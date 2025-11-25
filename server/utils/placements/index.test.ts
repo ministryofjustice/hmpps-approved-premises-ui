@@ -1,146 +1,50 @@
-import type { Cas1SpaceBooking, FullPerson, StaffMember } from '@approved-premises/api'
-import { RadioItem, SelectOption } from '@approved-premises/ui'
+import type { Cas1SpaceBooking } from '@approved-premises/api'
+import { RadioItem } from '@approved-premises/ui'
 import {
+  cas1CurrentKeyworkerFactory,
+  cas1KeyworkerAllocationFactory,
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
-  restrictedPersonFactory,
-  staffMemberFactory,
   userDetailsFactory,
+  userSummaryFactory,
 } from '../../testutils/factories'
 import {
   actions,
   arrivalInformation,
   canonicalDates,
   departureInformation,
-  detailedStatus,
-  getKeyDetail,
   injectRadioConditionalHtml,
   otherBookings,
-  overallStatus,
+  placementKeyDetails,
   placementOverviewSummary,
-  placementStatusHtml,
+  placementStatusTag,
+  placementStatusCell,
   placementSummary,
-  renderKeyworkersSelectOptions,
+  renderKeyworkersRadioOptions,
   requirementsInformation,
-  statusTextMap,
+  withdrawalMessage,
+  withdrawalSummaryList,
+  placementName,
 } from '.'
 import { DateFormats } from '../dateUtils'
 
 import paths from '../../paths/manage'
-import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
 import { characteristicsBulletList } from '../characteristicsUtils'
+import * as applicationHelpers from '../applications/helpers'
+import { detailedStatus, statusTextMap } from './status'
 
 describe('placementUtils', () => {
-  describe('placement status', () => {
-    describe.each([
-      ['placement summary', cas1SpaceBookingSummaryFactory],
-      ['full placement', cas1SpaceBookingFactory],
-    ])('when passed a %s', (_, typeFactory) => {
-      const upcoming = typeFactory.upcoming()
-      const current = typeFactory.current()
-      const departed = typeFactory.departed()
-      const nonArrival = typeFactory.nonArrival()
-      const cancelled = typeFactory.cancelled()
-
-      beforeEach(() => {
-        jest.useFakeTimers().setSystemTime(new Date('2025-03-01'))
-      })
-
-      const testCases = [
-        {
-          label: 'an upcoming placement',
-          factory: upcoming,
-          params: { expectedArrivalDate: '2025-05-01' },
-          expected: { overall: 'upcoming', detailed: 'upcoming' },
-        },
-        {
-          label: 'an upcoming placement starting within 6 weeks',
-          factory: upcoming,
-          params: { expectedArrivalDate: '2025-04-11' },
-          expected: { overall: 'upcoming', detailed: 'arrivingWithin6Weeks' },
-        },
-        {
-          label: 'an upcoming placement starting within 2 weeks',
-          factory: upcoming,
-          params: { expectedArrivalDate: '2025-03-14' },
-          expected: { overall: 'upcoming', detailed: 'arrivingWithin2Weeks' },
-        },
-        {
-          label: 'an upcoming placement starting today',
-          factory: upcoming,
-          params: { expectedArrivalDate: '2025-03-01' },
-          expected: { overall: 'upcoming', detailed: 'arrivingToday' },
-        },
-        {
-          label: 'an upcoming placement overdue arrival',
-          factory: upcoming,
-          params: { expectedArrivalDate: '2025-02-28' },
-          expected: { overall: 'upcoming', detailed: 'overdueArrival' },
-        },
-        {
-          label: 'a current placement departing in more than 6 weeks',
-          factory: current,
-          params: { expectedDepartureDate: '2025-05-01' },
-          expected: { overall: 'arrived', detailed: 'arrived' },
-        },
-        {
-          label: 'a current placement departing within 2 weeks',
-          factory: current,
-          params: { expectedDepartureDate: '2025-03-14' },
-          expected: { overall: 'arrived', detailed: 'departingWithin2Weeks' },
-        },
-        {
-          label: 'a current placement departing today',
-          factory: current,
-          params: { expectedDepartureDate: '2025-03-01' },
-          expected: { overall: 'arrived', detailed: 'departingToday' },
-        },
-        {
-          label: 'a current placement overdue departure',
-          factory: current,
-          params: { expectedDepartureDate: '2025-02-28' },
-          expected: { overall: 'arrived', detailed: 'overdueDeparture' },
-        },
-        {
-          label: 'a departed placement',
-          factory: departed,
-          params: {},
-          expected: { overall: 'departed', detailed: 'departed' },
-        },
-        {
-          label: 'a non-arrived placement',
-          factory: nonArrival,
-          params: {},
-          expected: { overall: 'notArrived', detailed: 'notArrived' },
-        },
-        {
-          label: 'a cancelled placement',
-          factory: cancelled,
-          params: { expectedArrivalDate: '2025-05-01' },
-          expected: { overall: 'cancelled', detailed: 'cancelled' },
-        },
-      ]
-
-      it.each(testCases)('should return a status for $label', ({ factory, params, expected }) => {
-        const placement = factory.build(params)
-
-        expect(overallStatus(placement)).toEqual(expected.overall)
-        expect(detailedStatus(placement)).toEqual(expected.detailed)
-      })
-    })
-  })
-
   describe('placementStatusHtml', () => {
     it('should return an appealRequested status', () => {
       const placement = cas1SpaceBookingSummaryFactory.build({ openChangeRequestTypes: ['placementAppeal'] })
       const expectedStatusText = statusTextMap[detailedStatus(placement)]
-      expect(placementStatusHtml(placement)).toEqual({ html: `${expectedStatusText}<br/>Appeal requested` })
+      expect(placementStatusCell(placement)).toEqual({ html: `${expectedStatusText}<br/>Appeal requested` })
     })
     it('should return an transfer requested status', () => {
       const placement = cas1SpaceBookingSummaryFactory.build({ openChangeRequestTypes: ['plannedTransfer'] })
       const expectedStatusText = statusTextMap[detailedStatus(placement)]
-      expect(placementStatusHtml(placement)).toEqual({ html: `${expectedStatusText}<br/>Transfer requested` })
+      expect(placementStatusCell(placement)).toEqual({ html: `${expectedStatusText}<br/>Transfer requested` })
     })
   })
 
@@ -202,7 +106,7 @@ describe('placementUtils', () => {
     }
     const keyworkerOption = {
       classes: 'govuk-button--secondary',
-      href: paths.premises.placements.keyworker({ premisesId: premises.id, placementId }),
+      href: paths.premises.placements.keyworker.new({ premisesId: premises.id, placementId }),
       text: 'Edit keyworker',
     }
     const requestTransferOption = {
@@ -332,63 +236,56 @@ describe('placementUtils', () => {
     })
   })
 
-  describe('getKeyDetail', () => {
-    it('should return the key information from the person in the placement', () => {
+  describe('placementKeyDetails', () => {
+    it('calls personKeyDetails with person and tier', () => {
+      jest.spyOn(applicationHelpers, 'personKeyDetails')
+
       const placement = cas1SpaceBookingFactory.build()
 
-      expect(getKeyDetail(placement)).toEqual({
-        header: { key: '', showKey: false, value: (placement.person as FullPerson).name },
-        items: [
-          { key: { text: 'CRN' }, value: { text: placement.person.crn } },
-          { key: { text: 'Tier' }, value: { text: placement.tier } },
-          {
-            key: { text: 'Date of birth' },
-            value: {
-              text: DateFormats.isoDateToUIDate((placement.person as FullPerson).dateOfBirth, { format: 'short' }),
-            },
-          },
-        ],
+      placementKeyDetails(placement)
+
+      expect(applicationHelpers.personKeyDetails).toHaveBeenCalledWith(placement.person, placement.tier)
+    })
+  })
+
+  describe('placementName', () => {
+    it('renders the placement title with premises name and arrival date', () => {
+      const spaceBooking = cas1SpaceBookingSummaryFactory.upcoming().build({
+        premises: {
+          name: "St John's House",
+        },
+        expectedArrivalDate: '2026-02-13',
       })
+
+      expect(placementName(spaceBooking)).toEqual(`St John's House from Fri 13 Feb 2026`)
+    })
+  })
+
+  describe('placementStatusTag', () => {
+    beforeEach(() => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-02-10'))
     })
 
-    it('should prefix the name with LAO if the person is LAO', () => {
-      const placement = cas1SpaceBookingFactory.build({
-        person: fullPersonFactory.build({
-          isRestricted: true,
-        }),
+    it.each([
+      ['Arriving within 2 weeks', 'arrivingWithin2Weeks', '2026-02-13', 'blue'],
+      ['Arriving today', 'arrivingToday', '2026-02-10', 'blue'],
+      ['Overdue arrival', 'overdueArrival', '2026-02-07', 'red'],
+    ])('renders the detailed status for a placement %s', (label, status, date, colour) => {
+      const spaceBooking = cas1SpaceBookingSummaryFactory.upcoming().build({
+        expectedArrivalDate: date,
       })
 
-      const result = getKeyDetail(placement)
-
-      expect(result.header.value).toEqual(`LAO: ${(placement.person as FullPerson).name}`)
+      expect(placementStatusTag(spaceBooking)).toEqual(
+        `<strong class="govuk-tag govuk-tag--${colour} govuk-tag--nowrap " data-cy-status="${status}" >${label}</strong>`,
+      )
     })
 
-    it('should not show the name or date of birth for a restricted person', () => {
-      const placement = cas1SpaceBookingFactory.build({
-        person: restrictedPersonFactory.build(),
-      })
+    it('accepts optional status tag options', () => {
+      const spaceBooking = cas1SpaceBookingSummaryFactory.departed().build()
 
-      expect(getKeyDetail(placement)).toEqual({
-        header: { key: '', showKey: false, value: 'Limited Access Offender' },
-        items: [
-          { key: { text: 'CRN' }, value: { text: placement.person.crn } },
-          { key: { text: 'Tier' }, value: { text: placement.tier } },
-        ],
-      })
-    })
-
-    it('should not show the name or date of birth for an unknown person', () => {
-      const placement = cas1SpaceBookingFactory.build({
-        person: unknownPersonFactory.build(),
-      })
-
-      expect(getKeyDetail(placement)).toEqual({
-        header: { key: '', showKey: false, value: 'Unknown person' },
-        items: [
-          { key: { text: 'CRN' }, value: { text: placement.person.crn } },
-          { key: { text: 'Tier' }, value: { text: placement.tier } },
-        ],
-      })
+      expect(placementStatusTag(spaceBooking, { classes: 'some-class', id: 'some-id' })).toEqual(
+        `<strong class="govuk-tag govuk-tag--grey govuk-tag--nowrap some-class" data-cy-status="departed" id="some-id-status">Departed</strong>`,
+      )
     })
   })
 
@@ -407,12 +304,12 @@ describe('placementUtils', () => {
         rows: [
           { key: { text: 'AP name' }, value: { text: placement.premises.name } },
           { key: { text: 'Date allocated' }, value: { text: DateFormats.isoDateToUIDate(placement.createdAt) } },
-          { key: { text: 'Status' }, value: { text: 'Departed' } },
+          { key: { text: 'Status' }, value: { html: placementStatusTag(placement) } },
           {
             key: { text: 'Actual length of stay' },
             value: { text: '29 weeks, 4 days' },
           },
-          { key: { text: 'Key worker' }, value: { text: placement.keyWorkerAllocation?.keyWorker?.name } },
+          { key: { text: 'Key worker' }, value: { text: placement.keyWorkerAllocation?.name } },
           { key: { text: 'Delius Event Number' }, value: { text: placement.deliusEventNumber } },
         ],
       })
@@ -457,19 +354,21 @@ describe('placementUtils', () => {
     })
 
     it('should return the arrival information', () => {
-      expect(arrivalInformation(placement)).toEqual({
+      const arrivedPlacement = cas1SpaceBookingFactory.current().build()
+
+      expect(arrivalInformation(arrivedPlacement)).toEqual({
         rows: [
           {
             key: { text: 'Expected arrival date' },
-            value: { text: DateFormats.isoDateToUIDate(placement.expectedArrivalDate) },
+            value: { text: DateFormats.isoDateToUIDate(arrivedPlacement.expectedArrivalDate) },
           },
           {
             key: { text: 'Actual arrival date' },
-            value: { text: DateFormats.isoDateToUIDate(placement.actualArrivalDate) },
+            value: { text: DateFormats.isoDateToUIDate(arrivedPlacement.actualArrivalDate) },
           },
           {
             key: { text: 'Arrival time' },
-            value: { text: placement.actualArrivalTime || '' },
+            value: { text: arrivedPlacement.actualArrivalTime },
           },
         ],
       })
@@ -519,9 +418,7 @@ describe('placementUtils', () => {
             },
             {
               key: { text: 'Departure time' },
-              value: {
-                text: (departedPlacement.actualDepartureTime || '').substring(0, 5),
-              },
+              value: { text: departedPlacement.actualDepartureTime },
             },
             { key: { text: 'Departure reason' }, value: { text: departedPlacement.departure?.reason?.name } },
             {
@@ -675,33 +572,37 @@ describe('placementUtils', () => {
       })
     })
   })
-  describe('renderKeyworkersSelectOptions', () => {
-    const selectBlankOption: SelectOption = { text: 'Select a keyworker', value: null }
-    const staffList: Array<StaffMember> = staffMemberFactory.buildList(3, { keyWorker: true })
 
-    it('should return a list of keyworker selection options', () => {
-      const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build()
-      const expected = [
-        selectBlankOption,
-        ...staffList.map(({ name, code }) => ({ text: name, value: code, selected: false })),
-      ]
+  describe('renderKeyworkersRadioOptions', () => {
+    it('should return a list of current keyworkers', () => {
+      const currentKeyworkers = cas1CurrentKeyworkerFactory.buildList(1)
 
-      const result = renderKeyworkersSelectOptions(staffList, placement)
-
-      expect(result).toEqual(expected)
+      expect(renderKeyworkersRadioOptions(currentKeyworkers)).toEqual([
+        { text: currentKeyworkers[0].summary.name, value: currentKeyworkers[0].summary.id },
+        { divider: 'or' },
+        { text: 'Assign a different keyworker', value: 'new' },
+      ])
     })
 
     it('should exclude the currently assigned keyworker', () => {
-      const placement: Cas1SpaceBooking = cas1SpaceBookingFactory.build({
-        keyWorkerAllocation: { keyWorker: { ...staffList[1] } },
+      const user = userSummaryFactory.build()
+      const currentKeyworkers = [
+        cas1CurrentKeyworkerFactory.build({ summary: user }),
+        cas1CurrentKeyworkerFactory.build(),
+      ]
+      const placement = cas1SpaceBookingFactory.build({
+        keyWorkerAllocation: cas1KeyworkerAllocationFactory.build({ ...user, userId: user.id }),
       })
 
-      const result = renderKeyworkersSelectOptions(staffList, placement)
-
-      expect(result).toEqual([
-        selectBlankOption,
-        ...[staffList[0], staffList[2]].map(({ name, code }) => ({ text: name, value: code, selected: false })),
+      expect(renderKeyworkersRadioOptions(currentKeyworkers, placement)).toEqual([
+        { text: currentKeyworkers[1].summary.name, value: currentKeyworkers[1].summary.id },
+        { divider: 'or' },
+        { text: 'Assign a different keyworker', value: 'new' },
       ])
+    })
+
+    it('does not render the divider if there are no current keyworkers', () => {
+      expect(renderKeyworkersRadioOptions([])).toEqual([{ text: 'Assign a different keyworker', value: 'new' }])
     })
   })
 
@@ -716,6 +617,34 @@ describe('placementUtils', () => {
       expect(injectRadioConditionalHtml(radioList, 'two', testHtml)).toEqual(
         expect.arrayContaining([{ text: 'Two', value: 'two', conditional: { html: testHtml } }]),
       )
+    })
+  })
+
+  describe('withdrawal utilities', () => {
+    const placement = cas1SpaceBookingFactory.build({
+      premises: { name: 'premises-name' },
+      actualArrivalDate: '2024-01-20',
+      expectedDepartureDate: '2024-11-04',
+      actualDepartureDate: undefined,
+    })
+    describe('withdrawalMessage', () => {
+      it('should return the placement withdrawal confirmation message', () => {
+        expect(withdrawalMessage(placement)).toEqual(
+          'Placement at premises-name from 20 Jan 2024 to 4 Nov 2024 has been withdrawn',
+        )
+      })
+    })
+
+    describe('withdrawalSummaryList', () => {
+      it('should generate the summary list for the withdrawl confirmation page', () => {
+        expect(withdrawalSummaryList(placement)).toEqual({
+          rows: [
+            { key: { text: 'Approved premises' }, value: { text: 'premises-name' } },
+            { key: { text: 'Arrival date' }, value: { text: 'Sat 20 Jan 2024' } },
+            { key: { text: 'Departure date' }, value: { text: 'Mon 4 Nov 2024' } },
+          ],
+        })
+      })
     })
   })
 })

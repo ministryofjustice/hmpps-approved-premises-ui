@@ -1,4 +1,4 @@
-import { PlacementCriteria } from '@approved-premises/api'
+import { Cas1SpaceSearchResult, PlacementCriteria } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import {
   apTypeRadioItems,
@@ -8,6 +8,7 @@ import {
   initialiseSearchState,
   spaceSearchStateToApiPayload,
   summaryCardRows,
+  summaryCards,
 } from './spaceSearch'
 import {
   cas1PlacementRequestDetailFactory,
@@ -19,6 +20,7 @@ import * as formUtils from '../formUtils'
 import { ApTypeCriteria, apTypeCriteriaLabels } from '../placementCriteriaUtils'
 import { addressRow, apTypeRow, distanceRow, restrictionsRow } from './index'
 import { summaryListItem } from '../formUtils'
+import * as artifactUtils from '../retrieveQuestionResponseFromFormArtifact'
 
 describe('Space search utils', () => {
   describe('initialiseSearchState', () => {
@@ -26,7 +28,6 @@ describe('Space search utils', () => {
       const placementRequest = cas1PlacementRequestDetailFactory.build({
         type: 'rfap',
         essentialCriteria: ['acceptsNonSexualChildOffenders', 'isStepFreeDesignated'],
-        desirableCriteria: ['hasEnSuite'],
       })
 
       expect(initialiseSearchState(placementRequest)).toEqual({
@@ -34,9 +35,9 @@ describe('Space search utils', () => {
         postcode: placementRequest.location,
         apType: 'isRecoveryFocussed',
         apCriteria: ['acceptsNonSexualChildOffenders'],
-        roomCriteria: ['isStepFreeDesignated', 'hasEnSuite'],
-        startDate: placementRequest.expectedArrival,
-        durationDays: placementRequest.duration,
+        roomCriteria: ['isStepFreeDesignated'],
+        startDate: placementRequest.authorisedPlacementPeriod.arrival,
+        durationDays: placementRequest.authorisedPlacementPeriod.duration,
       })
     })
 
@@ -226,6 +227,50 @@ describe('Space search utils', () => {
         distanceRow(spaceSearchResult, postcodeArea),
         restrictionsRow(spaceSearchResult),
       ])
+    })
+  })
+
+  describe('summaryCards', () => {
+    const nonPreferredResultsList = spaceSearchResultFactory.buildList(10)
+    const preferredList = spaceSearchResultFactory.buildList(3)
+    const allResults = [...nonPreferredResultsList, ...preferredList]
+    const placementRequest = cas1PlacementRequestDetailFactory.build()
+
+    beforeEach(() => {
+      jest.resetAllMocks()
+    })
+
+    const getDistances = (results: Array<Cas1SpaceSearchResult>): Array<number> => {
+      return results.map(({ distanceInMiles }) => distanceInMiles)
+    }
+
+    const getResultsFromCards = (cards: Array<{ spaceSearchResult: Cas1SpaceSearchResult }>) => {
+      return cards.map(({ spaceSearchResult }) => spaceSearchResult)
+    }
+
+    it('should render the results by distance if there are no preferred APs', () => {
+      const expectedDistances = getDistances(allResults).sort((a, b) => a - b)
+      const sortedResults = getResultsFromCards(summaryCards(allResults, '123456', placementRequest))
+
+      expect(getDistances(sortedResults)).toEqual(expectedDistances)
+    })
+
+    it('should not mutate the original results array', () => {
+      summaryCards(allResults, '123456', placementRequest)
+      expect(allResults).toEqual([...nonPreferredResultsList, ...preferredList])
+    })
+
+    it('should move preferred APs to the top, if provided', () => {
+      jest
+        .spyOn(artifactUtils, 'retrieveOptionalQuestionResponseFromFormArtifact')
+        .mockReturnValue(preferredList.map(result => result.premises))
+
+      const expectedDistances = getDistances(nonPreferredResultsList).sort((a, b) => a - b)
+      const sortedResults = getResultsFromCards(summaryCards(allResults, '123456', placementRequest))
+
+      expect(sortedResults.slice(0, 3)).toEqual(preferredList)
+
+      expect(getDistances(sortedResults.slice(3))).toEqual(expectedDistances)
     })
   })
 })

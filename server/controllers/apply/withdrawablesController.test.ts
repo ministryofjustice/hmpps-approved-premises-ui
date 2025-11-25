@@ -4,13 +4,14 @@ import { NextFunction } from 'express'
 import { Withdrawable } from '@approved-premises/api'
 import { ApplicationService, PlacementService } from '../../services'
 import WithdrawablesController from './withdrawablesController'
-import { cas1SpaceBookingFactory, withdrawableFactory } from '../../testutils/factories'
+import { applicationFactory, cas1SpaceBookingFactory, withdrawableFactory } from '../../testutils/factories'
 import adminPaths from '../../paths/admin'
 import managePaths from '../../paths/manage'
 import placementAppPaths from '../../paths/placementApplications'
 import applyPaths from '../../paths/apply'
 import { sortAndFilterWithdrawables } from '../../utils/applications/withdrawables'
 import withdrawablesFactory from '../../testutils/factories/withdrawablesFactory'
+import { applicationKeyDetails } from '../../utils/applications/helpers'
 
 jest.mock('../../utils/applications/withdrawables')
 
@@ -28,11 +29,14 @@ describe('withdrawablesController', () => {
 
   let withdrawablesController: WithdrawablesController
 
+  const application = applicationFactory.build()
+
   beforeEach(() => {
     withdrawablesController = new WithdrawablesController(applicationService, placementService)
     request = createMock<Request>({ user: { token }, flash })
     response = createMock<Response>({})
     jest.clearAllMocks()
+    applicationService.findApplication.mockResolvedValue(application)
   })
 
   describe('show', () => {
@@ -74,14 +78,16 @@ describe('withdrawablesController', () => {
       })
     })
 
-    describe('Bookings', () => {
+    describe('Placements', () => {
       it(`renders the view, calling the booking service to retrieve bookings`, async () => {
         const selectedWithdrawableType = 'placement'
         const spaceBookingWithdrawables = withdrawableFactory.buildList(2, { type: 'space_booking' })
         const applicationWithdrawable = withdrawableFactory.build({ type: 'application' })
-        const spaceBookings = cas1SpaceBookingFactory.buildList(2).map((b, i) => {
-          return { ...b, id: spaceBookingWithdrawables[i].id }
-        })
+        const spaceBookings = cas1SpaceBookingFactory
+          .buildList(2, { person: application.person, tier: application.risks.tier.value.level })
+          .map((b, i) => {
+            return { ...b, id: spaceBookingWithdrawables[i].id }
+          })
         const withdrawable = [applicationWithdrawable, ...spaceBookingWithdrawables]
         const withdrawables = withdrawablesFactory.build({ withdrawables: withdrawable })
 
@@ -91,9 +97,7 @@ describe('withdrawablesController', () => {
         )
         spaceBookings.forEach(b => placementService.getPlacement.mockResolvedValueOnce(b))
 
-        const requestHandler = withdrawablesController.show()
-
-        await requestHandler(
+        await withdrawablesController.show()(
           { ...request, params: { id: applicationId }, query: { selectedWithdrawableType } },
           response,
           next,
@@ -101,40 +105,53 @@ describe('withdrawablesController', () => {
         expect(sortAndFilterWithdrawables).toHaveBeenCalledWith(withdrawable, ['space_booking'])
         expect(applicationService.getWithdrawablesWithNotes).toHaveBeenCalledWith(token, applicationId)
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/show', {
-          pageHeading: 'Select your placement',
+          pageHeading: 'Select placement to withdraw',
           id: applicationId,
           withdrawables: spaceBookingWithdrawables,
           allBookings: spaceBookings,
           withdrawableType: 'placement',
           notes: withdrawables.notes,
+          contextKeyDetails: applicationKeyDetails(application),
         })
         expect(placementService.getPlacement).toHaveBeenCalledTimes(2)
         expect(placementService.getPlacement).toHaveBeenCalledWith(token, spaceBookingWithdrawables[0].id)
         expect(placementService.getPlacement).toHaveBeenCalledWith(token, spaceBookingWithdrawables[1].id)
       })
     })
+
+    it('Redirects to application show page if there are no withdrawables', async () => {
+      const withdrawables = withdrawablesFactory.build({ withdrawables: [] })
+      applicationService.getWithdrawablesWithNotes.mockResolvedValue(withdrawables)
+
+      await withdrawablesController.show()(
+        { ...request, params: { id: applicationId }, query: { selectedWithdrawableType: 'placement' } },
+        response,
+        next,
+      )
+      expect(response.redirect).toHaveBeenCalledWith(applyPaths.applications.show({ id: applicationId }))
+    })
   })
 
   describe('create', () => {
+    const selectedWithdrawableId = 'some-id'
     ;[
       {
         type: 'placement_request',
-        path: adminPaths.admin.placementRequests.withdrawal.new,
+        path: adminPaths.admin.placementRequests.withdrawal.new({ placementRequestId: selectedWithdrawableId }),
       },
       {
         type: 'placement_application',
-        path: placementAppPaths.placementApplications.withdraw.new,
+        path: placementAppPaths.placementApplications.withdraw.new({ id: selectedWithdrawableId }),
       },
       {
         type: 'application',
-        path: applyPaths.applications.withdraw.new,
+        path: applyPaths.applications.withdraw.new({ id: selectedWithdrawableId }),
       },
     ].forEach(w => {
       it(`redirects to the ${w.type} withdrawal page`, async () => {
-        const selectedWithdrawable = 'some-id'
         const withdrawable = withdrawableFactory.build({
           type: w.type as Withdrawable['type'],
-          id: selectedWithdrawable,
+          id: selectedWithdrawableId,
         })
         const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
 
@@ -143,13 +160,13 @@ describe('withdrawablesController', () => {
         const requestHandler = withdrawablesController.create()
 
         await requestHandler(
-          { ...request, params: { id: applicationId }, body: { selectedWithdrawable } },
+          { ...request, params: { id: applicationId }, body: { selectedWithdrawable: selectedWithdrawableId } },
           response,
           next,
         )
         expect(request.flash).toHaveBeenCalledWith('applicationId', applicationId)
         expect(applicationService.getWithdrawablesWithNotes).toHaveBeenCalledWith(token, applicationId)
-        expect(response.redirect).toHaveBeenCalledWith(302, w.path({ id: selectedWithdrawable }))
+        expect(response.redirect).toHaveBeenCalledWith(302, w.path)
       })
     })
 

@@ -12,13 +12,11 @@ import NationalOccupancyController from './nationalOccupancyController'
 import type { Services } from '../../services'
 
 export const controllers = (services: Services) => {
-  const { placementRequestService, premisesService, reportService, cruManagementAreaService, applicationService } =
-    services
-  const adminPlacementRequestsController = new AdminPlacementRequestsController(placementRequestService)
+  const { placementRequestService, premisesService, reportService, cruManagementAreaService, sessionService } = services
+  const adminPlacementRequestsController = new AdminPlacementRequestsController(placementRequestService, sessionService)
   const cruDashboardController = new CruDashboardController(
     placementRequestService,
     cruManagementAreaService,
-    applicationService,
     premisesService,
   )
   const placementRequestWithdrawalsController = new PlacementRequestsWithdrawalsController(placementRequestService)

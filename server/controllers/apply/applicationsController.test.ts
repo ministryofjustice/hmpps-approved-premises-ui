@@ -7,14 +7,18 @@ import type {
   GroupedApplications,
   PaginatedResponse,
 } from '@approved-premises/ui'
-import { Cas1ApplicationSummary } from '@approved-premises/api'
+import { addYears } from 'date-fns'
+import { type Cas1ApplicationSummary } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController from './applicationsController'
-import { ApplicationService, PersonService } from '../../services'
+import { ApplicationService, AssessmentService, PersonService, SessionService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import {
   activeOffenceFactory,
   applicationFactory,
+  assessmentFactory,
+  cas1ApplicationSummaryFactory,
   cas1TimelineEventFactory,
   paginatedResponseFactory,
   personFactory,
@@ -28,6 +32,10 @@ import * as applicationUtils from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
+import { getApplicationShowPageTabs } from '../../utils/applications/utils'
+import { getApplicationTableHeader, getApplicationTableRows } from '../../utils/applications/manageApplications'
+import { applicationKeyDetails, personKeyDetails } from '../../utils/applications/helpers'
+import { statusesLimitedToOne } from '../../utils/applications/statusTag'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applications/getResponses')
@@ -43,15 +51,23 @@ describe('applicationsController', () => {
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const applicationService = createMock<ApplicationService>({})
+  const assessmentService = createMock<AssessmentService>({})
   const personService = createMock<PersonService>({})
+  const sessionService = createMock<SessionService>({})
 
   let applicationsController: ApplicationsController
 
   beforeEach(() => {
-    applicationsController = new ApplicationsController(applicationService, personService)
+    applicationsController = new ApplicationsController(
+      applicationService,
+      assessmentService,
+      personService,
+      sessionService,
+    )
     request = createMock<Request>({ user: { token } })
     response = createMock<Response>({})
     jest.clearAllMocks()
+    sessionService.getPageBackLink.mockReturnValue('back-link')
   })
 
   describe('index', () => {
@@ -227,20 +243,25 @@ describe('applicationsController', () => {
       })
     })
 
+    const defaultRenderParams = {
+      application,
+      referrer,
+      pageHeading: 'Approved Premises application',
+      backLink: 'back-link',
+      contextKeyDetails: applicationKeyDetails(application),
+    }
+
     it('renders the readonly view if the application has been submitted', async () => {
       application.status = 'awaitingAssesment'
 
-      const requestHandler = applicationsController.show()
-
       applicationService.findApplication.mockResolvedValue(application)
 
-      await requestHandler(request, response, next)
+      await applicationsController.show()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('applications/show', {
-        application,
-        referrer,
+        ...defaultRenderParams,
         tab: 'application',
-        pageHeading: 'Approved Premises application',
+        tabs: getApplicationShowPageTabs(application.id, 'application'),
       })
     })
 
@@ -280,18 +301,17 @@ describe('applicationsController', () => {
         await requestHandler(
           {
             ...request,
-            query: { tab: applicationUtils.applicationShowPageTabs.timeline },
+            query: { tab: 'timeline' },
           },
           response,
           next,
         )
 
         expect(response.render).toHaveBeenCalledWith('applications/show', {
-          application,
-          referrer,
-          tab: applicationUtils.applicationShowPageTabs.timeline,
+          ...defaultRenderParams,
+          tab: 'timeline',
+          tabs: getApplicationShowPageTabs(application.id, 'timeline'),
           timelineEvents,
-          pageHeading: 'Approved Premises application',
         })
 
         expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
@@ -312,22 +332,53 @@ describe('applicationsController', () => {
         await requestHandler(
           {
             ...request,
-            query: { tab: applicationUtils.applicationShowPageTabs.placementRequests },
+            query: { tab: 'placementRequests' },
           },
           response,
           next,
         )
 
         expect(response.render).toHaveBeenCalledWith('applications/show', {
-          application,
-          referrer,
-          tab: applicationUtils.applicationShowPageTabs.placementRequests,
+          ...defaultRenderParams,
+          tab: 'placementRequests',
+          tabs: getApplicationShowPageTabs(application.id, 'placementRequests'),
           requestsForPlacement,
-          pageHeading: 'Approved Premises application',
         })
 
         expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
         expect(applicationService.getRequestsForPlacement).toHaveBeenCalledWith(token, application.id)
+      })
+    })
+
+    describe('when the tab=assessment query param is present', () => {
+      it('calls the findAssessment method on the assessment service', async () => {
+        const assessment = assessmentFactory.build()
+        application.status = 'awaitingPlacement'
+        application.assessmentId = assessment.id
+        application.assessmentDecisionDate = DateFormats.dateObjToIsoDate(faker.date.recent({ days: 50 }))
+
+        applicationService.findApplication.mockResolvedValue(application)
+        assessmentService.findAssessment.mockResolvedValue(assessment)
+
+        await applicationsController.show()(
+          {
+            ...request,
+            query: { tab: 'assessment' },
+          },
+          response,
+          next,
+        )
+
+        expect(response.render).toHaveBeenCalledWith('applications/show', {
+          ...defaultRenderParams,
+          tab: 'assessment',
+          tabs: getApplicationShowPageTabs(application.id, 'assessment'),
+          assessment,
+          applicationExpiryDate: DateFormats.dateObjtoUIDate(addYears(application.assessmentDecisionDate, 1)),
+        })
+
+        expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
+        expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, application.assessmentId)
       })
     })
 
@@ -520,6 +571,91 @@ describe('applicationsController', () => {
           ...errorsAndUserInput.userInput,
         })
       })
+    })
+  })
+
+  describe('manageApplications', () => {
+    const referrer = 'http://localhost/foo/bar'
+    const crn: string = '00112233'
+
+    const mockGetAll = (list: Array<Cas1ApplicationSummary>) => {
+      const paginatedResponse = paginatedResponseFactory.build({
+        data: list,
+      }) as PaginatedResponse<Cas1ApplicationSummary>
+      applicationService.getAll.mockResolvedValue(paginatedResponse)
+    }
+
+    beforeEach(() => {
+      ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
+        return { errors: {}, errorSummary: [] }
+      })
+      request = createMock<Request>({
+        params: { crn },
+        session: { user: { id: 'user-id' } },
+        user: {
+          token,
+        },
+        headers: {
+          referer: referrer,
+        },
+      })
+    })
+
+    it('should render the page with a continue button if there are no existing applications', async () => {
+      const person = personFactory.build({ crn })
+      mockGetAll([])
+      personService.findByCrn.mockResolvedValue(person)
+
+      await applicationsController.manageApplications()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/manageApplications', {
+        contextKeyDetails: personKeyDetails(person, undefined),
+        applicationCount: 0,
+        applicationsHeader: getApplicationTableHeader(),
+        applicationsRows: getApplicationTableRows([], ''),
+        pageHeading: 'There are no existing applications for this CRN',
+        continuePath: paths.applications.people.selectOffence({ crn }),
+      })
+
+      expect(applicationService.getAll).toHaveBeenCalledWith(
+        token,
+        1,
+        undefined,
+        undefined,
+        {
+          crnOrName: crn,
+          status: statusesLimitedToOne,
+        },
+        1000,
+      )
+
+      expect(personService.findByCrn).toHaveBeenCalledWith(token, crn)
+    })
+
+    it('should render the content if the application list is not empty', async () => {
+      const applicationList = [cas1ApplicationSummaryFactory.build()]
+      mockGetAll(applicationList)
+
+      await applicationsController.manageApplications()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/manageApplications', {
+        contextKeyDetails: applicationKeyDetails(applicationList[0]),
+        applicationCount: applicationList.length,
+        applicationsHeader: getApplicationTableHeader(),
+        applicationsRows: getApplicationTableRows(applicationList, ''),
+        pageHeading: 'There is 1 existing application for this CRN',
+      })
+      expect(applicationService.getAll).toHaveBeenCalledWith(
+        token,
+        1,
+        undefined,
+        undefined,
+        {
+          crnOrName: crn,
+          status: statusesLimitedToOne,
+        },
+        1000,
+      )
     })
   })
 

@@ -6,6 +6,7 @@ import adminPaths from '../../paths/admin'
 import placementAppPaths from '../../paths/placementApplications'
 import managePaths from '../../paths/manage'
 import { SelectedWithdrawableType, sortAndFilterWithdrawables } from '../../utils/applications/withdrawables'
+import { placementKeyDetails } from '../../utils/placements'
 
 export default class WithdrawalsController {
   constructor(
@@ -20,6 +21,8 @@ export default class WithdrawalsController {
 
       const withdrawables = await this.applicationService.getWithdrawablesWithNotes(req.user.token, id)
 
+      if (!withdrawables.withdrawables.length) return res.redirect(applyPaths.applications.show({ id }))
+
       if (selectedWithdrawableType === 'placement') {
         const placementWithdrawables = sortAndFilterWithdrawables(withdrawables.withdrawables, ['space_booking'])
 
@@ -30,12 +33,13 @@ export default class WithdrawalsController {
         )
 
         return res.render('applications/withdrawables/show', {
-          pageHeading: 'Select your placement',
+          pageHeading: 'Select placement to withdraw',
           id,
           withdrawables: placementWithdrawables,
           allBookings: [...placements],
           withdrawableType: 'placement',
           notes: withdrawables.notes,
+          contextKeyDetails: placements[0] && placementKeyDetails(placements[0]),
         })
       }
 
@@ -68,7 +72,10 @@ export default class WithdrawalsController {
       }
 
       if (withdrawable.type === 'placement_request') {
-        return res.redirect(302, adminPaths.admin.placementRequests.withdrawal.new({ id: selectedWithdrawable }))
+        return res.redirect(
+          302,
+          adminPaths.admin.placementRequests.withdrawal.new({ placementRequestId: selectedWithdrawable }),
+        )
       }
 
       if (withdrawable.type === 'placement_application') {

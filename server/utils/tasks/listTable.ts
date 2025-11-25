@@ -1,12 +1,12 @@
-import { isAssessmentTask, isPlacementApplicationTask } from './assertions'
 import {
   AssessmentDecision,
   PlacementApplicationDecision,
   SortDirection,
   Task,
   TaskSortField,
-} from '../../@types/shared'
-import { TableCell, TableRow } from '../../@types/ui'
+} from '@approved-premises/api'
+import { TabItem, TableCell, TableRow } from '@approved-premises/ui'
+import { isAssessmentTask, isPlacementApplicationTask } from './assertions'
 import paths from '../../paths/tasks'
 import { sortHeader } from '../sortHeader'
 import { kebabCase, linkTo } from '../utils'
@@ -81,17 +81,12 @@ const allocationCell = (task: Task): TableCell => ({
   text: task.allocatedToStaffMember?.name,
 })
 
-const nameAnchorCell = (task: Task, canAllocate: boolean): TableCell =>
-  canAllocate
-    ? {
-        html: linkTo(paths.tasks.show(taskParams(task)), {
-          text: displayName(task.personSummary, { showCrn: true }),
-          attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
-        }),
-      }
-    : {
-        text: displayName(task.personSummary, { showCrn: true }),
-      }
+const nameAnchorCell = (task: Task): TableCell => ({
+  html: linkTo(paths.tasks.show(taskParams(task)), {
+    text: displayName(task.personSummary, { showCrn: true }),
+    attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
+  }),
+})
 
 const apTypeCell = (task: Task): TableCell => ({
   text: apTypeShortLabels[task.apType] || '',
@@ -101,11 +96,11 @@ const apAreaCell = (task: Task): TableCell => ({
   text: task.apArea?.name || 'No area supplied',
 })
 
-const allocatedTableRows = (tasks: Array<Task>, canAllocate: boolean): Array<TableRow> => {
+const allocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   const rows: Array<TableRow> = []
   tasks.forEach(task => {
     rows.push([
-      nameAnchorCell(task, canAllocate),
+      nameAnchorCell(task),
       daysUntilDueCell(task, 'task--index__warning'),
       arrivalDateCell(task),
       allocationCell(task),
@@ -119,12 +114,12 @@ const allocatedTableRows = (tasks: Array<Task>, canAllocate: boolean): Array<Tab
   return rows
 }
 
-const unallocatedTableRows = (tasks: Array<Task>, canAllocate: boolean): Array<TableRow> => {
+const unallocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   tasks.forEach(task => {
     rows.push([
-      nameAnchorCell(task, canAllocate),
+      nameAnchorCell(task),
       daysUntilDueCell(task, 'task--index__warning'),
       arrivalDateCell(task),
       statusCell(task),
@@ -154,7 +149,7 @@ const completedTableRows = (tasks: Array<Task>): Array<TableRow> => {
 
   tasks.forEach(task => {
     rows.push([
-      nameAnchorCell(task, false),
+      nameAnchorCell(task),
       completedAtDateCell(task),
       completedByCell(task),
       taskTypeCell(task),
@@ -165,12 +160,12 @@ const completedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   return rows
 }
 
-const tasksTableRows = (tasks: Array<Task>, allocatedFilter: TaskTab, canAllocate: boolean): Array<TableRow> => {
+const tasksTableRows = (tasks: Array<Task>, allocatedFilter: TaskTab): Array<TableRow> => {
   if (allocatedFilter === 'allocated') {
-    return allocatedTableRows(tasks, canAllocate)
+    return allocatedTableRows(tasks)
   }
   if (allocatedFilter === 'unallocated') {
-    return unallocatedTableRows(tasks, canAllocate)
+    return unallocatedTableRows(tasks)
   }
   return completedTableRows(tasks)
 }
@@ -240,13 +235,6 @@ const tasksTableHeader = (
 }
 
 const taskParams = (task: Task) => ({ id: task.id, taskType: kebabCase(task.taskType) })
-
-export type TabItem = {
-  text: string
-  active: boolean
-  href: string
-  classes?: string
-}
 
 const tasksTabItems = (hrefPrefix: string, activeTab = 'allocated'): Array<TabItem> => {
   const [path, query] = hrefPrefix.split('?')

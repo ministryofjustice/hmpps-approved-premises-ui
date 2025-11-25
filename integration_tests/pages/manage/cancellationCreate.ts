@@ -9,7 +9,7 @@ export default class CancellationCreatePage extends Page {
     public readonly premisesId: string,
     public readonly placementId: string,
   ) {
-    super('Confirm withdrawn placement')
+    super('Confirm placement to withdraw')
   }
 
   static visit(premisesId: string, placementId: string): CancellationCreatePage {

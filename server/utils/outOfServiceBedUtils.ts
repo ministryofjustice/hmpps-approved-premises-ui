@@ -15,12 +15,11 @@ import {
   IdentityBarMenuItem,
   ObjectWithDateParts,
   SummaryList,
-  SummaryListItem,
   TableCell,
   UserDetails,
 } from '@approved-premises/ui'
 
-import { isBefore } from 'date-fns'
+import { isBefore, subDays } from 'date-fns'
 import paths from '../paths/manage'
 import { linkTo } from './utils'
 import { DateFormats, isoDateIsValid } from './dateUtils'
@@ -28,7 +27,7 @@ import { textValue } from './applications/helpers'
 import { sortHeader } from './sortHeader'
 import { hasPermission } from './users'
 import { SanitisedError } from '../sanitisedError'
-import { summaryListItem } from './formUtils'
+import { summaryListItem, summaryListItemNoBlankRows } from './formUtils'
 import { isValidCrn } from './crn'
 import { ValidationError } from './errors'
 
@@ -161,55 +160,20 @@ export const outOfServiceBedTabs = (
   },
 ]
 
-export const outOfServiceBedSummaryList = (outOfServiceBed: Cas1OutOfServiceBed): SummaryList => ({
-  rows: [
-    summaryListItem('Start date', DateFormats.isoDateToUIDate(outOfServiceBed.startDate, { format: 'long' })),
-    summaryListItem('End date', DateFormats.isoDateToUIDate(outOfServiceBed.endDate, { format: 'long' })),
-    summaryListItem('Reason', outOfServiceBed.reason.name),
-    summaryListItem('Reference/CRN', outOfServiceBed.referenceNumber),
-    summaryListItem('Notes', outOfServiceBed.notes, 'textBlock'),
-  ],
-})
-
-export const bedRevisionDetails = (revision: Cas1OutOfServiceBedRevision): SummaryList['rows'] => {
-  const summaryListItems: Array<SummaryListItem> = []
-
-  if (revision.startDate) {
-    summaryListItems.push({
-      key: textValue('Start date'),
-      value: textValue(DateFormats.isoDateToUIDate(revision.startDate, { format: 'long' })),
-    })
+export const outOfServiceBedSummaryList = (
+  outOfServiceBed: Cas1OutOfServiceBed | Cas1OutOfServiceBedRevision,
+  suppressBlank = false,
+): SummaryList => {
+  const item: typeof summaryListItem = suppressBlank ? summaryListItemNoBlankRows : summaryListItem
+  return {
+    rows: [
+      item('Start date', outOfServiceBed.startDate, 'date'),
+      item('End date', outOfServiceBed.endDate, 'date'),
+      item('Reason', outOfServiceBed.reason?.name),
+      item('Reference/CRN', outOfServiceBed.referenceNumber),
+      item('Additional information', outOfServiceBed.notes, 'textBlock'),
+    ].filter(Boolean),
   }
-
-  if (revision.endDate) {
-    summaryListItems.push({
-      key: textValue('End date'),
-      value: textValue(DateFormats.isoDateToUIDate(revision.endDate, { format: 'long' })),
-    })
-  }
-
-  if (revision.reason) {
-    summaryListItems.push({
-      key: textValue('Reason'),
-      value: textValue(revision.reason.name),
-    })
-  }
-
-  if (revision.referenceNumber) {
-    summaryListItems.push({
-      key: textValue('Reference/CRN'),
-      value: textValue(revision.referenceNumber),
-    })
-  }
-
-  if (revision.notes) {
-    summaryListItems.push({
-      key: textValue('Notes'),
-      value: textValue(revision.notes),
-    })
-  }
-
-  return summaryListItems
 }
 
 export const sortOutOfServiceBedRevisionsByUpdatedAt = (revisions: Array<Cas1OutOfServiceBedRevision>) => {
@@ -275,11 +239,19 @@ export type CreateOutOfServiceBedBody = ObjectWithDateParts<'startDate'> &
     notes?: string
   }
 
-export const validateOutOfServiceBedInput = (
-  body: CreateOutOfServiceBedBody,
-  outOfServiceBedReasons: Array<Cas1OutOfServiceBedReason>,
-  bedId?: string,
-): Cas1NewOutOfServiceBed => {
+export const validateOutOfServiceBedInput = ({
+  body,
+  user,
+  outOfServiceBedReasons,
+  bedId,
+  suppressDateRangeCheck = false,
+}: {
+  body: CreateOutOfServiceBedBody
+  user: UserDetails
+  outOfServiceBedReasons: Array<Cas1OutOfServiceBedReason>
+  bedId?: string
+  suppressDateRangeCheck?: boolean
+}): Cas1NewOutOfServiceBed => {
   const { startDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'startDate')
   const { endDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'endDate')
   const { reason, referenceNumber, notes } = body
@@ -290,6 +262,12 @@ export const validateOutOfServiceBedInput = (
     errors.startDate = 'You must enter a start date'
   } else if (!isoDateIsValid(startDate)) {
     errors.startDate = 'You must enter a valid start date'
+  } else if (
+    !hasPermission(user, ['cas1_out_of_service_bed_no_date_limit']) &&
+    !suppressDateRangeCheck &&
+    isBefore(startDate, subDays(DateFormats.dateObjToIsoDate(new Date()), 7))
+  ) {
+    errors.startDate = 'You must enter a start date no earlier than 7 days ago'
   }
 
   if (!endDate) {
@@ -310,6 +288,8 @@ export const validateOutOfServiceBedInput = (
     } else if (!isValidCrn(referenceNumber)) {
       errors.referenceNumber = 'You must enter a valid CRN'
     }
+  } else if (referenceNumber && referenceNumber.length > 32) {
+    errors.referenceNumber = 'A work order reference number must be less than 33 characters long'
   }
 
   if (!notes) {

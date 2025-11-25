@@ -1,4 +1,4 @@
-import type { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import type { Cas1Assessment as Assessment } from '@approved-premises/api'
 
 import AssessPage from './assessPage'
 

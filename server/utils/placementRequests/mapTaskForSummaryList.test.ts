@@ -1,10 +1,10 @@
 import { applicationFactory, placementApplicationFactory } from '../../testutils/factories'
 import { forPagesInTask } from '../applications/forPagesInTask'
-import { mapPageForSummaryList } from './checkYourAnswersUtils'
+import { mapPageForSummaryList } from './reviewUtils'
 import { mapTaskForSummaryList } from './mapTaskForSummaryList'
 import PlacementApplicationForm from '../../form-pages/placement-application'
 
-jest.mock('./checkYourAnswersUtils', () => ({
+jest.mock('./reviewUtils', () => ({
   mapPageForSummaryList: jest.fn(() => 'mockedPageSummary'),
 }))
 

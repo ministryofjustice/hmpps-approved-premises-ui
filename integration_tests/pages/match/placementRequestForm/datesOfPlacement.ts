@@ -1,5 +1,6 @@
 import { DateFormats } from '../../../../server/utils/dateUtils'
 import Page from '../../page'
+import { AND, THEN, WHEN } from '../../../helpers'
 
 export default class DatesOfPlacement extends Page {
   constructor() {
@@ -11,21 +12,55 @@ export default class DatesOfPlacement extends Page {
   }
 
   datesOfPlacement = [
-    { dateOfPlacement: '2023-08-01', duration: { days: 5, weeks: 2 } },
-    { dateOfPlacement: '2023-07-02', duration: { days: 4, weeks: 1 } },
+    { dateOfPlacement: '2023-08-01', duration: { weeks: 2, days: 5 }, isFlexible: 'yes' },
+    { dateOfPlacement: '2023-07-02', duration: { weeks: 1, days: 4 }, isFlexible: 'no' },
+    { dateOfPlacement: '2024-09-05', duration: { weeks: 0, days: 3 }, isFlexible: 'yes' },
   ]
 
   completeForm() {
-    this.datesOfPlacement.forEach((date, index) => {
-      const parsedDate = DateFormats.isoToDateObj(date.dateOfPlacement)
-
-      this.completeDatesOfPlacementDateInputs(parsedDate, index.toString())
-      this.completeDurationInputs(index.toString(), date.duration.weeks, date.duration.days)
+    this.datesOfPlacement.forEach((dateBlock, index) => {
+      this.populateBlock(index, dateBlock)
     })
   }
 
-  clickAddAnother() {
-    cy.get('button').contains('Add another').click()
+  populateBlock(index: number, dateBlock) {
+    const parsedDate = DateFormats.isoToDateObj(dateBlock.dateOfPlacement)
+
+    this.completeDatesOfPlacementDateInputs(parsedDate, index.toString())
+    this.completeDurationInputs(index.toString(), dateBlock.duration.weeks, dateBlock.duration.days)
+    this.completeIsFlexible(index.toString(), dateBlock.isFlexible)
+  }
+
+  verifyBlockPopulated(index: number, dateBlock) {
+    const prefix = `datesOfPlacement_${String(index)}_arrivalDate_`
+
+    const values = dateBlock.dateOfPlacement.split('-')
+    ;['year', 'month', 'day'].forEach((part: string, i) => {
+      cy.get(`#${prefix}${part}`).should('have.value', String(Number(values[i])))
+    })
+  }
+
+  checkBlockTitles(blockCount: number) {
+    for (let index = 0; index < blockCount; index += 1) {
+      cy.get('fieldset[data-fieldset] > legend')
+        .eq(index)
+        .should('contain.text', `ROTL placement ${index + 1}`)
+    }
+  }
+
+  removeBlock(index: number) {
+    cy.get('.moj-add-another__remove-button')
+      .eq(index - 1)
+      .click()
+  }
+
+  addAndRemoveBlock(initialCount: number = 0) {
+    const checkItems = (count: number) => cy.get('.moj-add-another__item').should('have.length', initialCount + count)
+    checkItems(0)
+    this.clickButton('Add another')
+    checkItems(1)
+    this.removeBlock(initialCount)
+    checkItems(0)
   }
 
   completeDatesOfPlacementDateInputs(date: Date, index: string): void {
@@ -41,13 +76,55 @@ export default class DatesOfPlacement extends Page {
     this.clearAndCompleteTextInputById(`datesOfPlacement_${index}_duration_days`, days.toString())
   }
 
+  completeIsFlexible(index: string, isFlexible: string) {
+    this.checkRadioByNameAndValue(`datesOfPlacement[${index}][isFlexible]`, isFlexible ? 'yes' : 'no')
+  }
+
   clearDateInputs(prefix: string): void {
     cy.get(`[name="${prefix}[arrivalDate-day]"`).clear()
     cy.get(`[name="${prefix}[arrivalDate-month]"`).clear()
     cy.get(`[name="${prefix}[arrivalDate-year]"`).clear()
   }
 
-  clickSaveAndContinue() {
-    cy.get('button').contains('Save and continue').click()
+  clickSubmit() {
+    this.clickButton('Save and continue')
+  }
+
+  exercisePage() {
+    WHEN('I submit the form empty')
+    this.clickButton('Save and continue')
+
+    THEN('I should see errors')
+    this.shouldShowErrorMessagesForFields(['datesOfPlacement_0_isFlexible'], {
+      datesOfPlacement_0_isFlexible: 'State if the placement date is flexible',
+    })
+
+    WHEN('I populate the form')
+    this.populateBlock(0, this.datesOfPlacement[0])
+    this.clickButton('Add another')
+    this.populateBlock(1, this.datesOfPlacement[1])
+
+    AND('I should be able to add and remove date blocks without affecting the form population')
+    this.addAndRemoveBlock(2)
+    this.verifyBlockPopulated(0, this.datesOfPlacement[0])
+    this.verifyBlockPopulated(1, this.datesOfPlacement[1])
+
+    WHEN('I add a new block and populate it')
+    this.clickButton('Add another')
+    this.populateBlock(2, this.datesOfPlacement[2])
+    this.verifyBlockPopulated(0, this.datesOfPlacement[0])
+    this.verifyBlockPopulated(1, this.datesOfPlacement[1])
+    this.verifyBlockPopulated(2, this.datesOfPlacement[2])
+
+    AND('I delete the block in the middle')
+    this.checkBlockTitles(3)
+    this.removeBlock(1)
+
+    THEN('The third block should remain populated')
+    this.verifyBlockPopulated(0, this.datesOfPlacement[0])
+    this.verifyBlockPopulated(2, this.datesOfPlacement[2])
+
+    AND('the block titles should be fixed')
+    this.checkBlockTitles(2)
   }
 }

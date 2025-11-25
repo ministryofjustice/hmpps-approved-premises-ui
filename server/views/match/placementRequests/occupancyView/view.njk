@@ -8,19 +8,19 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "./partials/_occupancySummary.njk" import occupancySummary %}
-{% from "./partials/_occupancyCalendar.njk" import occupancyCalendar %}
 {% from "partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "partials/filters.njk" import filterDatepicker, filterSelect, filterCheckboxes %}
-{% from "partials/_calendar.njk" import calendarKey %}
+{% from "partials/calendar/_occupancyCalendar.njk" import occupancyCalendar %}
+{% from "partials/calendar/_calendar.njk" import calendarKey %}
 
-{% extends "match/layout-with-details.njk" %}
+{% extends "partials/layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back to other APs",
-        href: paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id })
+        href: paths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequest.id })
     }) }}
 {% endblock %}
 
@@ -29,9 +29,15 @@
 
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-    {% call govukDetails({summaryText: "Placement request information", open: true}) %}
+    {% call govukDetails({ summaryText: "Placement request information", open: not newPlacementSummaryList }) %}
         {{ govukSummaryList(placementRequestInfoSummaryList) }}
     {% endcall %}
+
+    {% if newPlacementSummaryList %}
+        {% call govukDetails({summaryText: "New placement information", open: true}) %}
+            {{ govukSummaryList(newPlacementSummaryList) }}
+        {% endcall %}
+    {% endif %}
 
     <section>
         <h2 class="govuk-heading-l">View availability for {{ formatDuration(durationDays) }}
@@ -78,11 +84,11 @@
 
     {% if not errors.startDate %}
         <section>
-            <h2 class="govuk-heading-l">Book your placement</h2>
+            <h2 class="govuk-heading-l">{{ bookingHeading }}</h2>
 
             <p><strong>Room criteria:</strong> {{ selectedCriteria }}</p>
 
-            <form action="{{ paths.v2Match.placementRequests.search.occupancyBook({ id: placementRequest.id, premisesId: premises.id }) }}"
+            <form action="{{ paths.v2Match.placementRequests.search.occupancyBook({ placementRequestId: placementRequest.id, premisesId: premises.id }) }}"
                   method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
@@ -128,20 +134,25 @@
                     {{ govukButton({
                         text: "Cancel",
                         classes: "govuk-button--secondary",
-                        href: paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+                        href: paths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequest.id }),
                         preventDoubleClick: true
                     }) }}
                 </div>
             </form>
             <h3 class="govuk-heading-m">If you are not booking this placement</h3>
             <p class="govuk-body">
-                <a href="{{ paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }) }}">Check for a
-                    space at another AP</a>
+                <a href="{{ paths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequest.id }) }}">
+                    Search for a space at another AP
+                </a>
             </p>
-            <p class="govuk-body">
-                <a href="{{ paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id}) }}">Mark as unable
-                    to match</a>
-            </p>
+
+            {% if not newPlacementSummaryList %}
+                <p class="govuk-body">
+                    <a href="{{ paths.placementRequests.bookingNotMade.confirm({ placementRequestId: placementRequest.id }) }}">
+                        Mark as unable to book
+                    </a>
+                </p>
+            {% endif %}
         </section>
     {% endif %}
 {% endblock %}

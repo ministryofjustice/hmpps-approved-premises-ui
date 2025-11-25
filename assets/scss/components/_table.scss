@@ -1,3 +1,12 @@
 .table__column--collapse {
   width: 1px;
+
+  & > button {
+    white-space: nowrap;
+  }
+}
+
+.govuk-table__cell ul.govuk-list--spaced {
+  margin-bottom: 5px;
+  li:last-child {margin-bottom: 0}
 }

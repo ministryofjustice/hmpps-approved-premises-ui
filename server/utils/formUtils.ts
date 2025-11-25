@@ -5,13 +5,15 @@ import type {
   ErrorMessages,
   HtmlItem,
   RadioItem,
+  RadioItemButton,
   SelectOption,
   SummaryListItem,
   TextItem,
 } from '@approved-premises/ui'
 import type { RiskTierLevel } from '@approved-premises/api'
 import { PlacementRequestStatus } from '@approved-premises/api'
-import { resolvePath, sentenceCase } from './utils'
+import { isCardinal, resolvePath, sentenceCase } from './utils'
+import { DateFormats } from './dateUtils'
 import postcodeAreas from '../etc/postcodeAreas.json'
 
 export const dateFieldValues = (
@@ -58,7 +60,7 @@ export const convertObjectsToRadioItems = (
   valueKey: string,
   fieldName: string,
   context: Record<string, unknown>,
-): Array<RadioItem> => {
+): Array<RadioItemButton> => {
   return items.map(item => {
     return {
       text: item[textKey],
@@ -100,9 +102,9 @@ export const convertObjectsToSelectOptions = (
 export function convertKeyValuePairToRadioItems<T extends object>(
   object: T,
   checkedItem?: keyof T,
-  conditionals?: Partial<Record<keyof T, RadioItem['conditional']>>,
-  hints?: Partial<Record<keyof T, RadioItem['hint']>>,
-): Array<RadioItem> {
+  conditionals?: Partial<Record<keyof T, HtmlItem>>,
+  hints?: Partial<Record<keyof T, TextItem | HtmlItem>>,
+): Array<RadioItemButton> {
   return Object.keys(object).map(key => {
     return {
       value: key,
@@ -135,8 +137,8 @@ export function convertKeyValuePairToCheckBoxItems<T extends object>(
 export function convertArrayToRadioItems<T extends string>(
   array: Array<T> | ReadonlyArray<T>,
   checkedItem: string,
-  labels?: Partial<Record<T, RadioItem['text']>>,
-  hints?: Partial<Record<T, RadioItem['hint']>>,
+  labels?: Partial<Record<T, string>>,
+  hints?: Partial<Record<T, TextItem | HtmlItem>>,
 ): Array<RadioItem> {
   return array.map(key => {
     const radioItem: RadioItem = {
@@ -173,20 +175,31 @@ export function convertKeyValuePairsToSummaryListItems<T extends object>(
   return Object.keys(values).map(key => summaryListItem(titles[key], String(values[key as keyof T])))
 }
 
-export const summaryListItem = (
+type RenderAs = keyof TextItem | keyof HtmlItem | 'textBlock' | 'date'
+
+const renderSummaryValue = (value: string, renderAs: RenderAs) => {
+  switch (renderAs) {
+    case 'textBlock':
+      return { html: `<span class="govuk-summary-list__textblock">${value}</span>` }
+    case 'date':
+      return { text: (value && DateFormats.isoDateToUIDate(value)) || '' }
+    case 'html':
+      return { html: value }
+    default:
+      return { text: value }
+  }
+}
+
+export const summaryListItem = (label: string, value: string, renderAs: RenderAs = 'text'): SummaryListItem => ({
+  key: { text: label },
+  value: renderSummaryValue(value, renderAs),
+})
+
+export const summaryListItemNoBlankRows = (
   label: string,
   value: string,
-  renderAs: keyof TextItem | keyof HtmlItem | 'textBlock' = 'text',
-  supressBlank = false,
-): SummaryListItem => {
-  const htmlValue = renderAs === 'textBlock' ? `<span class="govuk-summary-list__textblock">${value}</span>` : value
-  return !supressBlank || value
-    ? {
-        key: { text: label },
-        value: renderAs === 'text' ? { text: value } : { html: htmlValue },
-      }
-    : undefined
-}
+  renderAs: RenderAs = 'text',
+): SummaryListItem => (value ? summaryListItem(label, value, renderAs) : undefined)
 
 /**
  * Performs validation on the area of a postcode (IE the first three or four characters)
@@ -195,6 +208,16 @@ export const summaryListItem = (
  */
 export function validPostcodeArea(potentialPostcode: string) {
   return postcodeAreas.includes(potentialPostcode.trim().toUpperCase())
+}
+
+/**
+ * Performs validation on a set of 'weeks' and 'days' fields
+ * @returns true if both fields are cardinal numbers or if one is a cardinal number and the other is empty
+ * @param weeks
+ * @param days
+ */
+export function validWeeksAndDaysDuration(weeks: string, days: string) {
+  return (isCardinal(weeks) && isCardinal(days)) || (isCardinal(weeks) && !days) || (!weeks && isCardinal(days))
 }
 
 /**
@@ -245,9 +268,9 @@ export const tierSelectOptions = (selectedOption: RiskTierLevel | undefined): Ar
 }
 
 export const placementRequestStatus: Record<PlacementRequestStatus, string> = {
-  notMatched: 'Not matched',
-  unableToMatch: 'Unable to match',
-  matched: 'Matched',
+  notMatched: 'Ready to book',
+  unableToMatch: 'Unable to book',
+  matched: 'Booked',
 }
 
 export const placementRequestStatusSelectOptions = (

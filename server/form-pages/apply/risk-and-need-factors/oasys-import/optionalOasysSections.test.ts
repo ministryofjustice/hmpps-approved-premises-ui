@@ -8,7 +8,7 @@ import {
   cas1OASysMetadataFactory,
   cas1OASysSupportingInformationMetaDataFactory,
 } from '../../../../testutils/factories'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import OptionalOasysSections from './optionalOasysSections'
 

@@ -13,6 +13,7 @@ import {
 import managePaths from '../../../../paths/manage'
 import { DateFormats } from '../../../../utils/dateUtils'
 import MultiPageFormManager from '../../../../utils/multiPageFormManager'
+import { placementKeyDetails } from '../../../../utils/placements'
 
 export default class PlacementAppealController {
   formData: MultiPageFormManager<'appeals'>
@@ -44,6 +45,7 @@ export default class PlacementAppealController {
 
       return res.render('manage/premises/placements/appeals/new', {
         pageHeading: 'Appeal against a placement',
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         appealReasonRadioItems,
         ...context,
@@ -80,10 +82,10 @@ export default class PlacementAppealController {
         const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
 
         return res.render('manage/premises/placements/appeals/confirm', {
+          contextKeyDetails: placementKeyDetails(placement),
           pageHeading: 'Confirm the appeal details',
           postUrl: managePaths.premises.placements.appeal.confirm({ premisesId, placementId }),
           backLink: managePaths.premises.placements.appeal.new({ premisesId, placementId }),
-          placement,
           summaryList: { rows: getConfirmationSummary(sessionData) },
         })
       } catch (error) {

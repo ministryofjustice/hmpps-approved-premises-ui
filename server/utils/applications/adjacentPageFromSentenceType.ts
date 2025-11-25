@@ -27,6 +27,6 @@ export const adjacentPageFromSentenceType = (sentenceType: SentenceTypeOption) =
     case 'life':
       return 'release-type'
     default:
-      throw new Error('The release type is invalid')
+      throw new Error(`The sentence type "${sentenceType}" is invalid`)
   }
 }

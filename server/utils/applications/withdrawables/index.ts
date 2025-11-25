@@ -109,7 +109,11 @@ export const withdrawableRadioOptions = (
     }
 
     if (withdrawable.type === 'placement_request') {
-      return withDrawableRadioSection(withdrawable, null, matchPaths.placementRequests.show({ id: withdrawable.id }))
+      return withDrawableRadioSection(
+        withdrawable,
+        null,
+        matchPaths.placementRequests.show({ placementRequestId: withdrawable.id }),
+      )
     }
 
     if (withdrawable.type === 'space_booking') {

@@ -7,6 +7,7 @@ import flash from 'connect-flash'
 import createError from 'http-errors'
 import methodOverride from 'method-override'
 
+import * as Sentry from '@sentry/node'
 import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
@@ -20,13 +21,13 @@ import setUpStaticResources from './middleware/setUpStaticResources'
 import setUpWebRequestParsing from './middleware/setupRequestParsing'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
-import { setUpSentryErrorHandler, setUpSentryRequestHandler } from './middleware/setUpSentry'
 import setUpMaintenancePageRedirect from './middleware/setUpMaintenancePageRedirect'
 import { appInsightsMiddleware } from './utils/azureAppInsights'
 
 import routes from './routes'
 import type { Controllers } from './controllers'
 import type { Services } from './services'
+import config from './config'
 
 export default function createApp(controllers: Controllers, services: Services): express.Application {
   const app = express()
@@ -34,8 +35,6 @@ export default function createApp(controllers: Controllers, services: Services):
   app.set('json spaces', 2)
   app.set('trust proxy', true)
   app.set('port', process.env.PORT || 3000)
-
-  setUpSentryRequestHandler(app)
 
   // Add method-override to allow us to use PUT and DELETE methods
   app.use(methodOverride('_method'))
@@ -62,7 +61,11 @@ export default function createApp(controllers: Controllers, services: Services):
   })
   app.use(routes(controllers, services))
   app.use((req, res, next) => next(createError(404, 'Not found')))
-  setUpSentryErrorHandler(app)
+
+  if (config.sentry.dsn) {
+    Sentry.setupExpressErrorHandler(app)
+  }
+
   app.use(errorHandler(process.env.NODE_ENV === 'production'))
 
   return app

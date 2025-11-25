@@ -1,10 +1,11 @@
+import { faker } from '@faker-js/faker'
+import { subDays } from 'date-fns'
 import { outOfServiceBedFactory, outOfServiceBedRevisionFactory, userDetailsFactory } from '../testutils/factories'
 import { DateFormats } from './dateUtils'
 import {
   actionCell,
   allOutOfServiceBedsTableHeaders,
   allOutOfServiceBedsTableRows,
-  bedRevisionDetails,
   CreateOutOfServiceBedBody,
   generateConflictBespokeError,
   outOfServiceBedActions,
@@ -158,80 +159,44 @@ describe('outOfServiceBedUtils', () => {
   })
 
   describe('outOfServiceBedSummaryList', () => {
+    const startDate = DateFormats.dateObjToIsoDate(faker.date.soon({ days: 80 }))
+    const endDate = DateFormats.dateObjToIsoDate(faker.date.soon({ refDate: startDate, days: 80 }))
+    const outOfServiceBed = outOfServiceBedFactory.build({
+      startDate,
+      endDate,
+      referenceNumber: '123',
+      notes: `some notes\ntwo lines`,
+    })
+
+    const expectedRows = [
+      { key: { text: 'Start date' }, value: { text: DateFormats.isoDateToUIDate(startDate) } },
+      { key: { text: 'End date' }, value: { text: DateFormats.isoDateToUIDate(endDate) } },
+      { key: { text: 'Reason' }, value: { text: outOfServiceBed.reason.name } },
+      { key: { text: 'Reference/CRN' }, value: { text: '123' } },
+      {
+        key: { text: 'Additional information' },
+        value: { html: `<span class="govuk-summary-list__textblock">some notes\ntwo lines</span>` },
+      },
+    ]
+
     it('renders a summary list with the OOSB details', () => {
-      const outOfServiceBed = outOfServiceBedFactory.build({
-        startDate: '2026-02-01',
-        endDate: '2026-03-12',
-        referenceNumber: '123',
-        notes: `some notes\ntwo lines`,
-      })
-
       expect(outOfServiceBedSummaryList(outOfServiceBed)).toEqual({
-        rows: [
-          { key: { text: 'Start date' }, value: { text: 'Sun 1 Feb 2026' } },
-          { key: { text: 'End date' }, value: { text: 'Thu 12 Mar 2026' } },
-          { key: { text: 'Reason' }, value: { text: outOfServiceBed.reason.name } },
-          { key: { text: 'Reference/CRN' }, value: { text: '123' } },
-          {
-            key: { text: 'Notes' },
-            value: { html: `<span class="govuk-summary-list__textblock">some notes\ntwo lines</span>` },
-          },
-        ],
+        rows: expectedRows,
       })
     })
-  })
 
-  describe('bedRevisionDetails', () => {
-    it('adds a formatted start date the summary list', () => {
-      const startDate = new Date(2024, 2, 1)
-      const revision = outOfServiceBedRevisionFactory.build({
-        startDate: DateFormats.dateObjToIsoDate(startDate),
+    it('renders blank rows where data are not supplied', () => {
+      const expectedRowCopy = [...expectedRows]
+      expectedRowCopy.splice(0, 1, { key: { text: 'Start date' }, value: { text: '' } })
+      expect(outOfServiceBedSummaryList({ ...outOfServiceBed, startDate: undefined })).toEqual({
+        rows: expectedRowCopy,
       })
-
-      expect(bedRevisionDetails(revision)).toEqual(
-        expect.arrayContaining([
-          { key: { text: 'Start date' }, value: { text: DateFormats.dateObjtoUIDate(startDate) } },
-        ]),
-      )
     })
 
-    it('adds a formatted end date the summary list', () => {
-      const endDate = new Date(2024, 2, 1)
-      const revision = outOfServiceBedRevisionFactory.build({
-        endDate: DateFormats.dateObjToIsoDate(endDate),
+    it('omits blank rows where data are not supplied when supressBlank is set', () => {
+      expect(outOfServiceBedSummaryList({ ...outOfServiceBed, startDate: undefined }, true)).toEqual({
+        rows: expectedRows.slice(1),
       })
-
-      expect(bedRevisionDetails(revision)).toEqual(
-        expect.arrayContaining([{ key: { text: 'End date' }, value: { text: DateFormats.dateObjtoUIDate(endDate) } }]),
-      )
-    })
-
-    it('adds a reason the summary list', () => {
-      const revision = outOfServiceBedRevisionFactory.build({
-        reason: { id: 'reasonId', name: 'reasonName' },
-      })
-
-      expect(bedRevisionDetails(revision)).toEqual(
-        expect.arrayContaining([{ key: { text: 'Reason' }, value: { text: revision.reason.name } }]),
-      )
-    })
-
-    it('adds a reference the summary list', () => {
-      const revision = outOfServiceBedRevisionFactory.build({
-        referenceNumber: '123',
-      })
-
-      expect(bedRevisionDetails(revision)).toEqual(
-        expect.arrayContaining([{ key: { text: 'Reference/CRN' }, value: { text: revision.referenceNumber } }]),
-      )
-    })
-
-    it('adds a notes item to the summary list', () => {
-      const revision = outOfServiceBedRevisionFactory.build({ notes: 'some note' })
-
-      expect(bedRevisionDetails(revision)).toEqual(
-        expect.arrayContaining([{ key: { text: 'Notes' }, value: { text: 'some note' } }]),
-      )
     })
   })
 
@@ -319,23 +284,24 @@ describe('outOfServiceBedUtils', () => {
   })
 
   describe('validateOutOfServiceBedInput', () => {
+    const startDate = faker.date.recent({ days: 7 })
+    const endDate = faker.date.soon({ refDate: startDate, days: 21 })
+
     const validBody: CreateOutOfServiceBedBody = {
-      'startDate-year': '2022',
-      'startDate-month': '8',
-      'startDate-day': '22',
-      'endDate-year': '2022',
-      'endDate-month': '9',
-      'endDate-day': '22',
+      ...DateFormats.dateObjectToDateInputs(startDate, 'startDate'),
+      ...DateFormats.dateObjectToDateInputs(endDate, 'endDate'),
       reason: outOfServiceBedReasonsJson.find(reason => reason.referenceType === 'workOrder').id,
       referenceNumber: '',
       notes: 'Some notes',
     }
-    const oosbReasons = outOfServiceBedReasonsJson as Array<Cas1OutOfServiceBedReason>
+    const outOfServiceBedReasons = outOfServiceBedReasonsJson as Array<Cas1OutOfServiceBedReason>
+    const user = userDetailsFactory.build()
+
     const expectErrors = (userInput: CreateOutOfServiceBedBody, expectedErrors: Record<string, string>) => {
       let error
 
       try {
-        validateOutOfServiceBedInput(userInput, oosbReasons)
+        validateOutOfServiceBedInput({ body: userInput, user, outOfServiceBedReasons })
       } catch (e) {
         error = e
       }
@@ -367,6 +333,44 @@ describe('outOfServiceBedUtils', () => {
       expectErrors(bodyInvalidDates, {
         startDate: 'You must enter a valid start date',
         endDate: 'You must enter a valid end date',
+      })
+    })
+
+    describe('date range check', () => {
+      const badStartDate = faker.date.recent({ refDate: subDays(new Date(), 8), days: 7 })
+      const badEndDate = faker.date.soon({ refDate: badStartDate, days: 21 })
+
+      const badBody: CreateOutOfServiceBedBody = {
+        ...validBody,
+        ...DateFormats.dateObjectToDateInputs(badStartDate, 'startDate'),
+        ...DateFormats.dateObjectToDateInputs(badEndDate, 'endDate'),
+      }
+
+      it('returns errors if start date is more than 1 week ago', async () => {
+        expectErrors(badBody, {
+          startDate: 'You must enter a start date no earlier than 7 days ago',
+        })
+      })
+
+      it('suppresses the date range check if user has override permission', () => {
+        expect(
+          validateOutOfServiceBedInput({
+            body: badBody,
+            user: { ...user, permissions: ['cas1_out_of_service_bed_no_date_limit'] },
+            outOfServiceBedReasons,
+          }),
+        ).toEqual(expect.objectContaining({ startDate: DateFormats.dateObjToIsoDate(badStartDate) }))
+      })
+
+      it(`suppresses the date range check if it's an update`, () => {
+        expect(
+          validateOutOfServiceBedInput({
+            body: badBody,
+            user,
+            outOfServiceBedReasons,
+            suppressDateRangeCheck: true,
+          }),
+        ).toEqual(expect.objectContaining({ startDate: DateFormats.dateObjToIsoDate(badStartDate) }))
       })
     })
 
@@ -404,6 +408,30 @@ describe('outOfServiceBedUtils', () => {
 
         expectErrors(bodyInvalidCrn, {
           referenceNumber: 'You must enter a valid CRN',
+        })
+      })
+    })
+
+    describe('when the reason is not connected to a person', () => {
+      const bodyNonCrn = {
+        ...validBody,
+        reason: outOfServiceBedReasonsJson.find(reason => reason.referenceType !== 'crn').id,
+      }
+
+      it('returns an error if the work order reference number is longer than 32 chars', () => {
+        expectErrors(
+          { ...bodyNonCrn, referenceNumber: faker.string.alpha({ length: 33 }) },
+          {
+            referenceNumber: 'A work order reference number must be less than 33 characters long',
+          },
+        )
+      })
+
+      it('returns does not return an error if the work order reference number is exactly 32 chars', () => {
+        validateOutOfServiceBedInput({
+          body: { ...bodyNonCrn, referenceNumber: faker.string.alpha({ length: 32 }) },
+          user,
+          outOfServiceBedReasons,
         })
       })
     })

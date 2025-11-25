@@ -1,4 +1,4 @@
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 import TriggerPlan, { TriggerPlanBody } from './triggerPlan'
 
 describe('TriggerPlan', () => {

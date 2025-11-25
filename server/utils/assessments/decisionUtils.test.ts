@@ -1,4 +1,4 @@
-import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { Cas1Assessment as Assessment } from '@approved-premises/api'
 import { applicationAccepted, decisionFromAssessment, notEnoughInformationFromAssessment } from './decisionUtils'
 import { assessmentFactory } from '../../testutils/factories'
 import * as retrievalFunctions from '../retrieveQuestionResponseFromFormArtifact'

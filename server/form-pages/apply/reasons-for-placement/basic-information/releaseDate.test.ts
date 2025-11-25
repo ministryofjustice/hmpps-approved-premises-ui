@@ -1,6 +1,6 @@
 import { add } from 'date-fns'
 import { DateFormats } from '../../../../utils/dateUtils'
-import { itShouldHaveNextValue } from '../../../shared-examples'
+import { itShouldHaveNextValue } from '../../../shared'
 
 import ReleaseDate from './releaseDate'
 import { applicationFactory } from '../../../../testutils/factories'

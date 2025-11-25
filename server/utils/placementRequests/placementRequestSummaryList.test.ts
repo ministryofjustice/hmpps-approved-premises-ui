@@ -1,10 +1,14 @@
-import { Cas1Application } from '@approved-premises/api'
-import { SummaryListItem } from '@approved-premises/ui'
-import { applicationFactory, cas1PlacementRequestDetailFactory } from '../../testutils/factories'
+import { Cas1Application, Cas1PlacementRequestDetail } from '@approved-premises/api'
+
+import {
+  applicationFactory,
+  cas1PlacementRequestDetailFactory,
+  cas1RequestedPlacementPeriodFactory,
+} from '../../testutils/factories'
 import offlineApplicationFactory from '../../testutils/factories/offlineApplication'
 import { placementRequestSummaryList } from './placementRequestSummaryList'
-import { DateFormats } from '../dateUtils'
 import { apTypeLongLabels } from '../apTypeLabels'
+import { summaryListItem } from '../formUtils'
 
 describe('placementRequestSummaryList', () => {
   const application = applicationFactory.build({
@@ -13,22 +17,84 @@ describe('placementRequestSummaryList', () => {
   const placementRequest = cas1PlacementRequestDetailFactory.build({
     isParole: false,
     releaseType: 'hdc',
-    expectedArrival: '2025-10-02',
-    duration: 52,
+    authorisedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({
+      arrival: '2025-10-02',
+      duration: 52,
+    }),
     essentialCriteria: ['hasTactileFlooring'],
     application,
     notes: 'Test notes',
   })
 
+  const timelineAction = (applicationId: string) => ({
+    actions: {
+      items: [
+        {
+          href: `/applications/${applicationId}?tab=timeline`,
+          text: 'View timeline',
+        },
+      ],
+    },
+  })
+
   it('should generate the expected summary list', () => {
-    expect(placementRequestSummaryList(placementRequest).rows).toEqual(
-      expectedSummaryListItems({
-        isWithdrawn: false,
-        expectedApplicationId: placementRequest.applicationId,
-        expectedLicenceExpiryDate: application.licenceExpiryDate,
-        expectedPostcode: placementRequest.location,
-      }),
-    )
+    expect(placementRequestSummaryList(placementRequest).rows).toEqual([
+      summaryListItem('Requested arrival date', 'Thu 2 Oct 2025'),
+      summaryListItem('Requested departure date', 'Sun 23 Nov 2025'),
+      summaryListItem('Length of stay', '7 weeks, 3 days'),
+      summaryListItem('Release type', 'Home detention curfew (HDC)'),
+      summaryListItem('Licence expiry date', 'Sat 23 Nov 2030'),
+      {
+        ...summaryListItem('Type of AP', apTypeLongLabels[placementRequest.type]),
+        ...timelineAction(placementRequest.applicationId),
+      },
+      summaryListItem('Preferred postcode', placementRequest.location),
+      summaryListItem('Criteria', '<ul class="govuk-list govuk-list--bullet"><li>Tactile flooring</li></ul>', 'html'),
+      summaryListItem('Observations from assessor', 'Test notes', 'textBlock'),
+    ])
+  })
+
+  it('should display the correct summary for a ROTL', () => {
+    const rotlPlacementRequest: Cas1PlacementRequestDetail = { ...placementRequest, releaseType: 'rotl' }
+
+    expect(placementRequestSummaryList(rotlPlacementRequest).rows).toEqual([
+      summaryListItem('Requested arrival date', 'Thu 2 Oct 2025'),
+      summaryListItem('Requested departure date', 'Sun 23 Nov 2025'),
+      summaryListItem('Flexible date', placementRequest.authorisedPlacementPeriod.arrivalFlexible ? 'Yes' : 'No'),
+      summaryListItem('Length of stay', '7 weeks, 3 days'),
+      summaryListItem('Release type', 'Release on Temporary Licence (ROTL)'),
+      summaryListItem('Licence expiry date', 'Sat 23 Nov 2030'),
+      {
+        ...summaryListItem('Type of AP', apTypeLongLabels[placementRequest.type]),
+        ...timelineAction(placementRequest.applicationId),
+      },
+      summaryListItem('Preferred postcode', placementRequest.location),
+      summaryListItem('Criteria', '<ul class="govuk-list govuk-list--bullet"><li>Tactile flooring</li></ul>', 'html'),
+      summaryListItem('Observations from assessor', 'Test notes', 'textBlock'),
+    ])
+  })
+
+  it('should display a ROTL in old format if a legacy PR (isFlexible is undefined)', () => {
+    const rotlPlacementRequest: Cas1PlacementRequestDetail = {
+      ...placementRequest,
+      releaseType: 'rotl',
+      authorisedPlacementPeriod: { ...placementRequest.authorisedPlacementPeriod, arrivalFlexible: undefined },
+    }
+
+    expect(placementRequestSummaryList(rotlPlacementRequest).rows).toEqual([
+      summaryListItem('Requested arrival date', 'Thu 2 Oct 2025'),
+      summaryListItem('Requested departure date', 'Sun 23 Nov 2025'),
+      summaryListItem('Length of stay', '7 weeks, 3 days'),
+      summaryListItem('Release type', 'Release on Temporary Licence (ROTL)'),
+      summaryListItem('Licence expiry date', 'Sat 23 Nov 2030'),
+      {
+        ...summaryListItem('Type of AP', apTypeLongLabels[placementRequest.type]),
+        ...timelineAction(placementRequest.applicationId),
+      },
+      summaryListItem('Preferred postcode', placementRequest.location),
+      summaryListItem('Criteria', '<ul class="govuk-list govuk-list--bullet"><li>Tactile flooring</li></ul>', 'html'),
+      summaryListItem('Observations from assessor', 'Test notes', 'textBlock'),
+    ])
   })
 
   it('should generate the expected summary list when is withdrawn', () => {
@@ -37,14 +103,28 @@ describe('placementRequestSummaryList', () => {
       ...placementRequest,
       isWithdrawn,
     }
-    expect(placementRequestSummaryList(withdrawnPlacementRequest).rows).toEqual(
-      expectedSummaryListItems({
-        isWithdrawn,
-        expectedApplicationId: placementRequest.applicationId,
-        expectedLicenceExpiryDate: application.licenceExpiryDate,
-        expectedPostcode: placementRequest.location,
-      }),
-    )
+    expect(placementRequestSummaryList(withdrawnPlacementRequest).rows).toEqual([
+      summaryListItem('Requested arrival date', 'Thu 2 Oct 2025'),
+      summaryListItem('Requested departure date', 'Sun 23 Nov 2025'),
+      summaryListItem('Length of stay', '7 weeks, 3 days'),
+      summaryListItem('Release type', 'Home detention curfew (HDC)'),
+
+      summaryListItem('Licence expiry date', 'Sat 23 Nov 2030'),
+      {
+        ...summaryListItem('Type of AP', apTypeLongLabels[placementRequest.type]),
+        ...timelineAction(placementRequest.applicationId),
+      },
+      summaryListItem('Preferred postcode', placementRequest.location),
+      summaryListItem(
+        'Status',
+        `<strong class="govuk-tag govuk-tag--nowrap govuk-tag--red">
+        Withdrawn
+      </strong>`,
+        'html',
+      ),
+      summaryListItem('Criteria', '<ul class="govuk-list govuk-list--bullet"><li>Tactile flooring</li></ul>', 'html'),
+      summaryListItem('Observations from assessor', 'Test notes', 'textBlock'),
+    ])
   })
 
   it(`should generate the expected summary list when placement-request's application is undefined`, () => {
@@ -53,14 +133,17 @@ describe('placementRequestSummaryList', () => {
       ...placementRequest,
       application: undefinedApplication,
     }
-    expect(placementRequestSummaryList(placementRequestWithoutLicenceExpiry).rows).toEqual(
-      expectedSummaryListItems({
-        isWithdrawn: false,
-        expectedApplicationId: undefined,
-        expectedLicenceExpiryDate: '',
-        expectedPostcode: placementRequest.location,
-      }),
-    )
+    expect(placementRequestSummaryList(placementRequestWithoutLicenceExpiry).rows).toEqual([
+      summaryListItem('Requested arrival date', 'Thu 2 Oct 2025'),
+      summaryListItem('Requested departure date', 'Sun 23 Nov 2025'),
+      summaryListItem('Length of stay', '7 weeks, 3 days'),
+      summaryListItem('Release type', 'Home detention curfew (HDC)'),
+      summaryListItem('Licence expiry date', ''),
+      summaryListItem('Type of AP', apTypeLongLabels[placementRequest.type]),
+      summaryListItem('Preferred postcode', placementRequest.location),
+      summaryListItem('Criteria', '<ul class="govuk-list govuk-list--bullet"><li>Tactile flooring</li></ul>', 'html'),
+      summaryListItem('Observations from assessor', 'Test notes', 'textBlock'),
+    ])
   })
 
   it(`should generate the expected summary list when placement-request's application is not of type ApprovedPremisesApplication`, () => {
@@ -70,14 +153,20 @@ describe('placementRequestSummaryList', () => {
       application: offlineApplication as unknown as Cas1Application,
       applicationId: offlineApplication.id,
     }
-    expect(placementRequestSummaryList(placementRequestWithOfflineApplication).rows).toEqual(
-      expectedSummaryListItems({
-        isWithdrawn: false,
-        expectedApplicationId: placementRequestWithOfflineApplication.application.id,
-        expectedLicenceExpiryDate: '',
-        expectedPostcode: placementRequest.location,
-      }),
-    )
+    expect(placementRequestSummaryList(placementRequestWithOfflineApplication).rows).toEqual([
+      summaryListItem('Requested arrival date', 'Thu 2 Oct 2025'),
+      summaryListItem('Requested departure date', 'Sun 23 Nov 2025'),
+      summaryListItem('Length of stay', '7 weeks, 3 days'),
+      summaryListItem('Release type', 'Home detention curfew (HDC)'),
+      summaryListItem('Licence expiry date', ''),
+      {
+        ...summaryListItem('Type of AP', apTypeLongLabels[placementRequest.type]),
+        ...timelineAction(offlineApplication.id),
+      },
+      summaryListItem('Preferred postcode', placementRequest.location),
+      summaryListItem('Criteria', '<ul class="govuk-list govuk-list--bullet"><li>Tactile flooring</li></ul>', 'html'),
+      summaryListItem('Observations from assessor', 'Test notes', 'textBlock'),
+    ])
   })
 
   it(`should generate the expected summary list with blank licence expiry date when application's license-expiry date is not set`, () => {
@@ -89,147 +178,36 @@ describe('placementRequestSummaryList', () => {
       application: noLicenceApplication,
       applicationId: noLicenceApplication.id,
     }
-    expect(placementRequestSummaryList(placementRequestWithoutLicenceExpiry).rows).toEqual(
-      expectedSummaryListItems({
-        isWithdrawn: false,
-        expectedApplicationId: placementRequestWithoutLicenceExpiry.application.id,
-        expectedLicenceExpiryDate: '',
-        expectedPostcode: placementRequest.location,
-      }),
-    )
+    expect(placementRequestSummaryList(placementRequestWithoutLicenceExpiry).rows).toEqual([
+      summaryListItem('Requested arrival date', 'Thu 2 Oct 2025'),
+      summaryListItem('Requested departure date', 'Sun 23 Nov 2025'),
+      summaryListItem('Length of stay', '7 weeks, 3 days'),
+      summaryListItem('Release type', 'Home detention curfew (HDC)'),
+      summaryListItem('Licence expiry date', ''),
+      {
+        ...summaryListItem('Type of AP', apTypeLongLabels[placementRequest.type]),
+        ...timelineAction(placementRequestWithoutLicenceExpiry.applicationId),
+      },
+      summaryListItem('Preferred postcode', placementRequest.location),
+      summaryListItem('Criteria', '<ul class="govuk-list govuk-list--bullet"><li>Tactile flooring</li></ul>', 'html'),
+      summaryListItem('Observations from assessor', 'Test notes', 'textBlock'),
+    ])
   })
 
   it('should generate the expected summary list without actions', () => {
-    expect(placementRequestSummaryList(placementRequest, { showActions: false }).rows).toEqual(
-      expectedSummaryListItems({
-        isWithdrawn: false,
-        expectedApplicationId: undefined,
-        expectedLicenceExpiryDate: application.licenceExpiryDate,
-        expectedPostcode: placementRequest.location,
-      }),
-    )
+    expect(placementRequestSummaryList(placementRequest).rows).toEqual([
+      summaryListItem('Requested arrival date', 'Thu 2 Oct 2025'),
+      summaryListItem('Requested departure date', 'Sun 23 Nov 2025'),
+      summaryListItem('Length of stay', '7 weeks, 3 days'),
+      summaryListItem('Release type', 'Home detention curfew (HDC)'),
+      summaryListItem('Licence expiry date', 'Sat 23 Nov 2030'),
+      {
+        ...summaryListItem('Type of AP', apTypeLongLabels[placementRequest.type]),
+        ...timelineAction(placementRequest.applicationId),
+      },
+      summaryListItem('Preferred postcode', placementRequest.location),
+      summaryListItem('Criteria', '<ul class="govuk-list govuk-list--bullet"><li>Tactile flooring</li></ul>', 'html'),
+      summaryListItem('Observations from assessor', 'Test notes', 'textBlock'),
+    ])
   })
-
-  const expectedSummaryListItems = (options: {
-    isWithdrawn: boolean
-    expectedApplicationId: string
-    expectedLicenceExpiryDate: string
-    expectedPostcode: string
-  }): Array<SummaryListItem> => {
-    const apTypeListItem = generateApTypeListItem(options.expectedApplicationId)
-    const rows = [
-      {
-        key: {
-          text: 'Requested arrival date',
-        },
-        value: {
-          text: 'Thu 2 Oct 2025',
-        },
-      },
-      {
-        key: {
-          text: 'Requested departure date',
-        },
-        value: {
-          text: 'Sun 23 Nov 2025',
-        },
-      },
-      {
-        key: {
-          text: 'Length of stay',
-        },
-        value: {
-          text: '7 weeks, 3 days',
-        },
-      },
-      {
-        key: {
-          text: 'Release type',
-        },
-        value: {
-          text: 'Home detention curfew (HDC)',
-        },
-      },
-      {
-        key: {
-          text: 'Licence expiry date',
-        },
-        value: {
-          text: options.expectedLicenceExpiryDate ? DateFormats.isoDateToUIDate(options.expectedLicenceExpiryDate) : '',
-        },
-      },
-      apTypeListItem,
-      {
-        key: {
-          text: 'Preferred postcode',
-        },
-        value: {
-          text: options.expectedPostcode,
-        },
-      },
-      {
-        key: {
-          text: 'Essential Criteria',
-        },
-        value: {
-          html: '<ul class="govuk-list govuk-list--bullet"><li>Tactile flooring</li></ul>',
-        },
-      },
-      {
-        key: {
-          text: 'Desirable Criteria',
-        },
-        value: {
-          html: '<span class="text-grey">None</span>',
-        },
-      },
-      {
-        key: {
-          text: 'Observations from assessor',
-        },
-        value: {
-          text: 'Test notes',
-        },
-      },
-    ]
-    if (options.isWithdrawn) {
-      const statusRow = {
-        key: {
-          text: 'Status',
-        },
-        value: {
-          html: `<strong class="govuk-tag govuk-tag--timeline-tag govuk-tag--red">
-        Withdrawn
-      </strong>`,
-        },
-      }
-      rows.splice(7, 0, statusRow)
-    }
-    return rows
-  }
-
-  const generateApTypeListItem = (expectedApplicationId: string) => {
-    const apTypeListItem = {
-      key: {
-        text: 'Type of AP',
-      },
-      value: {
-        text: apTypeLongLabels[placementRequest.type],
-      },
-    }
-    if (expectedApplicationId) {
-      return {
-        ...apTypeListItem,
-        actions: {
-          items: [
-            {
-              href: `/applications/${expectedApplicationId}?tab=timeline`,
-              text: 'View timeline',
-            },
-          ],
-        },
-      }
-    }
-    return apTypeListItem
-  }
 })

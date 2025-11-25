@@ -20,6 +20,7 @@ import {
   BREACH_OR_RECALL_REASON_ID,
   LICENCE_EXPIRED_REASON_ID,
   MOVE_TO_AP_REASON_ID,
+  placementKeyDetails,
   PLANNED_MOVE_ON_REASON_ID,
 } from '../../../../utils/placements'
 import { timeAddLeadingZero } from '../../../../utils/dateUtils'
@@ -112,6 +113,7 @@ describe('DeparturesController', () => {
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/new', {
         backlink: paths.premises.placements.show({ premisesId, placementId: placement.id }),
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         departureReasons: [rootDepartureReason1, rootDepartureReason2, rootDepartureReason3],
         errors: errorsAndUserInput.errors,
@@ -130,6 +132,7 @@ describe('DeparturesController', () => {
 
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/new', {
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         backlink: paths.premises.placements.show({ premisesId, placementId: placement.id }),
         departureReasons: [rootDepartureReason1, rootDepartureReason2, rootDepartureReason3],
@@ -389,6 +392,7 @@ describe('DeparturesController', () => {
 
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/breach-or-recall', {
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         backlink: paths.premises.placements.departure.new({ premisesId, placementId: placement.id }),
         departureReasons: [childDepartureReason1, childDepartureReason2],
@@ -497,6 +501,7 @@ describe('DeparturesController', () => {
         expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
         expect(premisesService.getCas1All).toHaveBeenCalledWith(token)
         expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/move-on-category', {
+          contextKeyDetails: placementKeyDetails(placement),
           placement,
           backlink: paths.premises.placements.departure.new({ premisesId, placementId: placement.id }),
           moveOnCategories,
@@ -626,6 +631,7 @@ describe('DeparturesController', () => {
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/notes', {
         backlink: paths.premises.placements.departure.new({ premisesId, placementId: placement.id }),
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,

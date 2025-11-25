@@ -59,9 +59,9 @@ const unknownPersonName = (person: UnknownPerson | UnknownPersonSummary, showCrn
  * Person, or 'Unknown person' if they are an Unknown Person. This handles 'summary' types.
  * @param {Person}    person The person whose name needs to be displayed
  * @param options
- * @param {boolean}   options.showCrn Show the CRN when the person name cannot be shown
+ * @param {boolean}   options.showCrn Show the CRN when the person name cannot be shown (default false)
  * @param {boolean}   options.laoPrefix Prefix person name with 'LAO: ' if restricted (default true)
- * @param {boolean}   options.laoSuffix Append ' (Limited access offender)' to person name if restricted
+ * @param {boolean}   options.laoSuffix Append ' (Limited access offender)' to person name if restricted (default false)
  * @returns {string}  The name or text to display
  */
 const displayName = (

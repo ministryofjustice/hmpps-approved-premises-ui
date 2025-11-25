@@ -1,0 +1,16 @@
+<p class="govuk-body">A placement at {{ premises.name }} was booked for {{ expectedArrival }} to {{ expectedDeparture }}
+    against Delius Event Number {{ eventNumber }}.</p>
+
+{% if transferReason %}
+    <dl>
+        <dt>Reason for transfer:</dt>
+        <dd>{{ transferReason }}</dd>
+    </dl>
+{% endif %}
+{% if additionalInformation %}
+    <dl>
+        <dt>Additional information:</dt>
+        <dd>{{ additionalInformation }}</dd>
+    </dl>
+{% endif %}
+

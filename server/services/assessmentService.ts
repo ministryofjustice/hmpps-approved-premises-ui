@@ -1,9 +1,9 @@
 import { Request } from 'express'
 import {
-  ApprovedPremisesAssessment as Assessment,
+  Cas1Assessment as Assessment,
   AssessmentSortField,
-  AssessmentStatus,
-  ApprovedPremisesAssessmentSummary as AssessmentSummary,
+  Cas1AssessmentStatus,
+  Cas1AssessmentSummary,
   Cas1NewClarificationNote,
   SortDirection,
   Cas1UpdatedClarificationNote,
@@ -27,11 +27,11 @@ export default class AssessmentService {
 
   async getAll(
     token: string,
-    statuses: Array<AssessmentStatus>,
+    statuses: Array<Cas1AssessmentStatus>,
     sortBy: AssessmentSortField = 'name',
     sortDirection: SortDirection = 'asc',
     page: number = 1,
-  ): Promise<PaginatedResponse<AssessmentSummary>> {
+  ): Promise<PaginatedResponse<Cas1AssessmentSummary>> {
     const client = this.assessmentClientFactory(token)
 
     return client.all(statuses, page, sortBy, sortDirection)
@@ -39,9 +39,7 @@ export default class AssessmentService {
 
   async findAssessment(token: string, id: string): Promise<Assessment> {
     const client = this.assessmentClientFactory(token)
-    const assessment = await client.find(id)
-
-    return assessment
+    return client.find(id)
   }
 
   async initializePage(
@@ -52,7 +50,6 @@ export default class AssessmentService {
     userInput?: Record<string, unknown>,
   ) {
     const body = getBody(Page, assessment, request, userInput)
-
     const page = Page.initialize
       ? await Page.initialize(body, assessment, request.user.token, dataServices)
       : new Page(body, assessment)

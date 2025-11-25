@@ -4,7 +4,7 @@ import { SelectedWithdrawableType } from '../../../server/utils/applications/wit
 import Page, { parseHtml } from '../page'
 
 export default class SelectWithdrawableTypePage extends Page {
-  constructor(heading: 'What do you want to withdraw?' | `Select your ${'placement' | 'request'}`) {
+  constructor(heading: string) {
     super(heading)
   }
 
@@ -64,7 +64,11 @@ export default class SelectWithdrawableTypePage extends Page {
 
   veryifyLink(id: Withdrawable['id'], type: Withdrawable['type']) {
     if (type === 'placement_request') {
-      cy.get(`[data-cy-withdrawable-id="${id}"]`).should('have.attr', 'href', matchPaths.placementRequests.show({ id }))
+      cy.get(`[data-cy-withdrawable-id="${id}"]`).should(
+        'have.attr',
+        'href',
+        matchPaths.placementRequests.show({ placementRequestId: id }),
+      )
     }
   }
 }

@@ -1,5 +1,5 @@
 import type {
-  Cas1OverbookingRange,
+  Cas1CurrentKeyWorker,
   Cas1Premises,
   Cas1PremisesBasicSummary,
   Cas1SpaceBookingResidency,
@@ -8,15 +8,14 @@ import type {
   NamedId,
   SortDirection,
 } from '@approved-premises/api'
-import { DateRange, SelectGroup, SelectOption, SummaryList, TableCell, TableRow } from '@approved-premises/ui'
+import { SelectGroup, SelectOption, SummaryList, TabItem, TableCell, TableRow } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
 import { getTierOrBlank, htmlValue, textValue } from '../applications/helpers'
 import managePaths from '../../paths/manage'
 import { createQueryString, linkTo } from '../utils'
-import { TabItem } from '../tasks/listTable'
 import { sortHeader } from '../sortHeader'
 import { displayName } from '../personUtils'
-import { canonicalDates, placementStatusHtml } from '../placements'
+import { canonicalDates, placementStatusCell } from '../placements'
 import { htmlCell, textCell } from '../tableUtils'
 
 export { premisesActions } from './premisesActions'
@@ -130,6 +129,25 @@ export const premisesTabItems = (premises: Cas1Premises, activeTab?: PremisesTab
   })
 }
 
+export const keyworkersToSelectOptions = (
+  currentKeyworkers: Array<Cas1CurrentKeyWorker>,
+  activeTab: PremisesTab,
+  selected?: string,
+): Array<SelectOption> => [
+  { text: 'All keyworkers', value: '' },
+  ...currentKeyworkers
+    .filter(
+      keyworker =>
+        (activeTab === 'upcoming' && keyworker.upcomingBookingCount > 0) ||
+        (activeTab === 'current' && keyworker.currentBookingCount > 0),
+    )
+    .map(keyworker => ({
+      text: keyworker.summary.name,
+      value: keyworker.summary.id,
+      selected: selected === keyworker.summary.id || undefined,
+    })),
+]
+
 type ColumnField = Cas1SpaceBookingSummarySortField | 'status'
 
 type ColumnDefinition = {
@@ -168,35 +186,28 @@ export const placementTableRows = (
   activeTab: PremisesTab,
   premisesId: string,
   placements: Array<Cas1SpaceBookingSummary>,
+  residentLink = false,
 ): Array<TableRow> =>
   placements.map(placement => {
     const { id, person, tier, keyWorkerAllocation } = placement
     const { arrivalDate, departureDate } = canonicalDates(placement)
-    const fieldValues: Record<ColumnField, TableCell> = {
-      personName: htmlValue(
-        `<a href="${managePaths.premises.placements.show({
+    const link = residentLink
+      ? managePaths.resident.tabPersonal({ crn: person.crn, placementId: id })
+      : managePaths.premises.placements.show({
           premisesId,
           placementId: id,
-        })}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`,
-      ),
+        })
+    const fieldValues: Record<ColumnField, TableCell> = {
+      personName: htmlValue(`<a href="${link}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`),
       tier: htmlValue(getTierOrBlank(tier)),
       canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })),
       canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(departureDate, { format: 'short' })),
-      keyWorkerName: textValue(keyWorkerAllocation?.keyWorker?.name || 'Not assigned'),
-      status: placementStatusHtml(placement),
+      keyWorkerName: textValue(keyWorkerAllocation?.name || 'Not assigned'),
+      status: placementStatusCell(placement),
     }
 
     return columnMap[activeTab].map(({ fieldName }: ColumnDefinition) => fieldValues[fieldName])
   })
-
-export const premisesOverbookingSummary = (premises: Cas1Premises): Array<DateRange> => {
-  const { overbookingSummary } = premises
-  return overbookingSummary.map(({ startInclusive, endInclusive }: Cas1OverbookingRange) => ({
-    from: startInclusive,
-    to: endInclusive,
-    duration: DateFormats.durationBetweenDates(endInclusive, startInclusive).number + 1,
-  }))
-}
 
 export const localRestrictionsTableRows = (premises: Cas1Premises): Array<TableRow> =>
   premises.localRestrictions.map(restriction => [

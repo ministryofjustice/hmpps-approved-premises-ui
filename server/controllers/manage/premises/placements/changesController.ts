@@ -15,10 +15,10 @@ import {
   validateSpaceBooking,
 } from '../../../../utils/match'
 import { Calendar, occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
-import { placementOverviewSummary } from '../../../../utils/placements'
+import { placementKeyDetails, placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
-import { DateFormats, daysToWeeksAndDays, isoDateIsValid } from '../../../../utils/dateUtils'
+import { DateFormats, isoDateIsValid } from '../../../../utils/dateUtils'
 import { CriteriaQuery } from '../../../match/placementRequests/occupancyViewController'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { durationSelectOptions, getClosestDuration } from '../../../../utils/match/occupancy'
@@ -126,14 +126,16 @@ export default class ChangesController {
 
         summary = occupancySummary(capacity.capacity, criteria)
         calendar = occupancyCalendar(capacity.capacity, placeholderDetailsUrl, criteria)
-        calendarHeading = `Showing ${DateFormats.formatDuration(daysToWeeksAndDays(String(durationDays)))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`
+        calendarHeading = `Showing ${DateFormats.formatDuration(durationDays)} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`
       }
 
       return res.render('manage/premises/placements/changes/new', {
         backlink: this.sessionService.getPageBackLink(managePaths.premises.placements.changes.new.pattern, req, [
           managePaths.premises.placements.show.pattern,
           adminPaths.admin.placementRequests.show.pattern,
+          adminPaths.admin.placementRequests.selectPlacement.pattern,
         ]),
+        contextKeyDetails: placementKeyDetails(placement),
         pageHeading,
         placement,
         selectedCriteria: roomCharacteristicsInlineList(criteria, 'no room criteria'),
@@ -209,8 +211,8 @@ export default class ChangesController {
 
       return res.render('manage/premises/placements/changes/confirm', {
         pageHeading: 'Confirm booking changes',
+        contextKeyDetails: placementKeyDetails(placement),
         backlink,
-        placement,
         summaryListRows: spaceBookingConfirmationSummaryListRows({
           premises,
           actualArrivalDate: placement.actualArrivalDate,
@@ -247,7 +249,7 @@ export default class ChangesController {
         req.flash('success', 'Booking changed successfully')
 
         const redirectUrl = placement.placementRequestId
-          ? adminPaths.admin.placementRequests.show({ id: placement.placementRequestId })
+          ? adminPaths.admin.placementRequests.show({ placementRequestId: placement.placementRequestId })
           : managePaths.premises.placements.show({
               premisesId,
               placementId,

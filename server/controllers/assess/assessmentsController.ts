@@ -6,8 +6,8 @@ import { AssessmentService, TaskService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 
 import paths from '../../paths/assess'
-import { ApprovedPremisesAssessment, AssessmentSortField, AssessmentStatus, TaskSortField } from '../../@types/shared'
-import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
+import { Cas1Assessment, AssessmentSortField, Cas1AssessmentStatus, TaskSortField } from '../../@types/shared'
+import { assessmentKeyDetails, awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { remapArsonAssessmentData } from '../../form-pages/utils/matchingInformationUtils'
 
@@ -29,7 +29,7 @@ export default class AssessmentsController {
       const statuses =
         activeTab === 'awaiting_assessment' || !activeTab
           ? awaitingAssessmentStatuses
-          : ([activeTab] as Array<AssessmentStatus>)
+          : ([activeTab] as Array<Cas1AssessmentStatus>)
 
       if (activeTab === 'requests_for_placement') {
         const placementApplications = await this.taskService.getAll({
@@ -86,6 +86,7 @@ export default class AssessmentsController {
         const referrer = req.headers.referer
 
         res.render('assessments/show', {
+          contextKeyDetails: assessmentKeyDetails(assessment),
           assessment,
           referrer,
         })
@@ -103,6 +104,7 @@ export default class AssessmentsController {
         res.render('assessments/tasklist', {
           assessment,
           pageHeading: tasklistPageHeading,
+          contextKeyDetails: assessmentKeyDetails(assessment),
           taskList,
           errorSummary,
           errors,
@@ -116,7 +118,7 @@ export default class AssessmentsController {
       const rawAssessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
 
       // TODO: remove once arson remapping (APS-1876) is completed
-      const assessment: ApprovedPremisesAssessment = {
+      const assessment: Cas1Assessment = {
         ...rawAssessment,
         data: remapArsonAssessmentData(rawAssessment.data),
       }

@@ -9,19 +9,21 @@ import TasklistPage from '../../../tasklistPage'
 export default class IsExceptionalCase implements TasklistPage {
   title = 'Is this an exceptional case?'
 
-  tier = this.application?.risks?.tier?.value?.level
+  tier: string
 
   constructor(
     readonly body: { isExceptionalCase?: YesOrNo },
     readonly application: Application,
-  ) {}
+  ) {
+    this.tier = this.application?.risks?.tier?.value?.level
+  }
 
   response() {
     return { [this.title]: sentenceCase(this.body.isExceptionalCase) }
   }
 
   previous() {
-    return ''
+    return 'dashboard'
   }
 
   next() {

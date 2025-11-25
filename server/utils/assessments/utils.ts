@@ -1,9 +1,16 @@
-import { GroupedAssessments, KeyDetailsArgs, SummaryListItem, TaskNames, UserDetails } from '@approved-premises/ui'
+import {
+  GroupedAssessments,
+  KeyDetailsArgs,
+  SummaryListItem,
+  TabItem,
+  TaskNames,
+  UserDetails,
+} from '@approved-premises/ui'
 
 import {
-  ApprovedPremisesAssessmentStatus,
-  ApprovedPremisesAssessment as Assessment,
-  ApprovedPremisesAssessmentSummary as AssessmentSummary,
+  Cas1AssessmentStatus,
+  Cas1Assessment as Assessment,
+  Cas1AssessmentSummary as AssessmentSummary,
   PersonAcctAlert,
 } from '@approved-premises/api'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
@@ -18,11 +25,10 @@ import { getResponseForPage } from '../applications/getResponseForPage'
 import { displayName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import applyPaths from '../../paths/apply'
-import { TabItem } from '../tasks/listTable'
 import assessPaths from '../../paths/assess'
 import { hasPermission } from '../users'
 
-const awaitingAssessmentStatuses = ['in_progress', 'not_started'] as Array<ApprovedPremisesAssessmentStatus>
+const awaitingAssessmentStatuses = ['in_progress', 'not_started'] as Array<Cas1AssessmentStatus>
 
 const groupAssessmements = (assessments: Array<AssessmentSummary>): GroupedAssessments => {
   const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments
@@ -146,7 +152,7 @@ const rejectionRationaleFromAssessmentResponses = (assessment: Assessment): stri
   return response
 }
 
-const keyDetails = (assessment: Assessment): KeyDetailsArgs => {
+const assessmentKeyDetails = (assessment: Assessment): KeyDetailsArgs => {
   return {
     header: {
       key: 'Name',
@@ -222,6 +228,6 @@ export {
   groupAssessmements,
   rejectionRationaleFromAssessmentResponses,
   awaitingAssessmentStatuses,
-  keyDetails,
+  assessmentKeyDetails,
   assessmentsTabItems,
 }

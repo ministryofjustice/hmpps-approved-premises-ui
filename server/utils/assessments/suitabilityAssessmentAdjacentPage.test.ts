@@ -1,5 +1,5 @@
 import { when } from 'jest-when'
-import { ApType, ApprovedPremisesAssessment } from '@approved-premises/api'
+import { ApType, Cas1Assessment } from '@approved-premises/api'
 import { assessmentFactory } from '../../testutils/factories'
 import {
   shouldShowContingencyPlanPartnersPages,
@@ -24,7 +24,7 @@ const specialistApTypes: Array<Exclude<ApType, 'normal'>> = [
 
 type SpecialistApType = (typeof specialistApTypes)[number]
 
-const mockApplicationOfType = (apType: ApType, assessment: ApprovedPremisesAssessment) => {
+const mockApplicationOfType = (apType: ApType, assessment: Cas1Assessment) => {
   when(retrieveOptionalQuestionResponseFromFormArtifact)
     .calledWith(assessment.application, SelectApType, 'type')
     .mockReturnValue(apType)

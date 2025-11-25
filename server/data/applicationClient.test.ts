@@ -1,4 +1,4 @@
-import { ApType, WithdrawalReason } from '@approved-premises/api'
+import { ApType, Cas1ExpireApplicationReason, WithdrawalReason } from '@approved-premises/api'
 import ApplicationClient from './applicationClient'
 import config from '../config'
 import {
@@ -37,9 +37,7 @@ describeClient('ApplicationClient', provider => {
         withRequest: {
           method: 'POST',
           path: paths.applications.new.pattern,
-          query: {
-            createWithRisks: 'true',
-          },
+          query: {},
           body: {
             crn: application.person.crn,
             convictionId: offence.convictionId,
@@ -77,9 +75,7 @@ describeClient('ApplicationClient', provider => {
           withRequest: {
             method: 'POST',
             path: paths.applications.new.pattern,
-            query: {
-              createWithRisks: 'false',
-            },
+            query: {},
             body: {
               crn: application.person.crn,
               convictionId: offence.convictionId,
@@ -252,6 +248,31 @@ describeClient('ApplicationClient', provider => {
     })
   })
 
+  describe('expiry', () => {
+    it('calls the expiry endpoint with the application id and reason', async () => {
+      const applicationId = 'applicationId'
+      const body: Cas1ExpireApplicationReason = { reason: 'some reason' }
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to withdraw an application',
+        withRequest: {
+          method: 'POST',
+          path: paths.applications.expire({ id: applicationId }),
+          body,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      await applicationClient.expire(applicationId, body)
+    })
+  })
+
   describe('requestsForPlacment', () => {
     it('calls the requests for placement endpoint with the application ID', async () => {
       const applicationId = 'applicationId'
@@ -378,7 +399,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.applications.all.pattern,
-          query: { page: '1', sortBy: 'arrivalDate', sortDirection: 'asc' },
+          query: { page: '1', sortBy: 'arrivalDate', sortDirection: 'asc', pageSize: '10' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -405,7 +426,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
       })
     })
 
-    it('should pass a page number', async () => {
+    it('should pass a page number and page size', async () => {
       const allApplications = cas1ApplicationSummaryFactory.buildList(5)
 
       await provider.addInteraction({
@@ -414,7 +435,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.applications.all.pattern,
-          query: { page: '2', sortBy: 'createdAt', sortDirection: 'desc' },
+          query: { page: '2', sortBy: 'createdAt', sortDirection: 'desc', pageSize: '20' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -425,19 +446,19 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
           headers: {
             'X-Pagination-TotalPages': '10',
             'X-Pagination-TotalResults': '100',
-            'X-Pagination-PageSize': '10',
+            'X-Pagination-PageSize': '20',
           },
         },
       })
 
-      const result = await applicationClient.all(2, 'createdAt', 'desc', {})
+      const result = await applicationClient.all(2, 'createdAt', 'desc', {}, 20)
 
       expect(result).toEqual({
         data: allApplications,
         pageNumber: '2',
         totalPages: '10',
         totalResults: '100',
-        pageSize: '10',
+        pageSize: '20',
       })
     })
 
@@ -456,6 +477,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
             sortDirection: 'desc',
             crnOrName: normaliseCrn('foo'),
             status: 'rejected',
+            pageSize: '10',
           },
           headers: {
             authorization: `Bearer ${token}`,

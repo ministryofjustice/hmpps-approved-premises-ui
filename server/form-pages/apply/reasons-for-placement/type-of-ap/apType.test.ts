@@ -1,5 +1,5 @@
 import { ApType } from '@approved-premises/api'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 import * as formUtils from '../../../../utils/formUtils'
 
 import SelectApType, { apTypeHintText } from './apType'

@@ -3,7 +3,6 @@ import {
   Cas1PlacementRequestDetail,
   Cas1PlacementRequestSummary,
   Cas1SpaceBooking,
-  PlacementRequest,
   PlacementRequestStatus,
 } from '@approved-premises/api'
 import Page from '../../page'
@@ -27,7 +26,7 @@ export default class ListPage extends Page {
 
   shouldShowSpaceBookingConfirmation(spaceBooking: Cas1SpaceBooking, placementRequest: Cas1PlacementRequestDetail) {
     const body = creationNotificationBody(spaceBooking, placementRequest)
-    this.shouldShowBanner(`Place booked for ${spaceBooking.person.crn} ${body}`)
+    this.shouldShowBanner(`Placement booked for ${spaceBooking.person.crn} ${body}`)
   }
 
   shouldShowPlacementRequests(
@@ -53,7 +52,7 @@ export default class ListPage extends Page {
     shouldShowTableRows(pendingPlacementRequestTableRows(applications))
   }
 
-  clickPlacementRequest(placementRequest: PlacementRequest): void {
+  clickPlacementRequest(placementRequest: Cas1PlacementRequestDetail): void {
     cy.get(`[data-cy-placementRequestId="${placementRequest.id}"]`).click()
   }
 

@@ -13,7 +13,7 @@ import { occupancySummary, spaceBookingConfirmationSummaryListRows } from '../..
 import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import managePaths from '../../../../paths/manage'
 import adminPaths from '../../../../paths/admin'
-import { placementOverviewSummary } from '../../../../utils/placements'
+import { placementKeyDetails, placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
 import { durationSelectOptions } from '../../../../utils/match/occupancy'
@@ -81,7 +81,11 @@ describe('changesController', () => {
       expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
         '/manage/premises/:premisesId/placements/:placementId/changes/new',
         request,
-        ['/manage/premises/:premisesId/placements/:placementId', '/admin/placement-requests/:id'],
+        [
+          '/manage/premises/:premisesId/placements/:placementId',
+          '/admin/placement-requests/:placementRequestId',
+          '/admin/placement-requests/:placementRequestId/select-placement',
+        ],
       )
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
@@ -92,6 +96,7 @@ describe('changesController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes/new', {
         backlink: '/backlink',
         pageHeading: 'Change placement',
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         selectedCriteria: roomCharacteristicsInlineList(expectedCriteria, 'no room criteria'),
         arrivalDateHint: `Current arrival date: ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'dateFieldHint' })}`,
@@ -350,7 +355,7 @@ describe('changesController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/changes/confirm', {
         pageHeading: 'Confirm booking changes',
         backlink: expectedBackLink,
-        placement,
+        contextKeyDetails: placementKeyDetails(placement),
         summaryListRows: spaceBookingConfirmationSummaryListRows({
           premises,
           expectedArrivalDate: query.arrivalDate,
@@ -384,7 +389,9 @@ describe('changesController', () => {
         departureDate: '2025-07-05',
         characteristics: ['isSuitedForSexOffenders', 'isStepFreeDesignated'],
       }
-      const expectedRedirectUrl = adminPaths.admin.placementRequests.show({ id: placement.placementRequestId })
+      const expectedRedirectUrl = adminPaths.admin.placementRequests.show({
+        placementRequestId: placement.placementRequestId,
+      })
 
       expect(placementService.updatePlacement).toHaveBeenCalledWith(
         token,

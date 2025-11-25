@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '@approved-premises/api'
+import { ApprovedPremisesApplication, Cas1Assessment } from '@approved-premises/api'
 import 'reflect-metadata'
 
 type Constructor = new (...args: Array<any>) => object
@@ -16,12 +16,11 @@ const Page = (options: {
 
       body: Record<string, unknown>
 
-      document: ApprovedPremisesApplication | ApprovedPremisesAssessment
+      document: ApprovedPremisesApplication | Cas1Assessment
 
       constructor(...args: Array<any>) {
         super(...args)
         const [body, document] = args
-
         if (options.mergeBody) {
           this.body = { ...(this.body || {}), ...this.createBody(body, ...options.bodyProperties) }
         } else {

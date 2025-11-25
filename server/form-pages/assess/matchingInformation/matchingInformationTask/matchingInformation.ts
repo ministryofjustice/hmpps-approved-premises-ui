@@ -1,12 +1,12 @@
 import type { SummaryList, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
-import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { Cas1Assessment as Assessment } from '@approved-premises/api'
 import {
   defaultMatchingInformationValues,
   lengthOfStay,
   suggestedStaySummaryListOptions,
 } from '../../../utils/matchingInformationUtils'
-import { DateFormats, daysToWeeksAndDays } from '../../../../utils/dateUtils'
+import { DateFormats } from '../../../../utils/dateUtils'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -26,19 +26,18 @@ import {
 } from '../../../../utils/placementCriteriaUtils'
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
 import { womensApTypes } from '../../../apply/reasons-for-placement/type-of-ap/apType'
+import { radioMatrixTable } from '../../../../utils/radioMatrixTable'
 
-const placementRequirementPreferences = ['essential' as const, 'desirable' as const, 'notRelevant' as const]
+const placementRequirementPreferences = ['required' as const, 'notRequired' as const]
 export type PlacementRequirementPreference = (typeof placementRequirementPreferences)[number]
 
 const offenceAndRiskRelevance = ['relevant' as const, 'notRelevant' as const]
 export type OffenceAndRiskRelevance = (typeof offenceAndRiskRelevance)[number]
 
 export type MatchingInformationBody = {
-  [Key in OffenceAndRiskCriteria | PlacementRequirementCriteria]: Key extends OffenceAndRiskCriteria
-    ? OffenceAndRiskRelevance
-    : Key extends PlacementRequirementCriteria
-      ? PlacementRequirementPreference
-      : never
+  [Key in OffenceAndRiskCriteria | PlacementRequirementCriteria]:
+    | OffenceAndRiskRelevance
+    | PlacementRequirementPreference
 } & {
   apType: ApTypeCriteria
   cruInformation: string
@@ -72,21 +71,30 @@ export default class MatchingInformation implements TasklistPage {
     cruInformation: 'Information for Central Referral Unit (CRU) manager (optional)',
   }
 
-  placementRequirementTableHeadings = ['Specify placement requirements', 'Essential', 'Desirable', 'Not required']
+  relevantInformationTable = () =>
+    radioMatrixTable(
+      ['Risks and offences to consider', 'Relevant', 'Not required'],
+      offenceAndRiskCriteria,
+      offenceAndRiskRelevance,
+      this.body,
+    )
 
-  placementRequirementCriteria = placementRequirementCriteria
+  prepopulatedRequirementsTable = () => {
+    return radioMatrixTable(
+      ['Specify placement requirements', 'Required', 'Not required'],
+      prepopulatablePlacementRequirementCriteria,
+      placementRequirementPreferences,
+      this.body,
+    )
+  }
 
-  prepopulatablePlacementRequirementCriteria = prepopulatablePlacementRequirementCriteria
-
-  nonPrepopulatablePlacementRequirementCriteria = nonPrepopulatablePlacementRequirementCriteria
-
-  placementRequirementPreferences = placementRequirementPreferences
-
-  relevantInformationTableHeadings = ['Risks and offences to consider', 'Relevant', 'Not required']
-
-  offenceAndRiskCriteria = offenceAndRiskCriteria
-
-  offenceAndRiskInformationRelevance = offenceAndRiskRelevance
+  nonPrepopulatedRequirementsTable = () =>
+    radioMatrixTable(
+      ['Specify placement requirements', 'Required', 'Not required'],
+      nonPrepopulatablePlacementRequirementCriteria,
+      placementRequirementPreferences,
+      this.body,
+    )
 
   availableApTypes: Record<ApTypeCriteria, string>
 
@@ -124,18 +132,26 @@ export default class MatchingInformation implements TasklistPage {
     return ''
   }
 
+  private criteriaMap: Record<string, string> = {
+    essential: 'Required',
+  }
+
+  private criterionValueText = (value: string) => {
+    return this.criteriaMap[value] || sentenceCase(value)
+  }
+
   response() {
     const response = {
       [this.questions.apType]: apTypeCriteriaLabels[this.body.apType],
     }
 
-    this.placementRequirementCriteria.forEach(placementRequirementCriterion => {
+    placementRequirementCriteria.forEach(placementRequirementCriterion => {
       response[`${placementCriteriaLabels[placementRequirementCriterion]}`] =
-        `${sentenceCase(this.body[placementRequirementCriterion])}`
+        `${this.criterionValueText(this.body[placementRequirementCriterion])}`
     })
 
-    this.offenceAndRiskCriteria.forEach(offenceOrRiskCriterion => {
-      response[`${placementCriteriaLabels[offenceOrRiskCriterion]}`] = `${sentenceCase(
+    offenceAndRiskCriteria.forEach(offenceOrRiskCriterion => {
+      response[`${placementCriteriaLabels[offenceOrRiskCriterion]}`] = `${this.criterionValueText(
         this.body[offenceOrRiskCriterion],
       )}`
     })
@@ -143,10 +159,7 @@ export default class MatchingInformation implements TasklistPage {
     response['Do you agree with the suggested length of stay?'] = sentenceCase(this.body.lengthOfStayAgreed)
 
     if (this.body.lengthOfStayAgreed === 'no') {
-      response['Recommended length of stay'] = DateFormats.formatDuration(daysToWeeksAndDays(lengthOfStay(this.body)), [
-        'weeks',
-        'days',
-      ])
+      response['Recommended length of stay'] = DateFormats.formatDuration(lengthOfStay(this.body))
     }
 
     if (this.body.cruInformation) {
@@ -162,7 +175,7 @@ export default class MatchingInformation implements TasklistPage {
     if (!Object.keys(this.availableApTypes).includes(this.body.apType))
       errors.apType = 'You must select the type of AP required'
 
-    this.placementRequirementCriteria.forEach(placementRequirementCriterion => {
+    placementRequirementCriteria.forEach(placementRequirementCriterion => {
       if (!this.body[placementRequirementCriterion]) {
         errors[placementRequirementCriterion] = `You must specify a preference for ${placementCriteriaLabels[
           placementRequirementCriterion
@@ -170,7 +183,7 @@ export default class MatchingInformation implements TasklistPage {
       }
     })
 
-    this.offenceAndRiskCriteria.forEach(offenceOrRiskCriterion => {
+    offenceAndRiskCriteria.forEach(offenceOrRiskCriterion => {
       if (!this.body[offenceOrRiskCriterion]) {
         errors[offenceOrRiskCriterion] = `You must specify if ${lowerCase(
           placementCriteriaLabels[offenceOrRiskCriterion],

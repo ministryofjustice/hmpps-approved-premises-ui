@@ -5,7 +5,7 @@ import { UserService } from '../services'
 import populateCurrentUser from './populateCurrentUser'
 import { userDetailsFactory } from '../testutils/factories'
 import logger from '../../logger'
-import { DeliusAccountMissingStaffDetailsError } from '../services/userService'
+import { DeliusAccountMissingStaffDetailsError, UnsupportedProbationRegionError } from '../services/userService'
 import inMemoryStore from '../inMemoryStore'
 
 jest.mock('../../logger')
@@ -131,11 +131,9 @@ describe('populateCurrentUser', () => {
     expect(next).toHaveBeenCalled()
   })
 
-  it('it throws an DeliusAccountMissingStaffDetailsError', async () => {
-    const err = new DeliusAccountMissingStaffDetailsError()
-
+  it('redirects to a specific error page if the user account is missing a staff record', async () => {
     ;(userService.getActingUser as jest.Mock).mockImplementation(() => {
-      throw err
+      throw new DeliusAccountMissingStaffDetailsError()
     })
 
     const middleware = populateCurrentUser(userService)
@@ -144,5 +142,18 @@ describe('populateCurrentUser', () => {
 
     expect(response.redirect).toHaveBeenCalledWith('/deliusMissingStaffDetails')
     expect(logger.error).toHaveBeenCalledWith('Delius account missing staff details')
+  })
+
+  it('redirects to a specific error page if the user account has an unsupported probation region', async () => {
+    ;(userService.getActingUser as jest.Mock).mockImplementation(() => {
+      throw new UnsupportedProbationRegionError()
+    })
+
+    const middleware = populateCurrentUser(userService)
+
+    await middleware(request, response, next)
+
+    expect(response.redirect).toHaveBeenCalledWith('/unsupported-probation-region')
+    expect(logger.error).toHaveBeenCalledWith('Unsupported probation region')
   })
 })

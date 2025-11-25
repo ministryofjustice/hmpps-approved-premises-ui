@@ -4,7 +4,7 @@ import EnterRiskLevel from './enterRiskLevel'
 import IsExceptionalCase from './isExceptionalCase'
 import ConfirmYourDetails from './confirmYourDetails'
 import ExceptionDetails from './exceptionDetails'
-import SentenceType from './sentenceType'
+import SentenceType from '../../../shared/sentenceType'
 import ReleaseType from './releaseType'
 import Situation from './situation'
 import ReleaseDate from './releaseDate'
@@ -53,3 +53,7 @@ import CaseManagerInformation from './caseManagerInformation'
   ],
 })
 export default class BasicInformation {}
+
+export const pages = {
+  SentenceType,
+}

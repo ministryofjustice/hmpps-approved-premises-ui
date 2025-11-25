@@ -1,6 +1,6 @@
 import type {
+  Cas1PlacementRequestDetail,
   Cas1NewSpaceBooking as NewSpaceBooking,
-  PlacementRequest,
   Cas1SpaceBooking as SpaceBooking,
   Cas1SpaceSearchParameters as SpaceSearchParameters,
   Cas1SpaceSearchResults as SpaceSearchResults,
@@ -23,7 +23,10 @@ export default class SpaceSearchClient {
     })) as Promise<SpaceSearchResults>
   }
 
-  async createSpaceBooking(placementRequestId: PlacementRequest['id'], data: NewSpaceBooking): Promise<SpaceBooking> {
+  async createSpaceBooking(
+    placementRequestId: Cas1PlacementRequestDetail['id'],
+    data: NewSpaceBooking,
+  ): Promise<SpaceBooking> {
     return (await this.restClient.post({
       path: paths.placementRequests.spaceBookings.create({ placementRequestId }),
       data,

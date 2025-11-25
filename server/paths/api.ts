@@ -6,9 +6,6 @@ const cas1Namespace = path('/cas1')
 const cas1Premises = cas1Namespace.path('premises')
 const cas1PremisesSingle = cas1Premises.path(':premisesId')
 const cas1Beds = cas1PremisesSingle.path('beds')
-const cas1LostBeds = cas1PremisesSingle.path('lost-beds')
-const cas1LostBedsSingle = cas1LostBeds.path(':id')
-const cas1LostBedsCancellations = cas1LostBedsSingle.path('cancellations')
 const cas1OutOfServiceBeds = cas1PremisesSingle.path('out-of-service-beds')
 const cas1OutOfServiceBedsSingle = cas1OutOfServiceBeds.path(':id')
 const cas1LocalRestrictions = cas1PremisesSingle.path('local-restrictions')
@@ -32,6 +29,7 @@ const cas1Oasys = cas1Person.path('oasys')
 
 const cas1Applications = cas1Namespace.path('applications')
 const cas1ApplicationsSingle = cas1Applications.path(':id')
+const cas1Appeals = cas1ApplicationsSingle.path('appeals')
 
 const cas1Assessments = cas1Namespace.path('assessments')
 const cas1AssessmentsSingle = cas1Assessments.path(':id')
@@ -39,21 +37,12 @@ const cas1AssessmentsNotes = cas1AssessmentsSingle.path('notes')
 
 const cas1ReferenceData = cas1Namespace.path('reference-data')
 
+const cas1Profile = cas1Namespace.path('/profile')
+
 // Non-namespaced
-const premises = path('/premises')
-const premisesSingle = premises.path(':premisesId')
-const rooms = premisesSingle.path('rooms')
-
-const profile = path('/profile')
-
-const applications = path('/applications')
-const applicationsSingle = applications.path(':id')
-const appeals = applicationsSingle.path('appeals')
-
 const people = path('/people')
 const person = people.path(':crn')
 
-const users = path('/users')
 const cas1Users = cas1Namespace.path('users')
 
 const placementRequests = path('/placement-requests')
@@ -82,23 +71,10 @@ export default {
     capacity: cas1Capacity,
     nationalCapacity: cas1NationalCapacity,
     daySummary: cas1DaySummary,
-    summary: premisesSingle.path('summary'),
-    lostBeds: {
-      create: cas1LostBeds,
-      index: cas1LostBeds,
-      update: cas1LostBedsSingle,
-      show: cas1LostBedsSingle,
-      cancel: cas1LostBedsCancellations,
-    },
-    staffMembers: {
-      index: cas1PremisesSingle.path('staff'),
-    },
     beds: {
       index: cas1Beds,
       show: cas1Beds.path(':bedId'),
     },
-    rooms,
-    room: rooms.path(':roomId'),
     placements: {
       show: cas1SpaceBookingSingle,
       index: cas1PremisesSingle.path('space-bookings'),
@@ -111,38 +87,33 @@ export default {
       emergencyTransfer: cas1SpaceBookingSingle.path('emergency-transfer'),
       appeal: cas1SpaceBookingSingle.path('appeal'),
     },
-    calendar: premisesSingle.path('calendar'),
     occupancyReport: cas1Premises.path('occupancy-report'),
     localRestrictions: {
       create: cas1LocalRestrictions,
       delete: cas1LocalRestrictions.path(':restrictionId'),
     },
-  },
-  bookings: {
-    bookingWithoutPremisesPath: path('/bookings/:bookingId'),
+    currentKeyworkers: cas1PremisesSingle.path('current-key-workers'),
   },
   placements: {
     placementWithoutPremises: cas1Namespace.path('space-bookings/:placementId'),
   },
   applications: {
-    show: applicationsSingle,
+    show: cas1ApplicationsSingle,
     me: cas1Applications.path('me'),
     all: cas1Applications.path('all'),
-    update: applicationsSingle,
-    new: applications,
-    submission: applicationsSingle.path('submission'),
-    documents: applicationsSingle.path('documents'),
-    assessment: applicationsSingle.path('assessment'),
-    withdrawal: applicationsSingle.path('withdrawal'),
+    update: cas1ApplicationsSingle,
+    new: cas1Applications,
+    submission: cas1ApplicationsSingle.path('submission'),
+    documents: cas1ApplicationsSingle.path('documents'),
+    withdrawal: cas1ApplicationsSingle.path('withdrawal'),
+    expire: cas1ApplicationsSingle.path('expire'),
     timeline: cas1ApplicationsSingle.path('timeline'),
-    placementApplications: applicationsSingle.path('placement-applications'),
-    requestsForPlacement: applicationsSingle.path('requests-for-placement'),
-    addNote: applicationsSingle.path('notes'),
-    withdrawables: applicationsSingle.path('withdrawables'),
-    withdrawablesWithNotes: applicationsSingle.path('withdrawablesWithNotes'),
+    requestsForPlacement: cas1ApplicationsSingle.path('requests-for-placement'),
+    addNote: cas1ApplicationsSingle.path('notes'),
+    withdrawablesWithNotes: cas1ApplicationsSingle.path('withdrawablesWithNotes'),
     appeals: {
-      show: appeals.path(':appealId'),
-      create: appeals,
+      show: cas1Appeals.path(':appealId'),
+      create: cas1Appeals,
     },
   },
   assessments: {
@@ -161,9 +132,6 @@ export default {
   },
   tasks: {
     index: cas1Tasks,
-    type: {
-      index: cas1Tasks.path(':taskType'),
-    },
     show: cas1TasksSingle,
     allocations: {
       create: cas1TasksSingle.path('allocations'),
@@ -208,14 +176,14 @@ export default {
     timeline: cas1Person.path('timeline'),
   },
   users: {
-    index: users,
-    summary: users.path('summary'),
-    search: users.path('search'),
-    searchDelius: users.path('delius'),
+    index: cas1Users,
+    summary: cas1Users.path('summary'),
+    search: cas1Users.path('search'),
+    searchDelius: cas1Users.path('delius'),
     show: cas1Users.path(':id'),
     update: cas1Users.path(':id'),
     delete: cas1Users.path(':id'),
-    profile: profile.path('v2'),
+    profile: cas1Profile,
   },
   reports: cas1Reports.path(':reportName'),
   cas1ReferenceData: cas1ReferenceData.path(':type'),

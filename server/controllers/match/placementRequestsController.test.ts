@@ -13,6 +13,7 @@ import {
 import paths from '../../paths/placementApplications'
 
 import { getResponses } from '../../utils/applications/getResponses'
+import { placementRequestKeyDetails } from '../../utils/placementRequests/utils'
 
 jest.mock('../../utils/applications/utils')
 jest.mock('../../utils/applications/getResponses')
@@ -57,11 +58,12 @@ describe('PlacementRequestsController', () => {
 
       const requestHandler = placementRequestsController.show()
 
-      await requestHandler({ ...request, params: { id: placementRequestDetail.id } }, response, next)
+      await requestHandler({ ...request, params: { placementRequestId: placementRequestDetail.id } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/show', {
         pageHeading: 'Matching information',
         placementRequest: placementRequestDetail,
+        contextKeyDetails: placementRequestKeyDetails(placementRequestDetail),
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })
@@ -81,7 +83,7 @@ describe('PlacementRequestsController', () => {
         paths.placementApplications.pages.show({
           id: placementApplication.id,
           task: 'request-a-placement',
-          page: 'reason-for-placement',
+          page: 'sentence-type-check',
         }),
       )
       expect(placementApplicationService.create).toHaveBeenCalledWith(token, applicationId)

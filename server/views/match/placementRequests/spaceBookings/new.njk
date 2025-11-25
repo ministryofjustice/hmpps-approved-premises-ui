@@ -1,9 +1,9 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
 
-{% extends "../../layout-with-details.njk" %}
+{% extends "partials/layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
@@ -17,7 +17,7 @@
 {% block content %}
     {{ showErrorSummary(errorSummary, errorTitle) }}
 
-    <h1 class="govuk-heading-l">Confirm booking</h1>
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
     {{ govukSummaryList({
         rows: summaryListRows
@@ -28,7 +28,7 @@
 
         <div class="govuk-button-group">
             {{ govukButton({
-                text: "Confirm and book",
+                text: "Confirm booking",
                 preventDoubleClick: true
             }) }}
 

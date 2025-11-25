@@ -1,9 +1,9 @@
 import { SuperAgentRequest } from 'superagent'
 
 import type {
-  ApprovedPremisesAssessment as Assessment,
-  AssessmentStatus,
-  ApprovedPremisesAssessmentSummary as AssessmentSummary,
+  Cas1Assessment as Assessment,
+  Cas1AssessmentStatus,
+  Cas1AssessmentSummary as AssessmentSummary,
   Cas1NewClarificationNote,
   SortDirection,
   Cas1UpdatedClarificationNote,
@@ -22,7 +22,7 @@ export default {
     page = '1',
   }: {
     assessments: Array<AssessmentSummary>
-    statuses: Array<AssessmentStatus>
+    statuses: Array<Cas1AssessmentStatus>
     sortDirection: SortDirection
     sortBy: AssessmentSortField
     page: string
@@ -185,7 +185,7 @@ export default {
     sortDirection = 'asc',
   }: {
     page: string
-    statuses: Array<AssessmentStatus>
+    statuses: Array<Cas1AssessmentStatus>
     sortDirection: SortDirection
     sortBy: AssessmentSortField
   }) =>

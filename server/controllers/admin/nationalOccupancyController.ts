@@ -187,7 +187,10 @@ export default class NationalOccupancyController {
           endDate: capacityDates.endDate,
         })
 
-        const placeholderDetailsUrl = `${paths.admin.nationalOccupancy.premisesDayView({ premisesId, date: ':date' })}${createQueryString(
+        const placeholderDetailsUrl = `${paths.admin.nationalOccupancy.premisesDayView({
+          premisesId,
+          date: ':date',
+        })}${createQueryString(
           { criteria: roomCharacteristics },
           {
             arrayFormat: 'repeat',

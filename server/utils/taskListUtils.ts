@@ -1,9 +1,9 @@
 import type { TaskStatus as TaskListStatus, TaskWithStatus, UiTask } from '@approved-premises/ui'
-import { ApprovedPremisesApplication as Application, ApprovedPremisesAssessment as Assessment } from '../@types/shared'
+import { Cas1Application as Application, Cas1Assessment as Assessment } from '../@types/shared'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import isAssessment from './assessments/isAssessment'
-import { StatusTag, StatusTagOptions } from './statusTag'
+import { StatusTag } from './statusTag'
 import { tierQualificationPage } from './applications/utils'
 
 export const taskLink = (task: TaskWithStatus, applicationOrAssessment: Application | Assessment): string => {
@@ -18,7 +18,7 @@ export const taskLink = (task: TaskWithStatus, applicationOrAssessment: Applicat
         })
       : (task.id === 'basic-information' && tierQualificationPage(applicationOrAssessment)) ||
         applyPaths.applications.pages.show({
-          id: applicationOrAssessment.id,
+          id: (applicationOrAssessment as Application).id,
           task: task.id,
           page: firstPage,
         })
@@ -43,10 +43,10 @@ export class TaskListStatusTag extends StatusTag<TaskListStatus> {
     cannot_start: 'grey',
   }
 
-  constructor(status: TaskListStatus, taskId: UiTask['id'], options?: StatusTagOptions) {
+  constructor(status: TaskListStatus, taskId: UiTask['id']) {
     super(
       status,
-      { ...options, taskListTag: true, id: taskId },
+      { classes: `app-task-list__tag`, id: taskId },
       {
         statuses: TaskListStatusTag.statuses,
         colours: TaskListStatusTag.colours,

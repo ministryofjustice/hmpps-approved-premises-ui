@@ -14,6 +14,7 @@ import type {
   NewWithdrawal,
   SortDirection,
   Cas1ApplicationSummary,
+  Cas1ExpireApplicationReason,
 } from '@approved-premises/api'
 
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
@@ -50,10 +51,11 @@ export default class ApplicationService {
     sortBy: ApplicationSortField = 'createdAt',
     sortDirection: SortDirection = 'asc',
     searchOptions: ApplicationDashboardSearchOptions = {},
+    pageSize: number = 10,
   ): Promise<PaginatedResponse<Cas1ApplicationSummary>> {
     const applicationClient = this.applicationClientFactory(token)
 
-    return applicationClient.all(page, sortBy, sortDirection, searchOptions)
+    return applicationClient.all(page, sortBy, sortDirection, searchOptions, pageSize)
   }
 
   async getAllForLoggedInUser(token: string): Promise<GroupedApplications> {
@@ -149,6 +151,12 @@ export default class ApplicationService {
     const client = this.applicationClientFactory(token)
 
     await client.withdrawal(applicationId, body)
+  }
+
+  async expire(token: string, applicationId: string, body: Cas1ExpireApplicationReason) {
+    const client = this.applicationClientFactory(token)
+
+    await client.expire(applicationId, body)
   }
 
   async timeline(token: string, applicationId: string) {

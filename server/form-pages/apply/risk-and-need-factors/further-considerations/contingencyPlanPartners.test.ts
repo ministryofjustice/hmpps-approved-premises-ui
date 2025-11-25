@@ -1,6 +1,6 @@
 import { PartnerAgencyDetails } from '@approved-premises/ui'
 import { contingencyPlanPartnerFactory } from '../../../../testutils/factories'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 import ContingencyPlanPartners from './contingencyPlanPartners'
 
 describe('ContingencyPlanPartners', () => {

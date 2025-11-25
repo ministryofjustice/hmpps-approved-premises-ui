@@ -14,6 +14,7 @@ import {
   verifyApiPatch,
   verifyApiPost,
   verifyApiPut,
+  verifyApiGet,
 } from './integration_tests/mockApis/journeyUtils'
 import assessments from './integration_tests/mockApis/assessments'
 import users from './integration_tests/mockApis/users'
@@ -65,6 +66,7 @@ export default defineConfig({
         verifyApiPatch,
         verifyApiPut,
         verifyApiDelete,
+        verifyApiGet,
       })
     },
     baseUrl: 'http://localhost:3007',

@@ -3,9 +3,13 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1RequestedPlacementPeriod } from './Cas1RequestedPlacementPeriod';
+import type { Cas1SpaceBookingShortSummary } from './Cas1SpaceBookingShortSummary';
 import type { PlacementDates } from './PlacementDates';
+import type { ReleaseTypeOption } from './ReleaseTypeOption';
 import type { RequestForPlacementStatus } from './RequestForPlacementStatus';
 import type { RequestForPlacementType } from './RequestForPlacementType';
+import type { SentenceTypeOption } from './SentenceTypeOption';
+import type { SituationOption } from './SituationOption';
 import type { WithdrawPlacementRequestReason } from './WithdrawPlacementRequestReason';
 export type RequestForPlacement = {
     authorisedPlacementPeriod?: Cas1RequestedPlacementPeriod;
@@ -25,11 +29,15 @@ export type RequestForPlacement = {
      * Requests for placements only have one set of placement dates, use 'requestedPlacementPeriod' or 'authorisedPlacementPeriod' instead
      */
     placementDates: Array<PlacementDates>;
+    placements: Array<Cas1SpaceBookingShortSummary>;
+    releaseType?: ReleaseTypeOption;
     /**
      * If `type` is `"manual"`, provides the value of `PlacementApplication.decisionMadeAt`. If `type` is `"automatic"` this field provides the value of `PlacementRequest.assessmentCompletedAt`.
      */
     requestReviewedAt?: string;
     requestedPlacementPeriod: Cas1RequestedPlacementPeriod;
+    sentenceType?: SentenceTypeOption;
+    situation?: SituationOption;
     status: RequestForPlacementStatus;
     submittedAt?: string;
     type: RequestForPlacementType;

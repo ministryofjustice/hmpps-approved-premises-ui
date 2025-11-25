@@ -1,4 +1,4 @@
-import { ApprovedPremisesAssessment as Assessment } from '../../@types/shared'
+import { Cas1Assessment as Assessment } from '../../@types/shared'
 import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import {
   shouldShowContingencyPlanPartnersPages,

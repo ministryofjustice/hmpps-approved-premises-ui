@@ -2,7 +2,7 @@ import { createMock } from '@golevelup/ts-jest'
 
 import { fromPartial } from '@total-typescript/shoehorn'
 import { AssessmentService } from '../../../../services'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import SufficientInformationConfirm from './sufficientInformationConfirm'
 

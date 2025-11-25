@@ -1,6 +1,6 @@
 import { applicationFactory } from '../../../../testutils/factories'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
-import { itShouldHaveNextValue } from '../../../shared-examples'
+import { itShouldHaveNextValue } from '../../../shared'
 import { furtherAccessNeedsQuestionsNeeded } from './accessNeeds'
 
 import Covid from './covid'

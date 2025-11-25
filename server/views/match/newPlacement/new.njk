@@ -1,0 +1,89 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "moj/components/date-picker/macro.njk" import mojDatePicker %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "../../components/formFields/form-page-radios/macro.njk" import formPageRadios %}
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
+
+{% extends "partials/layout-with-details.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: backlink
+    }) }}
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds-from-desktop">
+            {{ showErrorSummary(errorSummary, errorTitle) }}
+
+            <h1 class="govuk-heading-xl">{{ pageHeading }}</h1>
+
+            <form action="{{ currentUrl }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ mojDatePicker({
+                    id: "newPlacementArrivalDate",
+                    name: "newPlacementArrivalDate",
+                    label: {
+                        text: "Expected arrival date",
+                        classes: "govuk-label--m"
+                    },
+                    hint: {
+                        text: "For example, 17/5/2026"
+                    },
+                    value: newPlacementArrivalDate,
+                    errorMessage: errors.newPlacementArrivalDate
+                }) }}
+
+                {{ mojDatePicker({
+                    id: "newPlacementDepartureDate",
+                    name: "newPlacementDepartureDate",
+                    label: {
+                        text: "Expected departure date",
+                        classes: "govuk-label--m"
+                    },
+                    hint: {
+                        text: "For example, 23/6/2026"
+                    },
+                    value: newPlacementDepartureDate,
+                    errorMessage: errors.newPlacementDepartureDate
+                }) }}
+
+                {{ formPageRadios({
+                    fieldName: "newPlacementReason",
+                    fieldset: {
+                        legend: {
+                            text: 'Transfer reason',
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
+                    items: reasonOptions
+                }, fetchContext()) }}
+
+                {{ govukTextarea({
+                    id: "newPlacementNotes",
+                    name: "newPlacementNotes",
+                    label: {
+                        text: "Additional information",
+                        classes: "govuk-label--m"
+                    },
+                    hint: {
+                        text: "Include the name of the person that requested the transfer and any additional information about the reason for the transfer"
+                    },
+                    value: newPlacementNotes,
+                    errorMessage: errors.newPlacementNotes
+                }) }}
+
+                {{ govukButton({
+                    text: "Save and continue",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
+    </div>
+{% endblock %}

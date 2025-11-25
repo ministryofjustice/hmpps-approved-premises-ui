@@ -1,12 +1,13 @@
 import jwt from 'jsonwebtoken'
 import { Response } from 'superagent'
 
-import { ApprovedPremisesUser, ProfileResponse } from '@approved-premises/api'
+import { ApprovedPremisesUser, Cas1ProfileResponse } from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from './setup'
 import tokenVerification from './tokenVerification'
 import { userFactory } from '../../server/testutils/factories'
 import { userProfileFactory } from '../../server/testutils/factories/user'
+import apiPaths from '../../server/paths/api'
 
 const createToken = () => {
   const payload = {
@@ -124,11 +125,11 @@ const token = () =>
 
 export const defaultUserId = '70596333-63d4-4fb2-8acc-9ca55563d878'
 
-const stubProfile = (profile: ProfileResponse) =>
+const stubProfile = (profile: Cas1ProfileResponse) =>
   stubFor({
     request: {
       method: 'GET',
-      urlPattern: '/profile/v2',
+      urlPattern: apiPaths.users.profile.pattern,
     },
     response: {
       status: 200,
@@ -146,7 +147,7 @@ export default {
     Promise.all([favicon(), redirect(), signOut(), manageDetails(), token(), tokenVerification.stubVerifyToken()]),
   stubAuthUser: (
     args: Partial<ApprovedPremisesUser> & {
-      profile?: ProfileResponse
+      profile?: Cas1ProfileResponse
     } = {},
   ): Promise<Response> =>
     stubProfile(

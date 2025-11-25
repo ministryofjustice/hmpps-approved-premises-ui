@@ -7,10 +7,10 @@ export const signIn = (
   user?: Partial<ApprovedPremisesUser>,
 ) => {
   cy.task('stubSignIn')
-  const permissions = makeArrayOfType<ApprovedPremisesUserRole>(role).reduce(
+  const rolesPermissions = makeArrayOfType<ApprovedPremisesUserRole>(role).reduce(
     (permissionList, userRole: ApprovedPremisesUserRole) => [...permissionList, ...roleToPermissions(userRole)],
     [] as Array<ApprovedPremisesUserPermission>,
   )
-  cy.task('stubAuthUser', { role, permissions, ...user })
+  cy.task('stubAuthUser', { role, ...user, permissions: [...rolesPermissions, ...(user?.permissions || [])] })
   cy.signIn()
 }

@@ -41,6 +41,7 @@ export default class UpdateOutOfServiceBedsController {
       const {
         reason: { id: reason },
         referenceNumber,
+        notes,
       } = outOfServiceBed
 
       res.render('manage/outOfServiceBeds/update', {
@@ -52,7 +53,7 @@ export default class UpdateOutOfServiceBedsController {
         ...DateFormats.isoDateToDateInputs(outOfServiceBed.endDate, 'endDate'),
         reason,
         referenceNumber,
-        notes: '',
+        notes,
         errors,
         errorSummary,
         errorTitle,
@@ -67,7 +68,12 @@ export default class UpdateOutOfServiceBedsController {
 
       try {
         const outOfServiceBedReasons = await this.outOfServiceBedService.getOutOfServiceBedReasons(req.user.token)
-        const outOfServiceBed = validateOutOfServiceBedInput(req.body, outOfServiceBedReasons)
+        const outOfServiceBed = validateOutOfServiceBedInput({
+          body: req.body,
+          user: req.session.user,
+          outOfServiceBedReasons,
+          suppressDateRangeCheck: true,
+        })
 
         await this.outOfServiceBedService.updateOutOfServiceBed(req.user.token, id, premisesId, outOfServiceBed)
 

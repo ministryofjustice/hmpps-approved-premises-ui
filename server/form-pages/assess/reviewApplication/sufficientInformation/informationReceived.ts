@@ -1,6 +1,6 @@
 import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import type { User } from '@approved-premises/api'
-import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
+import { Cas1Assessment as Assessment } from '../../../../@types/shared'
 
 import { Page } from '../../../utils/decorators'
 import { sentenceCase } from '../../../../utils/utils'

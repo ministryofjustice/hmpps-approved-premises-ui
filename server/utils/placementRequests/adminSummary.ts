@@ -4,11 +4,14 @@ import { SummaryList, SummaryListItem } from '../../@types/ui'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { withdrawnStatusTag } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
-import { placementDates, placementLength } from '../match'
+import { placementDates } from '../match'
 import paths from '../../paths/apply'
 
 export const adminSummary = (placementRequest: Cas1PlacementRequestDetail): SummaryList => {
-  const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))
+  const dates = placementDates(
+    placementRequest.authorisedPlacementPeriod.arrival,
+    String(placementRequest.authorisedPlacementPeriod.duration),
+  )
 
   const rows: Array<SummaryListItem> = [
     {
@@ -48,7 +51,7 @@ export const adminSummary = (placementRequest: Cas1PlacementRequestDetail): Summ
         text: 'Length of stay',
       },
       value: {
-        text: placementLength(dates.placementLength),
+        text: DateFormats.formatDuration(dates.placementLength),
       },
     },
     apTypeCell(placementRequest),

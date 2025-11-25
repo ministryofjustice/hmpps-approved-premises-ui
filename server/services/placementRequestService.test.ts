@@ -62,7 +62,7 @@ describe('placementRequestService', () => {
       expect(result).toEqual(response)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
-      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(defaultFilters, 1, 'created_at', 'asc')
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(defaultFilters, undefined, undefined, undefined)
     })
 
     it('calls the find method on the placementRequest client with page and sort options', async () => {

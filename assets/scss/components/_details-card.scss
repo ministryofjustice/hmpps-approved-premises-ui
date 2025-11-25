@@ -1,0 +1,44 @@
+@use "govuk-frontend/dist/govuk" as *;
+
+/**
+ * A modifier class for the govuk-details component.
+ *
+ * This renders the details component in the style of the summary card, with a separate header
+ * with grey background and a border around the whole component.
+ */
+
+.govuk-details--card {
+  @extend .govuk-summary-card;
+
+  .govuk-details__summary {
+    @extend .govuk-summary-card__title-wrapper;
+
+    width: auto;
+
+    &:before {
+      left: govuk-spacing(4);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: none;
+
+      .govuk-details__summary-text {
+        @include govuk-focused-text;
+      }
+    }
+  }
+
+  .govuk-details__summary-text {
+    @extend .govuk-summary-card__title;
+
+    display: block;
+    padding-left: govuk-spacing(4);
+    color: inherit;
+  }
+
+  .govuk-details__text {
+    @extend .govuk-summary-card__content;
+    border-width: 0;
+  }
+}

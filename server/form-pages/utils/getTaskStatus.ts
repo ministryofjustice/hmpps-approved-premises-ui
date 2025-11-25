@@ -1,9 +1,6 @@
 import type { TaskStatus, UiTask } from '@approved-premises/ui'
 
-import {
-  ApprovedPremisesApplication as Application,
-  ApprovedPremisesAssessment as Assessment,
-} from '@approved-premises/api'
+import { Cas1Application as Application, Cas1Assessment as Assessment } from '@approved-premises/api'
 import { TasklistPageInterface } from '../tasklistPage'
 
 const getPageData = (applicationOrAssessment: Application | Assessment, taskName: string, pageName: string) => {

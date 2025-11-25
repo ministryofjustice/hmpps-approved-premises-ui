@@ -41,6 +41,7 @@ const managePath = path('/manage')
 const premisesPath = managePath.path('premises')
 const singlePremisesPath = premisesPath.path(':premisesId')
 const singlePlacementPath = singlePremisesPath.path('placements/:placementId')
+const keyworkerPath = singlePlacementPath.path('assign-keyworker')
 const departurePath = singlePlacementPath.path('departure')
 const placementCancellationsPath = singlePlacementPath.path('cancellations')
 const placementChangesPath = singlePlacementPath.path('changes')
@@ -52,6 +53,7 @@ const outOfServiceBedsPath = singlePremisesPath.path('beds/:bedId/out-of-service
 const outOfServiceBedPath = outOfServiceBedsPath.path(':id')
 const outOfServiceBedsIndexPath = managePath.path('out-of-service-beds')
 const localRestrictionsPath = singlePremisesPath.path('local-restrictions')
+const residentPath = managePath.path('resident/:crn/placement/:placementId')
 
 const paths = {
   premises: {
@@ -68,7 +70,10 @@ const paths = {
       showTabPlacementRequest: singlePlacementPath.path('placement-request'),
       showTabTimeline: singlePlacementPath.path('timeline'),
       arrival: singlePlacementPath.path('arrival'),
-      keyworker: singlePlacementPath.path('keyworker'),
+      keyworker: {
+        new: keyworkerPath,
+        find: keyworkerPath.path('find'),
+      },
       nonArrival: singlePlacementPath.path('non-arrival'),
       departure: {
         new: departurePath.path('new'),
@@ -107,7 +112,15 @@ const paths = {
       remove: localRestrictionsPath.path('remove/:restrictionId'),
     },
   },
-
+  resident: {
+    show: residentPath,
+    tabPersonal: residentPath.path('personal'),
+    tabHealth: residentPath.path('health'),
+    tabPlacement: residentPath.path('placement'),
+    tabRisk: residentPath.path('risk'),
+    tabSentence: residentPath.path('sentence'),
+    tabEnforcement: residentPath.path('enforcement'),
+  },
   bookings: {
     // In effect deprecated: legacy bookings have been migrated to space bookings. A redirect is now in place.
     show: bookingsPath.path(':placementId'),

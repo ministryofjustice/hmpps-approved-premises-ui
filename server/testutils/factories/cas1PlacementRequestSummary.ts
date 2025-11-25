@@ -44,8 +44,10 @@ class Cas1PlacementRequestSummaryFactory extends Factory<Cas1PlacementRequestSum
       applicationSubmittedDate: placementRequestDetail.applicationDate,
       personTier: placementRequestDetail.risks.tier.value.level,
       placementRequestStatus: placementRequestDetail.status,
-      requestedPlacementArrivalDate: placementRequestDetail.expectedArrival,
-      requestedPlacementDuration: placementRequestDetail.duration,
+      requestedPlacementArrivalDate: placementRequestDetail.authorisedPlacementPeriod.arrival,
+      requestedPlacementDuration: placementRequestDetail.authorisedPlacementPeriod.duration,
+      firstBookingArrivalDate: placementRequestDetail.spaceBookings?.[0]?.expectedArrivalDate,
+      firstBookingPremisesName: placementRequestDetail.spaceBookings?.[0]?.premises.name,
     })
   }
 }

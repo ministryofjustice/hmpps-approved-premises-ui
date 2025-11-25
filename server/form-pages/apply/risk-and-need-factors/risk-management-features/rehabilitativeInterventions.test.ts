@@ -1,6 +1,6 @@
 import { fromPartial } from '@total-typescript/shoehorn'
 
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
 import * as formUtils from '../../../../utils/formUtils'

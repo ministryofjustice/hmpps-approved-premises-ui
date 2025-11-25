@@ -134,7 +134,7 @@ describe('Tasklist Statuses', () => {
     it(`returns the correct tag for each person with a status of ${status}`, () => {
       const id = 'id' as TaskNames
       expect(new TaskListStatusTag(status, id).html()).toEqual(
-        `<strong class="govuk-tag govuk-tag--${TaskListStatusTag.colours[status]} app-task-list__tag " data-cy-status="${status}" id="${id}-status">${TaskListStatusTag.statuses[status]}</strong>`,
+        `<strong class="govuk-tag govuk-tag--${TaskListStatusTag.colours[status]} app-task-list__tag" data-cy-status="${status}" id="${id}-status">${TaskListStatusTag.statuses[status]}</strong>`,
       )
     })
   })

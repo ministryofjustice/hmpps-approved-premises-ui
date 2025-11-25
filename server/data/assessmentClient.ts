@@ -1,9 +1,9 @@
 import type {
-  ApprovedPremisesAssessment as Assessment,
-  AssessmentAcceptance,
-  AssessmentStatus,
-  ApprovedPremisesAssessmentSummary as AssessmentSummary,
-  ClarificationNote,
+  Cas1Assessment as Assessment,
+  Cas1AssessmentAcceptance,
+  Cas1AssessmentStatus,
+  Cas1AssessmentSummary,
+  Cas1ClarificationNote,
   Cas1NewClarificationNote,
   Cas1UpdatedClarificationNote,
 } from '@approved-premises/api'
@@ -22,11 +22,11 @@ export default class AssessmentClient {
   }
 
   async all(
-    statuses: Array<AssessmentStatus>,
+    statuses: Array<Cas1AssessmentStatus>,
     page: number,
     sortBy: AssessmentSortField = 'name',
     sortDirection: SortDirection = 'asc',
-  ): Promise<PaginatedResponse<AssessmentSummary>> {
+  ): Promise<PaginatedResponse<Cas1AssessmentSummary>> {
     return this.restClient.getPaginatedResponse({
       path: paths.assessments.index.pattern,
       page: page.toString(),
@@ -45,7 +45,7 @@ export default class AssessmentClient {
     })) as Assessment
   }
 
-  async acceptance(assessmentId: string, data: AssessmentAcceptance): Promise<void> {
+  async acceptance(assessmentId: string, data: Cas1AssessmentAcceptance): Promise<void> {
     await this.restClient.post({
       path: paths.assessments.acceptance({ id: assessmentId }),
       data,
@@ -66,21 +66,21 @@ export default class AssessmentClient {
   async createClarificationNote(
     assessmentId: string,
     clarificationNote: Cas1NewClarificationNote,
-  ): Promise<ClarificationNote> {
+  ): Promise<Cas1ClarificationNote> {
     return (await this.restClient.post({
       path: paths.assessments.clarificationNotes.create({ id: assessmentId }),
       data: clarificationNote,
-    })) as ClarificationNote
+    })) as Cas1ClarificationNote
   }
 
   async updateClarificationNote(
     assessmentId: string,
     clarificationNoteId: string,
     clarificationNote: Cas1UpdatedClarificationNote,
-  ): Promise<ClarificationNote> {
+  ): Promise<Cas1ClarificationNote> {
     return (await this.restClient.put({
       path: paths.assessments.clarificationNotes.update({ id: assessmentId, clarificationNoteId }),
       data: clarificationNote,
-    })) as ClarificationNote
+    })) as Cas1ClarificationNote
   }
 }

@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Cas1AssignKeyWorker = {
-    staffCode: string;
+    userId?: string;
 };
 

@@ -25,5 +25,8 @@ export default Factory.define<SpaceSearchFormData>(() => {
     durationDays,
     arrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
     departureDate: DateFormats.dateObjToIsoDate(departureDate),
+    newPlacementArrivalDate: undefined,
+    newPlacementDepartureDate: undefined,
+    newPlacementReason: undefined,
   }
 })

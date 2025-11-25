@@ -1,6 +1,6 @@
 import type { Cas1PlacementRequestDetail, Cas1Premises } from '@approved-premises/api'
 import paths from '../../../server/paths/match'
-import { DateFormats, daysToWeeksAndDays } from '../../../server/utils/dateUtils'
+import { DateFormats } from '../../../server/utils/dateUtils'
 import { placementRequestSummaryList } from '../../../server/utils/placementRequests/placementRequestSummaryList'
 import OccupancyFilterPage from '../shared/occupancyFilterPage'
 
@@ -10,7 +10,10 @@ export default class OccupancyViewPage extends OccupancyFilterPage {
   }
 
   static visit(placementRequest: Cas1PlacementRequestDetail, premises: Cas1Premises) {
-    const path = paths.v2Match.placementRequests.search.occupancy({ id: placementRequest.id, premisesId: premises.id })
+    const path = paths.v2Match.placementRequests.search.occupancy({
+      placementRequestId: placementRequest.id,
+      premisesId: premises.id,
+    })
 
     cy.visit(path)
 
@@ -24,7 +27,7 @@ export default class OccupancyViewPage extends OccupancyFilterPage {
     })
     cy.get('.govuk-heading-l')
       .contains(
-        `View availability for ${DateFormats.formatDuration(daysToWeeksAndDays(durationDays))} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`,
+        `View availability for ${DateFormats.formatDuration(durationDays)} from ${DateFormats.isoDateToUIDate(startDate, { format: 'short' })}`,
       )
       .should('exist')
   }
@@ -32,6 +35,11 @@ export default class OccupancyViewPage extends OccupancyFilterPage {
   completeForm(arrivalDate: string, departureDate: string) {
     this.completeDateInputs('arrivalDate', arrivalDate)
     this.completeDateInputs('departureDate', departureDate)
+  }
+
+  shouldHaveFormPopulated(arrivalDate: string, departureDate: string) {
+    this.dateInputsShouldContainDate('arrivalDate', arrivalDate)
+    this.dateInputsShouldContainDate('departureDate', departureDate)
   }
 
   shouldShowErrorSummaryAndErrorMessage(message: string): void {

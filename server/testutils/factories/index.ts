@@ -8,8 +8,7 @@ import applicationFactory from './application'
 import cas1ApplicationSummaryFactory from './cas1ApplicationSummary'
 import assessmentTaskFactory from './assessmentTask'
 import assessmentFactory from './assessment'
-import assessmentSummaryFactory from './assessmentSummary'
-import placementRequestBookingSummaryFactory from './placementRequestBookingSummary'
+import assessmentSummaryFactory from './cas1AssessmentSummary'
 import bookingNotMadeFactory from './bookingNotMade'
 import cancellationFactory from './cancellation'
 import clarificationNoteFactory from './clarificationNote'
@@ -52,7 +51,6 @@ import cas1ReferenceDataFactory, {
 } from './cas1ReferenceData'
 import requestForPlacementFactory from './requestForPlacement'
 import risksFactory, { tierEnvelopeFactory } from './risks'
-import staffMemberFactory from './staffMember'
 import taskFactory from './task'
 import taskWrapperFactory from './taskWrapperFactory'
 import userFactory, { userSummaryFactory, userWithWorkloadFactory } from './user'
@@ -70,6 +68,7 @@ import cas1PremisesFactory from './cas1Premises'
 import cas1PremisesBasicSummaryFactory from './cas1PremisesBasicSummary'
 import cas1PremiseCapacityFactory, { cas1PremiseCapacityForDayFactory } from './cas1PremiseCapacity'
 import cas1NationalOccupancyFactory, { cas1NationalOccupancyParametersFactory } from './cas1NationalOccupancy'
+import cas1SpaceBookingShortSummaryFactory from './cas1SpaceBookingShortSummary'
 import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
 import cas1SpaceBookingFactory from './cas1SpaceBooking'
 import cas1SpaceBookingDatesFactory from './cas1SpaceBookingDates'
@@ -82,7 +81,6 @@ import cas1KeyworkerAllocationFactory from './cas1KeyworkerAllocation'
 import cas1NewSpaceBookingCancellationFactory from './cas1NewSpaceBookingCancellation'
 import cas1PremisesDaySummaryFactory from './cas1PremisesDaySummary'
 import cas1OutOfServiceBedSummaryFactory from './cas1OutOfServiceBedSummary'
-import cas1OverbookingRangeFactory from './cas1OverbookingRange'
 import spaceSearchStateFactory from './spaceSearchState'
 import cas1UpdateSpaceBookingFactory from './cas1UpdateSpaceBooking'
 import { applicationTimelineFactory, cas1TimelineEventFactory, personalTimelineFactory } from './cas1Timeline'
@@ -100,6 +98,7 @@ import cas1OasysGroupFactory, { roshSummaryFactory } from './cas1OASysGroup'
 import cas1PremisesLocalRestrictionSummaryFactory from './cas1PremisesLocalRestrictionSummary'
 import cas1PremisesNewLocalRestrictionFactory from './cas1PremisesNewLocalRestriction'
 import cas1RequestedPlacementPeriodFactory from './cas1RequestedPlacementPeriod'
+import cas1CurrentKeyworkerFactory from './cas1CurrentKeyworker'
 
 export {
   acctAlertFactory,
@@ -114,7 +113,6 @@ export {
   assessmentTaskFactory,
   assessmentFactory,
   assessmentSummaryFactory,
-  placementRequestBookingSummaryFactory,
   bookingNotMadeFactory,
   cancellationFactory,
   cas1ApprovedPlacementAppealfactory,
@@ -135,6 +133,7 @@ export {
   cas1SpaceBookingDepartureFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingSummaryFactory,
+  cas1SpaceBookingShortSummaryFactory,
   cas1TimelineEventFactory,
   cas1AssignKeyWorkerFactory,
   cas1ChangeRequestFactory,
@@ -144,7 +143,6 @@ export {
   cas1NewEmergencyTransferFactory,
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
-  cas1OverbookingRangeFactory,
   cas1OutOfServiceBedReasonFactory,
   cas1PlacementRequestDetailFactory,
   cas1PlacementRequestSummaryFactory,
@@ -187,7 +185,6 @@ export {
   requestForPlacementFactory,
   risksFactory,
   roshSummaryFactory,
-  staffMemberFactory,
   taskFactory,
   taskWrapperFactory,
   tierEnvelopeFactory,
@@ -205,4 +202,5 @@ export {
   cas1RejectChangeRequestFactory,
   cas1PremisesLocalRestrictionSummaryFactory,
   cas1PremisesNewLocalRestrictionFactory,
+  cas1CurrentKeyworkerFactory,
 }

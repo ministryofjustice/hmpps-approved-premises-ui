@@ -9,19 +9,12 @@
 {% from "partials/filters.njk" import filterWrapper, filterDatepicker, filterSelect, filterCheckboxes %}
 
 {% from "partials/showErrorSummary.njk" import showErrorSummary %}
-{% from "components/keyDetails/macro.njk" import keyDetails %}
 {% from "match/placementRequests/occupancyView/partials/_occupancySummary.njk" import occupancySummary %}
-{% from "match/placementRequests/occupancyView/partials/_occupancyCalendar.njk" import occupancyCalendar %}
-{% from "partials/_calendar.njk" import calendarKey %}
+{% from "partials/calendar/_occupancyCalendar.njk" import occupancyCalendar,  calendarKey %}
 
-{% extends "partials/layout.njk" %}
+{% extends "partials/layout-with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
-
-{% block header %}
-    {{ super() }}
-    {{ keyDetails(PlacementUtils.getKeyDetail(placement)) }}
-{% endblock %}
 
 {% block beforeContent %}
     {{ govukBackLink({

@@ -4,21 +4,24 @@ import type {
   ApprovedPremisesApplicationStatus,
   FullPerson,
   RequestForPlacement,
+  Cas1Assessment,
 } from '@approved-premises/api'
 import { fromPartial } from '@total-typescript/shoehorn'
-
+import { addYears } from 'date-fns'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import Page from '../page'
 import { ApplicationShowPageTab, applicationShowPageTab } from '../../../server/utils/applications/utils'
 import paths from '../../../server/paths/apply'
-import { displayName } from '../../../server/utils/personUtils'
 import { mapRequestsForPlacementToSummaryCards } from '../../../server/utils/placementRequests'
+import { SubmittedDocumentRenderer } from '../../../server/utils/forms/submittedDocumentRenderer'
+import { applicationKeyDetails } from '../../../server/utils/applications/helpers'
 
 export default class ShowPage extends Page {
   constructor(private readonly application: Application) {
     super('Approved Premises application')
-    cy.get('h2').contains(displayName(application.person))
+    cy.get('h1').contains('Approved Premises application')
+    this.shouldShowKeyDetails(applicationKeyDetails(application))
   }
 
   static visit(application: Application, tab?: ApplicationShowPageTab) {
@@ -52,10 +55,6 @@ export default class ShowPage extends Page {
     )
   }
 
-  clickCreatePlacementButton() {
-    cy.get('button').contains('Create request for placement').click()
-  }
-
   shouldNotShowCreatePlacementButton() {
     cy.contains('Create request for placement').should('not.exist')
   }
@@ -68,54 +67,54 @@ export default class ShowPage extends Page {
     cy.get('.govuk-tag').contains('Offline application').should('exist')
   }
 
-  shouldShowAssessmentDetails(expired = false) {
-    cy.get('.govuk-inset-text')
-      .contains(
-        `Application was ${this.application.assessmentDecision} on ${DateFormats.isoDateToUIDate(
-          this.application.assessmentDecisionDate,
-        )}.`,
-      )
-      .should('exist')
+  shouldNotShowAssessmentDetails() {
+    this.clickTab('Assessment')
+    cy.contains('This application has not been assessed')
+  }
 
-    if (expired) {
+  shouldShowAssessmentDetails(assessment: Cas1Assessment) {
+    this.clickTab('Assessment')
+    const sections = new SubmittedDocumentRenderer(assessment).response
+
+    sections.forEach(section => {
+      cy.get('h2.govuk-heading-l').contains(section.title).should('exist')
+      section.tasks.forEach(task => {
+        cy.get(`[data-cy-section="${task.card.attributes['data-cy-section']}"]`).within(() => {
+          cy.get('.govuk-summary-card__title').contains(task.card.title.text).should('exist')
+          this.shouldContainSummaryListItems(task.rows)
+        })
+      })
+    })
+  }
+
+  shouldShowAssessedDate() {
+    const accepted = this.application.assessmentDecision === 'accepted'
+    const assessedDateText = `Assessed as ${accepted ? 'suitable' : 'not suitable'}: ${DateFormats.isoDateToUIDate(
+      this.application.assessmentDecisionDate,
+    )}`
+    const expiryDateText = `Application expires on: ${DateFormats.dateObjtoUIDate(
+      addYears(this.application.assessmentDecisionDate, 1),
+    )}`
+
+    cy.get('.govuk-inset-text').contains(assessedDateText).should('exist')
+    if (this.application.assessmentDecision === 'accepted') {
       cy.get('.govuk-inset-text')
-        .contains(
-          'Applications expire 12 months after being assessed as suitable. You cannot submit any new requests for placement.',
-        )
-        .should('exist')
-      cy.get('.govuk-inset-text')
-        .contains('You’ll need to submit a new application for this person to be assessed.')
-        .should('exist')
-    } else {
-      cy.get('.govuk-inset-text')
-        .contains(
-          'Applications expire 12 months after being assessed as ‘suitable’. You’ll then need to submit a new application for this person to be assessed.',
-        )
-        .should('exist')
-      cy.get('.govuk-inset-text').contains('Booked placements are unaffected.').should('exist')
+        .contains(expiryDateText)
+        .should(accepted ? 'exist' : 'not.exist')
     }
-
-    cy.get(`a[data-cy-assessmentId="${this.application.assessmentId}"]`).should('exist')
   }
 
   shouldShowPersonInformation() {
     this.shouldShowPersonDetails(this.application.person as FullPerson, this.application.personStatusOnSubmission)
   }
 
-  shouldShowResponses() {
+  shouldShowApplication() {
+    this.clickTab('Application')
     this.shouldShowResponseFromSubmittedApplication(this.application)
-  }
-
-  shouldShowResponsesForUnsubmittedWithdrawnApplication() {
-    this.shouldShowCheckYourAnswersResponses(this.application)
   }
 
   clickTimelineTab() {
     cy.get('.moj-sub-navigation a').contains('Timeline').click()
-  }
-
-  clickRequestAPlacementTab() {
-    cy.get('a').contains('Request for placement').click()
   }
 
   clickWithdraw(placementRequestId: string) {
@@ -130,25 +129,16 @@ export default class ShowPage extends Page {
     user?: { id: string },
   ) {
     mapRequestsForPlacementToSummaryCards(requestsForPlacement, application, fromPartial(user)).forEach(
-      (requestForPlacementSummaryCard, i) => {
+      requestForPlacementSummaryCard => {
         cy.get(
           `[data-cy-placement-application-id="${requestForPlacementSummaryCard.card.attributes['data-cy-placement-application-id']}"]`,
         )
           .should('contain', requestForPlacementSummaryCard.card.title.text)
           .within(() => {
-            cy.get('.govuk-summary-list__row').should(
-              'have.length',
-              // all of the top level rows + 2 rows for each placement date
-              requestForPlacementSummaryCard.rows.length + requestsForPlacement[i].placementDates.length * 2,
-            )
             this.shouldContainSummaryListItems(requestForPlacementSummaryCard.rows)
           })
       },
     )
-  }
-
-  showsWithdrawalConfirmationMessage() {
-    this.shouldShowBanner('Request for placement for ', { exact: false })
   }
 
   showsNoteAddedConfirmationMessage() {
@@ -157,5 +147,9 @@ export default class ShowPage extends Page {
 
   shouldShowStatusTag(status: ApprovedPremisesApplicationStatus) {
     cy.get(`.govuk-tag[data-cy-status="${status}"]`).should('exist')
+  }
+
+  shouldContainPlacementRequestTab() {
+    cy.get('a').contains('Placement requests')
   }
 }

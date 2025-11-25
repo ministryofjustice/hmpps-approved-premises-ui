@@ -19,6 +19,7 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'ap_area_manager',
   'user_manager',
   'change_request_dev',
+  'manage_resident',
   'janitor',
 ]
 
@@ -92,6 +93,10 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   },
   change_request_dev: {
     label: 'Change request development',
+    hint: 'For digital team use only',
+  },
+  manage_resident: {
+    label: 'Manage AP residents development',
     hint: 'For digital team use only',
   },
   janitor: {

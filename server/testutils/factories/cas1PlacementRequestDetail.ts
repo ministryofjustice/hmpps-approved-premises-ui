@@ -16,7 +16,7 @@ import type {
 
 import { faker } from '@faker-js/faker/locale/en_GB'
 import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
-import placementRequestBookingSummaryFactory from './placementRequestBookingSummary'
+import cas1RequestedPlacementPeriodFactory from './cas1RequestedPlacementPeriod'
 import { DateFormats } from '../../utils/dateUtils'
 import userFactory from './user'
 import postcodeAreas from '../../etc/postcodeAreas.json'
@@ -33,9 +33,7 @@ import {
 
 class Cas1PlacementRequestDetailFactory extends Factory<Cas1PlacementRequestDetail> {
   matched() {
-    return this.params({
-      status: 'matched',
-    })
+    return this.withSpaceBooking()
   }
 
   notMatched() {
@@ -52,9 +50,8 @@ class Cas1PlacementRequestDetailFactory extends Factory<Cas1PlacementRequestDeta
 
   withSpaceBooking(booking?: Cas1SpaceBookingSummary, changeRequest?: Cas1ChangeRequestSummary) {
     const spaceBooking = booking || cas1SpaceBookingSummaryFactory.build()
-    const bookingSummary = placementRequestBookingSummaryFactory.fromSpaceBooking(spaceBooking).build()
     return this.params({
-      booking: bookingSummary,
+      status: 'matched',
       legacyBooking: undefined,
       spaceBookings: [spaceBooking],
       openChangeRequests: changeRequest ? [changeRequest] : [],
@@ -68,12 +65,10 @@ export default Cas1PlacementRequestDetailFactory.define(({ params }) => {
   const assessmentDate = faker.date.past()
   const applicationDate = faker.date.recent({ refDate: assessmentDate })
   const spaceBooking = cas1SpaceBookingSummaryFactory.upcoming().build()
-  const bookingSummary = placementRequestBookingSummaryFactory.fromSpaceBooking(spaceBooking).build()
 
   const skipBooking = (['notMatched', 'unableToMatch'] as Array<PlacementRequestStatus>).includes(params.status)
 
   const essentialCriteria = faker.helpers.arrayElements(placementCriteria)
-  const desirableCriteria = essentialCriteria.filter(criteria => !essentialCriteria.includes(criteria))
 
   return {
     application: {} as Cas1Application,
@@ -83,11 +78,8 @@ export default Cas1PlacementRequestDetailFactory.define(({ params }) => {
     assessmentDecision: 'accepted' as AssessmentDecision,
     assessmentId: faker.string.uuid(),
     assessor: userFactory.build(),
-    booking: skipBooking ? undefined : bookingSummary,
-    desirableCriteria,
-    duration: faker.number.int({ min: 7, max: 84 }),
+    desirableCriteria: [] as Array<PlacementCriteria>,
     essentialCriteria,
-    expectedArrival: skipBooking ? DateFormats.dateObjToIsoDate(faker.date.future()) : spaceBooking.expectedArrivalDate,
     id: faker.string.uuid(),
     isParole: false,
     isWithdrawn: false,
@@ -110,5 +102,9 @@ export default Cas1PlacementRequestDetailFactory.define(({ params }) => {
           ...problemInPlacementReasons,
         ]) as WithdrawPlacementRequestReason)
       : undefined,
+    authorisedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
+    requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
+    expectedArrival: '2025-5-3',
+    duration: 10,
   }
 })

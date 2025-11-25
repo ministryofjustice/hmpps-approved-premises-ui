@@ -12,6 +12,7 @@ import { displayName } from '../../../server/utils/personUtils'
 
 import { spaceSearchCriteriaApLevelLabels } from '../../../server/utils/match/spaceSearchLabels'
 import { canonicalDates } from '../../../server/utils/placements'
+import { filterRoomLevelCriteria } from '../../../server/utils/match/spaceSearch'
 
 export default class OccupancyDayViewPage extends Page {
   constructor(private pageTitle: string) {
@@ -47,7 +48,7 @@ export default class OccupancyDayViewPage extends Page {
       cy.get('@row').contains(displayName(person))
       cy.get('@row').contains(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }))
       cy.get('@row').contains(DateFormats.isoDateToUIDate(departureDate, { format: 'short' }))
-      characteristics.forEach(characteristic => {
+      filterRoomLevelCriteria(characteristics).forEach(characteristic => {
         if (spaceSearchCriteriaApLevelLabels[characteristic])
           cy.get('@row').contains(spaceSearchCriteriaApLevelLabels[characteristic])
       })
@@ -60,7 +61,7 @@ export default class OccupancyDayViewPage extends Page {
       cy.get('@row').contains(DateFormats.isoDateToUIDate(startDate, { format: 'short' }))
       cy.get('@row').contains(DateFormats.isoDateToUIDate(endDate, { format: 'short' }))
       cy.get('@row').contains(reason.name)
-      characteristics.forEach(characteristic => () => {
+      filterRoomLevelCriteria(characteristics).forEach(characteristic => () => {
         if (spaceSearchCriteriaApLevelLabels[characteristic])
           cy.get('@row').contains(spaceSearchCriteriaApLevelLabels[characteristic])
       })

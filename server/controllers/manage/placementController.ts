@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express'
-import { ApprovedPremisesApplication, ApprovedPremisesAssessment, Cas1TimelineEvent } from '@approved-premises/api'
+import { ApprovedPremisesApplication, Cas1Assessment, Cas1TimelineEvent } from '@approved-premises/api'
 import { SummaryListItem } from '@approved-premises/ui'
 import {
   ApplicationService,
@@ -11,11 +11,12 @@ import {
 } from '../../services'
 
 import { DateFormats } from '../../utils/dateUtils'
-import { PlacementTab, canonicalDates, placementTabItems } from '../../utils/placements'
+import { PlacementTab, canonicalDates, placementTabItems, placementKeyDetails } from '../../utils/placements'
 import { mapApplicationTimelineEventsForUi } from '../../utils/applications/utils'
 import paths from '../../paths/manage'
 import applicationPaths from '../../paths/apply'
 import peoplePaths from '../../paths/people'
+import adminPaths from '../../paths/admin'
 import { matchingInformationSummaryRows } from '../../utils/placementRequests/matchingInformationSummaryList'
 import { adminSummary } from '../../utils/placementRequests'
 
@@ -42,12 +43,13 @@ export default class PlacementController {
         paths.premises.occupancy.day.pattern,
         applicationPaths.applications.show.pattern,
         peoplePaths.timeline.show.pattern,
+        adminPaths.admin.placementRequests.show.pattern,
       ])
       const { arrivalDate, departureDate } = canonicalDates(placement)
       const pageHeading = `${DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(departureDate, { format: 'short' })}`
       let timelineEvents: Array<Cas1TimelineEvent> = []
       let application: ApprovedPremisesApplication = null
-      let assessment: ApprovedPremisesAssessment = null
+      let assessment: Cas1Assessment = null
       let placementRequestSummaryRows: Array<SummaryListItem> = null
 
       if (activeTab === 'timeline') {
@@ -64,6 +66,7 @@ export default class PlacementController {
           req.user.token,
           placement.placementRequestId,
         )
+
         placementRequestSummaryRows = [
           ...adminSummary(placementRequestDetail).rows,
           ...matchingInformationSummaryRows(placementRequestDetail),
@@ -71,6 +74,7 @@ export default class PlacementController {
       }
 
       return res.render(`manage/premises/placements/show`, {
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         pageHeading,
         user,

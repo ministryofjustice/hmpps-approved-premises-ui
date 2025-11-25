@@ -371,7 +371,7 @@ describe('ApplicationService', () => {
       expect(result).toEqual(paginatedResponse)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.all).toHaveBeenCalledWith(1, 'createdAt', 'asc', {})
+      expect(applicationClient.all).toHaveBeenCalledWith(1, 'createdAt', 'asc', {}, 10)
     })
 
     it('passes a page number and sort options', async () => {
@@ -383,10 +383,16 @@ describe('ApplicationService', () => {
       expect(result).toEqual(paginatedResponse)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.all).toHaveBeenCalledWith(2, 'arrivalDate', 'desc', {
-        crnOrName: 'foo',
-        status: 'assesmentInProgress',
-      })
+      expect(applicationClient.all).toHaveBeenCalledWith(
+        2,
+        'arrivalDate',
+        'desc',
+        {
+          crnOrName: 'foo',
+          status: 'assesmentInProgress',
+        },
+        10,
+      )
     })
   })
 
@@ -402,6 +408,19 @@ describe('ApplicationService', () => {
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.withdrawal).toHaveBeenCalledWith(id, body)
+    })
+  })
+
+  describe('expire', () => {
+    it('calls the expire client with the ID and token', async () => {
+      const id = 'some-uuid'
+      const body = {
+        reason: 'Some freetext reason',
+      }
+      await service.expire(token, id, body)
+
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.expire).toHaveBeenCalledWith(id, body)
     })
   })
 

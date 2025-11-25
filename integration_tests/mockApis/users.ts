@@ -3,6 +3,7 @@ import {
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
   UserSummary,
+  ApprovedPremisesUserPermission as UserPermission,
 } from '@approved-premises/api'
 import QueryString from 'qs'
 import { getMatchingRequests, stubFor } from './setup'
@@ -44,6 +45,56 @@ const stubUserList = (args: { users: Array<User>; roles: Array<UserRole> }) => {
   })
 }
 
+const stubUsersSummaries = (args: {
+  users: Array<UserSummary>
+  nameOrEmail?: string
+  roles?: Array<UserRole>
+  permission?: UserPermission
+  page?: string
+}) => {
+  const queryParameters: Record<string, unknown> = {
+    page: {
+      equalTo: args.page || '1',
+    },
+  }
+
+  if (args.nameOrEmail) {
+    queryParameters.nameOrEmail = {
+      equalTo: args.nameOrEmail,
+    }
+  }
+
+  if (args.roles) {
+    queryParameters.roles = {
+      equalTo: args.roles.join(','),
+    }
+  }
+
+  if (args.permission) {
+    queryParameters.permission = {
+      equalTo: args.permission,
+    }
+  }
+
+  return stubFor({
+    request: {
+      method: 'GET',
+      urlPathPattern: paths.users.summary.pattern,
+      queryParameters,
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+        'X-Pagination-TotalPages': '10',
+        'X-Pagination-TotalResults': '100',
+        'X-Pagination-PageSize': '10',
+      },
+      jsonBody: args.users,
+    },
+  })
+}
+
 const stubUserSummaryList = (args: { users: Array<UserSummary>; roles: Array<UserRole> }) => {
   return stubFor({
     request: {
@@ -65,6 +116,7 @@ const stubUserSummaryList = (args: { users: Array<UserSummary>; roles: Array<Use
 
 const stubUsers = (args: {
   users: Array<User>
+  nameOrEmail?: string
   roles?: Array<UserRole>
   qualifications?: Array<UserQualification>
   apAreaId: string
@@ -83,6 +135,12 @@ const stubUsers = (args: {
       equalTo: args.sortDirection || 'asc',
     },
   } as Record<string, unknown>
+
+  if (args.nameOrEmail) {
+    queryParameters.nameOrEmail = {
+      equalTo: args.nameOrEmail,
+    }
+  }
 
   if (args.roles) {
     queryParameters.roles = {
@@ -233,6 +291,7 @@ export default {
   stubFindUser,
   stubUsers,
   stubUserList,
+  stubUsersSummaries,
   stubUserSummaryList,
   stubUserUpdate,
   stubUserSearch,

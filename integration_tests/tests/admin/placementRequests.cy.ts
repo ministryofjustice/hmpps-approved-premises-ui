@@ -1,11 +1,11 @@
 import { formatDate } from 'date-fns/format'
+import { ApprovedPremisesApplication as Application, FullPerson } from '@approved-premises/api'
 import ListPage from '../../pages/admin/placementApplications/listPage'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
 import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
 
 import {
   applicationFactory,
-  cas1ApplicationSummaryFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
   cruManagementAreaFactory,
@@ -14,18 +14,17 @@ import {
   premisesFactory,
   withdrawableFactory,
   cas1PlacementRequestSummaryFactory,
+  cas1SpaceBookingSummaryFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import { CancellationCreatePage, UnableToMatchPage } from '../../pages/manage'
 import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
-import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
 import { signIn } from '../signIn'
 import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
 import paths from '../../../server/paths/api'
-import BookingCancellationConfirmPage from '../../pages/manage/bookingCancellationConfirmation'
-import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeUtils'
 import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
+import PlacementRequestPage from '../../pages/match/placementRequestPage'
 
 context('Placement Requests', () => {
   const stubArtifacts = (applicationData: Record<string, unknown> = {}) => {
@@ -35,8 +34,12 @@ context('Placement Requests', () => {
       cas1PlacementRequestSummaryFactory.notMatched().build({ applicationId: application.id }),
       cas1PlacementRequestSummaryFactory.notMatched().build({ isParole: true }),
     ]
-    const matchedPlacementRequests = cas1PlacementRequestSummaryFactory.matched().buildList(3)
-    const unableToMatchPlacementRequests = cas1PlacementRequestSummaryFactory.unableToMatch().buildList(2)
+    const matchedPlacementRequests = cas1PlacementRequestSummaryFactory
+      .matched()
+      .buildList(3, { applicationId: application.id })
+    const unableToMatchPlacementRequests = cas1PlacementRequestSummaryFactory
+      .unableToMatch()
+      .buildList(2, { applicationId: application.id })
 
     const unmatchedPlacementRequest = cas1PlacementRequestDetailFactory
       .params(unmatchedPlacementRequests[0])
@@ -45,20 +48,22 @@ context('Placement Requests', () => {
 
     const parolePlacementRequest = cas1PlacementRequestDetailFactory
       .params(unmatchedPlacementRequests[1])
-      .withSpaceBooking()
+      .withSpaceBooking(cas1SpaceBookingSummaryFactory.upcoming().build())
       .build()
 
     const matchedPlacementRequest = cas1PlacementRequestDetailFactory
       .params({
         id: matchedPlacementRequests[1].id,
+        applicationId: application.id,
         status: 'matched',
       })
-      .matched()
+      .withSpaceBooking(cas1SpaceBookingSummaryFactory.upcoming().build())
       .build()
+
     const spaceBooking = cas1SpaceBookingFactory.build({
+      ...matchedPlacementRequest.spaceBookings[0],
       applicationId: application.id,
-      premises: { id: matchedPlacementRequest.booking.premisesId },
-      id: matchedPlacementRequest.booking.id,
+      placementRequestId: matchedPlacementRequest.id,
     })
 
     const unableToMatchPlacementRequest = cas1PlacementRequestDetailFactory
@@ -77,9 +82,13 @@ context('Placement Requests', () => {
     }) as Application
 
     unmatchedPlacementRequest.application = application
-
+    unmatchedPlacementRequest.applicationId = application.id
+    cy.task('stubApplicationGet', { application })
     cy.task('stubPlacementRequestsDashboard', { placementRequests: unmatchedPlacementRequests, status: 'notMatched' })
-    cy.task('stubPlacementRequestsDashboard', { placementRequests: matchedPlacementRequests, status: 'matched' })
+    cy.task('stubPlacementRequestsDashboard', {
+      placementRequests: matchedPlacementRequests,
+      status: 'matched',
+    })
     cy.task('stubPlacementRequestsDashboard', {
       placementRequests: unableToMatchPlacementRequests,
       status: 'unableToMatch',
@@ -95,6 +104,7 @@ context('Placement Requests', () => {
     const cas1SpaceBookingPremises = cas1PremisesBasicSummaryFactory.buildList(2, { supportsSpaceBookings: true })
     cy.task('stubCas1AllPremises', { premises: [...cas1premises, ...cas1SpaceBookingPremises] })
     cy.task('stubBookingFromPlacementRequest', unmatchedPlacementRequest)
+    cy.task('stubSpaceBookingGetWithoutPremises', spaceBooking)
 
     return {
       application,
@@ -137,20 +147,20 @@ context('Placement Requests', () => {
       THEN('I should see a list of unmatched placement requests')
       listPage.shouldShowPlacementRequests(unmatchedPlacementRequests, 'notMatched')
 
-      WHEN('I click the Unable to match tab')
-      listPage.clickTab('Unable to match')
+      WHEN('I click the Unable to book tab')
+      listPage.clickTab('Unable to book')
 
-      THEN('I should see a list of unable to match placement requests')
+      THEN('I should see a list of  unable to book placement requests')
       listPage.shouldShowPlacementRequests(unableToMatchPlacementRequests, 'unableToMatch')
 
-      WHEN('I click the Matched tab')
-      listPage.clickTab('Matched')
+      WHEN('I click the Booked tab')
+      listPage.clickTab('Booked')
 
       THEN('I should see a list of matched placement requests')
       listPage.shouldShowPlacementRequests(matchedPlacementRequests, 'matched')
 
-      WHEN('I click the Ready to match tab')
-      listPage.clickTab('Ready to match')
+      WHEN('I click the Ready to book tab')
+      listPage.clickTab('Ready to book')
 
       AND('I choose a placement request')
       listPage.clickPlacementRequest(unmatchedPlacementRequest)
@@ -159,7 +169,10 @@ context('Placement Requests', () => {
       let showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
 
       AND('I should see the Key-person details in the blue banner')
-      showPage.shouldShowKeyPersonDetails(unmatchedPlacementRequest)
+      showPage.shouldShowKeyPersonDetails(
+        unmatchedPlacementRequest.person as FullPerson,
+        unmatchedPlacementRequest.risks?.tier?.value?.level,
+      )
 
       AND('I should see the information about the placement request')
       showPage.shouldShowSummary()
@@ -168,13 +181,13 @@ context('Placement Requests', () => {
       showPage.shouldNotShowBookingInformation()
 
       AND('I should see available actions')
-      showPage.shouldHaveActions(['Search for a space', 'Withdraw request for placement', 'Mark as unable to match'])
+      showPage.shouldHaveActions(['Search for a space', 'Withdraw request for placement', 'Mark as unable to book'])
 
       WHEN('I go back to the dashboard')
       showPage.clickBack()
 
-      AND('I click the Matched tab')
-      listPage.clickTab('Matched')
+      AND('I click the Booked tab')
+      listPage.clickTab('Booked')
 
       AND('I click a placement request with a placement')
       listPage.clickPlacementRequest(matchedPlacementRequest)
@@ -186,13 +199,16 @@ context('Placement Requests', () => {
       showPage.shouldShowSummary()
 
       AND('I should see available actions')
-      showPage.shouldHaveActions(['Change placement', 'Withdraw placement'])
+      showPage.shouldHaveActions(['Change placement', 'Withdraw placement', 'Book placement transfer'])
 
       AND('I should see the booking information')
-      showPage.shouldShowBookingInformation()
+      showPage.shouldShowBookingInformation(matchedPlacementRequest.spaceBookings)
 
       WHEN('I go back to the dashboard')
       showPage.clickBack()
+
+      AND('I click the Ready to book tab')
+      showPage.clickTab('Ready to book')
 
       AND('I click the parole placement request')
       listPage.clickPlacementRequest(parolePlacementRequest)
@@ -207,11 +223,12 @@ context('Placement Requests', () => {
     it('allows me to cancel a placement', () => {
       const { matchedPlacementRequest, spaceBooking } = stubArtifacts()
       const cancellation = newCancellationFactory.build()
-      const withdrawable = withdrawableFactory.build({ id: matchedPlacementRequest.booking.id, type: 'space_booking' })
+      const booking = matchedPlacementRequest.spaceBookings[0]
+      const withdrawable = withdrawableFactory.build({ id: booking.id, type: 'space_booking' })
       cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
       cy.task('stubCancellationCreate', {
-        premisesId: matchedPlacementRequest.booking.premisesId,
-        placementId: matchedPlacementRequest.booking.id,
+        premisesId: booking.premises.id,
+        placementId: booking.id,
         cancellation,
       })
       cy.task('stubCancellationReferenceData')
@@ -221,13 +238,12 @@ context('Placement Requests', () => {
         applicationId: matchedPlacementRequest.applicationId,
         withdrawables,
       })
-      cy.task('stubSpaceBookingGetWithoutPremises', spaceBooking)
 
       WHEN('I visit the tasks dashboard')
       const listPage = ListPage.visit()
 
-      AND('I click the Matched tab')
-      listPage.clickTab('Matched')
+      AND('I click the Booked tab')
+      listPage.clickTab('Booked')
 
       AND('I choose a placement request')
       listPage.clickPlacementRequest(matchedPlacementRequest)
@@ -242,7 +258,7 @@ context('Placement Requests', () => {
       withdrawableTypePage.selectType('placement')
       withdrawableTypePage.clickSubmit()
 
-      const withdrawablePage = new NewWithdrawalPage('Select your placement')
+      const withdrawablePage = new NewWithdrawalPage('Select placement to withdraw')
       withdrawablePage.shouldShowWithdrawableGuidance('placement')
       withdrawablePage.selectWithdrawable(withdrawable.id)
       withdrawablePage.clickSubmit()
@@ -254,15 +270,16 @@ context('Placement Requests', () => {
       cancellationPage.completeForm(cancellation)
 
       THEN('I should see a confirmation message')
-      const confirmationPage = new BookingCancellationConfirmPage()
-      confirmationPage.shouldShowPanel()
+      const placementRequestPage = new PlacementRequestPage()
+
+      placementRequestPage.shouldShowWithdrawalBanner(spaceBooking)
 
       AND('a cancellation should have been created in the API')
       cy.task(
         'verifyApiPost',
         paths.premises.placements.cancel({
-          premisesId: matchedPlacementRequest.booking.premisesId,
-          placementId: matchedPlacementRequest.booking.id,
+          premisesId: matchedPlacementRequest.spaceBookings[0].premises.id,
+          placementId: matchedPlacementRequest.spaceBookings[0].id,
         }),
       ).then(({ reasonId }) => {
         expect(reasonId).equal(cancellation.reason)
@@ -310,7 +327,7 @@ context('Placement Requests', () => {
       })
     })
 
-    it('allows me to mark a placement request as unable to match', () => {
+    it('allows me to mark a placement request as  unable to book', () => {
       const { unmatchedPlacementRequest } = stubArtifacts()
       cy.task('stubPlacementRequestUnableToMatch', unmatchedPlacementRequest)
 
@@ -323,19 +340,19 @@ context('Placement Requests', () => {
       THEN('I should be taken to the placement request page')
       const showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
 
-      WHEN('I click on the unable to match button')
+      WHEN('I click on the  unable to book button')
       showPage.clickUnableToMatch()
 
-      THEN('I should be on the unable to match confirmation page')
+      THEN('I should be on the  unable to book confirmation page')
       const unableToMatchConfirmationPage = Page.verifyOnPage(UnableToMatchPage)
 
-      WHEN('I confirm I am unable to match the placement')
+      WHEN('I confirm I am  unable to book the placement')
       unableToMatchConfirmationPage.clickSubmit()
 
       THEN('I should see a confirmation message')
-      showPage.shouldShowBanner('Placement request has been marked as unable to match')
+      showPage.shouldShowBanner('Placement request has been marked as  unable to book')
 
-      AND('the placement should have been marked unable to match in the API')
+      AND('the placement should have been marked  unable to book in the API')
       cy.task('verifyPlacementRequestedMarkedUnableToMatch', unmatchedPlacementRequest).then(requests => {
         expect(requests).to.have.length(1)
       })
@@ -359,7 +376,7 @@ context('Placement Requests', () => {
         const listPage = ListPage.visit()
 
         THEN('I should see a list of placement requests')
-        listPage.shouldShowPlacementRequests(unmatchedPlacementRequests)
+        listPage.shouldShowPlacementRequests(unmatchedPlacementRequests, 'notMatched')
 
         WHEN('I click next')
         listPage.clickNext()
@@ -382,7 +399,6 @@ context('Placement Requests', () => {
         'expected_arrival',
         'person_name',
         'person_risks_tier',
-        'expected_arrival',
         'application_date',
         'duration',
         'request_type',
@@ -408,12 +424,15 @@ context('Placement Requests', () => {
           const listPage = ListPage.visit()
 
           THEN('I should see a list of placement requests')
-          listPage.shouldShowPlacementRequests(unmatchedPlacementRequests)
+          listPage.shouldShowPlacementRequests(unmatchedPlacementRequests, 'notMatched')
 
-          WHEN('I sort by expected arrival in ascending order')
-          listPage.clickSortBy(field)
+          // The default sort is by expected_arrival, so there is no need to click to sort
+          if (field !== 'expected_arrival') {
+            WHEN(`I sort by ${field} in ascending order`)
+            listPage.clickSortBy(field)
+          }
 
-          THEN('the dashboard should be sorted by expected arrival')
+          THEN(`the dashboard should be sorted by ${field}`)
           listPage.shouldBeSortedByField(field, 'ascending')
 
           AND('the API should have received a request for the correct sort order')
@@ -425,10 +444,10 @@ context('Placement Requests', () => {
             expect(requests).to.have.length(1)
           })
 
-          WHEN('I sort by expected arrival in descending order')
+          WHEN(`I sort by ${field} in descending order`)
           listPage.clickSortBy(field)
 
-          THEN('the dashboard should be sorted by expected arrival in descending order')
+          THEN(`the dashboard should be sorted by ${field} in descending order`)
           listPage.shouldBeSortedByField(field, 'descending')
 
           AND('the API should have received a request for the correct sort order')
@@ -443,23 +462,7 @@ context('Placement Requests', () => {
       })
 
       it(`supports filtering`, () => {
-        const {
-          unmatchedPlacementRequests,
-          matchedPlacementRequests,
-          unableToMatchPlacementRequests,
-          cruManagementAreas,
-        } = stubArtifacts()
-        cy.task('stubPlacementRequestsDashboard', {
-          placementRequests: [
-            ...unmatchedPlacementRequests,
-            ...matchedPlacementRequests,
-            ...unableToMatchPlacementRequests,
-          ],
-          status: 'notMatched',
-          sortBy: 'created_at',
-          sortDirection: 'asc',
-        })
-        cy.task('stubPlacementRequestsDashboard', { placementRequests: matchedPlacementRequests, status: 'matched' })
+        const { matchedPlacementRequests, cruManagementAreas, matchedPlacementRequest } = stubArtifacts()
 
         GIVEN('I am on the placement request dashboard')
         const listPage = ListPage.visit()
@@ -480,10 +483,24 @@ context('Placement Requests', () => {
           expect(requestType.values).to.deep.equal(['parole'])
         })
 
-        WHEN('I click the Matched tab')
-        listPage.clickTab('Matched')
+        WHEN('I click the Booked tab')
+        listPage.clickTab('Booked')
 
         THEN('the page should retain the area and request type filter')
+        listPage.shouldHaveSelectText('cruManagementArea', cruManagementAreas[1].name)
+        listPage.shouldHaveSelectText('requestType', 'Parole')
+
+        WHEN('I click on a placement request')
+        listPage.clickPlacementRequest(matchedPlacementRequest)
+
+        THEN("I should see the placement request's details")
+        const placementRequestPage = Page.verifyOnPage(ShowPage, matchedPlacementRequest)
+
+        WHEN('I click the back link')
+        placementRequestPage.clickBack()
+
+        THEN('I should be taken back to the placement request dashboard with the correct status and filters applied')
+        listPage.shouldShowPlacementRequests(matchedPlacementRequests, 'matched')
         listPage.shouldHaveSelectText('cruManagementArea', cruManagementAreas[1].name)
         listPage.shouldHaveSelectText('requestType', 'Parole')
       })
@@ -515,115 +532,7 @@ context('Placement Requests', () => {
         listPage.clickApplyFilter()
 
         THEN('the status filter should be retained')
-        listPage.shouldHaveActiveTab('Unable to match')
-      })
-    })
-
-    describe('pending request for placement', () => {
-      it('should list applications that have no placement request', () => {
-        const { cruManagementAreas } = stubArtifacts()
-
-        const applications = cas1ApplicationSummaryFactory.buildList(2)
-
-        cy.task('stubAllApplications', { applications, page: '1', sortDirection: 'asc' })
-
-        GIVEN('I am on the placement request dashboard filtering by the pendingPlacement status')
-        const listPage = ListPage.visit('status=pendingPlacement')
-
-        THEN('I should see a list of applications with no placement requests')
-        listPage.shouldShowApplications(applications)
-
-        cy.task('verifyDashboardRequest', {
-          status: 'pendingPlacementRequest',
-          sortDirection: 'asc',
-        }).then(requests => {
-          expect(requests).to.have.length(1)
-        })
-
-        AND('the Request Type filter should not be visible')
-        listPage.shouldNotShowRequestTypeFilter()
-
-        WHEN('I filter by AP area')
-        const areaApplications = cas1ApplicationSummaryFactory.buildList(2)
-        cy.task('stubAllApplications', {
-          applications: areaApplications,
-          page: '1',
-          sortDirection: 'asc',
-          searchOptions: { cruManagementAreaId: cruManagementAreas[3].id, releaseType: 'rotl' },
-        })
-        listPage.getSelectInputByIdAndSelectAnEntry('cruManagementArea', cruManagementAreas[3].name)
-        listPage.getSelectInputByIdAndSelectAnEntry('releaseType', allReleaseTypes.rotl)
-        listPage.clickApplyFilter()
-
-        THEN('I should see a list of applications with no placement requests for that area')
-        listPage.shouldShowApplications(areaApplications)
-
-        cy.task('verifyDashboardRequest', {
-          status: 'pendingPlacementRequest',
-          sortDirection: 'asc',
-          searchOptions: { cruManagementAreaId: cruManagementAreas[3].id, releaseType: 'rotl' },
-        }).then(requests => {
-          expect(requests).to.have.length(1)
-        })
-      })
-
-      const sortFields = ['tier', 'releaseType'] as const
-
-      sortFields.forEach(field => {
-        it(`supports pending placement requests sorting by ${field}`, () => {
-          stubArtifacts()
-          const applications = cas1ApplicationSummaryFactory.buildList(2)
-          cy.task('stubAllApplications', { applications, page: '1', sortDirection: 'asc' })
-          cy.task('stubAllApplications', {
-            applications,
-            sortBy: field,
-            sortDirection: 'asc',
-            searchOptions: { status: 'pendingPlacementRequest' },
-          })
-
-          cy.task('stubAllApplications', {
-            applications,
-            sortBy: field,
-            sortDirection: 'desc',
-            searchOptions: { status: 'pendingPlacementRequest' },
-          })
-
-          GIVEN('I am on the placement request dashboard filtering by the pendingPlacement status')
-          const listPage = ListPage.visit('status=pendingPlacement')
-
-          THEN('I should see a list of applications with no placement requests')
-          listPage.shouldShowApplications(applications)
-
-          WHEN('I sort by expected arrival in ascending order')
-          listPage.clickSortBy(field)
-
-          THEN('the dashboard should be sorted by field')
-          listPage.shouldBeSortedByField(field, 'ascending')
-
-          AND('the API should have received a request for the correct sort order')
-          cy.task('verifyDashboardRequest', {
-            status: 'pendingPlacementRequest',
-            sortBy: field,
-            sortDirection: 'asc',
-          }).then(requests => {
-            expect(requests).to.have.length(1)
-          })
-
-          WHEN('I sort by  descending order')
-          listPage.clickSortBy(field)
-
-          THEN('the dashboard should be sorted in descending order')
-          listPage.shouldBeSortedByField(field, 'descending')
-
-          AND('the API should have received a request for the correct sort order')
-          cy.task('verifyDashboardRequest', {
-            status: 'pendingPlacementRequest',
-            sortBy: field,
-            sortDirection: 'desc',
-          }).then(requests => {
-            expect(requests).to.have.length(1)
-          })
-        })
+        listPage.shouldHaveActiveTab('Unable to book')
       })
     })
 

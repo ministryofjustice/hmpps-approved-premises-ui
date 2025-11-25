@@ -1,4 +1,4 @@
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 import { applicationFactory } from '../../../../testutils/factories'
 
 import IsExceptionalCase from './isExceptionalCase'
@@ -14,7 +14,7 @@ describe('IsExceptionalCase', () => {
     })
   })
 
-  itShouldHavePreviousValue(new IsExceptionalCase({}, application), '')
+  itShouldHavePreviousValue(new IsExceptionalCase({}, application), 'dashboard')
 
   describe('when isExceptionalCase is yes', () => {
     itShouldHaveNextValue(new IsExceptionalCase({ isExceptionalCase: 'yes' }, application), 'exception-details')

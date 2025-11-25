@@ -22,6 +22,7 @@ test('Apply, assess, match and book an emergency application for an Approved Pre
   })
 
   await matchAndBookApplication({
+    person,
     applicationId: id,
     page,
     datesOfPlacement,

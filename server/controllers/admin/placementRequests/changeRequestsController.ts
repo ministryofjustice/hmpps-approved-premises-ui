@@ -8,6 +8,7 @@ import {
   Cas1SpaceBooking,
   NamedId,
 } from '@approved-premises/api'
+import { RadioItem } from '@approved-premises/ui'
 import { ValidationError } from '../../../utils/errors'
 import { PlacementRequestService, PlacementService } from '../../../services'
 import paths from '../../../paths/admin'
@@ -16,6 +17,7 @@ import { placementSummaryList } from '../../../utils/placementRequests/placement
 import { changeRequestSummaryList } from '../../../utils/placementRequests/changeRequestSummaryList'
 import { DateFormats } from '../../../utils/dateUtils'
 import { getChangeRequestReasonId, mapChangeRequestReasonsToRadios } from '../../../utils/placements/changeRequests'
+import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 
 type AppealDecision = 'progress' | 'rejectNoLongerRequired' | 'rejectManagerDecision'
 export default class ChangeRequestsController {
@@ -26,7 +28,7 @@ export default class ChangeRequestsController {
 
   review(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const { id: placementRequestId, changeRequestId } = req.params
+      const { placementRequestId, changeRequestId } = req.params
       const errorsAndUserInput = fetchErrorsAndUserInput(req)
 
       const [changeRequest, placementRequest, rejectionReasons]: [
@@ -42,20 +44,23 @@ export default class ChangeRequestsController {
         this.placementRequestService.getChangeRequestRejectionReasons(req.user.token, 'placementAppeal'),
       ])
 
+      const placementSummary = placementRequest.spaceBookings.find(
+        placement => placement.id === changeRequest.spaceBookingId,
+      )
       const changeRequestSummary = changeRequestSummaryList(changeRequest)
       const rejectionOptions = mapChangeRequestReasonsToRadios(rejectionReasons, '', {})
 
-      const decisionOptions: Array<{ value: string; text: string } | { divider: 'or' }> = [
+      const decisionOptions: Array<RadioItem> = [
         ...rejectionOptions,
         { divider: 'or' },
         { text: 'Progress appeal', value: 'progress' },
       ]
 
       res.render('admin/placementRequests/changeRequests/review', {
-        placementRequest,
+        contextKeyDetails: placementRequestKeyDetails(placementRequest),
         pageHeading: 'Review appeal',
-        backLink: paths.admin.placementRequests.show({ id: placementRequestId }),
-        bookingSummary: placementRequest.booking && placementSummaryList(placementRequest),
+        backLink: paths.admin.placementRequests.show({ placementRequestId }),
+        bookingSummary: placementSummary && placementSummaryList(placementSummary),
         changeRequestSummary,
         ...errorsAndUserInput,
         decisionOptions,
@@ -65,7 +70,7 @@ export default class ChangeRequestsController {
 
   decide(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const { id: placementRequestId, changeRequestId } = req.params
+      const { placementRequestId, changeRequestId } = req.params
       const {
         body: { decision, notes },
       } = req as { body: { decision: AppealDecision; notes: string } }
@@ -101,7 +106,7 @@ export default class ChangeRequestsController {
 
           req.flash('success', {
             heading: 'Appeal actioned',
-            body: `<p>The appealed placement has been cancelled. You will need to re-book via the 'Ready to match' list.</p>`,
+            body: `<p>The appealed placement has been cancelled. You will need to re-book via the 'Ready to book' list.</p>`,
           })
         } else {
           const rejectionReasons = await this.placementRequestService.getChangeRequestRejectionReasons(
@@ -123,13 +128,13 @@ export default class ChangeRequestsController {
             body: `<p>The placement remains in place. An email will be sent to the AP manager that made the appeal.</p>`,
           })
         }
-        return res.redirect(paths.admin.placementRequests.show({ id: placementRequestId }))
+        return res.redirect(paths.admin.placementRequests.show({ placementRequestId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
           res,
           error as Error,
-          paths.admin.placementRequests.changeRequests.review({ id: placementRequestId, changeRequestId }),
+          paths.admin.placementRequests.changeRequests.review({ placementRequestId, changeRequestId }),
         )
       }
     }

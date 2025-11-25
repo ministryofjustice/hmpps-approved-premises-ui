@@ -2,12 +2,12 @@ import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type {
-  ProfileResponse,
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
   UserSummary,
   UserWithWorkload,
+  Cas1ProfileResponse,
 } from '@approved-premises/api'
 import { apAreaFactory } from './referenceData'
 import { cruManagementAreaFactory } from './cas1ReferenceData'
@@ -34,6 +34,7 @@ const userFactory = Factory.define<User>(() => ({
 export const userSummaryFactory = Factory.define<UserSummary>(() => ({
   name: faker.person.fullName(),
   id: faker.string.uuid(),
+  emailAddress: faker.internet.email(),
 }))
 
 export const userWithWorkloadFactory = Factory.define<UserWithWorkload>(({ params }) => ({
@@ -43,7 +44,7 @@ export const userWithWorkloadFactory = Factory.define<UserWithWorkload>(({ param
   numTasksCompleted30Days: faker.number.int({ min: 0, max: 45 }),
 }))
 
-export const userProfileFactory = Factory.define<ProfileResponse>(() => ({
+export const userProfileFactory = Factory.define<Cas1ProfileResponse>(() => ({
   deliusUsername: faker.internet.userName(),
   user: userFactory.build(),
 }))

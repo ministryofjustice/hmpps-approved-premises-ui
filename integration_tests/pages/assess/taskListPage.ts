@@ -1,16 +1,16 @@
-import { ApprovedPremisesAssessment } from '@approved-premises/api'
+import { Cas1Assessment } from '@approved-premises/api'
 import TaskList from '../taskListPage'
 import paths from '../../../server/paths/assess'
 
 export default class TaskListPage extends TaskList {
-  constructor(assessment: ApprovedPremisesAssessment) {
+  constructor(assessment: Cas1Assessment) {
     super('Assess an Approved Premises (AP) application')
     if (!assessment.createdFromAppeal) {
       this.shouldNotShowAppealBanner()
     }
   }
 
-  static visit(assessment: ApprovedPremisesAssessment) {
+  static visit(assessment: Cas1Assessment) {
     cy.visit(paths.assessments.show({ id: assessment.id }))
     return new TaskListPage(assessment)
   }

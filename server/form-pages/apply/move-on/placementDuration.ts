@@ -1,13 +1,14 @@
 import { addDays, weeksToDays } from 'date-fns'
 import type { PageResponse, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { ApprovedPremisesApplication } from '@approved-premises/api'
-import { DateFormats } from '../../../utils/dateUtils'
+import { DateFormats, weeksAndDaysToDays } from '../../../utils/dateUtils'
 import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 import { sentenceCase } from '../../../utils/utils'
 import { getDefaultPlacementDurationInDays } from '../../../utils/applications/getDefaultPlacementDurationInDays'
 import { arrivalDateFromApplication } from '../../../utils/applications/arrivalDateFromApplication'
+import { validWeeksAndDaysDuration } from '../../../utils/formUtils'
 
 type PlacementDurationBody = {
   differentDuration: YesOrNo
@@ -57,7 +58,7 @@ export default class PlacementDuration implements TasklistPage {
 
     if (this.body.differentDuration === 'yes') {
       response[this.questions.duration] = sentenceCase(
-        `${DateFormats.formatDuration({ weeks: this.body.durationWeeks, days: this.body.durationDays })}`,
+        `${DateFormats.formatDuration(weeksAndDaysToDays(this.body.durationWeeks, this.body.durationDays))}`,
       )
       response[this.questions.reason] = this.body.reason
     }
@@ -73,11 +74,7 @@ export default class PlacementDuration implements TasklistPage {
     }
 
     if (this.body.differentDuration === 'yes') {
-      if (!this.body.durationDays) {
-        errors.duration = 'You must specify the duration of the placement'
-      }
-
-      if (!this.body.durationWeeks) {
+      if (!validWeeksAndDaysDuration(this.body.durationWeeks, this.body.durationDays)) {
         errors.duration = 'You must specify the duration of the placement'
       }
 

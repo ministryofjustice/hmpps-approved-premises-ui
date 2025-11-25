@@ -1,11 +1,12 @@
-import { Cas1PlacementRequestDetail } from '../../@types/shared'
-import { IdentityBar, IdentityBarMenuItem, UserDetails } from '../../@types/ui'
+import { Cas1PlacementRequestDetail } from '@approved-premises/api'
+import { IdentityBar, IdentityBarMenuItem, UserDetails } from '@approved-premises/ui'
 
+import adminPaths from '../../paths/admin'
 import managePaths from '../../paths/manage'
 import matchPaths from '../../paths/match'
 import applyPaths from '../../paths/apply'
 import { hasPermission } from '../users'
-import { overallStatus } from '../placements'
+import { overallStatus } from '../placements/status'
 
 export const adminIdentityBar = (placementRequest: Cas1PlacementRequestDetail, user: UserDetails): IdentityBar => {
   const identityBar: IdentityBar = {
@@ -20,20 +21,44 @@ export const adminIdentityBar = (placementRequest: Cas1PlacementRequestDetail, u
   return identityBar
 }
 
+export const changePlacementLink = (placementRequest: Cas1PlacementRequestDetail) => {
+  const changeablePlacements = placementRequest.spaceBookings.filter(placement =>
+    ['upcoming', 'arrived'].includes(overallStatus(placement)),
+  )
+
+  if (changeablePlacements.length > 1) {
+    return adminPaths.admin.placementRequests.selectPlacement({ placementRequestId: placementRequest.id })
+  }
+
+  if (changeablePlacements.length === 1) {
+    return managePaths.premises.placements.changes.new({
+      premisesId: changeablePlacements[0].premises.id,
+      placementId: changeablePlacements[0].id,
+    })
+  }
+
+  return undefined
+}
+
 export const adminActions = (
   placementRequest: Cas1PlacementRequestDetail,
   user: UserDetails,
 ): Array<IdentityBarMenuItem> => {
-  if (placementRequest.status === 'matched' && placementRequest.booking) {
+  if (placementRequest.status === 'matched' && placementRequest.spaceBookings.length > 0) {
     const matchedActions = []
+    const changeLink = changePlacementLink(placementRequest)
 
-    if (['upcoming', 'arrived'].includes(overallStatus(placementRequest.spaceBookings[0]))) {
+    if (changeLink) {
       matchedActions.push({
-        href: managePaths.premises.placements.changes.new({
-          premisesId: placementRequest.booking.premisesId,
-          placementId: placementRequest.booking.id,
-        }),
+        href: changeLink,
         text: 'Change placement',
+      })
+    }
+
+    if (hasPermission(user, ['cas1_space_booking_create_additional'])) {
+      matchedActions.push({
+        href: matchPaths.v2Match.placementRequests.newPlacement.new({ placementRequestId: placementRequest.id }),
+        text: 'Book placement transfer',
       })
     }
 
@@ -53,14 +78,14 @@ export const adminActions = (
       text: 'Withdraw request for placement',
     },
     {
-      href: matchPaths.placementRequests.bookingNotMade.confirm({ id: placementRequest.id }),
-      text: 'Mark as unable to match',
+      href: matchPaths.placementRequests.bookingNotMade.confirm({ placementRequestId: placementRequest.id }),
+      text: 'Mark as unable to book',
     },
   ]
 
   if (hasPermission(user, ['cas1_space_booking_create'])) {
     actions.unshift({
-      href: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+      href: matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequest.id }),
       text: 'Search for a space',
     })
   }

@@ -7,6 +7,7 @@ import type { ApType } from './ApType';
 import type { AssessmentDecision } from './AssessmentDecision';
 import type { Cas1Application } from './Cas1Application';
 import type { Cas1ChangeRequestSummary } from './Cas1ChangeRequestSummary';
+import type { Cas1RequestedPlacementPeriod } from './Cas1RequestedPlacementPeriod';
 import type { Cas1SpaceBookingSummary } from './Cas1SpaceBookingSummary';
 import type { FullPerson } from './FullPerson';
 import type { PersonRisks } from './PersonRisks';
@@ -26,10 +27,18 @@ export type Cas1PlacementRequestDetail = {
     assessmentDecision: AssessmentDecision;
     assessmentId: string;
     assessor: ApprovedPremisesUser;
+    authorisedPlacementPeriod: Cas1RequestedPlacementPeriod;
     booking?: PlacementRequestBookingSummary;
-    desirableCriteria: Array<PlacementCriteria>;
+    /**
+     * Use Cas1RequestedPlacementPeriod instead
+     * @deprecated
+     */
     duration: number;
     essentialCriteria: Array<PlacementCriteria>;
+    /**
+     * Use Cas1RequestedPlacementPeriod instead
+     * @deprecated
+     */
     expectedArrival: string;
     id: string;
     isParole: boolean;
@@ -48,10 +57,8 @@ export type Cas1PlacementRequestDetail = {
     radius: number;
     releaseType: ReleaseTypeOption;
     requestType?: PlacementRequestRequestType;
+    requestedPlacementPeriod: Cas1RequestedPlacementPeriod;
     risks: PersonRisks;
-    /**
-     * The space bookings associated with this placement request
-     */
     spaceBookings: Array<Cas1SpaceBookingSummary>;
     status: PlacementRequestStatus;
     type: ApType;

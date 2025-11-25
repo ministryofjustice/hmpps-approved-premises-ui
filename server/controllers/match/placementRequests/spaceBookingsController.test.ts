@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { Cas1NewSpaceBooking } from '@approved-premises/api'
+import { SpaceSearchFormData } from '@approved-premises/ui'
 import SpaceBookingsController from './spaceBookingsController'
 
 import { PlacementRequestService, PremisesService, SpaceSearchService } from '../../../services'
@@ -16,12 +17,14 @@ import matchPaths from '../../../paths/match'
 import * as validationUtils from '../../../utils/validation'
 import * as matchUtils from '../../../utils/match'
 import { DateFormats } from '../../../utils/dateUtils'
+import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 
 describe('SpaceBookingsController', () => {
   const token = 'SOME_TOKEN'
 
   let request: Readonly<DeepMocked<Request>>
   const mockSessionSave = jest.fn().mockImplementation((callback: () => void) => callback())
+  const mockFlash = jest.fn()
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
@@ -33,7 +36,7 @@ describe('SpaceBookingsController', () => {
   const placementRequestDetail = cas1PlacementRequestDetailFactory.build({ duration: 84 })
   const searchState = spaceSearchStateFactory.build()
 
-  const params = { id: placementRequestDetail.id, premisesId: premises.id }
+  const params = { placementRequestId: placementRequestDetail.id, premisesId: premises.id }
 
   let spaceBookingsController: SpaceBookingsController
 
@@ -48,12 +51,13 @@ describe('SpaceBookingsController', () => {
         save: mockSessionSave,
         multiPageFormData: { spaceSearch: { [placementRequestDetail.id]: searchState } },
       },
-      flash: jest.fn(),
+      flash: mockFlash,
     })
 
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     premisesService.find.mockResolvedValue(premises)
     jest.spyOn(spaceBookingsController.formData, 'get')
+    jest.spyOn(spaceBookingsController.formData, 'remove')
   })
 
   describe('new', () => {
@@ -61,12 +65,13 @@ describe('SpaceBookingsController', () => {
       const requestHandler = spaceBookingsController.new()
       await requestHandler(request, response, next)
 
-      expect(spaceBookingsController.formData.get).toHaveBeenCalledWith(params.id, request.session)
+      expect(spaceBookingsController.formData.get).toHaveBeenCalledWith(params.placementRequestId, request.session)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/spaceBookings/new', {
+        pageHeading: 'Confirm booking',
         backLink: matchPaths.v2Match.placementRequests.search.occupancy(params),
         submitLink: matchPaths.v2Match.placementRequests.spaceBookings.create(params),
-        placementRequest: placementRequestDetail,
+        contextKeyDetails: placementRequestKeyDetails(placementRequestDetail),
         premises,
         summaryListRows: matchUtils.spaceBookingConfirmationSummaryListRows({
           premises,
@@ -101,6 +106,29 @@ describe('SpaceBookingsController', () => {
       )
     })
 
+    it('should render the summary list with the reason for the new placement', async () => {
+      jest.spyOn(matchUtils, 'spaceBookingConfirmationSummaryListRows')
+
+      const searchStateWithReason: SpaceSearchFormData = {
+        ...searchState,
+        newPlacementReason: 'risk_to_resident',
+        newPlacementNotes: 'Reason for the new placement',
+        newPlacementCriteriaChanged: 'no',
+      }
+      request.session.multiPageFormData.spaceSearch = {
+        [placementRequestDetail.id]: searchStateWithReason,
+      }
+
+      await spaceBookingsController.new()(request, response, next)
+
+      expect(matchUtils.spaceBookingConfirmationSummaryListRows).toHaveBeenCalledWith(
+        expect.objectContaining({
+          newPlacementReason: 'risk_to_resident',
+          newPlacementNotes: 'Reason for the new placement',
+        }),
+      )
+    })
+
     it('redirects to the suitability search if no search state is present', async () => {
       request.session.multiPageFormData = undefined
 
@@ -108,7 +136,7 @@ describe('SpaceBookingsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith(
-        matchPaths.v2Match.placementRequests.search.spaces({ id: params.id }),
+        matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId: params.placementRequestId }),
       )
     })
 
@@ -134,7 +162,7 @@ describe('SpaceBookingsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith(
-        matchPaths.v2Match.placementRequests.search.spaces({ id: params.id }),
+        matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId: params.placementRequestId }),
       )
     })
 
@@ -149,18 +177,15 @@ describe('SpaceBookingsController', () => {
 
       spaceSearchService.createSpaceBooking.mockResolvedValue(spaceBooking)
 
-      const flash = jest.fn()
-
-      const requestHandler = spaceBookingsController.create()
-      await requestHandler({ ...request, flash }, response, next)
+      await spaceBookingsController.create()(request, response, next)
 
       expect(spaceSearchService.createSpaceBooking).toHaveBeenCalledWith(
         token,
         placementRequestDetail.id,
         newSpaceBooking,
       )
-      expect(flash).toHaveBeenCalledWith('success', {
-        heading: `Place booked for ${spaceBooking.person.crn}`,
+      expect(mockFlash).toHaveBeenCalledWith('success', {
+        heading: `Placement booked for ${spaceBooking.person.crn}`,
         body: `<ul><li><strong>Approved Premises:</strong> ${spaceBooking.premises.name}</li>
 <li><strong>Date of application:</strong> ${DateFormats.isoDateToUIDate(placementRequestDetail.applicationDate, { format: 'short' })}</li></ul>
 <p>A confirmation email will be sent to the AP and probation practitioner.</p>`,
@@ -188,6 +213,48 @@ describe('SpaceBookingsController', () => {
           response,
           apiError,
           expectedRedirect,
+        )
+      })
+    })
+
+    describe('when creating a new placement', () => {
+      it('should create the new placement and redirect the user to the placement request page', async () => {
+        const searchStateWithNewPlacement: SpaceSearchFormData = {
+          ...searchState,
+          newPlacementReason: 'risk_to_resident',
+          newPlacementNotes: 'There was a need',
+          newPlacementCriteriaChanged: 'no',
+        }
+        request.session.multiPageFormData.spaceSearch = {
+          [placementRequestDetail.id]: searchStateWithNewPlacement,
+        }
+
+        const newSpaceBooking: Cas1NewSpaceBooking = {
+          premisesId: premises.id,
+          arrivalDate: searchStateWithNewPlacement.arrivalDate,
+          departureDate: searchStateWithNewPlacement.departureDate,
+          characteristics: [...searchStateWithNewPlacement.apCriteria, ...searchStateWithNewPlacement.roomCriteria],
+          additionalInformation: searchStateWithNewPlacement.newPlacementNotes,
+          transferReason: searchStateWithNewPlacement.newPlacementReason,
+        }
+
+        const spaceBooking = cas1SpaceBookingFactory.build()
+        spaceSearchService.createSpaceBooking.mockResolvedValue(spaceBooking)
+
+        await spaceBookingsController.create()(request, response, next)
+
+        expect(spaceSearchService.createSpaceBooking).toHaveBeenCalledWith(
+          token,
+          placementRequestDetail.id,
+          newSpaceBooking,
+        )
+        expect(mockFlash).toHaveBeenCalledWith('success', {
+          heading: 'Placement transfer booked',
+          body: matchUtils.creationNotificationBodyNewPlacement(spaceBooking),
+        })
+        expect(spaceBookingsController.formData.remove).toHaveBeenCalled()
+        expect(response.redirect).toHaveBeenCalledWith(
+          paths.admin.placementRequests.show({ placementRequestId: placementRequestDetail.id }),
         )
       })
     })

@@ -8,7 +8,7 @@ import type { ErrorMessages, TaskStatus as TaskListStatus, UiTask } from '@appro
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
-  ApprovedPremisesAssessment as Assessment,
+  Cas1Assessment as Assessment,
   PersonStatus,
   TaskStatus,
 } from '@approved-premises/api'
@@ -34,7 +34,7 @@ import { navigationItems } from './navigationItems'
 
 import { StatusTagOptions } from './statusTag'
 import { ApplicationStatusTag } from './applications/statusTag'
-import { DateFormats, daysToWeeksAndDays, monthOptions, uiDateOrDateEmptyMessage, yearOptions } from './dateUtils'
+import { DateFormats, monthOptions, uiDateOrDateEmptyMessage, yearOptions } from './dateUtils'
 import { pagination } from './pagination'
 import { sortHeader } from './sortHeader'
 import { SubmittedDocumentRenderer } from './forms/submittedDocumentRenderer'
@@ -52,7 +52,6 @@ import * as FormUtils from './formUtils'
 import * as UserUtils from './users'
 import * as TaskUtils from './tasks'
 import * as PlacementRequestUtils from './placementRequests'
-import * as MatchUtils from './match'
 import * as SummaryListUtils from './applications/summaryListUtils'
 import * as BedUtils from './bedUtils'
 import * as OutOfServiceBedUtils from './outOfServiceBedUtils'
@@ -70,7 +69,6 @@ import adminPaths from '../paths/admin'
 import peoplePaths from '../paths/people'
 import staticPaths from '../paths/static'
 import placementApplicationsPaths from '../paths/placementApplications'
-import { radioMatrixTable } from './radioMatrixTable'
 import * as AppealsUtils from './appealsUtils'
 
 import config from '../config'
@@ -78,7 +76,6 @@ import { withdrawalRadioOptions } from './applications/withdrawalReasons'
 import { PersonStatusTag } from './people/personStatusTag'
 import { TaskStatusTag } from './tasks/statusTag'
 import { displayName } from './personUtils'
-import { UiPlacementCriteria } from './placementCriteriaUtils'
 import logger from '../../logger'
 
 export default function nunjucksSetup(app: express.Express, path: pathModule.PlatformPath): void {
@@ -123,7 +120,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('formatDate', (date: string, options: { format: 'short' | 'long' } = { format: 'long' }) =>
     DateFormats.isoDateToUIDate(date, options),
   )
-  njkEnv.addGlobal('formatDuration', (days: number) => DateFormats.formatDuration(daysToWeeksAndDays(days)))
+  njkEnv.addGlobal('formatDuration', (days: number) => DateFormats.formatDuration(days))
   njkEnv.addGlobal('formatDateTime', (date: string) => DateFormats.isoDateTimeToUIDateTime(date))
   njkEnv.addGlobal('dateObjToUIDate', (date: Date) => DateFormats.dateObjtoUIDate(date))
   njkEnv.addGlobal(
@@ -170,18 +167,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     },
   )
 
-  njkEnv.addGlobal(
-    'placementRequirementsTable',
-    function sendPlacementRequirementsTable(
-      headings: Array<string>,
-      requirements: Array<UiPlacementCriteria>,
-      preferences: Array<string>,
-      body: Record<string, string>,
-    ) {
-      return radioMatrixTable(headings, requirements, preferences, body)
-    },
-  )
-
   njkEnv.addGlobal('paths', {
     ...managePaths,
     ...applyPaths,
@@ -216,12 +201,9 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('taskStatusTag', function taskStatusTag(status: TaskStatus, options?: StatusTagOptions) {
     return new TaskStatusTag(status, options).html()
   })
-  njkEnv.addGlobal(
-    'taskListStatusTag',
-    function taskStatusTag(status: TaskListStatus, id: UiTask['id'], options?: StatusTagOptions) {
-      return new TasklistUtils.TaskListStatusTag(status, id, options).html()
-    },
-  )
+  njkEnv.addGlobal('taskListStatusTag', function taskStatusTag(status: TaskListStatus, id: UiTask['id']) {
+    return new TasklistUtils.TaskListStatusTag(status, id).html()
+  })
   njkEnv.addGlobal('personStatusTag', function personStatusTag(status: PersonStatus, options?: StatusTagOptions) {
     return new PersonStatusTag(status, options).html()
   })
@@ -255,7 +237,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('UserUtils', UserUtils)
   njkEnv.addGlobal('TaskUtils', TaskUtils)
   njkEnv.addGlobal('PlacementRequestUtils', PlacementRequestUtils)
-  njkEnv.addGlobal('MatchUtils', MatchUtils)
   njkEnv.addGlobal('SummaryListUtils', SummaryListUtils)
   njkEnv.addGlobal('BedUtils', BedUtils)
   njkEnv.addGlobal('OutOfServiceBedUtils', OutOfServiceBedUtils)

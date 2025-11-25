@@ -65,7 +65,7 @@ context('Apply', () => {
     cy.task('verifyApplicationSubmit', this.application.id).then(requests => {
       expect(requests).to.have.length(1)
 
-      expect(requests[0].url).to.equal(`/applications/${this.application.id}/submission`)
+      expect(requests[0].url).to.equal(`/cas1/applications/${this.application.id}/submission`)
 
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
@@ -188,11 +188,10 @@ context('Apply', () => {
 
   it(`allows the user to specify if the risk level if the person does not have a tier`, function test() {
     AND('that person does not have an eligible risk tier')
-    const risks = risksFactory.build({
+
+    this.application.risks = risksFactory.build({
       tier: undefined,
     })
-
-    this.application.risks = risks
 
     const apply = new ApplyHelper(this.application, this.person, this.offences)
     apply.setupApplicationStubs()
@@ -204,11 +203,10 @@ context('Apply', () => {
 
   it(`allows the user to specify if the case is exceptional if the offender's tier is not eligible`, function test() {
     GIVEN('the person does not have an eligible risk tier')
-    const risks = risksFactory.build({
+    this.application.risks = risksFactory.build({
       crn: this.person.crn,
       tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
     })
-    this.application.risks = risks
 
     const apply = new ApplyHelper(this.application, this.person, this.offences)
     apply.setupApplicationStubs()
@@ -223,11 +221,10 @@ context('Apply', () => {
 
   it('tells the user that their application is not applicable if the tier is not eligible and it is not an exceptional case', function test() {
     GIVEN('the person does not have an eligible risk tier')
-    const risks = risksFactory.build({
+    this.application.risks = risksFactory.build({
       crn: this.person.crn,
       tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
     })
-    this.application.risks = risks
 
     const apply = new ApplyHelper(this.application, this.person, this.offences)
     apply.setupApplicationStubs()
@@ -356,7 +353,7 @@ context('Apply', () => {
     cy.task('verifyApplicationSubmit', this.application.id).then(requests => {
       expect(requests).to.have.length(1)
 
-      expect(requests[0].url).to.equal(`/applications/${this.application.id}/submission`)
+      expect(requests[0].url).to.equal(`/cas1/applications/${this.application.id}/submission`)
 
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
@@ -381,7 +378,7 @@ context('Apply', () => {
     })
   })
 
-  it('redirects to no offence page if there are no offence', function test() {
+  it('redirects to no offence page if there are no offences', function test() {
     GIVEN('a person has no offences')
     const offences = activeOffenceFactory.buildList(0)
 

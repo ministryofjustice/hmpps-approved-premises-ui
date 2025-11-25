@@ -1,0 +1,13 @@
+.moj-timeline .moj-timeline__description :not(.govuk-summary-list) {
+  dl {
+    display: flex;
+    dt {
+      margin:0;
+      white-space: nowrap;
+    }
+    dd {
+      margin:0 0 0 10px;
+      white-space: pre-wrap;
+    }
+  }
+}

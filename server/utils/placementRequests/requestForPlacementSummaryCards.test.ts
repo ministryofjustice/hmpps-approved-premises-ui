@@ -48,7 +48,7 @@ describe('RequestForPlacementSummaryCards', () => {
       isWithdrawn: false,
       canBeDirectlyWithdrawn: false,
       withdrawalReason: undefined,
-      placementDates: [{ duration: 1, expectedArrival: '2024-04-24T00:00:00.000Z' }],
+      requestedPlacementPeriod: { duration: 123, arrival: '2024-04-24', arrivalFlexible: true },
     })
 
     it('should generate a summary card for the request section', () => {
@@ -61,8 +61,8 @@ describe('RequestForPlacementSummaryCards', () => {
       expect(summaryCard).toEqual({
         card: expect.objectContaining({
           title: {
-            text: `Request made on ${DateFormats.isoDateToUIDate(requestForPlacement.createdAt, { format: 'short' })}`,
-            headingLevel: '3',
+            text: `Request made on ${DateFormats.isoDateToUIDate(requestForPlacement.submittedAt, { format: 'short' })}`,
+            headingLevel: '2',
           },
           attributes: {
             'data-cy-placement-application-id': requestForPlacement.id,
@@ -82,11 +82,9 @@ describe('RequestForPlacementSummaryCards', () => {
             value: {
               html: embeddedSummaryListItem([
                 {
-                  'Expected arrival': DateFormats.isoDateToUIDate(
-                    requestForPlacement.placementDates[0].expectedArrival,
-                    { format: 'short' },
-                  ),
-                  Duration: `${requestForPlacement.placementDates[0].duration} days`,
+                  'Expected arrival': '24 Apr 2024',
+                  'Arrival date is flexible': 'Yes',
+                  Duration: '17 weeks, 4 days',
                 },
               ]),
             },
@@ -194,8 +192,8 @@ describe('RequestForPlacementSummaryCards', () => {
       expect(summaryCard).toEqual({
         card: expect.objectContaining({
           title: {
-            text: `Request made on ${DateFormats.isoDateToUIDate(requestForPlacement.createdAt, { format: 'short' })}`,
-            headingLevel: '3',
+            text: `Request made on ${DateFormats.isoDateToUIDate(requestForPlacement.submittedAt, { format: 'short' })}`,
+            headingLevel: '2',
           },
           attributes: {
             'data-cy-placement-application-id': requestForPlacement.id,

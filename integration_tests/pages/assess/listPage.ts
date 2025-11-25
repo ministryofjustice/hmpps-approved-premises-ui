@@ -1,10 +1,11 @@
 import type {
-  ApprovedPremisesAssessment as Assessment,
-  AssessmentStatus,
-  AssessmentSummary,
+  Cas1Assessment as Assessment,
+  Cas1AssessmentStatus,
+  Cas1AssessmentSummary,
   PlacementApplicationTask,
 } from '@approved-premises/api'
 
+import { AssessmentCurrentTab } from '@approved-premises/ui'
 import Page from '../page'
 import paths from '../../../server/paths/assess'
 import { shouldShowTableRows } from '../../helpers'
@@ -13,7 +14,6 @@ import {
   completedTableRows,
   requestedFurtherInformationTableRows,
 } from '../../../server/utils/assessments/tableUtils'
-import { AssessmentCurrentTab } from '../../../server/@types/ui'
 import { tableUtils as placementApplicationTableUtils } from '../../../server/utils/placementApplications'
 
 export default class ListPage extends Page {
@@ -21,7 +21,7 @@ export default class ListPage extends Page {
     super('Approved Premises applications')
   }
 
-  static visit(tab?: AssessmentStatus | 'requests_for_placement'): ListPage {
+  static visit(tab?: Cas1AssessmentStatus | 'requests_for_placement'): ListPage {
     const url = paths.assessments.index({}) + (tab ? `?activeTab=${tab}` : '')
     cy.visit(url)
     return new ListPage()
@@ -47,7 +47,7 @@ export default class ListPage extends Page {
     cy.get('a').contains(name).click()
   }
 
-  shouldShowAssessments(assessments: Array<AssessmentSummary>, activeTab: AssessmentCurrentTab) {
+  shouldShowAssessments(assessments: Array<Cas1AssessmentSummary>, activeTab: AssessmentCurrentTab) {
     let tableRowFunction
     switch (activeTab) {
       case 'awaiting_response':

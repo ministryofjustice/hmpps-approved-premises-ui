@@ -1,8 +1,8 @@
-import { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '@approved-premises/api'
+import { Cas1Application as Application, Cas1Assessment as Assessment, Cas1Application } from '@approved-premises/api'
 import { weeksToDays } from 'date-fns'
 import { BackwardsCompatibleApplyApType, SummaryList } from '@approved-premises/ui'
 import { placementDates } from '../../utils/match'
-import { DateFormats, daysToWeeksAndDays } from '../../utils/dateUtils'
+import { DateFormats } from '../../utils/dateUtils'
 import { placementDurationFromApplication } from '../../utils/applications/placementDurationFromApplication'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
@@ -25,7 +25,7 @@ import { OffenceAndRiskCriteria, PlacementRequirementCriteria } from '../../util
 import SelectApType from '../apply/reasons-for-placement/type-of-ap/apType'
 import PlacementDate from '../apply/reasons-for-placement/basic-information/placementDate'
 import ReleaseDate from '../apply/reasons-for-placement/basic-information/releaseDate'
-import { isCardinal } from '../../utils/utils'
+import { validWeeksAndDaysDuration } from '../../utils/formUtils'
 
 export interface TaskListPageField {
   name: string
@@ -33,10 +33,7 @@ export interface TaskListPageField {
   optional?: boolean
 }
 
-const apType = (
-  body: MatchingInformationBody,
-  application: ApprovedPremisesApplication,
-): MatchingInformationBody['apType'] => {
+const apType = (body: MatchingInformationBody, application: Application): MatchingInformationBody['apType'] => {
   if (body.apType) {
     return body.apType
   }
@@ -65,8 +62,7 @@ export const lengthOfStay = ({
   lengthOfStayAgreed,
 }: MatchingInformationBody): string | undefined => {
   if (lengthOfStayAgreed === 'no') {
-    if ((lengthOfStayWeeks && !isCardinal(lengthOfStayWeeks)) || (lengthOfStayDays && !isCardinal(lengthOfStayDays)))
-      return undefined
+    if (!validWeeksAndDaysDuration(lengthOfStayWeeks, lengthOfStayDays)) return undefined
 
     const lengthOfStayWeeksInDays = weeksToDays(Number(lengthOfStayWeeks || 0))
     const totalLengthInDays = lengthOfStayWeeksInDays + Number(lengthOfStayDays || 0)
@@ -83,18 +79,34 @@ type GetValuePlacementRequirement = {
   returnType: PlacementRequirementPreference
 }
 
+const getBodyValue = <T extends GetValueOffenceAndRisk | GetValuePlacementRequirement>(
+  body: MatchingInformationBody,
+  bodyField: T['bodyField'],
+  matchedReturnValue: T['returnType'],
+  unmatchedReturnValue: T['returnType'],
+): T['returnType'] => {
+  const bodyValue = body[bodyField]
+  if (bodyValue) {
+    if (![matchedReturnValue, unmatchedReturnValue].includes(bodyValue)) {
+      if (['essential', 'relevant', 'required'].includes(bodyValue)) return matchedReturnValue
+      if (['notRelevant', 'notRequired', 'desirable'].includes(bodyValue)) return unmatchedReturnValue
+    }
+    return bodyValue
+  }
+  return undefined
+}
+
 const getValue = <T extends GetValueOffenceAndRisk | GetValuePlacementRequirement>(
   body: MatchingInformationBody,
   bodyField: T['bodyField'],
-  application: ApprovedPremisesApplication,
+  application: Application,
   fieldsToCheck: Array<TaskListPageField>,
   lookForValues: Array<YesNoCurrentPrevious>,
   matchedReturnValue: T['returnType'],
   unmatchedReturnValue: T['returnType'],
 ): T['returnType'] => {
-  if (body[bodyField]) {
-    return body[bodyField]
-  }
+  const bodyValue = getBodyValue(body, bodyField, matchedReturnValue, unmatchedReturnValue)
+  if (bodyValue) return bodyValue
 
   const match = fieldsToCheck.find(({ name, page, optional }) => {
     const retrieveMethod = optional
@@ -114,7 +126,7 @@ const getValue = <T extends GetValueOffenceAndRisk | GetValuePlacementRequiremen
 
 const defaultMatchingInformationValues = (
   body: MatchingInformationBody,
-  application: ApprovedPremisesApplication,
+  application: Cas1Application,
 ): Partial<MatchingInformationBody> => {
   return {
     acceptsChildSexOffenders: getValue<GetValueOffenceAndRisk>(
@@ -166,8 +178,8 @@ const defaultMatchingInformationValues = (
       application,
       [{ name: 'arson', page: Arson }],
       ['yes'],
-      'essential',
-      'notRelevant',
+      'required',
+      'notRequired',
     ),
     isCatered: getValue<GetValuePlacementRequirement>(
       body,
@@ -175,8 +187,8 @@ const defaultMatchingInformationValues = (
       application,
       [{ name: 'catering', page: Catering }],
       ['no'],
-      'essential',
-      'notRelevant',
+      'required',
+      'notRequired',
     ),
     isSingle: getValue<GetValuePlacementRequirement>(
       body,
@@ -191,8 +203,8 @@ const defaultMatchingInformationValues = (
         { name: 'traumaConcerns', page: RoomSharing },
       ],
       ['yes'],
-      'essential',
-      'notRelevant',
+      'required',
+      'notRequired',
     ),
     isSuitableForVulnerable: getValue<GetValueOffenceAndRisk>(
       body,
@@ -214,8 +226,8 @@ const defaultMatchingInformationValues = (
         { name: 'nonContactSexualOffencesAgainstChildren', page: DateOfOffence, optional: true },
       ],
       ['current', 'previous'],
-      'essential',
-      'notRelevant',
+      'required',
+      'notRequired',
     ),
     isWheelchairDesignated: getValue<GetValuePlacementRequirement>(
       body,
@@ -223,16 +235,16 @@ const defaultMatchingInformationValues = (
       application,
       [{ name: 'needsWheelchair', page: AccessNeedsFurtherQuestions, optional: true }],
       ['yes'],
-      'essential',
-      'notRelevant',
+      'required',
+      'notRequired',
     ),
+    isStepFreeDesignated: getBodyValue(body, 'isStepFreeDesignated', 'required', 'notRequired'),
+    hasEnSuite: getBodyValue(body, 'hasEnSuite', 'required', 'notRequired'),
   }
 }
 
 // TODO: remove once arson remapping (APS-1876) is completed
-export const remapArsonAssessmentData = (
-  assessmentData: ApprovedPremisesAssessment['data'],
-): ApprovedPremisesAssessment['data'] => {
+export const remapArsonAssessmentData = (assessmentData: Assessment['data']): Assessment['data'] => {
   if (assessmentData?.['matching-information']?.['matching-information']) {
     const matchingInformationBody: MatchingInformationBody = {
       ...assessmentData['matching-information']['matching-information'],
@@ -250,9 +262,9 @@ export const remapArsonAssessmentData = (
   return assessmentData
 }
 
-const suggestedStaySummaryListOptions = (application: ApprovedPremisesApplication): SummaryList => {
+const suggestedStaySummaryListOptions = (application: Application): SummaryList => {
   const duration = placementDurationFromApplication(application)
-  const formattedDuration = DateFormats.formatDuration(daysToWeeksAndDays(duration))
+  const formattedDuration = DateFormats.formatDuration(duration)
   const rows: SummaryList['rows'] = [
     { key: { text: 'Placement duration' }, value: { text: formattedDuration, classes: 'placement-duration' } },
   ]

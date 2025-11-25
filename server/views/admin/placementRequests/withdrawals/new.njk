@@ -5,51 +5,52 @@
 
 {% extends "../../../partials/layout.njk" %}
 
-{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
 
-  {% if applicationId %}
-    {{ govukBackLink({
-      text: "Back",
-      href: paths.applications.withdraw.new({id: applicationId }) + '?selectedWithdrawableType=placementRequest'
-    }) }}
-  {% endif %}
+    {% if applicationId %}
+        {{ govukBackLink({
+            text: "Back",
+            href: paths.applications.withdraw.new({ id: applicationId }) + '?selectedWithdrawableType=placementRequest'
+        }) }}
+    {% endif %}
 
 {% endblock %}
 
 {% block content %}
-  {% include "../../../_messages.njk" %}
+    {% include "../../../_messages.njk" %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <form action="{{ paths.admin.placementRequests.withdrawal.create({ id: id }) }}" method="post">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form action="{{ paths.admin.placementRequests.withdrawal.create({ placementRequestId: placementRequestId }) }}"
+                  method="post">
 
-        {{ showErrorSummary(errorSummary) }}
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {{ showErrorSummary(errorSummary) }}
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-        {{ showErrorSummary(errorSummary) }}
+                {{ showErrorSummary(errorSummary) }}
 
-        {{ govukRadios({
-            name: "reason",              
-            classes: "govuk-radios--withdrawal-reasons",
-            fieldset: {
-                legend: {
-                    text: pageHeading,
-                    classes: "govuk-fieldset__legend--l",
-                    isPageHeading: true
-                }
-            },
-            items: withdrawalReasonsRadioItems
+                {{ govukRadios({
+                    name: "reason",
+                    classes: "govuk-radios--withdrawal-reasons",
+                    fieldset: {
+                        legend: {
+                            text: pageHeading,
+                            classes: "govuk-fieldset__legend--l",
+                            isPageHeading: true
+                        }
+                    },
+                    items: withdrawalReasonsRadioItems
 
-        }) }}
+                }) }}
 
-        {{ govukButton({
-            text: "Withdraw",
-            preventDoubleClick: true
-          }) }}
-      </form>
+                {{ govukButton({
+                    text: "Withdraw",
+                    preventDoubleClick: true
+                }) }}
+            </form>
+        </div>
     </div>
-  </div>
 {% endblock %}

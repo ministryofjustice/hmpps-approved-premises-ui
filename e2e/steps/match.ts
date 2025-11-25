@@ -1,8 +1,8 @@
 import { Page } from '@playwright/test'
 import { addDays, addYears } from 'date-fns'
+import { ApprovedPremisesApplication as Application, Premises } from '@approved-premises/api'
 import { E2EDatesOfPlacement } from './assess'
 import { ListPage, PlacementRequestPage } from '../pages/workflow'
-import { ApprovedPremisesApplication as Application, Premises } from '../../server/@types/shared'
 import { ApTypeLabel } from '../../server/utils/apTypeLabels'
 import { SearchPage } from '../pages/match/searchPage'
 import { BookingPage } from '../pages/match/bookingPage'
@@ -20,6 +20,7 @@ export type E2EMatchAndBookResult = {
 }
 
 export const matchAndBookApplication = async ({
+  person,
   applicationId,
   page,
   datesOfPlacement,
@@ -29,6 +30,7 @@ export const matchAndBookApplication = async ({
   preferredAps,
   preferredPostcode,
 }: {
+  person: { name: string; crn: string; tier: string }
   applicationId: Application['id']
   page: Page
   datesOfPlacement: E2EDatesOfPlacement
@@ -114,14 +116,15 @@ export const matchAndBookApplication = async ({
   const premisesId = page.url().match(/space-bookings\/(.[^/]*)/)[1] // Path: /match/placement-requests/:id/space-bookings/:premisesId/new
   await bookingPage.clickConfirm()
 
-  // Then I should see the Matched tab on the CRU dashboard
+  // Then I should see the Booked tab on the CRU dashboard
   cruDashboard = new ListPage(page)
 
   // And the placement should be listed
   await cruDashboard.findRowWithValues([
-    DateFormats.isoDateToUIDate(datesOfPlacement.startDate, { format: 'short' }),
+    `${person.name}, ${person.crn}`,
+    person.tier,
+    DateFormats.isoDateToUIDate(newDatesOfPlacement.startDate, { format: 'short' }),
     premisesName,
-    'Matched',
   ])
 
   // When I reopen the placement request to change the dates

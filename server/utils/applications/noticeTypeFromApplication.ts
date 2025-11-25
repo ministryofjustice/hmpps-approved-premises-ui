@@ -1,5 +1,5 @@
 import { differenceInDays } from 'date-fns'
-import { ApprovedPremisesApplication as Application, Cas1ApplicationTimelinessCategory } from '@approved-premises/api'
+import { Cas1Application as Application, Cas1ApplicationTimelinessCategory } from '@approved-premises/api'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { DateFormats } from '../dateUtils'
 

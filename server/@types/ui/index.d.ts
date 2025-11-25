@@ -1,4 +1,4 @@
-import type {
+import {
   ApArea,
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationStatus,
@@ -31,6 +31,7 @@ import type {
   RiskTier,
   RiskTierLevel,
   RoshRisks,
+  TransferReason,
   UserQualification,
 } from '@approved-premises/api'
 import { ApTypeCriteria } from '../../utils/placementCriteriaUtils'
@@ -123,15 +124,23 @@ export type TableCell = (TextItem | HtmlItem) & {
 
 export type TableRow = Array<TableCell>
 
-export type RadioItem = {
-  text: string
+export type RadioItemButton = (
+  | {
+      text: string
+      html?: never
+    }
+  | {
+      text?: never
+      html: string
+    }
+) & {
   value: string
   checked?: boolean
-  conditional?: {
-    html?: string
-  }
+  conditional?: HtmlItem
   hint?: TextItem | HtmlItem
 }
+
+export type RadioItem = RadioItemButton | Divider
 
 export type CheckBoxItem =
   | {
@@ -154,6 +163,13 @@ export interface SelectOption {
 export interface SelectGroup {
   label: string
   items: Array<SelectOption>
+}
+
+export type TabItem = {
+  text: string
+  active: boolean
+  href: string
+  classes?: string
 }
 
 export interface SummaryList {
@@ -300,7 +316,7 @@ export type DataServices = Partial<{
     ) => Promise<Cas1OASysGroup>
   }
   applicationService: {
-    getDocuments: (token: string, application: ApprovedPremisesApplication) => Promise<Array<Document>>
+    getDocuments: (token: string, application: Cas1Application) => Promise<Array<Document>>
     findApplication: (token: string, id: string) => Promise<ApprovedPremisesApplication>
   }
   userService: {
@@ -484,6 +500,11 @@ export type SpaceSearchFormData = SpaceSearchCommonFields & {
   applicationId?: string
   departureDate?: string
   apType?: ApTypeCriteria
+  newPlacementArrivalDate?: string
+  newPlacementDepartureDate?: string
+  newPlacementReason?: TransferReason
+  newPlacementNotes?: string
+  newPlacementCriteriaChanged?: YesOrNo
 }
 
 export type DepartureFormData = ObjectWithDateParts<'departureDate'> & {

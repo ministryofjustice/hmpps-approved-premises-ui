@@ -1,8 +1,15 @@
-import { KeyDetailsArgs, PersonRisksUI, SummaryListItem, TableCell, TableRow } from '@approved-premises/ui'
+import {
+  KeyDetailsArgs,
+  PersonRisksUI,
+  SpaceSearchFormData,
+  SummaryListItem,
+  TableCell,
+  TableRow,
+} from '@approved-premises/ui'
 import {
   Adjudication,
   ApprovedPremisesApplication as Application,
-  ApprovedPremisesAssessment as Assessment,
+  Cas1Assessment as Assessment,
   Cas1TimelineEvent,
   Document,
   FullPerson,
@@ -11,7 +18,6 @@ import {
   Person,
   PersonAcctAlert,
   PersonStatus,
-  Cas1PlacementRequestDetail,
   PrisonCaseNote,
   SortOrder,
   type Cas1PremiseCapacity,
@@ -24,22 +30,25 @@ import { DateFormats } from '../../server/utils/dateUtils'
 import { sentenceCase } from '../../server/utils/utils'
 import { SubmittedDocumentRenderer } from '../../server/utils/forms/submittedDocumentRenderer'
 import { eventTypeTranslations } from '../../server/utils/applications/utils'
-import { displayName, isFullPerson } from '../../server/utils/personUtils'
+import { displayName } from '../../server/utils/personUtils'
 import { dayAvailabilityCount, dayAvailabilityStatusForCriteria } from '../../server/utils/match/occupancy'
 import { dayStatusFromDayCapacity } from '../../server/utils/premises/occupancy'
+import { newPlacementSummaryList } from '../../server/utils/match/newPlacement'
 
 export type PageElement = Cypress.Chainable<JQuery>
 
+const normaliseWhitespace = (input: string): string => input.trim().replace(/\s+/g, ' ')
+
 export const parseHtml = (actual: JQuery<HTMLElement>, expected: string) => {
-  // Get rid of all whitespace in both the actual and expected text,
+  // Normalise whitespace in both the actual and expected text,
   // so we don't have to worry about small differences in whitespace
   const parser = new DOMParser()
   const doc = parser.parseFromString(expected, 'text/html')
 
-  return { actual: actual.text().replace(/\s+/g, ''), expected: doc.body.innerText.replace(/\s+/g, '') }
+  return { actual: normaliseWhitespace(actual.text()), expected: normaliseWhitespace(doc.body.innerText) }
 }
 
-export default abstract class Page {
+export default class Page {
   actions: Record<string, string> = {}
 
   static verifyOnPage<T>(constructor: new (...args: Array<unknown>) => T, ...args: Array<unknown>): T {
@@ -60,34 +69,35 @@ export default abstract class Page {
     cy.checkA11y()
   }
 
-  assertDefinition(term: string, value: string): void {
-    cy.get('dt').contains(term).parents('.govuk-summary-list__row').get('dd').should('contain', value)
+  assertDefinition(term: string, value: string, valueType: 'text' | 'html' = 'text'): void {
+    cy.get('dt').contains(term).parents('.govuk-summary-list__row').find('> dd.govuk-summary-list__value').as('dd')
+
+    if (value) {
+      if (valueType === 'html') {
+        cy.get('@dd').then($dd => {
+          const { actual, expected } = parseHtml($dd, value)
+          expect(actual).to.equal(expected)
+        })
+      } else {
+        cy.get('@dd').should(`contain.text`, value.trim())
+      }
+    } else {
+      cy.get('@dd').invoke('text').should('match', /^\s*$/)
+    }
   }
 
   shouldContainSummaryListItems(items: Array<SummaryListItem>): void {
     items.forEach(item => {
-      const key = 'text' in item.key ? item.key.text : item.key.html
-      const value = 'text' in item.value ? item.value.text : item.value.html
-      if ('text' in item.key && 'text' in item.value) {
-        this.assertDefinition(key, value)
-      } else if ('text' in item.key && 'html' in item.value) {
-        cy.get('dt')
-          .contains(key)
-          .siblings('dd')
-          .then($dd => {
-            const { actual, expected } = parseHtml($dd, value)
-
-            expect(actual).to.equal(expected)
-          })
+      let key: string
+      if ('text' in item.key) {
+        key = item.key.text
       } else {
-        cy.get('dd')
-          .contains(value)
-          .siblings('dt')
-          .then($dt => {
-            const { actual, expected } = parseHtml($dt, key)
-            expect(actual).to.equal(expected)
-          })
+        const parser = new DOMParser()
+        key = parser.parseFromString(item.key.html, 'text/html').body.textContent
       }
+      const value = 'text' in item.value ? item.value.text : item.value.html
+
+      this.assertDefinition(key, value, 'text' in item.value ? 'text' : 'html')
     })
   }
 
@@ -188,6 +198,10 @@ export default abstract class Page {
 
   checkRadioByNameAndValue(name: string, option: string): void {
     cy.get(`input[name="${name}"][value="${option}"]`).check()
+  }
+
+  checkRadioByLabel(label: string): void {
+    cy.get('label').contains(label).parent().find('input[type="radio"]').check()
   }
 
   checkCheckboxByNameAndValue(name: string, option: string): void {
@@ -496,6 +510,16 @@ export default abstract class Page {
     cy.get(`[name="${name}"][value="${value}"]`).should('be.checked')
   }
 
+  verifyRadioByLabel(label: string, checked?: boolean): void {
+    let should = 'exist'
+
+    if (checked !== undefined) {
+      should = checked === true ? 'be.checked' : 'not.be.checked'
+    }
+
+    cy.get('label').contains(label).parent().find('input').should(should)
+  }
+
   verifyCheckboxByLabel(label: string, checked = true) {
     cy.get('label')
       .contains(label)
@@ -538,7 +562,7 @@ export default abstract class Page {
         .within(() => {
           row.forEach((column, i) => {
             if ('text' in column) {
-              cy.get('td,th').eq(i).contains(column.text)
+              cy.get('td,th').eq(i).should('contain.text', column.text)
             } else if ('html' in column) {
               cy.get('td,th')
                 .eq(i)
@@ -755,7 +779,7 @@ export default abstract class Page {
     }
 
     if (bedDetails.notes) {
-      cy.get('.govuk-summary-list__key').should('contain', 'Notes')
+      cy.get('.govuk-summary-list__key').should('contain', 'Additional information')
       cy.get('.govuk-summary-list__value').should('contain', bedDetails.notes)
     }
   }
@@ -768,14 +792,11 @@ export default abstract class Page {
     cy.get('[aria-label="Primary navigation"] a').contains(label).click()
   }
 
-  shouldShowKeyPersonDetails(placementRequest: Cas1PlacementRequestDetail) {
+  shouldShowKeyPersonDetails(person: FullPerson, tier: string) {
     cy.get('.prisoner-info').within(() => {
-      const { person } = placementRequest
-      if (!isFullPerson(person)) throw new Error('test requires a Full Person')
-
       cy.get('span').contains(displayName(person))
       cy.get('span').contains(`CRN: ${person.crn}`)
-      cy.get('span').contains(`Tier: ${placementRequest?.risks?.tier?.value.level}`)
+      cy.get('span').contains(`Tier: ${tier}`)
       cy.get('span').contains(`Date of birth: ${DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' })}`)
     })
   }
@@ -819,50 +840,67 @@ export default abstract class Page {
     this.clearInput(name)
   }
 
-  shouldShowCalendarKey(type: 'twoColour' | 'threeColour'): void {
+  shouldShowCalendar({
+    premisesCapacity,
+    criteria = [],
+    colourMode = 'twoColour',
+    logic = 'match',
+  }: {
+    premisesCapacity: Cas1PremiseCapacity
+    criteria?: Array<Cas1SpaceBookingCharacteristic>
+    colourMode?: 'twoColour' | 'threeColour'
+    logic?: 'match' | 'manage'
+  }): void {
+    const statusClasses =
+      colourMode === 'threeColour'
+        ? { overbooked: 'govuk-tag--red', full: 'govuk-tag--yellow', available: 'govuk-tag--green' }
+        : { overbooked: 'govuk-tag--red', full: 'govuk-tag--red', available: 'govuk-tag--green' }
+
     cy.get('#calendar-key').within(() => {
       cy.contains('Available')
-      if (type === 'twoColour') {
+      if (colourMode === 'twoColour') {
         cy.contains('Full or overbooked')
       } else {
         cy.contains('Full')
         cy.contains('Overbooked')
       }
     })
-  }
-
-  shouldShowCalendar({
-    premisesCapacity,
-    criteria = [],
-    verbose = false,
-  }: {
-    premisesCapacity: Cas1PremiseCapacity
-    criteria?: Array<Cas1SpaceBookingCharacteristic>
-    verbose?: boolean
-  }): void {
-    const statusClasses = verbose
-      ? { overbooked: 'govuk-tag--red', full: 'govuk-tag--yellow', available: 'govuk-tag--green' }
-      : { overbooked: 'govuk-tag--red', full: 'govuk-tag--red', available: 'govuk-tag--green' }
     cy.get('#calendar').find('li').should('have.length', premisesCapacity.capacity.length)
     cy.get('#calendar')
       .find('li')
       .each((day, index) => {
         const capacity = premisesCapacity.capacity[index]
         const { availableBedCount, bookingCount, date } = capacity
-        const dayStatus = verbose
-          ? dayStatusFromDayCapacity(capacity)
-          : dayAvailabilityStatusForCriteria(capacity, criteria)
+        const dayStatus =
+          logic === 'manage' ? dayStatusFromDayCapacity(capacity) : dayAvailabilityStatusForCriteria(capacity, criteria)
         cy.wrap(day).within(() => {
-          if (verbose) {
+          if (logic === 'manage') {
             cy.contains(`${bookingCount} booked`)
             cy.contains(`${availableBedCount - bookingCount} available`)
           } else {
-            const bookableCount = dayAvailabilityCount(capacity, criteria)
-            cy.contains(criteria.length ? `${bookableCount}` : `${bookableCount}/${availableBedCount}`)
+            cy.contains(`${availableBedCount - bookingCount}/${availableBedCount} capacity`)
+            if (criteria.length) cy.contains(`${dayAvailabilityCount(capacity, criteria)} for your criteria`)
           }
           cy.contains(DateFormats.isoDateToUIDate(date, { format: 'longNoYear' }))
         })
         cy.wrap(day).should('have.class', statusClasses[dayStatus])
       })
+  }
+
+  shouldShowNewPlacementDetails(searchState: SpaceSearchFormData) {
+    cy.get('summary')
+      .contains('New placement information')
+      .closest('details')
+      .within(() => {
+        this.shouldContainSummaryListItems(newPlacementSummaryList(searchState).rows)
+      })
+  }
+
+  shouldNotShow(text: string, selector: string = 'body') {
+    cy.get(selector).contains(text).should('not.exist')
+  }
+
+  shouldShowLink(text: string, href: string) {
+    cy.get('a').contains(text).should('have.attr', 'href', href)
   }
 }

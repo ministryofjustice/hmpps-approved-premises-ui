@@ -31,29 +31,56 @@ describe('CRU dashboard utilities', () => {
   })
 
   describe('cruDashboardTabItems', () => {
-    it('returns CRU all dashboard tab items for a user with all permissions', () => {
+    it('returns CRU all dashboard base tab items for a user with all permissions', () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_change_request_list'] })
+
+      expect(cruDashboardTabItems(user)).toEqual([
+        {
+          active: true,
+          href: '/admin/cru-dashboard',
+          text: 'Ready to book',
+        },
+        {
+          active: false,
+          href: '/admin/cru-dashboard?status=unableToMatch',
+          text: 'Unable to book',
+        },
+        {
+          active: false,
+          href: '/admin/cru-dashboard?status=matched',
+          text: 'Booked',
+        },
+        {
+          active: false,
+          href: '/admin/cru-dashboard/change-requests',
+          text: 'Change requests',
+        },
+        {
+          active: false,
+          href: '/admin/cru-dashboard/search',
+          text: 'Search',
+        },
+      ])
+    })
+
+    it('returns CRU all dashboard tab items with filters for a user with all permissions', () => {
       const user = userDetailsFactory.build({ permissions: ['cas1_change_request_list'] })
 
       expect(cruDashboardTabItems(user, 'notMatched', 'cru-management-area-id', 'parole')).toEqual([
         {
-          active: false,
-          text: 'Pending Request for Placement',
-          href: `/admin/cru-dashboard?cruManagementArea=cru-management-area-id&status=pendingPlacement`,
-        },
-        {
           active: true,
           href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=parole',
-          text: 'Ready to match',
+          text: 'Ready to book',
         },
         {
           active: false,
           href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=parole&status=unableToMatch',
-          text: 'Unable to match',
+          text: 'Unable to book',
         },
         {
           active: false,
           href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=parole&status=matched',
-          text: 'Matched',
+          text: 'Booked',
         },
         {
           active: false,
@@ -74,23 +101,18 @@ describe('CRU dashboard utilities', () => {
       expect(cruDashboardTabItems(user, 'matched', 'cru-management-area-id', 'standardRelease')).toEqual([
         {
           active: false,
-          text: 'Pending Request for Placement',
-          href: `/admin/cru-dashboard?cruManagementArea=cru-management-area-id&status=pendingPlacement`,
-        },
-        {
-          active: false,
           href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=standardRelease',
-          text: 'Ready to match',
+          text: 'Ready to book',
         },
         {
           active: false,
           href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=standardRelease&status=unableToMatch',
-          text: 'Unable to match',
+          text: 'Unable to book',
         },
         {
           active: true,
           href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=standardRelease&status=matched',
-          text: 'Matched',
+          text: 'Booked',
         },
         {
           active: false,

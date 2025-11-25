@@ -1,4 +1,10 @@
-import type { ApType, Cas1SpaceBookingCharacteristic, FullPerson, PlacementCriteria } from '@approved-premises/api'
+import type {
+  ApType,
+  Cas1SpaceBookingCharacteristic,
+  FullPerson,
+  PlacementCriteria,
+  TransferReason,
+} from '@approved-premises/api'
 import { HtmlItem } from '@approved-premises/ui'
 import applyPaths from '../../paths/apply'
 import {
@@ -15,11 +21,11 @@ import {
   apTypeWithViewTimelineActionRow,
   characteristicsDetails,
   creationNotificationBody,
+  creationNotificationBodyNewPlacement,
   distanceRow,
   filterOutAPTypes,
   keyDetails,
-  placementLength,
-  preferredPostcodeRow,
+  newPlacementReasons,
   premisesAddress,
   requestedOrEstimatedArrivalDateRow,
   restrictionsRow,
@@ -144,16 +150,6 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('preferredPostcodeRow', () => {
-    it('returns preferred postcode', () => {
-      const postcode = 'B71'
-      expect(preferredPostcodeRow(postcode)).toEqual({
-        key: { text: 'Preferred postcode' },
-        value: { text: postcode },
-      })
-    })
-  })
-
   describe('distanceRow', () => {
     const spaceSearchResult = spaceSearchResultFactory.build()
     const postcodeArea = 'HR1 2AF'
@@ -258,18 +254,14 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('placementLength', () => {
-    it('formats the number of days as weeks', () => {
-      expect(placementLength(16)).toEqual('2 weeks, 2 days')
-    })
-  })
-
   describe('spaceBookingConfirmationSummaryListRows', () => {
     const placementRequest = cas1PlacementRequestDetailFactory.build()
     const premises = cas1PremisesFactory.build()
     const expectedArrivalDate = '2025-09-23'
     const expectedDepartureDate = '2025-11-18'
     const criteria: Array<Cas1SpaceBookingCharacteristic> = ['hasEnSuite', 'isArsonSuitable']
+    const newPlacementReason: TransferReason = 'conflict_with_staff'
+    const newPlacementNotes = 'Some notes'
 
     it('returns summary list items for the space booking confirmation screen', () => {
       expect(
@@ -341,6 +333,33 @@ describe('matchUtils', () => {
 
       expect(rows).toEqual(expect.not.arrayContaining([expect.objectContaining({ key: { text: 'AP area' } })]))
     })
+
+    it('returns summary list items with the reason for a new placement', () => {
+      const rows = spaceBookingConfirmationSummaryListRows({
+        premises,
+        expectedArrivalDate,
+        expectedDepartureDate,
+        criteria,
+        releaseType: placementRequest.releaseType,
+        newPlacementReason,
+        newPlacementNotes,
+      })
+
+      expect(rows).toEqual(
+        expect.arrayContaining([
+          {
+            key: { text: 'Reason for transfer' },
+            value: {
+              text: newPlacementReasons[newPlacementReason],
+            },
+          },
+          {
+            key: { text: 'Additional information' },
+            value: { html: `<span class="govuk-summary-list__textblock">${newPlacementNotes}</span>` },
+          },
+        ]),
+      )
+    })
   })
 
   describe('filterOutAPTypes', () => {
@@ -409,6 +428,22 @@ describe('matchUtils', () => {
         .toEqual(`<ul><li><strong>Approved Premises:</strong> ${placement.premises.name}</li>
 <li><strong>Date of application:</strong> ${DateFormats.isoDateToUIDate(placementRequest.applicationDate, { format: 'short' })}</li></ul>
 <p>A confirmation email will be sent to the AP and probation practitioner.</p>`)
+    })
+  })
+
+  describe('creationNotificationBodyNewPlacement', () => {
+    it('should build the notification body for a new placement', () => {
+      const placement = cas1SpaceBookingFactory.build({
+        person: personFactory.build({ type: 'FullPerson', name: 'Ben Johnson' }),
+        expectedArrivalDate: '2026-01-28',
+        expectedDepartureDate: '2026-02-13',
+        premises: { name: 'Someplace', id: 'some-id' },
+      })
+
+      expect(creationNotificationBodyNewPlacement(placement)).toMatchStringIgnoringWhitespace(`
+        <p>A placement has been created for Ben Johnson at Someplace from Wed 28 Jan 2026 to Fri 13 Feb 2026.</p>
+        <p>You need to change the departure date for the original placement.</p>
+      `)
     })
   })
 })

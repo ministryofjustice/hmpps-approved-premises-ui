@@ -1,10 +1,7 @@
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-import {
-  ApprovedPremisesAssessment as Assessment,
-  Cas1ApplicationUserDetails as UserDetails,
-} from '../../../../@types/shared'
+import { Cas1Assessment as Assessment, Cas1ApplicationUserDetails as UserDetails } from '../../../../@types/shared'
 import { lowerCase } from '../../../../utils/utils'
 
 const userDetailsKeys: Array<keyof UserDetails> = ['name', 'email', 'telephoneNumber']

@@ -14,6 +14,7 @@ import {
   emergencyTransferSummaryList,
   validateNew,
 } from '../../../../utils/placements/transfers'
+import { placementKeyDetails } from '../../../../utils/placements'
 
 export default class TransfersController {
   formData: MultiPageFormManager<'transfers'>
@@ -36,7 +37,7 @@ export default class TransfersController {
       return res.render('manage/premises/placements/transfers/new', {
         backlink: managePaths.premises.placements.show({ premisesId, placementId }),
         pageHeading: 'Request a transfer',
-        placement,
+        contextKeyDetails: placementKeyDetails(placement),
         errors,
         errorSummary,
         ...formData,
@@ -94,6 +95,7 @@ export default class TransfersController {
       return res.render('manage/premises/placements/transfers/emergency-details', {
         backlink: managePaths.premises.placements.transfers.new({ premisesId, placementId }),
         pageHeading: 'Enter the emergency transfer details',
+        contextKeyDetails: placementKeyDetails(placement),
         placement,
         approvedPremisesOptions: allApprovedPremisesOptions(approvedPremises),
         errors,
@@ -195,7 +197,7 @@ export default class TransfersController {
       return res.render('manage/premises/placements/transfers/confirm', {
         backlink: managePaths.premises.placements.transfers.emergencyDetails({ premisesId, placementId }),
         pageHeading: 'Confirm emergency transfer',
-        placement,
+        contextKeyDetails: placementKeyDetails(placement),
         summaryList: emergencyTransferSummaryList(formData),
         errors,
         errorSummary,

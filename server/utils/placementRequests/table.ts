@@ -6,9 +6,9 @@ import {
 } from '@approved-premises/api'
 import { TableCell, TableRow } from '@approved-premises/ui'
 import adminPaths from '../../paths/admin'
-import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { DateFormats } from '../dateUtils'
 import { linkTo } from '../utils'
-import { htmlCell, textCell } from '../tableUtils'
+import { dateCell, htmlCell, textCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
 import { displayName, isFullPerson, tierBadge } from '../personUtils'
 import { placementRequestStatus } from '../formUtils'
@@ -17,30 +17,29 @@ export const dashboardTableRows = (
   placementRequests: Array<Cas1PlacementRequestSummary>,
   status?: PlacementRequestStatus,
 ): Array<TableRow> =>
-  placementRequests.map(placementRequest => [
-    nameCell(placementRequest),
-    htmlCell(tierBadge(placementRequest.personTier)),
-    textCell(DateFormats.isoDateToUIDate(placementRequest.requestedPlacementArrivalDate, { format: 'short' })),
-    textCell('N/A'),
-    textCell(DateFormats.isoDateToUIDate(placementRequest.applicationSubmittedDate, { format: 'short' })),
-    status === 'matched'
-      ? textCell(placementRequest.firstBookingPremisesName)
-      : durationCell(placementRequest.requestedPlacementDuration),
-    textCell(placementRequest.isParole ? 'Parole' : 'Standard release'),
-    textCell(placementRequestStatus[placementRequest.placementRequestStatus]),
-  ])
+  placementRequests.map(placementRequest =>
+    [
+      nameCell(placementRequest),
+      htmlCell(tierBadge(placementRequest.personTier)),
+      textCell(placementRequest.isParole ? 'Parole' : 'Standard release'),
+      status === 'matched' && dateCell(placementRequest.firstBookingArrivalDate),
+      status === 'matched' && textCell(placementRequest.firstBookingPremisesName),
+      status !== undefined && status !== 'matched' && dateCell(placementRequest.applicationSubmittedDate),
+      status !== 'matched' && dateCell(placementRequest.requestedPlacementArrivalDate),
+      status !== 'matched' && durationCell(placementRequest.requestedPlacementDuration),
+      status === undefined && textCell(placementRequestStatus[placementRequest.placementRequestStatus]),
+    ].filter(Boolean),
+  )
 
 export const durationCell = (duration: number): TableCell => {
-  return { text: DateFormats.formatDuration(daysToWeeksAndDays(duration), ['weeks', 'days']) }
+  return { text: DateFormats.formatDuration(duration) }
 }
 
 export const nameCell = (placementRequest: Cas1PlacementRequestSummary): TableCell => {
-  const name = displayName(placementRequest.person, { showCrn: true })
-
   if (isFullPerson(placementRequest.person)) {
     return htmlCell(
-      linkTo(adminPaths.admin.placementRequests.show({ id: placementRequest.id }), {
-        text: name,
+      linkTo(adminPaths.admin.placementRequests.show({ placementRequestId: placementRequest.id }), {
+        text: `${displayName(placementRequest.person)}, ${placementRequest.person.crn}`,
         attributes: {
           'data-cy-placementRequestId': placementRequest.id,
           'data-cy-applicationId': placementRequest.applicationId,
@@ -49,7 +48,7 @@ export const nameCell = (placementRequest: Cas1PlacementRequestSummary): TableCe
     )
   }
 
-  return textCell(name)
+  return textCell(displayName(placementRequest.person, { showCrn: true }))
 }
 
 export const dashboardTableHeader = (
@@ -58,28 +57,18 @@ export const dashboardTableHeader = (
   sortDirection: SortDirection,
   hrefPrefix: string,
 ): Array<TableCell> => {
+  const sortColumn = (label: string, sortableBy: PlacementRequestSortField) =>
+    sortHeader<PlacementRequestSortField>(label, sortableBy, sortBy, sortDirection, hrefPrefix)
+
   return [
-    sortHeader<PlacementRequestSortField>('Name', 'person_name', sortBy, sortDirection, hrefPrefix),
-    sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
-    sortHeader<PlacementRequestSortField>(
-      'Requested arrival date',
-      'expected_arrival',
-      sortBy,
-      sortDirection,
-      hrefPrefix,
-    ),
-    {
-      text: 'Booked arrival date',
-    },
-    sortHeader<PlacementRequestSortField>('Application date', 'application_date', sortBy, sortDirection, hrefPrefix),
-    status === 'matched'
-      ? {
-          text: 'Approved Premises',
-        }
-      : sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
-    sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
-    {
-      text: 'Status',
-    },
-  ]
+    sortColumn('Name and CRN', 'person_name'),
+    sortColumn('Tier', 'person_risks_tier'),
+    sortColumn('Request type', 'request_type'),
+    status === 'matched' && sortColumn('Booked arrival date', 'canonical_arrival_date'),
+    status === 'matched' && sortColumn('Approved Premises', 'name'),
+    status !== undefined && status !== 'matched' && sortColumn('Application date', 'application_date'),
+    status !== 'matched' && sortColumn('Requested arrival date', 'expected_arrival'),
+    status !== 'matched' && sortColumn('Length of stay', 'duration'),
+    status === undefined && { text: 'Status' },
+  ].filter(Boolean)
 }

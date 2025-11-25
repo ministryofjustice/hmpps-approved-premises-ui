@@ -7,6 +7,7 @@ import {
   cas1ChangeRequestFactory,
   cas1PlacementRequestDetailFactory,
   cas1SpaceBookingFactory,
+  cas1SpaceBookingSummaryFactory,
 } from '../../../testutils/factories'
 import { PlacementRequestService, PlacementService } from '../../../services'
 import ChangeRequestsController from './changeRequestsController'
@@ -15,6 +16,7 @@ import { changeRequestSummaryList } from '../../../utils/placementRequests/chang
 import * as validationUtils from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
 import { DateFormats } from '../../../utils/dateUtils'
+import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 
 describe('plannedTransferController', () => {
   const token = 'TEST_TOKEN'
@@ -28,7 +30,8 @@ describe('plannedTransferController', () => {
   const controller = new ChangeRequestsController(placementRequestService, placementService)
 
   const placement = cas1SpaceBookingFactory.upcoming().build()
-  const placementRequest = cas1PlacementRequestDetailFactory.withSpaceBooking().build()
+  const placementSummary = cas1SpaceBookingSummaryFactory.build(placement)
+  const placementRequest = cas1PlacementRequestDetailFactory.withSpaceBooking(placementSummary).build()
   const changeRequest = cas1ChangeRequestFactory.placementAppeal().build({ spaceBookingId: placement.id })
   const changeRequestRejectionReasons: Array<{ name: ChangeRequestReason; id: string }> = [
     { name: 'noSuitableApAvailable', id: faker.string.uuid() },
@@ -61,7 +64,7 @@ describe('plannedTransferController', () => {
     jest.resetAllMocks()
     request = createMock<Request>({
       user: { token },
-      params: { id: placementRequest.id, changeRequestId: changeRequest.id },
+      params: { placementRequestId: placementRequest.id, changeRequestId: changeRequest.id },
       session: {
         save: jest.fn().mockImplementation((callback: () => unknown) => callback()),
       },
@@ -80,11 +83,11 @@ describe('plannedTransferController', () => {
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/changeRequests/review', {
         pageHeading: 'Review appeal',
+        contextKeyDetails: placementRequestKeyDetails(placementRequest),
         backLink: `/admin/placement-requests/${placementRequest.id}`,
-        bookingSummary: placementSummaryList(placementRequest),
+        bookingSummary: placementSummaryList(placementSummary),
         changeRequestSummary: changeRequestSummaryList(changeRequest),
         decisionOptions,
-        placementRequest,
         ...errorsAndUserInput,
       })
     })
@@ -100,7 +103,7 @@ describe('plannedTransferController', () => {
         response,
         new ValidationError({}),
         paths.admin.placementRequests.changeRequests.review({
-          id: placementRequest.id,
+          placementRequestId: placementRequest.id,
           changeRequestId: changeRequest.id,
         }),
       )
@@ -120,9 +123,11 @@ describe('plannedTransferController', () => {
       })
       expect(request.flash).toHaveBeenCalledWith('success', {
         heading: 'Appeal actioned',
-        body: "<p>The appealed placement has been cancelled. You will need to re-book via the 'Ready to match' list.</p>",
+        body: "<p>The appealed placement has been cancelled. You will need to re-book via the 'Ready to book' list.</p>",
       })
-      expect(response.redirect).toHaveBeenCalledWith(paths.admin.placementRequests.show({ id: placementRequest.id }))
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.admin.placementRequests.show({ placementRequestId: placementRequest.id }),
+      )
     })
 
     it('should reject the appeal if a rejection reason is given', async () => {
@@ -142,7 +147,9 @@ describe('plannedTransferController', () => {
         heading: 'Appeal rejected',
         body: '<p>The placement remains in place. An email will be sent to the AP manager that made the appeal.</p>',
       })
-      expect(response.redirect).toHaveBeenCalledWith(paths.admin.placementRequests.show({ id: placementRequest.id }))
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.admin.placementRequests.show({ placementRequestId: placementRequest.id }),
+      )
     })
   })
 })

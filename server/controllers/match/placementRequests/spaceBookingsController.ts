@@ -4,12 +4,17 @@ import { PlacementRequestService, PremisesService, SpaceSearchService } from '..
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import paths from '../../../paths/admin'
 import matchPaths from '../../../paths/match'
-import { creationNotificationBody, spaceBookingConfirmationSummaryListRows } from '../../../utils/match'
+import {
+  creationNotificationBody,
+  creationNotificationBodyNewPlacement,
+  spaceBookingConfirmationSummaryListRows,
+} from '../../../utils/match'
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
+import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 
 interface NewRequest extends Request {
   params: {
-    id: string
+    placementRequestId: string
     premisesId: string
   }
 }
@@ -28,24 +33,30 @@ export default class {
   new(): TypedRequestHandler<Request, Response> {
     return async (req: NewRequest, res: Response) => {
       const { token } = req.user
-      const { id, premisesId } = req.params
+      const { placementRequestId, premisesId } = req.params
 
-      const searchState = this.formData.get(id, req.session)
+      const searchState = this.formData.get(placementRequestId, req.session)
 
       if (!searchState) {
-        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id }))
+        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }))
       }
       if (!searchState.arrivalDate || !searchState.departureDate) {
-        return res.redirect(matchPaths.v2Match.placementRequests.search.occupancy({ id, premisesId }))
+        return res.redirect(matchPaths.v2Match.placementRequests.search.occupancy({ placementRequestId, premisesId }))
       }
 
-      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
+      const placementRequest = await this.placementRequestService.getPlacementRequest(token, placementRequestId)
       const premises = await this.premisesService.find(token, premisesId)
 
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
-      const submitLink = matchPaths.v2Match.placementRequests.spaceBookings.create({ id, premisesId })
-      const backLink = matchPaths.v2Match.placementRequests.search.occupancy({ id, premisesId })
+      const submitLink = matchPaths.v2Match.placementRequests.spaceBookings.create({
+        placementRequestId,
+        premisesId,
+      })
+      const backLink = matchPaths.v2Match.placementRequests.search.occupancy({
+        placementRequestId,
+        premisesId,
+      })
 
       const summaryListRows = spaceBookingConfirmationSummaryListRows({
         premises,
@@ -54,12 +65,15 @@ export default class {
         criteria: searchState.roomCriteria,
         releaseType: placementRequest.releaseType,
         isWomensApplication: placementRequest.application.isWomensApplication,
+        newPlacementReason: searchState.newPlacementReason,
+        newPlacementNotes: searchState.newPlacementNotes,
       })
 
       return res.render('match/placementRequests/spaceBookings/new', {
+        pageHeading: searchState.newPlacementReason ? 'Confirm placement transfer' : 'Confirm booking',
         backLink,
         submitLink,
-        placementRequest,
+        contextKeyDetails: placementRequestKeyDetails(placementRequest),
         premises,
         summaryListRows,
         errors,
@@ -71,14 +85,14 @@ export default class {
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
       const {
-        params: { id, premisesId },
+        params: { placementRequestId, premisesId },
         user: { token },
       } = req
 
-      const searchState = this.formData.get(id, req.session)
+      const searchState = this.formData.get(placementRequestId, req.session)
 
       if (!searchState) {
-        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id }))
+        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }))
       }
 
       const newSpaceBooking: Cas1NewSpaceBooking = {
@@ -86,29 +100,42 @@ export default class {
         departureDate: searchState.departureDate,
         premisesId,
         characteristics: [...searchState.apCriteria, ...searchState.roomCriteria],
+        additionalInformation: searchState.newPlacementNotes,
+        transferReason: searchState.newPlacementReason,
       }
 
       try {
-        const placement = await this.spaceSearchService.createSpaceBooking(token, id, newSpaceBooking)
-        const placementRequest = await this.placementRequestService.getPlacementRequest(
-          token,
-          placement.placementRequestId,
-        )
-        req.flash('success', {
-          heading: `Place booked for ${placement.person.crn}`,
-          body: creationNotificationBody(placement, placementRequest),
-        })
-        this.formData.remove(id, req.session)
+        const placement = await this.spaceSearchService.createSpaceBooking(token, placementRequestId, newSpaceBooking)
+        let redirect = `${paths.admin.cruDashboard.index({})}?status=matched`
+
+        if (searchState.newPlacementReason) {
+          req.flash('success', {
+            heading: 'Placement transfer booked',
+            body: creationNotificationBodyNewPlacement(placement),
+          })
+          redirect = paths.admin.placementRequests.show({ placementRequestId })
+        } else {
+          const placementRequest = await this.placementRequestService.getPlacementRequest(
+            token,
+            placement.placementRequestId,
+          )
+          req.flash('success', {
+            heading: `Placement booked for ${placement.person.crn}`,
+            body: creationNotificationBody(placement, placementRequest),
+          })
+        }
+
+        await this.formData.remove(placementRequestId, req.session)
 
         return req.session.save(() => {
-          res.redirect(`${paths.admin.cruDashboard.index({})}?status=matched`)
+          res.redirect(redirect)
         })
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
           res,
           error,
-          matchPaths.v2Match.placementRequests.spaceBookings.new({ id, premisesId }),
+          matchPaths.v2Match.placementRequests.spaceBookings.new({ placementRequestId, premisesId }),
         )
       }
     }

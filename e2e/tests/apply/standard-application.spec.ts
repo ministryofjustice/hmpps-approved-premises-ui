@@ -21,6 +21,7 @@ test('Apply, assess, match and book an application for an Approved Premises with
   )
   const { datesOfPlacement, duration } = await assessApplication({ page, assessor, person }, id)
   const { premisesName, newDatesOfPlacement } = await matchAndBookApplication({
+    person,
     applicationId: id,
     page,
     apType,

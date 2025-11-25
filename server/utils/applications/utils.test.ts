@@ -39,6 +39,7 @@ import {
   dashboardTableRows,
   eventTypeTranslations,
   firstPageOfApplicationJourney,
+  getApplicationSummary,
   getApplicationType,
   getSections,
   isInapplicable,
@@ -54,6 +55,7 @@ import { RestrictedPersonError } from '../errors'
 import { sortHeader } from '../sortHeader'
 import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
 import { renderTimelineEventContent } from '../timeline'
+import { summaryListItem } from '../formUtils'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -658,6 +660,27 @@ describe('utils', () => {
     })
   })
 
+  describe('getApplicationsSummary', () => {
+    it('generates the summary list for an application', () => {
+      const application = applicationFactory.build({
+        createdAt: '2025-11-05',
+        createdByUserName: 'Anne Elk',
+        arrivalDate: '2025-11-06',
+        status: 'started',
+      })
+      expect(getApplicationSummary(application)).toEqual([
+        summaryListItem('Created on', 'Wed 5 Nov 2025'),
+        summaryListItem('Created by', 'Anne Elk'),
+        summaryListItem('Requested arrival date', 'Thu 6 Nov 2025'),
+        summaryListItem(
+          'Status',
+          `<strong class="govuk-tag govuk-tag--blue " data-cy-status="started" >Not submitted</strong>`,
+          'html',
+        ),
+      ])
+    })
+  })
+
   describe('actionsCell', () => {
     it.each(['started', 'requestedFurtherInformation'] as Array<ApplicationStatus>)(
       'returns a link to withdraw the application when the status is %s',
@@ -684,7 +707,7 @@ describe('utils', () => {
         })
 
         expect(actionsLink(applicationSummary)).toEqual(
-          '<a href="/placement-applications?id=an-application-id">Create request for placement</a>',
+          '<a href="/placement-applications?id=an-application-id">Create placement request</a>',
         )
       },
     )

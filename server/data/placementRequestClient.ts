@@ -11,7 +11,6 @@ import {
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
-  PlacementRequest,
   PlacementRequestRequestType,
   PlacementRequestSortField,
   PlacementRequestStatus,
@@ -49,9 +48,9 @@ export default class PlacementRequestClient {
       requestType: '',
       cruManagementAreaId: '',
     },
-    page = 1,
-    sortBy: PlacementRequestSortField = 'created_at',
-    sortDirection: SortDirection = 'asc',
+    page: number = 1,
+    sortBy?: PlacementRequestSortField,
+    sortDirection?: SortDirection,
   ): Promise<PaginatedResponse<Cas1PlacementRequestSummary>> {
     const params: DashboardQueryParams = { ...allParams }
 
@@ -95,11 +94,14 @@ export default class PlacementRequestClient {
     })) as Promise<BookingNotMade>
   }
 
-  async withdraw(placementRequestId: string, reason: WithdrawPlacementRequestReason): Promise<PlacementRequest> {
+  async withdraw(
+    placementRequestId: string,
+    reason: WithdrawPlacementRequestReason,
+  ): Promise<Cas1PlacementRequestDetail> {
     return (await this.restClient.post({
       path: paths.placementRequests.withdrawal.create({ placementRequestId }),
       data: { reason },
-    })) as Promise<PlacementRequest>
+    })) as Promise<Cas1PlacementRequestDetail>
   }
 
   async createPlacementAppeal(placementRequestId: string, newChangeRequest: Cas1NewChangeRequest) {

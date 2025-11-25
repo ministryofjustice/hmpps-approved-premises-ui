@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application as Application } from '@approved-premises/api'
 
 import Page from '../page'
 
@@ -11,7 +11,7 @@ export default class SufficientInformationPage extends Page {
     return cy.get('a').contains('Return to dashboard').click()
   }
 
-  confirmUserDetails(application: ApprovedPremisesApplication) {
+  confirmUserDetails(application: Application) {
     cy.get('h2').contains(
       application.caseManagerIsNotApplicant ? 'Applicant details' : 'Case manager and applicant details',
     )

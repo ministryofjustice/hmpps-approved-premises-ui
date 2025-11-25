@@ -3,7 +3,6 @@ import { SuperAgentRequest } from 'superagent'
 import type {
   Cas1PlacementRequestDetail,
   Cas1PlacementRequestSummary,
-  PlacementRequest,
   PlacementRequestStatus,
   RiskTierLevel,
 } from '@approved-premises/api'
@@ -17,33 +16,30 @@ export default {
   stubPlacementRequestsDashboard: ({
     placementRequests,
     status,
-    page = '1',
-    sortBy = 'created_at',
-    sortDirection = 'asc',
+    page,
+    sortBy,
+    sortDirection,
   }: {
     placementRequests: Array<Cas1PlacementRequestSummary>
-    status: PlacementRequestStatus
-    page: string
-    sortBy: string
-    sortDirection: string
+    status?: PlacementRequestStatus
+    page?: string
+    sortBy?: string
+    sortDirection?: string
   }): SuperAgentRequest => {
     const queryParameters = {
+      status: {
+        equalTo: status || 'notMatched',
+      },
       page: {
-        equalTo: page,
+        equalTo: page || '1',
       },
       sortBy: {
-        equalTo: sortBy,
+        equalTo: sortBy || (status === 'matched' ? 'canonical_arrival_date' : 'expected_arrival'),
       },
       sortDirection: {
-        equalTo: sortDirection,
+        equalTo: sortDirection || 'asc',
       },
     } as Record<string, unknown>
-
-    if (status) {
-      queryParameters.status = {
-        equalTo: status,
-      }
-    }
 
     return stubFor({
       request: {
@@ -122,7 +118,7 @@ export default {
   verifyPlacementRequestsDashboard: async ({
     status,
     page = '1',
-    sortBy = 'created_at',
+    sortBy = 'expected_arrival',
     sortDirection = 'asc',
   }: {
     status: PlacementRequestStatus
@@ -215,7 +211,7 @@ export default {
         jsonBody: placementRequestDetail,
       },
     }),
-  stubBookingFromPlacementRequest: (placementRequest: PlacementRequest): SuperAgentRequest =>
+  stubBookingFromPlacementRequest: (placementRequest: Cas1PlacementRequestDetail): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',
@@ -229,7 +225,7 @@ export default {
         jsonBody: newPlacementRequestBookingConfirmationFactory.build(),
       },
     }),
-  stubUnableToMatchPlacementRequest: (placementRequest: PlacementRequest): SuperAgentRequest =>
+  stubUnableToMatchPlacementRequest: (placementRequest: Cas1PlacementRequestDetail): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',
@@ -258,7 +254,7 @@ export default {
       },
     }),
 
-  stubPlacementRequestUnableToMatch: (placementRequest: PlacementRequest): SuperAgentRequest =>
+  stubPlacementRequestUnableToMatch: (placementRequest: Cas1PlacementRequestDetail): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',
@@ -271,14 +267,14 @@ export default {
         },
       },
     }),
-  verifyPlacementRequestWithdrawal: async (placementRequest: PlacementRequest) =>
+  verifyPlacementRequestWithdrawal: async (placementRequest: Cas1PlacementRequestDetail) =>
     (
       await getMatchingRequests({
         method: 'POST',
         url: paths.placementRequests.withdrawal.create({ placementRequestId: placementRequest.id }),
       })
     ).body.requests,
-  verifyPlacementRequestedMarkedUnableToMatch: async (placementRequest: PlacementRequest) =>
+  verifyPlacementRequestedMarkedUnableToMatch: async (placementRequest: Cas1PlacementRequestDetail) =>
     (
       await getMatchingRequests({
         method: 'POST',

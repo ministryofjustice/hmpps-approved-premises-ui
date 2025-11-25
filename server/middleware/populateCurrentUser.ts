@@ -1,7 +1,10 @@
 import { RequestHandler } from 'express'
 import logger from '../../logger'
 
-import UserService, { DeliusAccountMissingStaffDetailsError } from '../services/userService'
+import UserService, {
+  DeliusAccountMissingStaffDetailsError,
+  UnsupportedProbationRegionError,
+} from '../services/userService'
 import inMemoryStore from '../inMemoryStore'
 
 export default function populateCurrentUser(userService: UserService): RequestHandler {
@@ -39,6 +42,12 @@ export default function populateCurrentUser(userService: UserService): RequestHa
         logger.error('Delius account missing staff details')
         return res.redirect('/deliusMissingStaffDetails')
       }
+
+      if (error instanceof UnsupportedProbationRegionError) {
+        logger.error('Unsupported probation region')
+        return res.redirect('/unsupported-probation-region')
+      }
+
       logger.error(error, `Failed to retrieve user: ${res.locals.user?.id}`)
       return next(error)
     }

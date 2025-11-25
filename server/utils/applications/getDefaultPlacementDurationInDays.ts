@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
+import { Cas1Application as Application } from '@approved-premises/api'
 import { BackwardsCompatibleApplyApType } from '@approved-premises/ui'
 import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'

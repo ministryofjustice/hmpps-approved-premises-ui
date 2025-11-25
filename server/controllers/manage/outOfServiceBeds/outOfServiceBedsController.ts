@@ -13,6 +13,7 @@ import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService 
 import {
   CreateOutOfServiceBedBody,
   outOfServiceBedActions,
+  outOfServiceBedSummaryList,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
   outOfServiceBedTabs,
@@ -21,6 +22,7 @@ import {
   validateOutOfServiceBedInput,
 } from '../../../utils/outOfServiceBedUtils'
 import { characteristicsBulletList, roomCharacteristicMap } from '../../../utils/characteristicsUtils'
+import { summaryListItem } from '../../../utils/formUtils'
 
 interface ShowRequest extends Request {
   params: {
@@ -77,7 +79,12 @@ export default class OutOfServiceBedsController {
 
       try {
         const outOfServiceBedReasons = await this.outOfServiceBedService.getOutOfServiceBedReasons(req.user.token)
-        const outOfServiceBed = validateOutOfServiceBedInput(req.body, outOfServiceBedReasons, bedId)
+        const outOfServiceBed = validateOutOfServiceBedInput({
+          body: req.body,
+          user: req.session.user,
+          outOfServiceBedReasons,
+          bedId,
+        })
 
         await this.outOfServiceBedService.createOutOfServiceBed(req.user.token, premisesId, outOfServiceBed)
 
@@ -238,6 +245,8 @@ export default class OutOfServiceBedsController {
 
       outOfServiceBed.revisionHistory = sortOutOfServiceBedRevisionsByUpdatedAt(outOfServiceBed.revisionHistory)
       const characteristicsHtml = characteristicsBulletList(characteristics, { labels: roomCharacteristicMap })
+      const summaryList = outOfServiceBedSummaryList(outOfServiceBed)
+      summaryList.rows = [...summaryList.rows, summaryListItem('Characteristics', characteristicsHtml, 'html')]
 
       return res.render('manage/outOfServiceBeds/show', {
         outOfServiceBed,
@@ -246,7 +255,7 @@ export default class OutOfServiceBedsController {
         id,
         backLink,
         activeTab: tab,
-        characteristicsHtml,
+        summaryList,
         pageHeading: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
         actions: outOfServiceBedActions(req.session.user, premisesId, bedId, id),
         tabs: outOfServiceBedTabs(premisesId, bedId, id, tab),

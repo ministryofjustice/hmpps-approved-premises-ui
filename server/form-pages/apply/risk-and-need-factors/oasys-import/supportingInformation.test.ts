@@ -10,7 +10,7 @@ import {
 } from '../../../../testutils/factories'
 import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import SupportingInformation from './supportingInformation'
 

@@ -1,4 +1,4 @@
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import ConvictedOffences, { responses } from './convictedOffences'
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'

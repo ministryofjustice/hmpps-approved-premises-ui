@@ -54,5 +54,5 @@
 }
 
 .govuk-summary-list--force-bottom-border .govuk-summary-list__row:last-of-type {
-  border-bottom: 1px solid $govuk-border-colour;
+  border-bottom: 1px solid $govuk-border-colour !important;
 }

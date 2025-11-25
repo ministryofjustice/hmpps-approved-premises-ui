@@ -18,6 +18,8 @@ import {
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
   cas1PlacementRequestSummaryFactory,
+  cas1RequestedPlacementPeriodFactory,
+  cas1SpaceBookingSummaryFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
@@ -90,16 +92,15 @@ context('Placement Requests', () => {
       const initialSearchRequestBody = JSON.parse(requests[0].body)
       const secondSearchRequestBody: Cas1SpaceSearchParameters = JSON.parse(requests[1].body)
 
-      const allPlacementCriteria = [...placementRequest.desirableCriteria, ...placementRequest.essentialCriteria]
       const filteredPlacementCriteria = [
-        ...filterApLevelCriteria(allPlacementCriteria),
-        ...filterRoomLevelCriteria(allPlacementCriteria),
+        ...filterApLevelCriteria(placementRequest.essentialCriteria),
+        ...filterRoomLevelCriteria(placementRequest.essentialCriteria),
       ]
       AND('the first request to the API should contain the criteria from the placement request')
       expect(initialSearchRequestBody).to.deep.equal({
         applicationId: placementRequest.applicationId,
-        durationInDays: placementRequest.duration,
-        startDate: placementRequest.expectedArrival,
+        durationInDays: placementRequest.authorisedPlacementPeriod.duration,
+        startDate: placementRequest.authorisedPlacementPeriod.arrival,
         targetPostcodeDistrict: placementRequest.location,
         spaceCharacteristics: [
           placementRequest.type !== 'normal' && applyApTypeToAssessApType[placementRequest.type],
@@ -110,8 +111,8 @@ context('Placement Requests', () => {
       AND('the second request to the API should contain the new criteria I submitted')
       expect(secondSearchRequestBody).to.contain({
         applicationId: placementRequest.applicationId,
-        durationInDays: placementRequest.duration,
-        startDate: placementRequest.expectedArrival,
+        durationInDays: placementRequest.authorisedPlacementPeriod.duration,
+        startDate: placementRequest.authorisedPlacementPeriod.arrival,
         targetPostcodeDistrict: newSearchState.postcode,
       })
 
@@ -133,7 +134,6 @@ context('Placement Requests', () => {
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
     AND('I should see an occupancy calendar')
-    occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
   })
 
@@ -145,7 +145,6 @@ context('Placement Requests', () => {
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
     AND('I should see an occupancy calendar')
-    occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
   })
 
@@ -171,8 +170,10 @@ context('Placement Requests', () => {
     const premises = cas1PremisesFactory.build({ bedCount: totalCapacity })
     const placementRequest = cas1PlacementRequestDetailFactory.build({
       person,
-      expectedArrival: startDate,
-      duration: durationDays,
+      authorisedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({
+        arrival: startDate,
+        duration: durationDays,
+      }),
       application: applicationFactory.build({
         licenceExpiryDate,
       }),
@@ -181,8 +182,8 @@ context('Placement Requests', () => {
       .fromPlacementRequestDetail(placementRequest)
       .build()
     const { startDate: requestedArrivalDate, endDate: requestedDepartureDate } = placementDates(
-      placementRequest.expectedArrival,
-      placementRequest.duration,
+      placementRequest.authorisedPlacementPeriod.arrival,
+      placementRequest.authorisedPlacementPeriod.duration,
     )
     const searchState = initialiseSearchState(placementRequest)
     const premiseCapacity = cas1PremiseCapacityFactory.build({
@@ -275,7 +276,6 @@ context('Placement Requests', () => {
     occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
 
     AND('I should see an occupancy calendar')
-    occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
 
     AND("I should be able to see any day's availability details")
@@ -284,8 +284,10 @@ context('Placement Requests', () => {
       shouldShowDayDetailsAndReturn(occupancyViewPage, date, premises, premiseCapacity, searchState.roomCriteria)
     })
 
+    AND('I should see a summary of occupancy')
+    occupancyViewPage.shouldShowOccupancySummary(premiseCapacity, searchState.roomCriteria)
+
     THEN('I should see the calendar again')
-    occupancyViewPage.shouldShowCalendarKey('twoColour')
     occupancyViewPage.shouldShowCalendar({ premisesCapacity: premiseCapacity, criteria: searchState.roomCriteria })
 
     WHEN('I filter with an invalid date')
@@ -322,15 +324,8 @@ context('Placement Requests', () => {
   })
 
   it('allows me to book a space', () => {
-    const {
-      occupancyViewPage,
-      premises,
-      placementRequest,
-      placementRequestSummary,
-      searchState,
-      requestedArrivalDate,
-      requestedDepartureDate,
-    } = shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
+    const { occupancyViewPage, premises, placementRequest, searchState, requestedArrivalDate, requestedDepartureDate } =
+      shouldVisitOccupancyViewPageAndShowMatchingDetails(defaultLicenceExpiryDate)
 
     const arrivalDate = '2024-07-23'
     const departureDate = '2024-08-08'
@@ -354,7 +349,7 @@ context('Placement Requests', () => {
     occupancyViewPage.completeForm(arrivalDate, departureDate)
     occupancyViewPage.clickContinue()
 
-    const page = Page.verifyOnPage(BookASpacePage)
+    const page = Page.verifyOnPage(BookASpacePage, 'Confirm booking')
 
     THEN('I should see the details of the case I am matching')
     page.shouldShowPersonHeader(placementRequest.person as FullPerson)
@@ -364,16 +359,26 @@ context('Placement Requests', () => {
 
     AND('when I complete the form')
     const spaceBooking = cas1SpaceBookingFactory.upcoming().build({ placementRequestId: placementRequest.id })
+    const spaceBookingSummary = cas1SpaceBookingSummaryFactory.build(spaceBooking)
+    const placementRequestWithBooking = cas1PlacementRequestDetailFactory
+      .params(placementRequest)
+      .withSpaceBooking(spaceBookingSummary)
+      .build()
+    const placementRequestWithBookingSummary = cas1PlacementRequestSummaryFactory
+      .fromPlacementRequestDetail(placementRequestWithBooking)
+      .build()
     cy.task('stubSpaceBookingCreate', { placementRequestId: placementRequest.id, spaceBooking })
-    cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequestSummary], status: 'matched' })
-    cy.task('stubPlacementRequest', placementRequest)
+    cy.task('stubPlacementRequestsDashboard', {
+      placementRequests: [placementRequestWithBookingSummary],
+      status: 'matched',
+    })
     page.clickSubmit()
 
-    THEN("I should be redirected to the 'Matched' tab")
+    THEN("I should be redirected to the 'Booked' tab")
     const cruDashboard = Page.verifyOnPage(ListPage)
 
     AND('I should see a success message')
-    cruDashboard.shouldShowSpaceBookingConfirmation(spaceBooking, placementRequest)
+    cruDashboard.shouldShowSpaceBookingConfirmation(spaceBooking, placementRequestWithBooking)
 
     AND('the booking details should have been sent to the API')
     cy.task(
@@ -389,7 +394,7 @@ context('Placement Requests', () => {
     })
   })
 
-  it('allows me to mark a placement request as unable to match', () => {
+  it('allows me to mark a placement request as  unable to book', () => {
     GIVEN('there is a placement request waiting for me to match')
     const placementRequest = cas1PlacementRequestDetailFactory.notMatched().build({
       person: personFactory.build(),

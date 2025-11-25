@@ -1,14 +1,15 @@
 import type {
+  Cas1CurrentKeyWorker,
   Cas1NationalOccupancy,
   Cas1PremiseCapacity,
   Cas1Premises,
   Cas1PremisesBasicSummary,
   Cas1PremisesDaySummary,
-  StaffMember,
 } from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
+import { cas1CurrentKeyworkerFactory } from '../../server/testutils/factories'
 
 const stubCas1AllPremises = (args: { premises: Array<Cas1PremisesBasicSummary>; cruManagementAreaId?: string }) => {
   return stubFor({
@@ -44,18 +45,18 @@ const stubSinglePremises = (premises: Cas1Premises) =>
     },
   })
 
-const stubPremisesStaffMembers = (args: { premisesId: string; staffMembers: Array<StaffMember> }) =>
+const stubPremisesCurrentKeyworkers = (args: { premisesId: string; currentKeyworkers?: Array<Cas1CurrentKeyWorker> }) =>
   stubFor({
     request: {
       method: 'GET',
-      urlPattern: paths.premises.staffMembers.index({ premisesId: args.premisesId }),
+      urlPattern: paths.premises.currentKeyworkers({ premisesId: args.premisesId }),
     },
     response: {
       status: 200,
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      jsonBody: args.staffMembers,
+      jsonBody: args.currentKeyworkers || cas1CurrentKeyworkerFactory.buildList(5),
     },
   })
 
@@ -153,7 +154,7 @@ const stubPremisesLocalRestrictionDelete = (args: { premisesId: string; restrict
 export default {
   stubCas1AllPremises,
   stubSinglePremises,
-  stubPremisesStaffMembers,
+  stubPremisesCurrentKeyworkers,
   stubPremisesCapacity,
   stubPremisesDaySummary,
   stubNationalOccupancy,

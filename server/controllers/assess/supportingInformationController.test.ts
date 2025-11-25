@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { OasysSummariesSection } from '../../@types/ui'
-import { ApprovedPremisesAssessment as Assessment } from '../../@types/shared'
+import { Cas1Assessment as Assessment } from '../../@types/shared'
 
 import {
   acctAlertFactory,

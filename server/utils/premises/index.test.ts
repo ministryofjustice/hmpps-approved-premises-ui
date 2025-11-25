@@ -1,7 +1,8 @@
-import { Cas1OverbookingRange, Cas1SpaceBookingResidency } from '@approved-premises/api'
+import { Cas1SpaceBookingResidency } from '@approved-premises/api'
 import { TextItem } from '@approved-premises/ui'
 import { addDays } from 'date-fns'
 import {
+  cas1CurrentKeyworkerFactory,
   cas1PremisesBasicSummaryFactory,
   cas1PremisesFactory,
   cas1PremisesLocalRestrictionSummaryFactory,
@@ -10,16 +11,16 @@ import {
 import {
   cas1PremisesSummaryRadioOptions,
   groupCas1SummaryPremisesSelectOptions,
+  keyworkersToSelectOptions,
   localRestrictionsTableRows,
   placementTableHeader,
   placementTableRows,
   premisesActions,
-  premisesOverbookingSummary,
   premisesTabItems,
   premisesTableRows,
   summaryListForPremises,
 } from '.'
-import { canonicalDates, placementStatusHtml } from '../placements'
+import { canonicalDates, placementStatusCell } from '../placements'
 import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
@@ -228,6 +229,39 @@ describe('premisesUtils', () => {
     })
   })
 
+  describe('keyworkersToSelectOptions', () => {
+    const currentKeyworkers = [
+      cas1CurrentKeyworkerFactory.build({ upcomingBookingCount: 2, currentBookingCount: 0 }),
+      cas1CurrentKeyworkerFactory.build({ upcomingBookingCount: 0, currentBookingCount: 6 }),
+      cas1CurrentKeyworkerFactory.build({ upcomingBookingCount: 2, currentBookingCount: 4 }),
+      cas1CurrentKeyworkerFactory.build({ upcomingBookingCount: 0, currentBookingCount: 0 }),
+    ]
+
+    it('converts a list of current keyworkers to select options for the upcoming tab', () => {
+      expect(keyworkersToSelectOptions(currentKeyworkers, 'upcoming')).toEqual([
+        { text: 'All keyworkers', value: '' },
+        { text: currentKeyworkers[0].summary.name, value: currentKeyworkers[0].summary.id },
+        { text: currentKeyworkers[2].summary.name, value: currentKeyworkers[2].summary.id },
+      ])
+    })
+
+    it('converts a list of current keyworkers to select options for the current tab', () => {
+      expect(keyworkersToSelectOptions(currentKeyworkers, 'current')).toEqual([
+        { text: 'All keyworkers', value: '' },
+        { text: currentKeyworkers[1].summary.name, value: currentKeyworkers[1].summary.id },
+        { text: currentKeyworkers[2].summary.name, value: currentKeyworkers[2].summary.id },
+      ])
+    })
+
+    it('marks the given value as selected', () => {
+      expect(keyworkersToSelectOptions(currentKeyworkers, 'upcoming', currentKeyworkers[0].summary.id)).toEqual([
+        { text: 'All keyworkers', value: '' },
+        { text: currentKeyworkers[0].summary.name, value: currentKeyworkers[0].summary.id, selected: true },
+        { text: currentKeyworkers[2].summary.name, value: currentKeyworkers[2].summary.id },
+      ])
+    })
+  })
+
   describe('placementTableHeader', () => {
     it.each(['upcoming', 'current', 'historic'])(
       'should return the sortable table headings for tab "%s" of the placement list',
@@ -265,7 +299,7 @@ describe('premisesUtils', () => {
 
         const tableRows = placementTableRows(activeTab, 'Test_Premises_Id', placements)
         const expectedRows = placements.map(placement => {
-          const statusColumn = placementStatusHtml(placement)
+          const statusColumn = placementStatusCell(placement)
           const { arrivalDate, departureDate } = canonicalDates(placement)
           const baseColumns = [
             {
@@ -277,7 +311,7 @@ describe('premisesUtils', () => {
           ]
           return activeTab === 'historic'
             ? [...baseColumns, statusColumn]
-            : [...baseColumns, { text: placement.keyWorkerAllocation?.keyWorker?.name || 'Not assigned' }, statusColumn]
+            : [...baseColumns, { text: placement.keyWorkerAllocation?.name || 'Not assigned' }, statusColumn]
         })
         expect(tableRows).toEqual(expectedRows)
       },
@@ -289,37 +323,15 @@ describe('premisesUtils', () => {
       const placement = cas1SpaceBookingSummaryFactory
         .upcoming()
         .build({ expectedArrivalDate: DateFormats.dateObjToIsoDate(addDays(new Date(), 43)) })
-      expect(placementStatusHtml(placement)).toEqual({ html: 'Upcoming' })
-      expect(placementStatusHtml({ ...placement, openChangeRequestTypes: ['placementAppeal'] })).toEqual({
+      expect(placementStatusCell(placement)).toEqual({ html: 'Upcoming' })
+      expect(placementStatusCell({ ...placement, openChangeRequestTypes: ['placementAppeal'] })).toEqual({
         html: 'Upcoming<br/>Appeal requested',
       })
       expect(
-        placementStatusHtml({ ...placement, openChangeRequestTypes: ['placementAppeal', 'plannedTransfer'] }),
+        placementStatusCell({ ...placement, openChangeRequestTypes: ['placementAppeal', 'plannedTransfer'] }),
       ).toEqual({
         html: 'Upcoming<br/>Appeal requested<br/>Transfer requested',
       })
-    })
-  })
-
-  describe('premisesOverbookingSummary', () => {
-    it('Should generate the premisesOverbooking summary', () => {
-      const overbookingSummary: Array<Cas1OverbookingRange> = [
-        { startInclusive: '2025-03-01', endInclusive: '2025-04-01' },
-        { startInclusive: '2025-10-20', endInclusive: '2025-10-28' },
-        { startInclusive: '2025-10-30', endInclusive: '2025-10-30' },
-      ]
-
-      const premises = cas1PremisesFactory.build({ overbookingSummary })
-      expect(premisesOverbookingSummary(premises)).toEqual([
-        { duration: 32, from: '2025-03-01', to: '2025-04-01' },
-        { duration: 9, from: '2025-10-20', to: '2025-10-28' },
-        { duration: 1, from: '2025-10-30', to: '2025-10-30' },
-      ])
-    })
-    it('Should generate an empty premisesOverbooking summary', () => {
-      const overbookingSummary: Array<Cas1OverbookingRange> = []
-      const premises = cas1PremisesFactory.build({ overbookingSummary })
-      expect(premisesOverbookingSummary(premises)).toEqual([])
     })
   })
 

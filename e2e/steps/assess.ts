@@ -149,18 +149,21 @@ export const addMatchingInformation = async (page: Page) => {
     'Accepts sex offenders',
     'Is suitable for vulnerable',
     'Accepts child sex offenders',
+  ]
+
+  const requiredCharacteristics = ['Is catered', 'Has en suite']
+
+  const nonRequiredCharacteristics = [
+    'Is step free designated',
+    'Is wheelchair designated',
+    'Is single',
     'Is arson suitable',
   ]
 
-  const essentialCharacteristics = ['Is catered', 'Has en suite']
-
-  const desirableCharacteristics: Array<string> = []
-  const irrelevantCharacteristics = ['Is step free designated', 'Is wheelchair designated', 'Is single']
-
   await matchingInformationPage.checkListOfRequirements(relevantRisksAndOffences, 'relevant')
   await matchingInformationPage.checkListOfRequirements(irrelevantRisksAndOffences, 'notRelevant')
-  await matchingInformationPage.checkListOfRequirements(essentialCharacteristics, 'essential')
-  await matchingInformationPage.checkListOfRequirements(irrelevantCharacteristics, 'notRelevant')
+  await matchingInformationPage.checkListOfRequirements(requiredCharacteristics, 'required')
+  await matchingInformationPage.checkListOfRequirements(nonRequiredCharacteristics, 'notRequired')
 
   // Agree to the dates of placement
   await matchingInformationPage.checkRadio('Yes')
@@ -177,7 +180,7 @@ export const addMatchingInformation = async (page: Page) => {
 
   await matchingInformationPage.clickSubmit()
 
-  return { datesOfPlacement: { startDate, endDate }, duration, essentialCharacteristics, desirableCharacteristics }
+  return { datesOfPlacement: { startDate, endDate }, duration, requiredCharacteristics, nonRequiredCharacteristics }
 }
 
 export const checkAssessAnswers = async (page: Page) => {

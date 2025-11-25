@@ -7,7 +7,7 @@ import {
   placementApplicationDecisionEnvelopeFactory,
   placementApplicationFactory,
 } from '../testutils/factories'
-import PlacementApplicationService from './placementApplicationService'
+import PlacementApplicationService, { LegacyError } from './placementApplicationService'
 import { DataServices, TaskListErrors } from '../@types/ui'
 import { getBody } from '../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
@@ -48,7 +48,9 @@ describe('placementApplicationService', () => {
     let request: DeepMocked<Request>
 
     const dataServices = createMock<DataServices>({}) as DataServices
-    const placementApplication = placementApplicationFactory.build()
+    const placementApplication = placementApplicationFactory.build({
+      data: { 'request-a-placement': { 'sentence-type-check': { sentenceTypeCheck: 'no' } } },
+    })
     const Page = jest.fn()
 
     beforeEach(() => {
@@ -60,7 +62,7 @@ describe('placementApplicationService', () => {
       })
     })
 
-    it('should fetch the application from the API if it is not in the session', async () => {
+    it('should fetch the placement application from the API', async () => {
       ;(getBody as jest.Mock).mockReturnValue(request.body)
 
       const result = await service.initializePage(Page, request, dataServices)
@@ -96,7 +98,7 @@ describe('placementApplicationService', () => {
       const data = { 'my-task': { first: { foo: 'bar' } } }
       const applicationWithData = {
         ...placementApplication,
-        data,
+        data: { ...placementApplication.data, ...data },
       }
       request.body = {}
       placementApplicationClient.find.mockResolvedValue(applicationWithData)
@@ -121,6 +123,25 @@ describe('placementApplicationService', () => {
         request.user.token,
         dataServices,
       )
+    })
+
+    it('should throw a LegacyError if the data are not valid', async () => {
+      const legacyApplication = {
+        ...placementApplication,
+        data: {},
+      }
+
+      placementApplicationClient.find.mockResolvedValue(legacyApplication)
+
+      let error: LegacyError
+
+      try {
+        await service.initializePage(Page, request, dataServices)
+      } catch (e) {
+        error = e
+      }
+
+      expect(error).toBeInstanceOf(LegacyError)
     })
   })
 

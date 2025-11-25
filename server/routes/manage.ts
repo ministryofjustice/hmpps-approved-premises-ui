@@ -31,6 +31,7 @@ export default function routes(controllers: Controllers, router: Router, service
     plannedTransferController,
     placementAppealController,
     occupancyViewController,
+    residentProfileController,
   } = controllers
 
   // Deprecated paths, redirect to v2 equivalent
@@ -124,6 +125,36 @@ export default function routes(controllers: Controllers, router: Router, service
     allowedPermissions: ['cas1_premises_local_restrictions_manage'],
   })
 
+  // Manage a resident
+  get(paths.resident.show.pattern, residentProfileController.show('personal'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_ap_resident_profile'],
+  })
+  get(paths.resident.tabPersonal.pattern, residentProfileController.show('personal'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_ap_resident_profile'],
+  })
+  get(paths.resident.tabHealth.pattern, residentProfileController.show('health'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_ap_resident_profile'],
+  })
+  get(paths.resident.tabPlacement.pattern, residentProfileController.show('placement'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_ap_resident_profile'],
+  })
+  get(paths.resident.tabRisk.pattern, residentProfileController.show('risk'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_ap_resident_profile'],
+  })
+  get(paths.resident.tabSentence.pattern, residentProfileController.show('sentence'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_ap_resident_profile'],
+  })
+  get(paths.resident.tabEnforcement.pattern, residentProfileController.show('enforcement'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_ap_resident_profile'],
+  })
+
   // Placements
   get(paths.premises.placements.showTabApplication.pattern, placementController.show('application'), {
     auditEvent: 'SHOW_PLACEMENT',
@@ -155,19 +186,23 @@ export default function routes(controllers: Controllers, router: Router, service
       },
     ],
   })
-  get(paths.premises.placements.keyworker.pattern, keyworkerController.new(), {
+  get(paths.premises.placements.keyworker.new.pattern, keyworkerController.new(), {
     auditEvent: 'ASSIGN_KEYWORKER',
     allowedPermissions: ['cas1_space_booking_record_keyworker'],
   })
-  post(paths.premises.placements.keyworker.pattern, keyworkerController.assign(), {
+  post(paths.premises.placements.keyworker.new.pattern, keyworkerController.create(), {
     auditEvent: 'ASSIGN_KEYWORKER_SUCCESS',
     allowedPermissions: ['cas1_space_booking_record_keyworker'],
     redirectAuditEventSpecs: [
       {
-        path: paths.premises.placements.keyworker.pattern,
+        path: paths.premises.placements.keyworker.new.pattern,
         auditEvent: 'ASSIGN_KEYWORKER_FAILURE',
       },
     ],
+  })
+  get(paths.premises.placements.keyworker.find.pattern, keyworkerController.find(), {
+    auditEvent: 'ASSIGN_KEYWORKER_FIND',
+    allowedPermissions: ['cas1_space_booking_record_keyworker'],
   })
   get(paths.premises.placements.nonArrival.pattern, nonArrivalsController.new(), {
     auditEvent: 'NON_ARRIVAL',

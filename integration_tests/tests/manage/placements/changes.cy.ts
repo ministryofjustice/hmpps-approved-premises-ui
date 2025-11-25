@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { addDays } from 'date-fns'
-import { Cas1PlacementRequestDetail, Cas1SpaceBooking, Cas1UpdateSpaceBooking } from '@approved-premises/api'
+import { Cas1UpdateSpaceBooking, FullPerson } from '@approved-premises/api'
 import { signIn } from '../../signIn'
 import {
   cas1PremiseCapacityFactory,
@@ -19,31 +19,28 @@ import apiPaths from '../../../../server/paths/api'
 import { roomCharacteristicMap } from '../../../../server/utils/characteristicsUtils'
 import { PlacementShowPage } from '../../../pages/manage'
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
+import { SelectPlacementPage } from '../../../pages/manage/placements/changes/selectPlacement'
+import { placementName } from '../../../../server/utils/placements'
 
 context('Change Placement', () => {
-  const expectedArrivalDate = DateFormats.dateObjToIsoDate(faker.date.soon())
-  const expectedDepartureDate = DateFormats.dateObjToIsoDate(addDays(expectedArrivalDate, 84))
+  const setupPlacement = (status = 'upcoming', placementRequestId?: string) => {
+    const expectedArrivalDate = DateFormats.dateObjToIsoDate(faker.date.soon())
+    const expectedDepartureDate = DateFormats.dateObjToIsoDate(addDays(expectedArrivalDate, 84))
 
-  const premises = cas1PremisesFactory.build()
-
-  const setupMocks = (placement: Cas1SpaceBooking) => {
-    let placementRequestDetail: Cas1PlacementRequestDetail
-
-    if (placement.placementRequestId) {
-      placementRequestDetail = cas1PlacementRequestDetailFactory
-        .withSpaceBooking(cas1SpaceBookingSummaryFactory.build(placement))
-        .build({
-          id: placement.placementRequestId,
-        })
-      cy.task('stubPlacementRequest', placementRequestDetail)
-    }
-
+    const premises = cas1PremisesFactory.build()
+    const placement = cas1SpaceBookingFactory[status]().build({
+      placementRequestId,
+      premises: { name: premises.name, id: premises.id },
+      expectedArrivalDate,
+      expectedDepartureDate,
+    })
     const startDate = placement.actualArrivalDate || placement.expectedArrivalDate
     const endDate = DateFormats.dateObjToIsoDate(addDays(placement.expectedDepartureDate, -1))
     const capacity = cas1PremiseCapacityFactory.build({
       startDate,
       endDate,
     })
+
     cy.task('stubSinglePremises', premises)
     cy.task('stubPremisesCapacity', {
       premisesId: premises.id,
@@ -55,7 +52,7 @@ context('Change Placement', () => {
     cy.task('stubSpaceBookingShow', placement)
     cy.task('stubSpaceBookingGetWithoutPremises', placement)
     cy.task('stubSpaceBookingUpdate', { premisesId: premises.id, placementId: placement.id })
-    return { placementRequestDetail }
+    return { placement, premises }
   }
 
   beforeEach(() => {
@@ -66,12 +63,11 @@ context('Change Placement', () => {
   })
 
   it('allows me to change the dates and criteria of a space booking', () => {
-    const placement = cas1SpaceBookingFactory.upcoming().build({
-      premises: { name: premises.name, id: premises.id },
-      expectedArrivalDate,
-      expectedDepartureDate,
-    })
-    const { placementRequestDetail } = setupMocks(placement)
+    const { placement, premises } = setupPlacement('upcoming', faker.string.uuid())
+    const placementRequestDetail = cas1PlacementRequestDetailFactory
+      .withSpaceBooking(placement)
+      .build({ id: placement.placementRequestId })
+    cy.task('stubPlacementRequest', placementRequestDetail)
 
     WHEN('I visit a placement request')
     const placementRequestPage = ShowPage.visit(placementRequestDetail)
@@ -81,6 +77,9 @@ context('Change Placement', () => {
 
     THEN('I should see the Change Placement page')
     const changePlacementPage = Page.verifyOnPage(ChangePlacementPage, placement)
+
+    AND('I should see the details of the person')
+    changePlacementPage.shouldShowKeyPersonDetails(placement.person as FullPerson, placement.tier)
 
     AND('I should see an overview of the placement')
     changePlacementPage.shouldShowPlacementOverview()
@@ -135,8 +134,8 @@ context('Change Placement', () => {
     })
 
     WHEN('I submit valid updated dates for the booking')
-    const arrivalDate = DateFormats.dateObjToIsoDate(addDays(expectedArrivalDate, 2))
-    const departureDate = DateFormats.dateObjToIsoDate(addDays(expectedDepartureDate, 2))
+    const arrivalDate = DateFormats.dateObjToIsoDate(addDays(placement.expectedArrivalDate, 2))
+    const departureDate = DateFormats.dateObjToIsoDate(addDays(placement.expectedDepartureDate, 2))
 
     changePlacementPage.completeForm(arrivalDate, departureDate)
     changePlacementPage.clickContinue()
@@ -170,13 +169,7 @@ context('Change Placement', () => {
   })
 
   it('allows me to change the dates and criteria of an offline placement', () => {
-    const placement = cas1SpaceBookingFactory.upcoming().build({
-      placementRequestId: undefined,
-      premises: { name: premises.name, id: premises.id },
-      expectedArrivalDate,
-      expectedDepartureDate,
-    })
-    setupMocks(placement)
+    const { placement, premises } = setupPlacement('upcoming')
 
     WHEN('I visit an offline placement')
     const placementPage = PlacementShowPage.visit(placement)
@@ -186,6 +179,9 @@ context('Change Placement', () => {
 
     THEN('I should see the Change Placement page')
     const changePlacementPage = Page.verifyOnPage(ChangePlacementPage, placement)
+
+    AND('I should see the details of the person')
+    changePlacementPage.shouldShowKeyPersonDetails(placement.person as FullPerson, placement.tier)
 
     AND('I should see an overview of the placement')
     changePlacementPage.shouldShowPlacementOverview()
@@ -201,8 +197,8 @@ context('Change Placement', () => {
     changePlacementPage.filterAvailability(newFilters, 'criteria')
 
     AND('I submit valid updated dates for the booking')
-    const arrivalDate = DateFormats.dateObjToIsoDate(addDays(expectedArrivalDate, 2))
-    const departureDate = DateFormats.dateObjToIsoDate(addDays(expectedDepartureDate, 2))
+    const arrivalDate = DateFormats.dateObjToIsoDate(addDays(placement.expectedArrivalDate, 2))
+    const departureDate = DateFormats.dateObjToIsoDate(addDays(placement.expectedDepartureDate, 2))
 
     changePlacementPage.completeForm(arrivalDate, departureDate)
     changePlacementPage.clickContinue()
@@ -236,15 +232,13 @@ context('Change Placement', () => {
   })
 
   it('allows me to extend the end date of placement after arrival', () => {
-    const actualArrivalDate = DateFormats.dateObjToIsoDate(faker.date.recent({ days: 20 }))
-    const arrivedPlacement = cas1SpaceBookingFactory.current().build({
-      premises: { name: premises.name, id: premises.id },
-      actualArrivalDate,
-      expectedDepartureDate: DateFormats.dateObjToIsoDate(addDays(actualArrivalDate, 45)),
-    })
-    const newDepartureDate = DateFormats.dateObjToIsoDate(addDays(arrivedPlacement.expectedDepartureDate, 5))
+    const { placement: arrivedPlacement, premises } = setupPlacement('current', faker.string.uuid())
+    const placementRequestDetail = cas1PlacementRequestDetailFactory
+      .withSpaceBooking(arrivedPlacement)
+      .build({ id: arrivedPlacement.placementRequestId })
+    cy.task('stubPlacementRequest', placementRequestDetail)
 
-    const { placementRequestDetail } = setupMocks(arrivedPlacement)
+    const newDepartureDate = DateFormats.dateObjToIsoDate(addDays(arrivedPlacement.expectedDepartureDate, 5))
 
     WHEN('I visit a placement request')
     const placementRequestPage = ShowPage.visit(placementRequestDetail)
@@ -258,10 +252,12 @@ context('Change Placement', () => {
     AND('I should see an overview of the placement')
     page.shouldShowPlacementOverview()
 
-    cy.log(
-      'And I can see the calendar for the rounded-up period in the duration selector, from the actual arrival date',
-    )
-    page.shouldShowCalendarHeading(arrivedPlacement.actualArrivalDate, 45)
+    AND('I can see the calendar for the period from actual arrival date to the expected departure date')
+    const duration = DateFormats.durationBetweenDates(
+      arrivedPlacement.actualArrivalDate,
+      arrivedPlacement.expectedDepartureDate,
+    ).number
+    page.shouldShowCalendarHeading(arrivedPlacement.actualArrivalDate, duration)
 
     AND('I can see the current placement dates in the departure date hint')
     page.shouldShowDateFieldHint(
@@ -301,5 +297,62 @@ context('Change Placement', () => {
         arrivedPlacement.characteristics.filter(characteristic => roomCharacteristicMap[characteristic]).sort(),
       )
     })
+  })
+
+  it('asks which placement needs changing if there are more than one for the placement request', () => {
+    GIVEN('There is a placement request with two placements')
+    const placementRequestId = faker.string.uuid()
+    const { placement: placement1 } = setupPlacement('current', placementRequestId)
+    const { placement: placement2 } = setupPlacement('upcoming', placementRequestId)
+    const placementRequestDetail = cas1PlacementRequestDetailFactory.matched().build({
+      id: placementRequestId,
+      spaceBookings: [
+        cas1SpaceBookingSummaryFactory.build(placement1),
+        cas1SpaceBookingSummaryFactory.build(placement2),
+      ],
+    })
+    cy.task('stubPlacementRequest', placementRequestDetail)
+
+    WHEN('I visit the placement request')
+    const placementRequestPage = ShowPage.visit(placementRequestDetail)
+
+    WHEN('I click on the Change placement action')
+    placementRequestPage.clickAction('Change placement')
+
+    THEN('I see the page to select the placement to change')
+    const selectPlacementPage = Page.verifyOnPage(SelectPlacementPage)
+
+    AND('I can see both placements listed')
+    selectPlacementPage.shouldShowPlacementsAsRadios(placementRequestDetail.spaceBookings)
+
+    WHEN('I submit the form without selecting a placement')
+    selectPlacementPage.clickButton('Continue')
+
+    THEN('I should see an error')
+    selectPlacementPage.shouldShowErrorMessagesForFields(['placementId'], {
+      placementId: 'Select a placement to change',
+    })
+
+    WHEN('I select the first placement')
+    selectPlacementPage.checkRadioByLabel(placementName(placementRequestDetail.spaceBookings[0]))
+    selectPlacementPage.clickButton('Continue')
+
+    THEN('I should see the Change Placement page for the first placement')
+    const changePlacement1Page = Page.verifyOnPage(ChangePlacementPage, placement1)
+    changePlacement1Page.shouldShowPlacementOverview()
+
+    WHEN('I click back')
+    changePlacement1Page.clickBack()
+
+    THEN('I should see the page to select the placement to change')
+    Page.verifyOnPage(SelectPlacementPage)
+
+    WHEN('I select the second placement')
+    selectPlacementPage.checkRadioByLabel(placementName(placementRequestDetail.spaceBookings[1]))
+    selectPlacementPage.clickButton('Continue')
+
+    THEN('I should see the Change Placement page for the second placement')
+    const changePlacement2Page = Page.verifyOnPage(ChangePlacementPage, placement2)
+    changePlacement2Page.shouldShowPlacementOverview()
   })
 })

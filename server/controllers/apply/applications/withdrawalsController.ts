@@ -7,9 +7,11 @@ import {
 } from '../../../utils/validation'
 import paths from '../../../paths/apply'
 import adminPaths from '../../../paths/admin'
-import { NewWithdrawal } from '../../../@types/shared'
+import { Cas1Application, NewWithdrawal, Withdrawables } from '../../../@types/shared'
 import { SelectedWithdrawableType } from '../../../utils/applications/withdrawables'
 import { ApplicationService, SessionService } from '../../../services'
+import { applicationKeyDetails } from '../../../utils/applications/helpers'
+import config from '../../../config'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
@@ -27,11 +29,15 @@ export default class WithdrawalsController {
         | SelectedWithdrawableType
         | undefined
 
-      const withdrawables = await this.applicationService.getWithdrawablesWithNotes(req.user.token, id)
+      const [withdrawables, application]: [Withdrawables, Cas1Application] = await Promise.all([
+        this.applicationService.getWithdrawablesWithNotes(req.user.token, id),
+        this.applicationService.findApplication(req.user.token, id),
+      ])
 
       if (selectedWithdrawableType === 'application') {
         return res.render('applications/withdrawals/new', {
           pageHeading: 'Do you want to withdraw this application?',
+          contextKeyDetails: applicationKeyDetails(application),
           applicationId: req.params.id,
           errors,
           errorSummary,
@@ -43,11 +49,13 @@ export default class WithdrawalsController {
         adminPaths.admin.placementRequests.show.pattern,
         paths.applications.show.pattern,
         paths.applications.index.pattern,
+        paths.applications.people.manageApplications.pattern,
       ])
 
       if (!selectedWithdrawableType) {
         return res.render('applications/withdrawables/new', {
           pageHeading: 'What do you want to withdraw?',
+          contextKeyDetails: applicationKeyDetails(application),
           id,
           withdrawables: withdrawables.withdrawables,
           backLink,
@@ -76,8 +84,13 @@ export default class WithdrawalsController {
 
         await this.applicationService.withdraw(req.user.token, req.params.id, body)
 
+        const returnUrl = config.flags.oneApplication
+          ? this.sessionService.getPageBackLink(paths.applications.withdraw.new.pattern, req, [])
+          : paths.applications.index({})
+
         req.flash('success', 'Application withdrawn')
-        return res.redirect(paths.applications.index({}))
+
+        return res.redirect(returnUrl)
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

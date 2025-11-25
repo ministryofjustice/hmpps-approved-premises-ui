@@ -18,6 +18,7 @@ const paths = {
     people: {
       find: peoplePath.path('find'),
       selectOffence: personPath.path('select-offence'),
+      manageApplications: personPath.path('manage-applications'),
       documents: personPath.path('documents/:documentId'),
     },
     create: applicationsPath,
@@ -34,6 +35,7 @@ const paths = {
       new: withdrawalsPath.path('new'),
       create: withdrawalsPath,
     },
+    expire: applicationPath.path('expire'),
     pages: {
       show: pagesPath,
       update: pagesPath,

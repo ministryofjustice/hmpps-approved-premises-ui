@@ -1,8 +1,8 @@
 import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import createError from 'http-errors'
 
-import { ApprovedPremisesAssessment as Assessment, Cas1UpdatedClarificationNote } from '@approved-premises/api'
-import { getPage } from '../../../utils/assessments/utils'
+import { Cas1Assessment, Cas1Assessment as Assessment, Cas1UpdatedClarificationNote } from '@approved-premises/api'
+import { assessmentKeyDetails, getPage } from '../../../utils/assessments/utils'
 import { AssessmentService } from '../../../services'
 
 import {
@@ -47,6 +47,7 @@ export default class PagesController {
         res.render(viewPath(page, 'assessments'), {
           assessmentId: req.params.id,
           assessment,
+          contextKeyDetails: assessmentKeyDetails(assessment),
           errors,
           errorSummary,
           task: taskName,
@@ -82,7 +83,7 @@ export default class PagesController {
   updateInformationRecieved(taskName: TaskNames, pageName: string) {
     return async (req: Request, res: Response) => {
       if (req.body.informationReceived === 'yes') {
-        const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
+        const assessment: Cas1Assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
         const clarificationNote = assessment.clarificationNotes.find(note => !note.response)
 
         const page = await this.saveAndValidate(assessment, taskName, pageName, req, res)

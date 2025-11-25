@@ -8,13 +8,12 @@ import type { Cas1ApplicationUserDetails } from './Cas1ApplicationUserDetails';
 import type { ReleaseTypeOption } from './ReleaseTypeOption';
 import type { SentenceTypeOption } from './SentenceTypeOption';
 import type { SituationOption } from './SituationOption';
-import type { SubmitApplication } from './SubmitApplication';
-export type SubmitApprovedPremisesApplication = (SubmitApplication & {
+export type SubmitApprovedPremisesApplication = {
     /**
      * If the user's ap area id is incorrect, they can optionally override it for the application
      */
     apAreaId?: string;
-    apType?: ApType;
+    apType: ApType;
     applicantUserDetails?: Cas1ApplicationUserDetails;
     /**
      * If the applicant has requested a placement, this is the requested arrival date
@@ -28,6 +27,7 @@ export type SubmitApprovedPremisesApplication = (SubmitApplication & {
     duration?: number;
     /**
      * noticeType should be used to indicate if this an emergency application
+     * @deprecated
      */
     isEmergencyApplication?: boolean;
     isWomensApplication?: boolean;
@@ -35,14 +35,14 @@ export type SubmitApprovedPremisesApplication = (SubmitApplication & {
     noticeType?: Cas1ApplicationTimelinessCategory;
     reasonForShortNotice?: string;
     reasonForShortNoticeOther?: string;
-    releaseType?: ReleaseTypeOption;
-    sentenceType?: SentenceTypeOption;
-    situation?: SituationOption;
-    targetLocation?: string;
-} & {
-    apType: ApType;
     releaseType: ReleaseTypeOption;
     sentenceType: SentenceTypeOption;
+    situation?: SituationOption;
     targetLocation: string;
-});
+    /**
+     * Any object
+     */
+    translatedDocument?: any;
+    type: string;
+};
 

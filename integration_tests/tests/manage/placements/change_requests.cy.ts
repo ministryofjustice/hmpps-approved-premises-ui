@@ -279,7 +279,7 @@ context('Change requests', () => {
 
     // Then I should be redirected back to the placement page with a success banner
     placementPage.checkOnPage()
-    placementPage.shouldShowBanner(`Transfer requested${plannedTransferSuccessMessage.body}`)
+    placementPage.shouldShowBanner(`Transfer requested ${plannedTransferSuccessMessage.body}`)
 
     // And the API was called to create the planned transfer change request
     cy.task(

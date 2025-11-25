@@ -15,39 +15,23 @@ import type { FullPerson } from './FullPerson';
 import type { NamedId } from './NamedId';
 import type { RestrictedPerson } from './RestrictedPerson';
 import type { TemporaryAccommodationUser } from './TemporaryAccommodationUser';
+import type { TransferReason } from './TransferReason';
 import type { UnknownPerson } from './UnknownPerson';
 export type Cas1SpaceBooking = {
     actualArrivalDate?: string;
-    /**
-     * Use actualArrivalDate
-     */
     actualArrivalDateOnly?: string;
-    /**
-     * This value may not be defined even if an arrival date is
-     */
     actualArrivalTime?: string;
     actualDepartureDate?: string;
-    /**
-     * Use actualDepartureDate
-     */
     actualDepartureDateOnly?: string;
-    /**
-     * This value may not be defined even if a departure date is
-     */
     actualDepartureTime?: string;
+    additionalInformation?: string;
     allowedActions: Array<Cas1SpaceBookingAction>;
     apArea: NamedId;
     applicationId: string;
     assessmentId?: string;
     bookedBy?: (ApprovedPremisesUser | TemporaryAccommodationUser);
     cancellation?: Cas1SpaceBookingCancellation;
-    /**
-     * actual arrival date or, if not known, the expected arrival date.
-     */
     canonicalArrivalDate: string;
-    /**
-     * actual departure date or, if not known, the expected departure date
-     */
     canonicalDepartureDate: string;
     characteristics: Array<Cas1SpaceCharacteristic>;
     createdAt: string;
@@ -63,10 +47,8 @@ export type Cas1SpaceBooking = {
     person: (FullPerson | RestrictedPerson | UnknownPerson);
     placementRequestId?: string;
     premises: NamedId;
-    /**
-     * use the better named 'placementRequestId'
-     */
     requestForPlacementId?: string;
     tier?: string;
+    transferReason?: TransferReason;
 };
 

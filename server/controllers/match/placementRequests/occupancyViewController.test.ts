@@ -4,7 +4,9 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
 import { addDays } from 'date-fns'
 import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
-import { PlacementRequestService, PremisesService, SessionService, SpaceSearchService } from '../../../services'
+import { faker } from '@faker-js/faker'
+import { SpaceSearchFormData } from '@approved-premises/ui'
+import { PlacementRequestService, PlacementService, PremisesService, SessionService } from '../../../services'
 import {
   cas1PlacementRequestDetailFactory,
   cas1PremiseCapacityFactory,
@@ -42,6 +44,11 @@ import {
   tableCaptions,
 } from '../../../utils/premises/occupancy'
 import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../utils/characteristicsUtils'
+import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
+import { placementKeyDetails } from '../../../utils/placements'
+import cas1RequestedPlacementPeriodFactory from '../../../testutils/factories/cas1RequestedPlacementPeriod'
+import { newPlacementSummaryList } from '../../../utils/match/newPlacement'
+import * as placementsUtils from '../../../utils/placementRequests/placements'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -51,23 +58,25 @@ describe('OccupancyViewController', () => {
 
   const placementRequestService = createMock<PlacementRequestService>({})
   const premisesService = createMock<PremisesService>({})
-  const spaceSearchService = createMock<SpaceSearchService>({})
   const sessionService = createMock<SessionService>()
+  const placementService = createMock<PlacementService>({})
 
   let occupancyViewController: OccupancyViewController
   const premises = cas1PremisesFactory.build()
-  const placementRequestDetail = cas1PlacementRequestDetailFactory.build({ duration: 84 })
+  const placementRequestDetail = cas1PlacementRequestDetailFactory.build({
+    authorisedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({ duration: 84 }),
+  })
   const searchState = initialiseSearchState(placementRequestDetail)
   const premiseCapacity = cas1PremiseCapacityFactory.build()
 
   let request: Readonly<DeepMocked<Request>>
   const mockSessionSave = jest.fn().mockImplementation((callback: () => void) => callback())
 
-  const params = { id: placementRequestDetail.id, premisesId: premises.id }
+  const params = { placementRequestId: placementRequestDetail.id, premisesId: premises.id }
 
   const occupancyViewUrl = matchPaths.v2Match.placementRequests.search.occupancy(params)
   const placeholderDetailsUrl = `${matchPaths.v2Match.placementRequests.search.dayOccupancy({
-    id: placementRequestDetail.id,
+    placementRequestId: placementRequestDetail.id,
     premisesId: premises.id,
     date: ':date',
   })}${createQueryString({ criteria: searchState.roomCriteria }, { arrayFormat: 'repeat', addQueryPrefix: true })}`
@@ -78,8 +87,8 @@ describe('OccupancyViewController', () => {
     occupancyViewController = new OccupancyViewController(
       placementRequestService,
       premisesService,
-      spaceSearchService,
       sessionService,
+      placementService,
     )
     request = createMock<Request>({
       params,
@@ -108,13 +117,16 @@ describe('OccupancyViewController', () => {
   })
 
   describe('view', () => {
+    beforeEach(() => {
+      jest.spyOn(placementsUtils, 'getPlacementOfStatus')
+    })
+
     it('should render the occupancy view template with the search state details', async () => {
-      const requestHandler = occupancyViewController.view()
-      await requestHandler(request, response, next)
+      await occupancyViewController.view()(request, response, next)
 
       const { startDate, endDate } = placementDates(
-        placementRequestDetail.expectedArrival,
-        placementRequestDetail.duration,
+        placementRequestDetail.authorisedPlacementPeriod.arrival,
+        placementRequestDetail.authorisedPlacementPeriod.duration,
       )
 
       expect(occupancyViewController.formData.get).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
@@ -127,6 +139,8 @@ describe('OccupancyViewController', () => {
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/occupancyView/view', {
         pageHeading: `View spaces in ${premises.name}`,
+        bookingHeading: 'Book placement',
+        contextKeyDetails: placementRequestKeyDetails(placementRequestDetail),
         placementRequest: placementRequestDetail,
         selectedCriteria: roomCharacteristicsInlineList(searchState.roomCriteria, 'no room criteria'),
         arrivalDateHint: `Requested arrival date: ${DateFormats.isoDateToUIDate(startDate, { format: 'dateFieldHint' })}`,
@@ -152,7 +166,7 @@ describe('OccupancyViewController', () => {
       await requestHandler(request, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith(
-        matchPaths.v2Match.placementRequests.search.spaces({ id: params.id }),
+        matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId: params.placementRequestId }),
       )
     })
 
@@ -254,6 +268,38 @@ describe('OccupancyViewController', () => {
         expect.objectContaining({
           ...DateFormats.isoDateToDateInputs(fullSearchState.arrivalDate, 'arrivalDate'),
           ...DateFormats.isoDateToDateInputs(fullSearchState.departureDate, 'departureDate'),
+        }),
+      )
+    })
+
+    it('should show the new placement summary and requested dates if the user is booking a new placement', async () => {
+      const newPlacementArrivalDate = faker.date.future()
+      const newPlacementDepartureDate = faker.date.future({ refDate: newPlacementArrivalDate })
+      const searchStateWithNewPlacement: SpaceSearchFormData = {
+        ...searchState,
+        newPlacementArrivalDate: DateFormats.dateObjtoUIDate(newPlacementArrivalDate, { format: 'datePicker' }),
+        newPlacementDepartureDate: DateFormats.dateObjtoUIDate(newPlacementDepartureDate, { format: 'datePicker' }),
+        newPlacementCriteriaChanged: 'no',
+        newPlacementReason: 'public_protection',
+        newPlacementNotes: faker.lorem.paragraph(3),
+      }
+      request.session.multiPageFormData.spaceSearch = {
+        [placementRequestDetail.id]: searchStateWithNewPlacement,
+      }
+
+      await occupancyViewController.view()(request, response, next)
+
+      expect(placementsUtils.getPlacementOfStatus).toHaveBeenCalledWith('arrived', placementRequestDetail)
+      expect(response.render).toHaveBeenCalledWith(
+        'match/placementRequests/occupancyView/view',
+        expect.objectContaining({
+          newPlacementSummaryList: newPlacementSummaryList(searchStateWithNewPlacement),
+          arrivalDateHint: `Requested arrival date: ${DateFormats.dateObjtoUIDate(newPlacementArrivalDate, { format: 'dateFieldHint' })}`,
+          departureDateHint: `Requested departure date: ${DateFormats.dateObjtoUIDate(newPlacementDepartureDate, { format: 'dateFieldHint' })}`,
+          newPlacementReason: 'public_protection',
+          newPlacementNotes: searchStateWithNewPlacement.newPlacementNotes,
+          pageHeading: `View spaces in ${premises.name}`,
+          bookingHeading: 'Book placement transfer',
         }),
       )
     })
@@ -476,16 +522,18 @@ describe('OccupancyViewController', () => {
       when(premisesService.getCapacity)
         .calledWith(request.user.token, premises.id, { startDate: date, excludeSpaceBookingId: placement.id })
         .mockResolvedValue(premisesCapacityForDay)
+
+      placementService.getPlacement.mockResolvedValue(placement)
     })
 
     describe.each([
       [
         'for a placement request to help with Find & Book',
-        { premisesId: premises.id, id: placementRequestDetail.id, date },
+        { premisesId: premises.id, placementRequestId: placementRequestDetail.id, date },
         {
           pathPrefix: `/match/placement-requests/${placementRequestDetail.id}/space-search/occupancy/${premises.id}/date`,
           getCapacityArgs: { startDate: date },
-          placementRequest: placementRequestDetail,
+          keyDetails: placementRequestKeyDetails(placementRequestDetail),
         },
       ],
       [
@@ -494,7 +542,7 @@ describe('OccupancyViewController', () => {
         {
           pathPrefix: `/manage/premises/${premises.id}/placements/${placement.id}/changes/occupancy/date`,
           getCapacityArgs: { startDate: date, excludeSpaceBookingId: placement.id },
-          placementRequest: undefined,
+          keyDetails: placementKeyDetails(placement),
         },
       ],
       [
@@ -503,15 +551,35 @@ describe('OccupancyViewController', () => {
         {
           pathPrefix: `/admin/national-occupancy/premises/${premises.id}/date`,
           getCapacityArgs: { startDate: date },
-          placementRequest: undefined,
+          keyDetails: undefined,
         },
       ],
     ])('when rendering %s', (_, requestParams, expected) => {
-      it('should render the day occupancy with default sort', async () => {
-        const { pathPrefix, getCapacityArgs, placementRequest } = expected
-        await occupancyViewController.viewDay()({ ...request, params: requestParams, query: {} }, response, next)
+      const { pathPrefix, getCapacityArgs, keyDetails } = expected
+      const expectedStatus = dayAvailabilityStatusForCriteria(dayCapacity, [])
+      const defaultRenderParameters = {
+        pageHeading: 'Sun 23 Mar 2025',
+        contextKeyDetails: keyDetails,
+        backLink: '/backlink',
+        dayAvailabilityStatus: dayAvailabilityStatusMap[expectedStatus],
+        daySummaryRows: daySummaryRows(dayCapacity, [], 'singleRow'),
+        premises,
+        nextDayLink: `${pathPrefix}/2025-03-24`,
+        previousDayLink: `${pathPrefix}/2025-03-22`,
+        ...tableCaptions(premisesDaySummary, [], true),
+        outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
+        outOfServiceBedTableRows: outOfServiceBedTableRows(premises.id, premisesDaySummary.outOfServiceBeds),
+        placementTableHeader: tableHeader<PlacementColumnField>(
+          placementColumnMap,
+          'canonicalArrivalDate',
+          undefined,
+          `${pathPrefix}/2025-03-23`,
+        ),
+        placementTableRows: placementTableRows(premises.id, premisesDaySummary.spaceBookingSummaries),
+      }
 
-        const expectedStatus = dayAvailabilityStatusForCriteria(dayCapacity, [])
+      it('should render the day occupancy with default sort', async () => {
+        await occupancyViewController.viewDay()({ ...request, params: requestParams, query: {} }, response, next)
 
         expect(premisesService.getCapacity).toHaveBeenCalledWith('SOME_TOKEN', premises.id, getCapacityArgs)
 
@@ -523,30 +591,10 @@ describe('OccupancyViewController', () => {
           token,
         })
 
-        expect(response.render).toHaveBeenCalledWith('manage/premises/occupancy/dayView', {
-          pageHeading: 'Sun 23 Mar 2025',
-          backLink: '/backlink',
-          dayAvailabilityStatus: dayAvailabilityStatusMap[expectedStatus],
-          daySummaryRows: daySummaryRows(dayCapacity, [], 'singleRow'),
-          placementRequest,
-          premises,
-          nextDayLink: `${pathPrefix}/2025-03-24`,
-          previousDayLink: `${pathPrefix}/2025-03-22`,
-          ...tableCaptions(premisesDaySummary, [], true),
-          outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
-          outOfServiceBedTableRows: outOfServiceBedTableRows(premises.id, premisesDaySummary.outOfServiceBeds),
-          placementTableHeader: tableHeader<PlacementColumnField>(
-            placementColumnMap,
-            'canonicalArrivalDate',
-            undefined,
-            `${pathPrefix}/2025-03-23`,
-          ),
-          placementTableRows: placementTableRows(premises.id, premisesDaySummary.spaceBookingSummaries),
-        })
+        expect(response.render).toHaveBeenCalledWith('manage/premises/occupancy/dayView', defaultRenderParameters)
       })
 
       it('should render the day occupancy with sorting and filtering', async () => {
-        const { pathPrefix, getCapacityArgs, placementRequest } = expected
         const criteria: Array<Cas1SpaceBookingCharacteristic> = ['isWheelchairDesignated', 'isArsonSuitable']
         const query = {
           sortBy: 'canonicalDepartureDate',
@@ -563,7 +611,7 @@ describe('OccupancyViewController', () => {
           next,
         )
 
-        const expectedStatus = dayAvailabilityStatusForCriteria(
+        const expectedFilteredStatus = dayAvailabilityStatusForCriteria(
           dayCapacity,
           filterRoomLevelCriteria(makeArrayOfType(query.criteria)),
         )
@@ -580,24 +628,17 @@ describe('OccupancyViewController', () => {
         })
 
         expect(response.render).toHaveBeenCalledWith('manage/premises/occupancy/dayView', {
-          pageHeading: 'Sun 23 Mar 2025',
-          backLink: '/backlink',
-          dayAvailabilityStatus: dayAvailabilityStatusMap[expectedStatus],
+          ...defaultRenderParameters,
+          dayAvailabilityStatus: dayAvailabilityStatusMap[expectedFilteredStatus],
           daySummaryRows: daySummaryRows(dayCapacity, criteria, 'singleRow'),
-          placementRequest,
-          premises,
           nextDayLink: `${pathPrefix}/2025-03-24?${expectedQueryString}`,
           previousDayLink: `${pathPrefix}/2025-03-22?${expectedQueryString}`,
-          ...tableCaptions(premisesDaySummary, [], true),
-          outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
-          outOfServiceBedTableRows: outOfServiceBedTableRows(premises.id, premisesDaySummary.outOfServiceBeds),
           placementTableHeader: tableHeader<PlacementColumnField>(
             placementColumnMap,
             'canonicalDepartureDate',
             'desc',
             `${pathPrefix}/2025-03-23`,
           ),
-          placementTableRows: placementTableRows(premises.id, premisesDaySummary.spaceBookingSummaries),
         })
       })
     })

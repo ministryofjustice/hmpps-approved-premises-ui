@@ -23,6 +23,7 @@ export default function routes(controllers: Controllers, router: Router, service
     withdrawalsController,
     notesController,
     withdrawablesController,
+    expiryController,
   } = controllers
 
   get(paths.applications.start.pattern, applicationsController.start(), { auditEvent: 'START_APPLICATION' })
@@ -41,9 +42,15 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'APPLY_FIND_PERSON',
     auditBodyParams: ['crn'],
   })
+
+  get(paths.applications.people.manageApplications.pattern, applicationsController.manageApplications(), {
+    auditEvent: 'MANAGE_APPLICATIONS',
+  })
   get(paths.applications.people.selectOffence.pattern, offencesController.selectOffence(), {
     auditEvent: 'SELECT_OFFENCE',
   })
+
+  // Withdrawals
   get(paths.applications.people.documents.pattern, documentsController.show(), { auditEvent: 'SHOW_DOCUMENTS' })
   post(paths.applications.withdraw.new.pattern, withdrawalsController.new(), {
     auditEvent: 'SELECT_WITHDRAWABLE_TYPE',
@@ -63,12 +70,24 @@ export default function routes(controllers: Controllers, router: Router, service
   post(paths.applications.withdraw.create.pattern, withdrawalsController.create(), {
     auditEvent: 'WITHDRAW_APPLICATION',
   })
+
+  // Expiry
+  get(paths.applications.expire.pattern, expiryController.new(), {
+    auditEvent: 'NEW_APPLICATION_EXPIRY',
+  })
+  post(paths.applications.expire.pattern, expiryController.create(), {
+    auditEvent: 'EXPIRE_APPLICATION',
+  })
+
+  // Notes
   post(paths.applications.notes.new.pattern, notesController.new(), {
     auditEvent: 'CONFIRM_NEW_NOTE',
   })
   post(paths.applications.notes.create.pattern, notesController.create(), {
     auditEvent: 'CREATE_NEW_NOTE',
   })
+
+  // Appeals
   get(paths.applications.appeals.new.pattern, appealsController.new(), {
     auditEvent: 'NEW_APPEAL',
   })

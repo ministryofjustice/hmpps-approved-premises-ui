@@ -14,14 +14,8 @@ export type Cas1Assessment = {
     clarificationNotes: Array<Cas1ClarificationNote>;
     createdAt: string;
     createdFromAppeal: boolean;
-    /**
-     * Any object
-     */
     data?: any;
     decision?: AssessmentDecision;
-    /**
-     * Any object
-     */
     document?: any;
     id: string;
     rejectionRationale?: string;

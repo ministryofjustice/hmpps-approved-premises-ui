@@ -12,6 +12,7 @@ export type Cas1ApplicationSummary = {
     arrivalDate?: string;
     createdAt: string;
     createdByUserId: string;
+    createdByUserName?: string;
     hasRequestsForPlacement: boolean;
     id: string;
     isEmergencyApplication?: boolean;

@@ -1,8 +1,8 @@
 import {
-  ApprovedPremisesAssessment as Assessment,
-  ApprovedPremisesAssessmentStatus as AssessmentStatus,
-  ApprovedPremisesAssessmentSummary as AssessmentSummary,
-  ClarificationNote,
+  Cas1Assessment as Assessment,
+  Cas1AssessmentStatus as AssessmentStatus,
+  Cas1AssessmentSummary,
+  Cas1ClarificationNote,
   Document,
   ApprovedPremisesUser as User,
 } from '@approved-premises/api'
@@ -32,7 +32,7 @@ import { awaitingAssessmentStatuses } from '../../server/utils/assessments/utils
 import SufficientInformationConfirmPage from '../pages/assess/sufficientInformationConfirmPage'
 
 export default class AseessHelper {
-  assessmentSummary: AssessmentSummary
+  assessmentSummary: Cas1AssessmentSummary
 
   pages = {
     reviewApplication: [] as Array<AssessPage>,
@@ -47,7 +47,7 @@ export default class AseessHelper {
     private readonly assessment: Assessment,
     private readonly documents: Array<Document>,
     private readonly user: User,
-    private readonly clarificationNote?: ClarificationNote,
+    private readonly clarificationNote?: Cas1ClarificationNote,
   ) {
     this.assessmentSummary = assessmentSummaryFactory.build({ id: this.assessment.id, person: personFactory.build() })
   }

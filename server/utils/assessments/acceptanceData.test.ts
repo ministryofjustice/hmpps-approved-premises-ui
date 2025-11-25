@@ -133,8 +133,8 @@ describe('acceptanceData', () => {
         type: 'normal',
         location: 'ABC123',
         radius: '100',
-        essentialCriteria: criteriaFromMatchingInformation(matchingInformation).essentialCriteria,
-        desirableCriteria: criteriaFromMatchingInformation(matchingInformation).desirableCriteria,
+        desirableCriteria: [],
+        essentialCriteria: criteriaFromMatchingInformation(matchingInformation),
       })
     })
 
@@ -170,8 +170,8 @@ describe('acceptanceData', () => {
     it('returns all essential criteria for essential and relevant matching information', () => {
       const matchingInformation = createMock<MatchingInformationBody>({
         apType: 'isESAP',
-        isWheelchairDesignated: 'essential',
-        isStepFreeDesignated: 'essential',
+        isWheelchairDesignated: 'required',
+        isStepFreeDesignated: 'required',
         acceptsSexOffenders: 'relevant',
         acceptsChildSexOffenders: 'relevant',
         acceptsNonSexualChildOffenders: 'relevant',
@@ -180,8 +180,7 @@ describe('acceptanceData', () => {
 
       const result = criteriaFromMatchingInformation(matchingInformation)
 
-      expect(result.desirableCriteria).toEqual([])
-      expect(result.essentialCriteria.sort()).toEqual(
+      expect(result.sort()).toEqual(
         [
           'isESAP',
           'isWheelchairDesignated',
@@ -193,19 +192,6 @@ describe('acceptanceData', () => {
           'isSuitedForSexOffenders',
         ].sort(),
       )
-    })
-
-    it('returns all desirable criteria for desirable matching information', () => {
-      const matchingInformation = createMock<MatchingInformationBody>({
-        apType: 'normal',
-        isWheelchairDesignated: 'desirable',
-        isStepFreeDesignated: 'desirable',
-      })
-
-      const result = criteriaFromMatchingInformation(matchingInformation)
-
-      expect(result.desirableCriteria.sort()).toEqual(['isStepFreeDesignated', 'isWheelchairDesignated'].sort())
-      expect(result.essentialCriteria).toEqual([])
     })
 
     it('returns empty objects for not relevant matching information', () => {
@@ -220,10 +206,7 @@ describe('acceptanceData', () => {
         isSuitableForVulnerable: 'notRelevant',
       })
 
-      expect(criteriaFromMatchingInformation(matchingInformation)).toEqual({
-        desirableCriteria: [],
-        essentialCriteria: [],
-      })
+      expect(criteriaFromMatchingInformation(matchingInformation)).toEqual([])
     })
   })
 })

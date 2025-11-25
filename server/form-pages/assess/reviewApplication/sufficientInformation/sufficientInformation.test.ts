@@ -1,5 +1,5 @@
 import { when } from 'jest-when'
-import { itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHavePreviousValue } from '../../../shared'
 
 import SufficientInformation from './sufficientInformation'
 import { assessmentFactory } from '../../../../testutils/factories'

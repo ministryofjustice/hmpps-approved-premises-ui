@@ -1,6 +1,7 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorMessages } from '@approved-premises/ui'
+import { faker } from '@faker-js/faker'
 import {
   convertArrayToCheckboxItems,
   convertArrayToRadioItems,
@@ -17,7 +18,10 @@ import {
   summaryListItem,
   tierSelectOptions,
   validPostcodeArea,
+  validWeeksAndDaysDuration,
+  summaryListItemNoBlankRows,
 } from './formUtils'
+import { DateFormats } from './dateUtils'
 
 describe('formUtils', () => {
   describe('dateFieldValues', () => {
@@ -522,6 +526,29 @@ describe('formUtils', () => {
     })
   })
 
+  describe('validWeeksAndDaysDuration', () => {
+    it.each([
+      ['1', '1'],
+      ['12', ''],
+      ['', '8'],
+      ['0', '12'],
+      ['3', '0'],
+    ])('returns true if weeks is "%s" and days is "%s"', (durationWeeks: string, durationDays: string) => {
+      expect(validWeeksAndDaysDuration(durationWeeks, durationDays)).toBe(true)
+    })
+
+    it.each([
+      ['', ''],
+      [undefined, undefined],
+      ['1', 'a'],
+      ['a', 'a'],
+      ['1', '-1'],
+      ['a', ''],
+    ])('returns false if weeks is "%s" and days is "%s"', (durationWeeks: string, durationDays: string) => {
+      expect(validWeeksAndDaysDuration(durationWeeks, durationDays)).toBe(false)
+    })
+  })
+
   describe('flattenCheckboxInput', () => {
     it('returns the input in an array', () => {
       expect(flattenCheckboxInput('test')).toEqual(['test'])
@@ -609,10 +636,16 @@ describe('formUtils', () => {
   describe('SummaryListItem', () => {
     const label = 'label'
     const value = 'test value'
+    const isoDate = DateFormats.dateObjToIsoDate(faker.date.anytime())
 
     it('should return a summary list item', () => {
       expect(summaryListItem(label, value)).toEqual({ key: { text: label }, value: { text: value } })
       expect(summaryListItem(label, value, 'html')).toEqual({ key: { text: label }, value: { html: value } })
+      expect(summaryListItem(label, isoDate, 'date')).toEqual({
+        key: { text: label },
+        value: { text: DateFormats.isoDateToUIDate(isoDate) },
+      })
+      expect(summaryListItem(label, undefined, 'date')).toEqual({ key: { text: label }, value: { text: '' } })
       expect(summaryListItem(label, value, 'textBlock')).toEqual({
         key: { text: label },
         value: { html: `<span class="govuk-summary-list__textblock">${value}</span>` },
@@ -621,8 +654,8 @@ describe('formUtils', () => {
     })
 
     it('should return undefined if value is falsey and blank suppression enabled', () => {
-      expect(summaryListItem(label, '', 'text')).toEqual({ key: { text: label }, value: { text: '' } })
-      expect(summaryListItem(label, '', 'text', true)).toEqual(undefined)
+      expect(summaryListItem(label, '')).toEqual({ key: { text: label }, value: { text: '' } })
+      expect(summaryListItemNoBlankRows(label, '')).toEqual(undefined)
     })
   })
 
@@ -677,18 +710,18 @@ describe('placementRequestStatusSelectOptions', () => {
   it('should return select options for tiers with the all tiers option selected by default', () => {
     expect(placementRequestStatusSelectOptions(null)).toEqual([
       { selected: true, text: 'All statuses', value: '' },
-      { selected: false, text: 'Not matched', value: 'notMatched' },
-      { selected: false, text: 'Unable to match', value: 'unableToMatch' },
-      { selected: false, text: 'Matched', value: 'matched' },
+      { selected: false, text: 'Ready to book', value: 'notMatched' },
+      { selected: false, text: 'Unable to book', value: 'unableToMatch' },
+      { selected: false, text: 'Booked', value: 'matched' },
     ])
   })
 
   it('should return the selected status if provided', () => {
     expect(placementRequestStatusSelectOptions('matched')).toEqual([
       { selected: false, text: 'All statuses', value: '' },
-      { selected: false, text: 'Not matched', value: 'notMatched' },
-      { selected: false, text: 'Unable to match', value: 'unableToMatch' },
-      { selected: true, text: 'Matched', value: 'matched' },
+      { selected: false, text: 'Ready to book', value: 'notMatched' },
+      { selected: false, text: 'Unable to book', value: 'unableToMatch' },
+      { selected: true, text: 'Booked', value: 'matched' },
     ])
   })
 })

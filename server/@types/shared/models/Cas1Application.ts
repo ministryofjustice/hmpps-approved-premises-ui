@@ -21,31 +21,21 @@ export type Cas1Application = {
     assessmentDecision?: AssessmentDecision;
     assessmentDecisionDate?: string;
     assessmentId?: string;
-    /**
-     * If true, caseManagerUserDetails will provide case manager details. Otherwise, applicantUserDetails can be used for case manager details
-     */
     caseManagerIsNotApplicant?: boolean;
     caseManagerUserDetails?: Cas1ApplicationUserDetails;
     createdAt: string;
     createdByUserId: string;
+    createdByUserName?: string;
     cruManagementArea?: Cas1CruManagementArea;
-    /**
-     * Any object
-     */
     data?: any;
-    /**
-     * Any object
-     */
     document?: any;
     id: string;
     isEmergencyApplication?: boolean;
     /**
-     * Use apType
      * @deprecated
      */
     isEsapApplication?: boolean;
     /**
-     * Use apType
      * @deprecated
      */
     isPipeApplication?: boolean;

@@ -2,7 +2,7 @@ import { path } from 'static-path'
 
 const adminPath = path('/admin')
 const placementRequestsPath = adminPath.path('placement-requests')
-const placementRequestPath = placementRequestsPath.path(':id')
+const placementRequestPath = placementRequestsPath.path(':placementRequestId')
 const changeRequestPath = placementRequestPath.path('change-requests/:changeRequestId')
 
 const userManagementPath = adminPath.path('user-management')
@@ -39,6 +39,7 @@ export default {
       changeRequests: {
         review: changeRequestPath.path('review'),
       },
+      selectPlacement: placementRequestPath.path('select-placement'),
     },
     reports: {
       new: adminPath.path('reports'),
@@ -47,8 +48,6 @@ export default {
     userManagement: {
       index: userManagementPath,
       edit: userManagementPath.path(':id'),
-      update: userManagementPath.path(':id'),
-      search: userManagementPath.path('search'),
       searchDelius: userManagementPath.path('search/delius'),
       confirmDelete: userManagementPath.path(':id/confirm-delete'),
       delete: userManagementPath.path(':id/delete'),

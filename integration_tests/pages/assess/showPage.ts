@@ -1,9 +1,9 @@
-import type { ApprovedPremisesAssessment, FullPerson } from '@approved-premises/api'
+import type { Cas1Assessment, FullPerson } from '@approved-premises/api'
 
 import Page from '../page'
 
 export default class ShowPage extends Page {
-  constructor(private readonly assessment: ApprovedPremisesAssessment) {
+  constructor(private readonly assessment: Cas1Assessment) {
     super('View Assessment')
   }
 

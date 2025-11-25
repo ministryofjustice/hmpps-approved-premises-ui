@@ -5,6 +5,7 @@ import { when } from 'jest-when'
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { PaginatedResponse } from '@approved-premises/ui'
 import { Cas1OutOfServiceBed as OutOfServiceBed, Cas1OutOfServiceBedReason } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import { SanitisedError } from '../../../sanitisedError'
 import OutOfServiceBedsController from './outOfServiceBedsController'
 import * as validationUtils from '../../../utils/validation'
@@ -28,12 +29,15 @@ import { characteristicsBulletList, roomCharacteristicMap } from '../../../utils
 import {
   CreateOutOfServiceBedBody,
   outOfServiceBedActions,
+  outOfServiceBedSummaryList,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
   outOfServiceBedTabs,
   premisesIndexTabs,
 } from '../../../utils/outOfServiceBedUtils'
 import { ValidationError } from '../../../utils/errors'
+import { summaryListItem } from '../../../utils/formUtils'
+import { DateFormats } from '../../../utils/dateUtils'
 
 jest.mock('../../../utils/getPaginationDetails')
 
@@ -102,13 +106,11 @@ describe('OutOfServiceBedsController', () => {
   })
 
   describe('create', () => {
+    const startDate = faker.date.recent({ days: 7 })
+    const endDate = faker.date.soon({ refDate: startDate, days: 21 })
     const validBody: CreateOutOfServiceBedBody = {
-      'startDate-year': '2022',
-      'startDate-month': '8',
-      'startDate-day': '22',
-      'endDate-year': '2022',
-      'endDate-month': '9',
-      'endDate-day': '22',
+      ...DateFormats.dateObjectToDateInputs(startDate, 'startDate'),
+      ...DateFormats.dateObjectToDateInputs(endDate, 'endDate'),
       reason: outOfServiceBedReasonsJson.find(reason => reason.referenceType === 'workOrder').id,
       referenceNumber: '',
       notes: 'Some notes',
@@ -120,8 +122,8 @@ describe('OutOfServiceBedsController', () => {
       await outOfServiceBedController.create()(request, response, next)
 
       expect(outOfServiceBedService.createOutOfServiceBed).toHaveBeenCalledWith(token, premisesId, {
-        startDate: '2022-08-22',
-        endDate: '2022-09-22',
+        startDate: DateFormats.dateObjToIsoDate(startDate),
+        endDate: DateFormats.dateObjToIsoDate(endDate),
         bedId: request.params.bedId,
         reason: request.body.reason,
         referenceNumber: request.body.referenceNumber,
@@ -212,7 +214,6 @@ describe('OutOfServiceBedsController', () => {
         .calledWith(request.user.token, premisesId, outOfServiceBed.id)
         .mockResolvedValue(outOfServiceBed)
 
-      const requestHandler = outOfServiceBedController.show()
       const req = {
         ...request,
         params: {
@@ -222,17 +223,27 @@ describe('OutOfServiceBedsController', () => {
           tab: 'details',
         },
       }
-      await requestHandler(req, response, next)
+      await outOfServiceBedController.show()(req, response, next)
+
+      const summaryList = outOfServiceBedSummaryList(outOfServiceBed)
+      summaryList.rows = [
+        ...summaryList.rows,
+        summaryListItem(
+          'Characteristics',
+          characteristicsBulletList(bed.characteristics, {
+            labels: roomCharacteristicMap,
+          }),
+          'html',
+        ),
+      ]
 
       expect(response.render).toHaveBeenCalledWith('manage/outOfServiceBeds/show', {
+        summaryList,
         outOfServiceBed,
         premisesId,
         bedId: bed.id,
         id: outOfServiceBed.id,
         activeTab,
-        characteristicsHtml: characteristicsBulletList(bed.characteristics, {
-          labels: roomCharacteristicMap,
-        }),
         pageHeading: `Out of service bed ${outOfServiceBed.room.name} ${outOfServiceBed.bed.name}`,
         backLink,
         actions: outOfServiceBedActions(request.session.user, premisesId, bed.id, outOfServiceBed.id),

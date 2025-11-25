@@ -24,6 +24,8 @@
 @use './components/autocomplete';
 @use './components/summary-card';
 @use './components/list';
+@use './components/details-card';
+@use './components/timeline';
 
 @use './pages/assessments-index';
 @use './pages/applications-pages-attach-document';

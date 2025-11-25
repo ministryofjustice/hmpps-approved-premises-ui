@@ -18,18 +18,22 @@ export default class UserController {
       const role = req.query.role as UserRole
       const qualification = req.query.qualification as UserQualification
       const selectedArea = req.query.area as string
+      const nameOrEmail = req.query.nameOrEmail as string
 
       const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<UserSortField>(
         req,
         paths.admin.userManagement.index({}),
-        { role, qualification, area: selectedArea },
+        { role, qualification, nameOrEmail, area: selectedArea },
       )
 
       const usersResponse = await this.userService.getUsers(
         req.user.token,
-        selectedArea,
-        [role],
-        [qualification],
+        {
+          cruManagementAreaId: selectedArea,
+          roles: role ? [role] : undefined,
+          qualifications: qualification ? [qualification] : undefined,
+          nameOrEmail,
+        },
         pageNumber,
         sortBy,
         sortDirection,
@@ -46,6 +50,7 @@ export default class UserController {
         hrefPrefix,
         sortBy,
         sortDirection,
+        nameOrEmail,
         selectedArea,
         selectedQualification: qualification,
         selectedRole: role,
@@ -81,20 +86,6 @@ export default class UserController {
 
       req.flash('success', 'User updated')
       res.redirect(paths.admin.userManagement.edit({ id: req.params.id }))
-    }
-  }
-
-  search(): TypedRequestHandler<Request, Response> {
-    return async (req: Request, res: Response) => {
-      const users = await this.userService.search(req.user.token, req.body.name as string)
-      const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(req.user.token)
-
-      res.render('admin/users/index', {
-        pageHeading: 'User management dashboard',
-        users,
-        cruManagementAreas,
-        name: req.body.name,
-      })
     }
   }
 

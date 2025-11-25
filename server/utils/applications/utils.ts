@@ -13,9 +13,9 @@ import type {
 } from '@approved-premises/ui'
 import type {
   AppealDecision,
-  ApprovedPremisesApplication as Application,
+  Cas1Application as Application,
   ApplicationSortField,
-  ApprovedPremisesApplicationStatus as ApplicationStatus,
+  Cas1ApplicationStatus as ApplicationStatus,
   Cas1PersonalTimeline,
   Cas1TimelineEvent,
   Cas1TimelineEventAssociatedUrl,
@@ -23,6 +23,7 @@ import type {
   Cas1TimelineEventUrlType,
   SortDirection,
   Cas1ApplicationSummary,
+  ApprovedPremisesApplication,
 } from '@approved-premises/api'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
@@ -43,8 +44,9 @@ import { RestrictedPersonError } from '../errors'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
-import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
+import { APPLICATION_SUITABLE, ApplicationStatusTag, applicationSuitableStatuses } from './statusTag'
 import { renderTimelineEventContent } from '../timeline'
+import { summaryListItem } from '../formUtils'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
@@ -77,32 +79,28 @@ const applicationTableRows = (applications: Array<Cas1ApplicationSummary>): Arra
   ])
 }
 
-export const applicationsTabs = (applications: GroupedApplications) => {
-  const tabs = [
-    {
-      label: 'In progress',
-      id: 'applications',
-      rows: applicationTableRows(applications.inProgress),
-    },
-    {
-      label: 'Further information requested',
-      id: 'further-information-requested',
-      rows: applicationTableRows(applications.requestedFurtherInformation),
-    },
-    {
-      label: 'Submitted',
-      id: 'applications-submitted',
-      rows: applicationTableRows(applications.submitted),
-    },
-    {
-      label: 'Inactive',
-      id: 'inactive',
-      rows: applicationTableRows(applications.inactive),
-    },
-  ]
-
-  return tabs
-}
+export const applicationsTabs = (applications: GroupedApplications) => [
+  {
+    label: 'In progress',
+    id: 'applications',
+    rows: applicationTableRows(applications.inProgress),
+  },
+  {
+    label: 'Further information requested',
+    id: 'further-information-requested',
+    rows: applicationTableRows(applications.requestedFurtherInformation),
+  },
+  {
+    label: 'Submitted',
+    id: 'applications-submitted',
+    rows: applicationTableRows(applications.submitted),
+  },
+  {
+    label: 'Inactive',
+    id: 'inactive',
+    rows: applicationTableRows(applications.inactive),
+  },
+]
 
 const dashboardTableHeader = (
   sortBy: ApplicationSortField,
@@ -148,17 +146,18 @@ const dashboardTableRows = (
 const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
   arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'
 
-export const applicationSuitableStatuses: ReadonlyArray<ApplicationStatus> = [
-  'awaitingPlacement',
-  'pendingPlacementRequest',
-  'placementAllocated',
+export const getApplicationSummary = (application: ApprovedPremisesApplication) => [
+  summaryListItem('Created on', application.createdAt, 'date'),
+  summaryListItem('Created by', application.createdByUserName),
+  summaryListItem('Requested arrival date', application.arrivalDate, 'date'),
+  summaryListItem('Status', new ApplicationStatusTag(application.status).html(), 'html'),
 ]
 
 export const actionsLink = (application: Cas1ApplicationSummary) => {
   if (application.hasRequestsForPlacement) {
     return linkTo(paths.applications.show({ id: application.id }), {
       text: 'View placement request(s)',
-      query: { tab: applicationShowPageTabs.placementRequests },
+      query: { tab: 'placementRequests' },
     })
   }
 
@@ -168,7 +167,7 @@ export const actionsLink = (application: Cas1ApplicationSummary) => {
 
   if (applicationSuitableStatuses.includes(application.status) && !application.hasRequestsForPlacement) {
     return linkTo(placementApplicationPaths.placementApplications.create({}), {
-      text: 'Create request for placement',
+      text: 'Create placement request',
       query: { id: application.id },
     })
   }
@@ -220,15 +219,7 @@ const isInapplicable = (application: Application): boolean => {
     'agreedCaseWithManager',
   )
 
-  if (isExceptionalCase === 'no') {
-    return true
-  }
-
-  if (isExceptionalCase === 'yes' && agreedCaseWithManager === 'no') {
-    return true
-  }
-
-  return false
+  return isExceptionalCase === 'no' || (isExceptionalCase === 'yes' && agreedCaseWithManager === 'no')
 }
 
 const tierQualificationPage = (application: Application) => {
@@ -279,13 +270,14 @@ export const eventTypeTranslations: Record<Cas1TimelineEventType, string> = {
   application_submitted: 'Application submitted',
   application_assessed: 'Application assessed',
   application_expired: 'Application expired',
+  application_manually_expired: 'Application manually expired',
   assessment_appealed: 'Application appealed',
   booking_made: 'Placement made',
   booking_keyworker_assigned: 'Key worker assigned',
   person_arrived: 'Person arrived',
   person_not_arrived: 'Person not arrived',
   person_departed: 'Person departed',
-  booking_not_made: 'Unable to match',
+  booking_not_made: 'Unable to book',
   booking_cancelled: 'Placement cancelled',
   booking_changed: 'Placement changed',
   application_withdrawn: 'Application withdrawn',
@@ -363,7 +355,7 @@ const urlTypeForUi = (type: Cas1TimelineEventUrlType) => {
 export const withdrawnStatusTag = {
   key: { text: 'Status' },
   value: {
-    html: `<strong class="govuk-tag govuk-tag--timeline-tag govuk-tag--red">
+    html: `<strong class="govuk-tag govuk-tag--nowrap govuk-tag--red">
         Withdrawn
       </strong>`,
   },
@@ -376,17 +368,27 @@ const lengthOfStayForUI = (duration: number) => {
 
   return 'None supplied'
 }
+export type ApplicationShowPageTab = 'application' | 'assessment' | 'placementRequests' | 'timeline'
 
-export const applicationShowPageTabs = {
-  application: 'application',
-  timeline: 'timeline',
-  placementRequests: 'placementRequests',
+const tabLabels: Record<ApplicationShowPageTab, string> = {
+  application: 'Application',
+  assessment: 'Assessment',
+  placementRequests: 'Placement requests',
+  timeline: 'Timeline',
 }
 
-export type ApplicationShowPageTab = keyof typeof applicationShowPageTabs
+export const applicationShowPageTab = (applicationId: string, tab: ApplicationShowPageTab): string =>
+  `${paths.applications.show({ id: applicationId })}?tab=${tab}`
 
-export const applicationShowPageTab = (id: Application['id'], tab: ApplicationShowPageTab) =>
-  `${paths.applications.show({ id })}?tab=${applicationShowPageTabs[tab]}`
+export const getApplicationShowPageTabs = (applicationId: string, tab: ApplicationShowPageTab) => {
+  return Object.entries(tabLabels).map(([tabKey, text]: [ApplicationShowPageTab, string]) => {
+    return {
+      text,
+      href: applicationShowPageTab(applicationId, tabKey),
+      active: tab === tabKey,
+    }
+  })
+}
 
 export type ApplicationStatusForFilter = ApplicationStatus | typeof applicationSuitableStatuses
 
@@ -458,4 +460,5 @@ export {
   applicationStatusSelectOptions,
   appealDecisionRadioItems,
   tierQualificationPage,
+  applicationSuitableStatuses,
 }

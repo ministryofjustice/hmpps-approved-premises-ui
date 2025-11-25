@@ -1,7 +1,7 @@
 import { createMock } from '@golevelup/ts-jest'
 import { fromPartial } from '@total-typescript/shoehorn'
 import { assessmentFactory, documentFactory } from '../../../../testutils/factories'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import Review from './review'
 import { ApplicationService } from '../../../../services'

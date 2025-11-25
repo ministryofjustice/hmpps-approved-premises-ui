@@ -12,6 +12,7 @@ import type {
   SubmitApprovedPremisesApplication,
   UpdateApprovedPremisesApplication,
   Withdrawables,
+  Cas1ExpireApplicationReason,
 } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
@@ -36,7 +37,7 @@ export default class ApplicationClient {
     const { convictionId, deliusEventNumber, offenceId } = activeOffence
 
     return (await this.restClient.post({
-      path: `${paths.applications.new.pattern}?createWithRisks=${!config.flags.oasysDisabled}`,
+      path: paths.applications.new.pattern,
       data: { crn, convictionId, deliusEventNumber, offenceId, type: 'CAS1' },
     })) as Application
   }
@@ -59,12 +60,13 @@ export default class ApplicationClient {
     sortBy: ApplicationSortField,
     sortDirection: SortDirection,
     searchOptions: ApplicationDashboardSearchOptions,
+    pageSize: number = 10,
   ): Promise<PaginatedResponse<Cas1ApplicationSummary>> {
     searchOptions.crnOrName = normaliseCrn(searchOptions.crnOrName)
     return this.restClient.getPaginatedResponse<Cas1ApplicationSummary>({
       path: paths.applications.all.pattern,
       page: page.toString(),
-      query: { ...searchOptions, sortBy, sortDirection },
+      query: { ...searchOptions, sortBy, sortDirection, pageSize },
     })
   }
 
@@ -84,6 +86,13 @@ export default class ApplicationClient {
   async withdrawal(applicationId: string, body: NewWithdrawal): Promise<void> {
     await this.restClient.post({
       path: paths.applications.withdrawal({ id: applicationId }),
+      data: body,
+    })
+  }
+
+  async expire(applicationId: string, body: Cas1ExpireApplicationReason): Promise<void> {
+    await this.restClient.post({
+      path: paths.applications.expire({ id: applicationId }),
       data: body,
     })
   }

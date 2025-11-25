@@ -1,13 +1,13 @@
-import { when } from 'jest-when'
-import UserService from './userService'
+import UserService, { DeliusAccountMissingStaffDetailsError, UnsupportedProbationRegionError } from './userService'
 import { UserClient } from '../data'
 
-import { paginatedResponseFactory, referenceDataFactory, userFactory } from '../testutils/factories'
+import { paginatedResponseFactory, referenceDataFactory, userFactory, userSummaryFactory } from '../testutils/factories'
 import { PaginatedResponse } from '../@types/ui'
 import { ApprovedPremisesUser } from '../@types/shared'
 import ReferenceDataClient from '../data/referenceDataClient'
 import { convertToTitleCase } from '../utils/utils'
 import { userProfileFactory } from '../testutils/factories/user'
+import { UsersSearchFilters, UsersSearchParams } from '../data/userClient'
 
 jest.mock('../data/userClient')
 jest.mock('../data/referenceDataClient.ts')
@@ -47,6 +47,42 @@ describe('User service', () => {
       expect(result.apArea).toEqual(approvedPremisesUser.apArea)
       expect(result.cruManagementArea).toEqual(approvedPremisesUser.cruManagementArea)
     })
+
+    it('throws an error if the user staff record does not exist', async () => {
+      userClient.getUserProfile.mockResolvedValueOnce({
+        deliusUsername: 'SOME_USER',
+        loadError: 'staff_record_not_found',
+      })
+
+      let error: Error
+
+      try {
+        await userService.getActingUser(token)
+      } catch (e) {
+        error = e
+      }
+
+      expect(error).toBeInstanceOf(DeliusAccountMissingStaffDetailsError)
+      expect(error.message).toEqual('Delius account missing staff details')
+    })
+
+    it("throws an error if the user's probation region is not supported", async () => {
+      userClient.getUserProfile.mockResolvedValueOnce({
+        deliusUsername: 'SOME_USER',
+        loadError: 'unsupported_probation_region',
+      })
+
+      let error: Error
+
+      try {
+        await userService.getActingUser(token)
+      } catch (e) {
+        error = e
+      }
+
+      expect(error).toBeInstanceOf(UnsupportedProbationRegionError)
+      expect(error.message).toEqual('Unsupported probation region')
+    })
   })
 
   describe('getUserById', () => {
@@ -64,11 +100,35 @@ describe('User service', () => {
     })
   })
 
+  describe('getUsersSummaries', () => {
+    it('returns user summaries with specific criteria', async () => {
+      const searchParams: UsersSearchParams = {
+        page: 1,
+        nameOrEmail: 'john@test.com',
+        permission: 'cas1_space_booking_view',
+        roles: ['assessor', 'future_manager'],
+      }
+      const clientResponse = {
+        data: userSummaryFactory.buildList(3),
+        pageNumber: '1',
+        pageSize: '10',
+        totalPages: '3',
+        totalResults: '21',
+      }
+
+      userClient.getUsersSummaries.mockResolvedValue(clientResponse)
+
+      const result = await userService.getUsersSummaries(token, searchParams)
+
+      expect(result).toEqual(clientResponse)
+
+      expect(userClient.getUsersSummaries).toHaveBeenCalledWith(searchParams)
+    })
+  })
+
   describe('getUserList', () => {
     it('returns all users', async () => {
       const response = userFactory.buildList(4)
-
-      when(userClient.getUserList).calledWith().mockResolvedValue(response)
 
       userClient.getUserList.mockResolvedValue(response)
 
@@ -76,13 +136,11 @@ describe('User service', () => {
 
       expect(result).toEqual(response)
 
-      expect(userClient.getUserList).toHaveBeenCalled()
+      expect(userClient.getUserList).toHaveBeenCalledWith([])
     })
 
     it('returns all users with given roles', async () => {
       const response = userFactory.buildList(4)
-
-      when(userClient.getUserList).calledWith().mockResolvedValue(response)
 
       userClient.getUserList.mockResolvedValue(response)
 
@@ -95,18 +153,25 @@ describe('User service', () => {
   })
 
   describe('getUsers', () => {
-    it('returns users by role and qualification', async () => {
+    it('returns users by role, qualification and name or email', async () => {
       const response = paginatedResponseFactory.build({
         data: userFactory.buildList(4),
       }) as PaginatedResponse<ApprovedPremisesUser>
 
       userClient.getUsers.mockResolvedValue(response)
 
-      const result = await userService.getUsers(token, 'test', ['applicant', 'assessor'], ['pipe'], 1, 'name', 'asc')
+      const filters: UsersSearchFilters = {
+        cruManagementAreaId: 'test',
+        roles: ['applicant', 'assessor'],
+        qualifications: ['pipe'],
+        nameOrEmail: 'Foo Smith',
+      }
+
+      const result = await userService.getUsers(token, filters, 1, 'name', 'asc')
 
       expect(result).toEqual(response)
 
-      expect(userClient.getUsers).toHaveBeenCalledWith('test', ['applicant', 'assessor'], ['pipe'], 1, 'name', 'asc')
+      expect(userClient.getUsers).toHaveBeenCalledWith(filters, 1, 'name', 'asc')
     })
   })
 

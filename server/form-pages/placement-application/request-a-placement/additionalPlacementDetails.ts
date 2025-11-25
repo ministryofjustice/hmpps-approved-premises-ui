@@ -1,10 +1,13 @@
 import { weeksToDays } from 'date-fns'
 import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 
+import type { PlacementApplication } from '@approved-premises/api'
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
-import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
+import { DateFormats, dateAndTimeInputsAreValidDates, weeksAndDaysToDays } from '../../../utils/dateUtils'
 import { dateBodyProperties } from '../../utils/dateBodyProperties'
+import { adjacentPageFromSentenceType } from '../../../utils/applications/adjacentPageFromSentenceType'
+import { getSentenceType } from '../../../utils/placementApplications'
 
 export type Body = {
   duration: string
@@ -26,7 +29,10 @@ export default class AdditionalPlacementDetails implements TasklistPage {
     reason: 'Why are you requesting this placement?',
   }
 
-  constructor(private _body: Body) {}
+  constructor(
+    private _body: Body,
+    private placementApplication: PlacementApplication,
+  ) {}
 
   get body() {
     return {
@@ -43,7 +49,8 @@ export default class AdditionalPlacementDetails implements TasklistPage {
   }
 
   previous() {
-    return 'reason-for-placement'
+    const { sentenceTypeCheck, sentenceType } = getSentenceType(this.placementApplication)
+    return sentenceTypeCheck === 'yes' ? adjacentPageFromSentenceType(sentenceType) : 'sentence-type-check'
   }
 
   next() {
@@ -53,10 +60,9 @@ export default class AdditionalPlacementDetails implements TasklistPage {
   response() {
     return {
       [this.questions.arrivalDate]: DateFormats.isoDateToUIDate(this.body.arrivalDate),
-      [this.questions.duration]: DateFormats.formatDuration({
-        weeks: this.body.durationWeeks,
-        days: this.body.durationDays,
-      }),
+      [this.questions.duration]: DateFormats.formatDuration(
+        weeksAndDaysToDays(this.body.durationWeeks, this.body.durationDays),
+      ),
       [this.questions.reason]: this.body.reason,
     }
   }

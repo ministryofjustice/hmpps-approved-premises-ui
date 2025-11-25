@@ -1,6 +1,6 @@
 import { YesOrNo } from '../../../../@types/ui'
 import { DateFormats } from '../../../../utils/dateUtils'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import RequiredActions from './requiredActions'
 

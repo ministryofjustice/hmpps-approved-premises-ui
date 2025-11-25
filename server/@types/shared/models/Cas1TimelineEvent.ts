@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Cas1ApplicationExpiredManuallyPayload } from './Cas1ApplicationExpiredManuallyPayload';
 import type { Cas1BookingCancelledContentPayload } from './Cas1BookingCancelledContentPayload';
 import type { Cas1BookingChangedContentPayload } from './Cas1BookingChangedContentPayload';
 import type { Cas1BookingMadeContentPayload } from './Cas1BookingMadeContentPayload';
@@ -20,7 +21,7 @@ export type Cas1TimelineEvent = {
     createdBySummary?: UserSummary;
     id: string;
     occurredAt: string;
-    payload?: (Cas1BookingCancelledContentPayload | Cas1BookingChangedContentPayload | Cas1BookingMadeContentPayload | Cas1PlacementChangeRequestCreatedPayload | Cas1PlacementChangeRequestRejectedPayload);
+    payload?: (Cas1ApplicationExpiredManuallyPayload | Cas1BookingCancelledContentPayload | Cas1BookingChangedContentPayload | Cas1BookingMadeContentPayload | Cas1PlacementChangeRequestCreatedPayload | Cas1PlacementChangeRequestRejectedPayload);
     schemaVersion?: number;
     triggerSource?: Cas1TriggerSourceType;
     type: Cas1TimelineEventType;

@@ -1,6 +1,5 @@
 import { placementApplicationFactory } from '../../../testutils/factories'
-import { retrieveQuestionResponseFromFormArtifact } from '../../../utils/retrieveQuestionResponseFromFormArtifact'
-import { itShouldHaveNextValue } from '../../shared-examples'
+import { itShouldHaveNextValue } from '../../shared'
 
 import UpdatesToApplication, { Body } from './updatesToApplication'
 
@@ -35,18 +34,21 @@ describe('UpdatesToApplication', () => {
   itShouldHaveNextValue(new UpdatesToApplication({}, placementApplication), 'check-your-answers')
 
   describe('previous', () => {
-    const reasonsAndPreviousPages = [
-      { reason: 'rotl', previousPage: 'dates-of-placement' },
-      { reason: 'additional_placement', previousPage: 'additional-placement-details' },
-      { reason: 'release_following_decision', previousPage: 'additional-documents' },
-    ]
+    it.each([
+      { releaseType: 'rotl', previousPage: 'dates-of-placement' },
+      { releaseType: 'licence', previousPage: 'additional-placement-details' },
+      { releaseType: 'paroleDirectedLicence', previousPage: 'additional-documents' },
+    ])('should return the correct previous page for %s', ({ releaseType, previousPage }) => {
+      const testData = {
+        'request-a-placement': {
+          'sentence-type-check': {
+            sentenceTypeCheck: 'no',
+            applicationReleaseType: releaseType,
+          },
+        },
+      }
 
-    it.each(reasonsAndPreviousPages)('should return the correct previous page for %s', ({ reason, previousPage }) => {
-      ;(
-        retrieveQuestionResponseFromFormArtifact as jest.MockedFn<typeof retrieveQuestionResponseFromFormArtifact>
-      ).mockReturnValue(reason)
-
-      const page = new UpdatesToApplication(body, placementApplication)
+      const page = new UpdatesToApplication(body, { ...placementApplication, data: testData })
       expect(page.previous()).toBe(previousPage)
     })
   })

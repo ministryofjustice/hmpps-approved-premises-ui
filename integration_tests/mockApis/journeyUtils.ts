@@ -1,8 +1,5 @@
 import { SuperAgentRequest } from 'superagent'
-import {
-  ApprovedPremisesApplication as Application,
-  ApprovedPremisesAssessment as Assessment,
-} from '@approved-premises/api'
+import { Cas1Application as Application, Cas1Assessment as Assessment } from '@approved-premises/api'
 
 import { UiTask } from '@approved-premises/ui'
 import { bulkStub, getMatchingRequests } from './setup'
@@ -94,24 +91,25 @@ export const generateStubsForPage = (
 
 const stubRequestBody = (form: Application | Assessment, formData: Record<string, unknown>): string => {
   if (!isAssessment(form)) {
+    const application = form as Application
     return `
       {
-        "id": "${form.id}",
-        "person": ${JSON.stringify(form.person)},
-        "createdByProbationOfficerId": "${form.createdByUserId}",
-        "createdAt": "${form.createdAt}",
-        "submittedAt": "${form.submittedAt}",
+        "id": "${application.id}",
+        "person": ${JSON.stringify(application.person)},
+        "createdByProbationOfficerId": "${application.createdByUserId}",
+        "createdAt": "${application.createdAt}",
+        "submittedAt": "${application.submittedAt}",
         "data": "${formData}"
       }
       `
   }
-
+  const assessment = form as Assessment
   return `
     {
-      "id": "${form.id}",
-      "createdAt": "${form.createdAt}",
-      "submittedAt": "${form.submittedAt}",
-      "application": "${form.application}",
+      "id": "${assessment.id}",
+      "createdAt": "${assessment.createdAt}",
+      "submittedAt": "${assessment.submittedAt}",
+      "application": "${assessment.application}",
       "data": "${formData}"
     }
     `
@@ -168,13 +166,26 @@ export const verifyApiRequest = async (
   })
 
   const { requests } = result.body
-  return requests[0].body ? JSON.parse(requests[0].body) : {}
+  const lastRequest = requests.pop()
+  return lastRequest.body ? JSON.parse(lastRequest.body) : {}
+}
+
+type FoundRequest = {
+  queryParameters: Record<string, unknown>
 }
 
 export const verifyApiPost = (url: string) => verifyApiRequest(url, 'POST')
 export const verifyApiPatch = (url: string) => verifyApiRequest(url, 'PATCH')
 export const verifyApiPut = (url: string) => verifyApiRequest(url, 'PUT')
 export const verifyApiDelete = (url: string) => verifyApiRequest(url, 'DELETE')
+
+export const verifyApiGet = async (urlPattern: string): Promise<Array<FoundRequest>> => {
+  const result = await getMatchingRequests({
+    method: 'GET',
+    urlPathPattern: urlPattern,
+  })
+  return result.body.requests
+}
 
 export const stubJourney = (form: Application | Assessment): SuperAgentRequest => {
   const journeyType = isAssessment(form) ? 'assessment' : 'application'
@@ -184,7 +195,7 @@ export const stubJourney = (form: Application | Assessment): SuperAgentRequest =
     journeyType === 'application'
       ? {
           method: 'POST',
-          url: `${paths.applications.new({})}?createWithRisks=true`,
+          url: paths.applications.new({}),
         }
       : {
           method: 'GET',
@@ -227,7 +238,7 @@ export const stubJourney = (form: Application | Assessment): SuperAgentRequest =
           return [...taskList, ...section.tasks]
         }, [] as Array<UiTask>)
         .map(({ id }): string => id)
-    : Object.keys(form.data)
+    : Object.keys((form as Application).data)
 
   tasks.forEach((task, taskIndex) => {
     const previousTask = taskIndex > 0 ? tasks[taskIndex - 1] : undefined

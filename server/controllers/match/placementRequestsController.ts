@@ -3,6 +3,7 @@ import { ApplicationService, PlacementApplicationService, PlacementRequestServic
 import paths from '../../paths/placementApplications'
 import { addErrorMessageToFlash } from '../../utils/validation'
 import { getResponses } from '../../utils/applications/getResponses'
+import { placementRequestKeyDetails } from '../../utils/placementRequests/utils'
 
 export default class PlacementRequestsController {
   constructor(
@@ -13,10 +14,14 @@ export default class PlacementRequestsController {
 
   show(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
+      const placementRequest = await this.placementRequestService.getPlacementRequest(
+        req.user.token,
+        req.params.placementRequestId,
+      )
 
       res.render('match/placementRequests/show', {
         pageHeading: `Matching information`,
+        contextKeyDetails: placementRequestKeyDetails(placementRequest),
         placementRequest,
       })
     }
@@ -31,7 +36,7 @@ export default class PlacementRequestsController {
         paths.placementApplications.pages.show({
           id: application.id,
           task: 'request-a-placement',
-          page: 'reason-for-placement',
+          page: 'sentence-type-check',
         }),
       )
     }

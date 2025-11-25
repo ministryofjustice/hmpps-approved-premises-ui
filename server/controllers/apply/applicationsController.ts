@@ -1,31 +1,48 @@
 import type { Request, RequestHandler, Response } from 'express'
 
+import { addYears } from 'date-fns'
+import { ApplicationSortField, Cas1Assessment, Cas1TimelineEvent, RequestForPlacement } from '@approved-premises/api'
+import { statusesLimitedToOne } from '../../utils/applications/statusTag'
+import {
+  getApplicationsHeading,
+  getApplicationTableHeader,
+  getApplicationTableRows,
+} from '../../utils/applications/manageApplications'
 import TasklistService from '../../services/tasklistService'
 import ApplicationService from '../../services/applicationService'
-import { PersonService } from '../../services'
+import { AssessmentService, PersonService, SessionService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
+import adminPaths from '../../paths/admin'
 import { DateFormats } from '../../utils/dateUtils'
 import {
-  applicationShowPageTabs,
+  ApplicationShowPageTab,
   applicationsTabs,
   applicationStatusSelectOptions,
   firstPageOfApplicationJourney,
+  getApplicationShowPageTabs,
 } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { isFullPerson } from '../../utils/personUtils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
-import { ApplicationSortField } from '../../@types/shared'
 import { ApplicationDashboardSearchOptions } from '../../@types/ui'
 import { getSearchOptions } from '../../utils/getSearchOptions'
 import { RestrictedPersonError } from '../../utils/errors'
+import peoplePaths from '../../paths/people'
+import { applicationKeyDetails, personKeyDetails } from '../../utils/applications/helpers'
+
+interface ShowRequest extends Request {
+  query: { tab: ApplicationShowPageTab }
+}
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
 export default class ApplicationsController {
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly assessmentService: AssessmentService,
     private readonly personService: PersonService,
+    private readonly sessionService: SessionService,
   ) {}
 
   index(): RequestHandler {
@@ -87,38 +104,91 @@ export default class ApplicationsController {
   }
 
   show(): RequestHandler {
-    return async (req: Request, res: Response) => {
+    return async (req: ShowRequest, res: Response) => {
       const application = await this.applicationService.findApplication(req.user.token, req.params.id)
+
+      const backLink = this.sessionService.getPageBackLink(paths.applications.show.pattern, req, [
+        paths.applications.index.pattern,
+        paths.applications.dashboard.pattern,
+        peoplePaths.timeline.show.pattern,
+        paths.applications.people.manageApplications.pattern,
+        adminPaths.admin.placementRequests.show.pattern,
+      ])
 
       const taskList = new TasklistService(application)
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
       if (application.status !== 'started') {
-        const referrer = req.headers.referer
-        const defaultParams = { application, referrer, pageHeading: 'Approved Premises application' }
+        const {
+          query: { tab = 'application' },
+          user: { token },
+          headers: { referer },
+        } = req
 
-        if (req.query.tab === applicationShowPageTabs.timeline) {
-          const timelineEvents = await this.applicationService.timeline(req.user.token, application.id)
+        const renderParams: {
+          timelineEvents?: Array<Cas1TimelineEvent>
+          requestsForPlacement?: Array<RequestForPlacement>
+          assessment?: Cas1Assessment
+        } = {}
 
-          return res.render('applications/show', { ...defaultParams, timelineEvents, tab: 'timeline' })
+        if (tab === 'timeline') {
+          renderParams.timelineEvents = await this.applicationService.timeline(token, application.id)
         }
-
-        if (req.query.tab === applicationShowPageTabs.placementRequests) {
-          const requestsForPlacement = await this.applicationService.getRequestsForPlacement(
-            req.user.token,
+        if (tab === 'placementRequests') {
+          renderParams.requestsForPlacement = await this.applicationService.getRequestsForPlacement(
+            token,
             application.id,
           )
-
-          return res.render('applications/show', {
-            ...defaultParams,
-            requestsForPlacement,
-            tab: 'placementRequests',
-          })
+        }
+        if (tab === 'assessment' && application.assessmentId) {
+          renderParams.assessment = await this.assessmentService.findAssessment(token, application.assessmentId)
         }
 
-        return res.render('applications/show', { ...defaultParams, tab: 'application' })
+        return res.render('applications/show', {
+          backLink,
+          contextKeyDetails: applicationKeyDetails(application),
+          referrer: referer,
+          pageHeading: 'Approved Premises application',
+          application,
+          ...renderParams,
+          tab: tab || 'application',
+          tabs: getApplicationShowPageTabs(application.id, tab),
+          applicationExpiryDate:
+            application.assessmentDecisionDate &&
+            DateFormats.dateObjtoUIDate(addYears(application.assessmentDecisionDate, 1)),
+        })
       }
       return res.render('applications/tasklist', { application, taskList, errorSummary, errors })
+    }
+  }
+
+  manageApplications(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { crn } = req.params
+
+      const { data: applicationList } = await this.applicationService.getAll(
+        req.user.token,
+        1,
+        undefined,
+        undefined,
+        {
+          crnOrName: crn,
+          status: statusesLimitedToOne,
+        },
+        1000,
+      )
+
+      const person =
+        applicationList.length > 0 ? applicationList[0].person : await this.personService.findByCrn(req.user.token, crn)
+
+      return res.render('applications/manageApplications', {
+        contextKeyDetails: personKeyDetails(person, applicationList[0] && applicationList[0].risks?.tier?.value?.level),
+        continuePath: applicationList.length > 0 ? undefined : paths.applications.people.selectOffence({ crn }),
+        pageHeading: getApplicationsHeading(applicationList),
+        applicationsHeader: getApplicationTableHeader(),
+        applicationsRows: getApplicationTableRows(applicationList, req.session.user.id),
+        applicationCount: applicationList.length,
+      })
     }
   }
 

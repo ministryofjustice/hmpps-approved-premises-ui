@@ -1,4 +1,4 @@
-import { ApprovedPremisesAssessment as Assessment } from '../../../server/@types/shared'
+import { Cas1Assessment as Assessment } from '../../../server/@types/shared'
 import {
   assessmentFactory,
   assessmentSummaryFactory,
@@ -225,7 +225,7 @@ context('Assess', () => {
       task: 'make-a-decision',
       page: 'make-a-decision',
       keyValuePairs: {
-        decision: 'otherReasons',
+        decision: 'notNecessaryOrProportionate',
         decisionRationale: 'reject reason',
       },
     })

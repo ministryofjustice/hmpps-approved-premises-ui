@@ -1,5 +1,5 @@
 import { convertKeyValuePairToRadioItems } from '../../../utils/formUtils'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared'
 
 import TypeOfAccommodation, { accommodationType } from './typeOfAccommodation'
 

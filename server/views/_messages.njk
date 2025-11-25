@@ -14,7 +14,7 @@
 {% if successMessages %}
     {% for message in successMessages %}
         {{ govukNotificationBanner({
-            html: '<h3 class="govuk-notification-banner__heading">' + (message.heading or message) + '</h3>' + (message.body or ''),
+            html: '<h3 class="govuk-notification-banner__heading">' + (message.heading or message) + '</h3> ' + (message.body or ''),
             type: 'success',
             titleId: 'success-title',
             classes: 'govuk-notification-banner--full-width-content'

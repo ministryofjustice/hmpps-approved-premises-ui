@@ -2,6 +2,7 @@ import { GIVEN, updateApplicationReleaseDate } from '../../helpers'
 import {
   activeOffenceFactory,
   applicationFactory,
+  assessmentFactory,
   personFactory,
   risksFactory,
   tierEnvelopeFactory,
@@ -18,23 +19,31 @@ export const setup = () => {
 
   cy.fixture('applicationData.json').then(applicationData => {
     const person = personFactory.build()
+    const assessment = assessmentFactory.build()
     const application = applicationFactory.build({
       person,
       status: 'started',
       createdAt: DateFormats.dateObjToIsoDate(new Date()),
       createdByUserId: defaultUserId,
+      assessmentId: assessment.id,
     })
     const risks = risksFactory.build({
       crn: person.crn,
       tier: tierEnvelopeFactory.build({ value: { level: 'A3' } }),
     })
     const offences = activeOffenceFactory.buildList(1)
+
     application.data = updateApplicationReleaseDate(applicationData)
     application.risks = risks
+
+    cy.task('stubApplicationGet', { application })
+    cy.task('stubApplications', [application])
+    cy.task('stubAllApplications', { applications: [], anyQuery: true })
 
     cy.wrap(person).as('person')
     cy.wrap(offences).as('offences')
     cy.wrap(application).as('application')
     cy.wrap(application.data).as('applicationData')
+    cy.wrap(assessment).as('assessment')
   })
 }

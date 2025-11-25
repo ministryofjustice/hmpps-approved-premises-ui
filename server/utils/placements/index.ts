@@ -1,53 +1,27 @@
-import type {
+import {
   Cas1ChangeRequestType,
+  Cas1CurrentKeyWorker,
   Cas1SpaceBooking,
   Cas1SpaceBookingDates,
   Cas1SpaceBookingSummary,
-  StaffMember,
 } from '@approved-premises/api'
-import {
-  KeyDetailsArgs,
-  RadioItem,
-  SelectOption,
-  SummaryList,
-  SummaryListItem,
-  UserDetails,
-} from '@approved-premises/ui'
-import { differenceInCalendarDays } from 'date-fns'
-import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
-import { htmlValue, textValue } from '../applications/helpers'
-import { displayName, isFullPerson } from '../personUtils'
+import { RadioItem, SummaryList, TabItem, TableCell, UserDetails } from '@approved-premises/ui'
+import { DateFormats } from '../dateUtils'
+import { htmlValue, personKeyDetails, textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
-import { TabItem } from '../tasks/listTable'
-import { summaryListItem } from '../formUtils'
+import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
 import {
   ApTypeCriteria,
-  SpecialistApTypeCriteria,
   apTypeCriteriaLabels,
+  SpecialistApTypeCriteria,
   specialistApTypeCriteria,
 } from '../placementCriteriaUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import { characteristicsBulletList, roomCharacteristicMap } from '../characteristicsUtils'
-
-export const overallStatusTextMap = {
-  upcoming: 'Upcoming',
-  arrived: 'Arrived',
-  notArrived: 'Not arrived',
-  departed: 'Departed',
-  cancelled: 'Cancelled',
-} as const
-
-export const statusTextMap = {
-  ...overallStatusTextMap,
-  arrivingWithin6Weeks: 'Arriving within 6 weeks',
-  arrivingWithin2Weeks: 'Arriving within 2 weeks',
-  arrivingToday: 'Arriving today',
-  overdueArrival: 'Overdue arrival',
-  departingWithin2Weeks: 'Departing within 2 weeks',
-  departingToday: 'Departing today',
-  overdueDeparture: 'Overdue departure',
-} as const
+import { StatusTagOptions } from '../statusTag'
+import { PlacementStatusTag } from './statusTag'
+import { detailedStatus, overallStatus, statusTextMap } from './status'
 
 const changeRequestStatuses: Record<Cas1ChangeRequestType, string> = {
   placementAppeal: 'Appeal requested',
@@ -55,49 +29,7 @@ const changeRequestStatuses: Record<Cas1ChangeRequestType, string> = {
   placementExtension: 'Extension requested',
 }
 
-type SpaceBookingOverallStatus = keyof typeof overallStatusTextMap
-type SpaceBookingStatus = keyof typeof statusTextMap
-
-const isSpaceBooking = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): placement is Cas1SpaceBooking =>
-  Boolean((placement as Cas1SpaceBooking).otherBookingsInPremisesForCrn)
-
-export const overallStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingOverallStatus => {
-  const isNonArrival = isSpaceBooking(placement) ? placement.nonArrival : placement.isNonArrival
-  const isCancelled = isSpaceBooking(placement) ? placement.cancellation : placement.isCancelled
-
-  if (isCancelled) return 'cancelled'
-  if (isNonArrival) return 'notArrived'
-  if (placement.actualDepartureDate) return 'departed'
-  if (placement.actualArrivalDate) return 'arrived'
-  return 'upcoming'
-}
-
-export const detailedStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingStatus => {
-  const status = overallStatus(placement)
-
-  if (['notArrived', 'departed', 'cancelled'].includes(status)) return status
-
-  if (status === 'arrived') {
-    const daysFromDeparture = differenceInCalendarDays(placement.expectedDepartureDate, new Date())
-
-    if (daysFromDeparture < 0) return 'overdueDeparture'
-    if (daysFromDeparture === 0) return 'departingToday'
-    if (daysFromDeparture <= 2 * 7) return 'departingWithin2Weeks'
-
-    return 'arrived'
-  }
-
-  const daysFromArrival = differenceInCalendarDays(placement.expectedArrivalDate, new Date())
-
-  if (daysFromArrival < 0) return 'overdueArrival'
-  if (daysFromArrival === 0) return 'arrivingToday'
-  if (daysFromArrival <= 2 * 7) return 'arrivingWithin2Weeks'
-  if (daysFromArrival <= 6 * 7) return 'arrivingWithin6Weeks'
-
-  return 'upcoming'
-}
-
-export const placementStatusHtml = (placement: Cas1SpaceBookingSummary): { html: string } => {
+export const placementStatusCell = (placement: Cas1SpaceBookingSummary): TableCell => {
   const statusElements: Array<string> = [
     statusTextMap[detailedStatus(placement)],
     ...placement.openChangeRequestTypes.map((requestType: Cas1ChangeRequestType) => changeRequestStatuses[requestType]),
@@ -119,7 +51,10 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
     actionList.push({
       text: 'Edit keyworker',
       classes: 'govuk-button--secondary',
-      href: paths.premises.placements.keyworker({ premisesId: placement.premises.id, placementId: placement.id }),
+      href: paths.premises.placements.keyworker.new({
+        premisesId: placement.premises.id,
+        placementId: placement.id,
+      }),
     })
   }
 
@@ -182,26 +117,7 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
   return actionList.length ? [{ items: actionList }] : null
 }
 
-export const getKeyDetail = (placement: Cas1SpaceBooking): KeyDetailsArgs => {
-  const { person, tier } = placement
-  return {
-    header: { value: displayName(person), key: '', showKey: false },
-    items: [
-      { key: textValue('CRN'), value: textValue(person.crn) },
-      { key: { text: 'Tier' }, value: { text: tier } },
-      isFullPerson(person)
-        ? {
-            key: { text: 'Date of birth' },
-            value: {
-              text: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
-            },
-          }
-        : undefined,
-    ],
-  }
-}
-
-const formatDate = (date: string | null) => date && DateFormats.isoDateToUIDate(date)
+export const placementKeyDetails = (placement: Cas1SpaceBooking) => personKeyDetails(placement.person, placement.tier)
 
 const formatTimeFromIsoDateTime = (dateTime: string | null) =>
   dateTime && DateFormats.timeFromDate(DateFormats.isoToDateObj(dateTime))
@@ -210,41 +126,52 @@ const formatTime = (time: string) => {
   return time ? DateFormats.timeFromDate(new Date(`2024-01-01T${time}`)) : ''
 }
 
-const summaryRow = (key: string, value: string): SummaryListItem => value && summaryListItem(key, value)
+export const placementName = (placement: Cas1SpaceBookingSummary): string =>
+  `${placement.premises.name} from ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate)}`
+
+export const placementStatusTag = (
+  placement: Cas1SpaceBookingSummary | Cas1SpaceBooking,
+  options: StatusTagOptions = {},
+): string =>
+  new PlacementStatusTag(detailedStatus(placement), {
+    ...options,
+    classes: `govuk-tag--nowrap ${options.classes || ''}`,
+  }).html()
+
+export const placementNameWithStatus = (placement: Cas1SpaceBookingSummary): string =>
+  `${placementName(placement)} ${placementStatusTag(placement, { classes: 'govuk-!-margin-left-1' })}`
 
 export const placementSummary = (placement: Cas1SpaceBooking): SummaryList => {
   const { createdAt, actualArrivalDate, actualDepartureDate, keyWorkerAllocation, deliusEventNumber } = placement
   return {
     rows: [
-      summaryRow('AP name', placement.premises.name),
-      summaryRow('Date allocated', formatDate(createdAt)),
-      summaryRow('Status', statusTextMap[detailedStatus(placement)]),
-      summaryRow(
+      summaryListItemNoBlankRows('AP name', placement.premises.name),
+      summaryListItemNoBlankRows('Date allocated', createdAt, 'date'),
+      summaryListItemNoBlankRows('Status', placementStatusTag(placement), 'html'),
+      summaryListItemNoBlankRows(
         'Actual length of stay',
         actualArrivalDate &&
           actualDepartureDate &&
           DateFormats.formatDuration(
-            daysToWeeksAndDays(
-              DateFormats.durationBetweenDates(
-                DateFormats.isoToDateObj(actualDepartureDate),
-                DateFormats.isoToDateObj(actualArrivalDate),
-              ).number,
-            ),
+            DateFormats.durationBetweenDates(
+              DateFormats.isoToDateObj(actualDepartureDate),
+              DateFormats.isoToDateObj(actualArrivalDate),
+            ).number,
           ),
       ),
-      summaryRow('Key worker', keyWorkerAllocation?.keyWorker?.name || 'Not assigned'),
-      summaryRow('Delius Event Number', deliusEventNumber),
+      summaryListItemNoBlankRows('Key worker', keyWorkerAllocation?.name || 'Not assigned'),
+      summaryListItemNoBlankRows('Delius Event Number', deliusEventNumber),
     ].filter(Boolean),
   }
 }
 
 export const placementOverviewSummary = (placement: Cas1SpaceBooking): SummaryList => ({
   rows: [
-    summaryRow('Approved premises', placement.premises.name),
-    summaryRow('Date of match', formatDate(placement.createdAt)),
-    summaryRow('Expected arrival date', formatDate(placement.expectedArrivalDate)),
-    summaryRow('Actual arrival date', formatDate(placement.actualArrivalDate)),
-    summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
+    summaryListItemNoBlankRows('Approved premises', placement.premises.name),
+    summaryListItemNoBlankRows('Date of match', placement.createdAt, 'date'),
+    summaryListItemNoBlankRows('Expected arrival date', placement.expectedArrivalDate, 'date'),
+    summaryListItemNoBlankRows('Actual arrival date', placement.actualArrivalDate, 'date'),
+    summaryListItemNoBlankRows('Expected departure date', placement.expectedDepartureDate, 'date'),
     summaryListItem(
       'Room criteria',
       characteristicsBulletList(placement.characteristics, {
@@ -261,15 +188,15 @@ export const arrivalInformation = (placement: Cas1SpaceBooking): SummaryList => 
   const { reason, notes, confirmedAt } = nonArrival || {}
   return {
     rows: [
-      summaryRow('Expected arrival date', formatDate(expectedArrivalDate)),
-      summaryRow('Actual arrival date', formatDate(actualArrivalDate)),
-      summaryRow('Arrival time', formatTime(actualArrivalTime)),
-      summaryRow(
+      summaryListItemNoBlankRows('Expected arrival date', expectedArrivalDate, 'date'),
+      summaryListItemNoBlankRows('Actual arrival date', actualArrivalDate, 'date'),
+      summaryListItemNoBlankRows('Arrival time', formatTime(actualArrivalTime)),
+      summaryListItemNoBlankRows(
         'Non arrival recorded at',
-        confirmedAt && `${formatDate(confirmedAt)} ${formatTimeFromIsoDateTime(confirmedAt)}`,
+        confirmedAt && `${DateFormats.isoDateToUIDate(confirmedAt)} ${formatTimeFromIsoDateTime(confirmedAt)}`,
       ),
-      summaryRow('Non arrival reason', reason?.name),
-      summaryRow('Non arrival any other information', notes),
+      summaryListItemNoBlankRows('Non arrival reason', reason?.name),
+      summaryListItemNoBlankRows('Non arrival any other information', notes),
     ].filter(Boolean),
   }
 }
@@ -285,13 +212,13 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
 
   return {
     rows: [
-      summaryRow('Expected departure date', formatDate(placement.expectedDepartureDate)),
-      summaryRow('Actual departure date', formatDate(placement.actualDepartureDate)),
-      summaryRow('Departure time', formatTime(placement.actualDepartureTime)),
-      summaryRow('Departure reason', reason),
-      summaryRow('Breach or recall', breachOrRecall),
-      summaryRow('Move on', placement.departure?.moveOnCategory?.name),
-      summaryListItem('More information', placement.departure?.notes, 'textBlock', true),
+      summaryListItemNoBlankRows('Expected departure date', placement.expectedDepartureDate, 'date'),
+      summaryListItemNoBlankRows('Actual departure date', placement.actualDepartureDate, 'date'),
+      summaryListItemNoBlankRows('Departure time', formatTime(placement.actualDepartureTime)),
+      summaryListItemNoBlankRows('Departure reason', reason),
+      summaryListItemNoBlankRows('Breach or recall', breachOrRecall),
+      summaryListItemNoBlankRows('Move on', placement.departure?.moveOnCategory?.name),
+      summaryListItemNoBlankRows('More information', placement.departure?.notes, 'textBlock'),
     ].filter(Boolean),
   }
 }
@@ -335,19 +262,26 @@ export const otherBookings = (placement: Cas1SpaceBooking): SummaryList => ({
   ],
 })
 
-export const renderKeyworkersSelectOptions = (
-  staffList: Array<StaffMember>,
-  placement: Cas1SpaceBooking,
-): Array<SelectOption> => [
-  { text: 'Select a keyworker', value: null },
-  ...staffList
-    .filter(({ code }) => placement.keyWorkerAllocation?.keyWorker?.code !== code)
-    .map(({ name, code }) => ({
-      text: `${name}`,
-      value: `${code}`,
-      selected: false,
-    })),
-]
+export const renderKeyworkersRadioOptions = (
+  currentKeyworkers: Array<Cas1CurrentKeyWorker>,
+  placement?: Cas1SpaceBooking,
+): Array<RadioItem> => {
+  const currentKeyworkersRadios = currentKeyworkers
+    .filter(keyworker => keyworker.summary.id !== placement?.keyWorkerAllocation?.userId)
+    .map(keyworker => ({
+      text: keyworker.summary.name,
+      value: keyworker.summary.id,
+    }))
+
+  return [
+    ...currentKeyworkersRadios,
+    currentKeyworkersRadios.length ? { divider: 'or' } : undefined,
+    {
+      text: 'Assign a different keyworker',
+      value: 'new',
+    },
+  ].filter(Boolean)
+}
 
 export type PlacementTab = 'application' | 'assessment' | 'placementRequest' | 'placement' | 'timeline'
 
@@ -399,7 +333,23 @@ export const processReferenceData = <T>(input: Array<IdAndName>, subst: IdAndNam
 }
 
 export const injectRadioConditionalHtml = (input: Array<RadioItem>, value: string, html: string): Array<RadioItem> =>
-  input.map((row: RadioItem) => (row.value === value ? { ...row, conditional: { html } } : row))
+  input.map(row => ('value' in row && row.value === value ? { ...row, conditional: { html } } : row))
+
+export const withdrawalMessage = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): string => {
+  const { arrivalDate, departureDate } = canonicalDates(placement)
+  return `Placement at ${placement.premises.name} from ${DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(departureDate, { format: 'short' })} has been withdrawn`
+}
+
+export const withdrawalSummaryList = (placement: Cas1SpaceBooking) => {
+  const { arrivalDate, departureDate } = canonicalDates(placement)
+  return {
+    rows: [
+      summaryListItem('Approved premises', placement?.premises.name),
+      summaryListItem('Arrival date', arrivalDate, 'date'),
+      summaryListItem('Departure date', departureDate, 'date'),
+    ],
+  }
+}
 
 export const BREACH_OR_RECALL_REASON_ID = 'd3e43ec3-02f4-4b96-a464-69dc74099259'
 export const PLANNED_MOVE_ON_REASON_ID = '1bfe5cdf-348e-4a6e-8414-177a92a53d26'

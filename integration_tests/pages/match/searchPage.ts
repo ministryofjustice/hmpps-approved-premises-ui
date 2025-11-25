@@ -1,4 +1,9 @@
-import { Cas1PlacementRequestDetail, Cas1SpaceSearchResult, Cas1SpaceSearchResults } from '@approved-premises/api'
+import {
+  Cas1PlacementRequestDetail,
+  Cas1SpaceSearchResult,
+  Cas1SpaceSearchResults,
+  FullPerson,
+} from '@approved-premises/api'
 import { SpaceSearchFormData } from '@approved-premises/ui'
 import Page from '../page'
 import { addressRow, apTypeRow, distanceRow, restrictionsRow } from '../../../server/utils/match'
@@ -13,12 +18,12 @@ export default class SearchPage extends Page {
   }
 
   static visit(placementRequest: Cas1PlacementRequestDetail) {
-    cy.visit(paths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }))
+    cy.visit(paths.v2Match.placementRequests.search.spaces({ placementRequestId: placementRequest.id }))
     return new SearchPage()
   }
 
   shouldShowCaseDetails(placementRequest: Cas1PlacementRequestDetail): void {
-    this.shouldShowKeyPersonDetails(placementRequest)
+    this.shouldShowKeyPersonDetails(placementRequest.person as FullPerson, placementRequest.risks?.tier?.value?.level)
     this.shouldShowMatchingDetails(placementRequest)
   }
 
@@ -33,6 +38,7 @@ export default class SearchPage extends Page {
 
   shouldDisplaySearchResults(spaceSearchResults: Cas1SpaceSearchResults, targetPostcodeDistrict: string): void {
     cy.get('h2').contains(`${spaceSearchResults.resultsCount} Approved Premises found`)
+    cy.contains('Results are ordered by suitable preferred AP and distance from location.')
 
     spaceSearchResults.results.forEach(result => {
       cy.contains('h3', result.premises.name)
@@ -88,6 +94,6 @@ export default class SearchPage extends Page {
   }
 
   clickUnableToMatch(): void {
-    cy.get('.govuk-button').contains('Unable to match').click()
+    cy.get('.govuk-button').contains('Unable to book').click()
   }
 }

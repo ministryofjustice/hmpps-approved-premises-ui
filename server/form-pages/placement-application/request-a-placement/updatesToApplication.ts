@@ -6,8 +6,7 @@ import { yesOrNoResponseWithDetailForYes } from '../../utils'
 import TasklistPage from '../../tasklistPage'
 import { PlacementApplication } from '../../../@types/shared'
 import { applicationLink } from '../../../utils/placementRequests/applicationLink'
-import { retrieveQuestionResponseFromFormArtifact } from '../../../utils/retrieveQuestionResponseFromFormArtifact'
-import ReasonForPlacement from './reasonForPlacement'
+import { getSentenceType } from '../../../utils/placementApplications'
 
 export type Body = YesOrNoWithDetail<'significantEvents'> &
   YesOrNoWithDetail<'changedCirumstances'> &
@@ -50,36 +49,24 @@ export default class UpdatesToApplication implements TasklistPage {
 
   applicationLink: string
 
-  placementApplication: PlacementApplication
-
   constructor(
     public body: Partial<Body>,
-    placementApplication: PlacementApplication,
+    private readonly placementApplication: PlacementApplication,
   ) {
     this.applicationLink = applicationLink(placementApplication, 'View application', 'View application')
-    this.placementApplication = placementApplication
   }
 
   previous() {
-    const reasonForPlacement = retrieveQuestionResponseFromFormArtifact(
-      this.placementApplication,
-      ReasonForPlacement,
-      'reason',
-    )
+    const { releaseType } = getSentenceType(this.placementApplication)
 
-    if (reasonForPlacement === 'rotl') {
-      return 'dates-of-placement'
+    switch (releaseType) {
+      case 'rotl':
+        return 'dates-of-placement'
+      case 'paroleDirectedLicence':
+        return 'additional-documents'
+      default:
+        return 'additional-placement-details'
     }
-
-    if (reasonForPlacement === 'additional_placement') {
-      return 'additional-placement-details'
-    }
-
-    if (reasonForPlacement === 'release_following_decision') {
-      return 'additional-documents'
-    }
-
-    throw new Error('Unknown reason for placement')
   }
 
   next() {

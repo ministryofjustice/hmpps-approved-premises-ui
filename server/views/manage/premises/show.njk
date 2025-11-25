@@ -11,7 +11,6 @@
 
 {% from "components/sortableTable/macro.njk" import sortableTable %}
 
-{%- from "./partials/_overbookingSummary.njk" import overbookingSummary -%}
 {% from "../../partials/filters.njk" import filterWrapper, filterSelect %}
 
 {% extends "../../partials/layout.njk" %}
@@ -32,8 +31,6 @@
 {% endset %}
 
 {% block content %}
-    {{ overbookingSummary(premisesOverbookingSummary,viewSpacesLink) }}
-
     {% include "../../_messages.njk" %}
 
 
@@ -60,7 +57,7 @@
             {% if activeTab === 'upcoming' or activeTab === 'current' %}
                 {% call filterWrapper('Filter') %}
                     <input type="hidden" name="activeTab" value="{{ activeTab }}" />
-                    {{ filterSelect('keyworker','Keyworker',convertObjectsToSelectOptions(keyworkersList, 'All keyworkers', 'name', 'code', 'keyworker')) }}
+                    {{ filterSelect('keyworker', 'Keyworker', keyworkersSelectOptions) }}
                 {%- endcall %}
             {% endif %}
 
@@ -91,15 +88,15 @@
             {% endif %}
 
 
-            {% if activeTab !== 'search' or placements | length > 0 %}
+            {% if activeTab !== 'search' or placementTableRows | length > 0 %}
                 {{ sortableTable({
                     firstCellIsHeader: false,
-                    head: PremisesUtils.placementTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
-                    rows: PremisesUtils.placementTableRows(activeTab, premises.id, placements)
+                    head: placementTableHeader,
+                    rows: placementTableRows
                 }) }}
 
                 {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
-            {% elseif crnOrName and placements | length === 0 %}
+            {% elseif crnOrName and placementTableRows | length === 0 %}
                 <p>There are no results for your search.</p>
             {% endif %}
 

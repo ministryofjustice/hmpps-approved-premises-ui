@@ -17,6 +17,9 @@ import { ValidationError } from '../../../utils/errors'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import MultiPageFormManager from '../../../utils/multiPageFormManager'
 import { spaceSearchCriteriaApLevelLabels } from '../../../utils/match/spaceSearchLabels'
+import { placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
+import { newPlacementSummaryList } from '../../../utils/match/newPlacement'
+import { getPlacementOfStatus } from '../../../utils/placementRequests/placements'
 
 export default class SpaceSearchController {
   formData: MultiPageFormManager<'spaceSearch'>
@@ -31,17 +34,17 @@ export default class SpaceSearchController {
   search(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { token } = req.user
-      const { id } = req.params
+      const { placementRequestId } = req.params
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      const placementRequest = await this.placementRequestService.getPlacementRequest(token, id)
+      const placementRequest = await this.placementRequestService.getPlacementRequest(token, placementRequestId)
 
-      if (req.headers?.referer?.includes(paths.admin.placementRequests.show({ id }))) {
-        await this.formData.remove(id, req.session)
+      if (req.headers?.referer?.includes(paths.admin.placementRequests.show({ placementRequestId }))) {
+        await this.formData.remove(placementRequestId, req.session)
       }
 
       const searchState =
-        this.formData.get(id, req.session) ||
+        this.formData.get(placementRequestId, req.session) ||
         (await this.formData.update(placementRequest.id, req.session, initialiseSearchState(placementRequest)))
 
       const spaceSearchResults = (await this.spaceSearchService.search(token, searchState)).results
@@ -51,16 +54,32 @@ export default class SpaceSearchController {
         ...userInput,
       }
 
+      let backlink = paths.admin.placementRequests.show({ placementRequestId })
+      let backlinkLabel = 'Back to placement request'
+
+      if (searchState.newPlacementReason) {
+        backlink =
+          searchState.newPlacementCriteriaChanged === 'yes'
+            ? matchPaths.v2Match.placementRequests.newPlacement.updateCriteria({ placementRequestId })
+            : matchPaths.v2Match.placementRequests.newPlacement.checkCriteria({ placementRequestId })
+        backlinkLabel = 'Back'
+      }
+
       res.render('match/search', {
-        pageHeading: 'Find a space in an Approved Premises',
-        summaryCards: summaryCards(
-          spaceSearchResults,
-          formValues.postcode,
-          placementRequest.application.isWomensApplication,
-        ),
+        backlink,
+        backlinkLabel,
+        pageHeading: searchState.newPlacementReason
+          ? 'Find a space in an Approved Premises to book a placement transfer'
+          : 'Find a space in an Approved Premises',
+        contextKeyDetails: placementRequestKeyDetails(placementRequest),
+        summaryCards: summaryCards(spaceSearchResults, formValues.postcode, placementRequest),
         placementRequest,
         placementRequestInfoSummaryList: placementRequestSummaryList(placementRequest, { showActions: false }),
-        formPath: matchPaths.v2Match.placementRequests.search.spaces({ id: placementRequest.id }),
+        newPlacementSummaryList: newPlacementSummaryList(
+          searchState,
+          getPlacementOfStatus('arrived', placementRequest),
+        ),
+        formPath: matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }),
         errors,
         errorSummary,
         ...formValues,
@@ -80,6 +99,7 @@ export default class SpaceSearchController {
 
   filterSearch(): RequestHandler {
     return async (req: Request, res: Response) => {
+      const { placementRequestId } = req.params
       try {
         const { postcode, apType, apCriteria = [], roomCriteria = [] } = req.body
 
@@ -89,20 +109,20 @@ export default class SpaceSearchController {
           })
         }
 
-        await this.formData.update(req.params.id, req.session, {
+        await this.formData.update(placementRequestId, req.session, {
           postcode,
           apType,
           apCriteria,
           roomCriteria,
         })
 
-        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ id: req.params.id }))
+        return res.redirect(matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
           res,
           error,
-          matchPaths.v2Match.placementRequests.search.spaces({ id: req.params.id }),
+          matchPaths.v2Match.placementRequests.search.spaces({ placementRequestId }),
         )
       }
     }

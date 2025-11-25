@@ -4,29 +4,16 @@ import { placementRequirementsRow } from './placementRequirementsRow'
 import { characteristicsBulletList } from '../characteristicsUtils'
 
 describe('placementRequirementsRow', () => {
-  it('returns a list of desirable placement requirements in sentence case', () => {
+  it('returns a list of placement requirements in sentence case', () => {
     const placementRequest = cas1PlacementRequestDetailFactory.build()
 
-    expect(placementRequirementsRow(placementRequest, 'desirable')).toEqual({
+    expect(placementRequirementsRow(placementRequest)).toEqual({
       key: {
-        text: `Desirable Criteria`,
+        text: `Criteria`,
       },
       value: {
-        html: characteristicsBulletList(placementRequest.desirableCriteria),
+        html: characteristicsBulletList(placementRequest.essentialCriteria),
       },
     })
-  })
-})
-
-it('returns a list of essential placement requirements in sentence case', () => {
-  const placementRequest = cas1PlacementRequestDetailFactory.build()
-
-  expect(placementRequirementsRow(placementRequest, 'essential')).toEqual({
-    key: {
-      text: `Essential Criteria`,
-    },
-    value: {
-      html: characteristicsBulletList(placementRequest.essentialCriteria),
-    },
   })
 })

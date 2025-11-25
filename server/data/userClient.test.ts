@@ -1,9 +1,9 @@
 import UserClient from './userClient'
 import { userFactory, userSummaryFactory } from '../testutils/factories'
 import paths from '../paths/api'
-import describeClient from '../testutils/describeClient'
+import { describeCas1NamespaceClient } from '../testutils/describeClient'
 
-describeClient('UserClient', provider => {
+describeCas1NamespaceClient('UserClient', provider => {
   let userClient: UserClient
 
   const token = 'token-1'
@@ -34,6 +34,90 @@ describeClient('UserClient', provider => {
 
       const output = await userClient.getUserProfile()
       expect(output).toEqual(user)
+    })
+  })
+
+  describe('getUsersSummaries', () => {
+    const users = userSummaryFactory.buildList(4)
+
+    it('should return all users summaries unfiltered with pagination', async () => {
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to search for all users',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.summary({}),
+          query: {
+            page: '1',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const output = await userClient.getUsersSummaries()
+
+      expect(output).toEqual({
+        data: users,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
+
+    it('should return all users summaries filtered with pagination', async () => {
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to search for specific users',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.summary({}),
+          query: {
+            page: '2',
+            nameOrEmail: 'Smith',
+            permission: 'cas1_assess_application',
+            roles: 'janitor,assessor',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+          headers: {
+            'X-Pagination-TotalPages': '3',
+            'X-Pagination-TotalResults': '27',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const output = await userClient.getUsersSummaries({
+        page: 2,
+        nameOrEmail: 'Smith',
+        permission: 'cas1_assess_application',
+        roles: ['janitor', 'assessor'],
+      })
+
+      expect(output).toEqual({
+        data: users,
+        pageNumber: '2',
+        totalPages: '3',
+        totalResults: '27',
+        pageSize: '10',
+      })
     })
   })
 
@@ -159,7 +243,7 @@ describeClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUsers('', [], [], 2)
+      const output = await userClient.getUsers({}, 2)
 
       expect(output).toEqual({
         data: users,
@@ -197,7 +281,7 @@ describeClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUsers('', [], [], 1, 'name', 'asc')
+      const output = await userClient.getUsers({}, 1, 'name', 'asc')
 
       expect(output).toEqual({
         data: users,
@@ -236,7 +320,7 @@ describeClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUsers('', ['assessor', 'appeals_manager'])
+      const output = await userClient.getUsers({ roles: ['assessor', 'appeals_manager'] })
 
       expect(output).toEqual({
         data: users,
@@ -275,7 +359,7 @@ describeClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUsers('', [], ['pipe', 'emergency'])
+      const output = await userClient.getUsers({ qualifications: ['pipe', 'emergency'] })
 
       expect(output).toEqual({
         data: users,
@@ -315,7 +399,57 @@ describeClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUsers('', ['assessor', 'appeals_manager'], ['pipe', 'emergency'])
+      const output = await userClient.getUsers({
+        roles: ['assessor', 'appeals_manager'],
+        qualifications: ['pipe', 'emergency'],
+      })
+
+      expect(output).toEqual({
+        data: users,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
+
+    it('should query by cru management area, qualifications, roles and name or email', async () => {
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of users with roles, qualifications and name',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.index({}),
+          query: {
+            cruManagementAreaId: 'area-id',
+            roles: 'assessor',
+            qualifications: 'pipe',
+            nameOrEmail: 'John',
+            page: '1',
+            sortBy: 'name',
+            sortDirection: 'asc',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const output = await userClient.getUsers({
+        cruManagementAreaId: 'area-id',
+        roles: ['assessor'],
+        qualifications: ['pipe'],
+        nameOrEmail: 'John',
+      })
 
       expect(output).toEqual({
         data: users,
