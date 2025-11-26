@@ -1,12 +1,14 @@
 import { Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
-import { ResidentProfileTab } from '../../../../server/utils/resident'
+import { getResidentStatus, ResidentProfileTab } from '../../../../server/utils/resident'
+import { convertToTitleCase } from '../../../../server/utils/utils'
+import { DateFormats } from '../../../../server/utils/dateUtils'
 
 export default class ResidentProfilePage extends Page {
   constructor(
     private placement: Cas1SpaceBooking,
-    title = 'Manage a resident',
+    title: string,
   ) {
     super(title)
     this.checkPhaseBanner()
@@ -33,9 +35,17 @@ export default class ResidentProfilePage extends Page {
           return paths.resident.show(params)
       }
     })()
+    const title = (() => {
+      switch (tab) {
+        case 'personal':
+          return 'Personal details'
+        default:
+          return convertToTitleCase(tab)
+      }
+    })()
 
     cy.visit(path)
-    return new ResidentProfilePage(placement)
+    return new ResidentProfilePage(placement, title)
   }
 
   static visitUnauthorised(placement: Cas1SpaceBooking): ResidentProfilePage {
@@ -46,6 +56,23 @@ export default class ResidentProfilePage extends Page {
   }
 
   checkHeader() {
-    this.shouldShowPersonHeader(this.placement.person as FullPerson)
+    const person = this.placement.person as FullPerson
+    const { premises, keyWorkerAllocation, expectedArrivalDate, expectedDepartureDate } = this.placement
+
+    const arrivalDate = DateFormats.isoDateToUIDate(expectedArrivalDate, { format: 'short' })
+    const departureDate = DateFormats.isoDateToUIDate(expectedDepartureDate, { format: 'short' })
+    const status = getResidentStatus(this.placement)
+    const duration = DateFormats.durationBetweenDates(expectedArrivalDate, expectedDepartureDate).ui
+
+    cy.get('.profile-banner').within(() => {
+      cy.get('h2').should('contain', person.name)
+      this.shouldShowDescription('CRN', person.crn)
+      this.shouldShowDescription('Approved Premises', premises.name)
+      this.shouldShowDescription('Key worker', keyWorkerAllocation.name)
+      this.shouldShowDescription('Arrival', arrivalDate)
+      this.shouldShowDescription('Departure', departureDate)
+      this.shouldShowDescription('Status', status)
+      this.shouldShowDescription('Length of stay', duration)
+    })
   }
 }
