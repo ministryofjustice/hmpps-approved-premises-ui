@@ -68,25 +68,26 @@ describe('PremisesController', () => {
       cas1CurrentKeyworkerFactory.build({ upcomingBookingCount: 0, currentBookingCount: 0 }),
     ]
 
-    const expectedRenderParameters = {
+    const expectedRenderParameters = (tab: PremisesTab) => ({
       backlink: referrer,
       premises: premisesSummary,
       menuActions: premisesActions(user, premisesSummary),
       summaryList: summaryListForPremises(premisesSummary),
       showPlacements: true,
-      activeTab: 'upcoming',
+      activeTab: tab,
       pageNumber: 1,
       totalPages: 1,
-      // placements: paginatedPlacements.data,
+      hrefPrefix: `/manage/premises/${premisesId}?activeTab=${tab}&`,
       viewSpacesLink: `/manage/premises/${premisesId}/occupancy`,
+      keyworkersSelectOptions: keyworkersToSelectOptions(currentKeyworkers, tab),
       placementTableHeader: placementTableHeader(
-        'upcoming',
+        tab,
         'canonicalArrivalDate',
         'asc',
-        `/manage/premises/${premisesId}?activeTab=upcoming&`,
+        `/manage/premises/${premisesId}?activeTab=${tab}&`,
       ),
       placementTableRows: placementTableRows('upcoming', premisesId, paginatedPlacements.data),
-    }
+    })
 
     beforeEach(() => {
       premisesService.find.mockResolvedValue(premisesSummary)
@@ -101,13 +102,10 @@ describe('PremisesController', () => {
     })
 
     it('should render the premises detail and list of placements on the "upcoming" tab', async () => {
-      // request.query = { activeTab: 'upcoming' }
-
       await premisesController.show()({ ...request, query: { activeTab: 'upcoming' } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
-        ...expectedRenderParameters,
-        keyworkersSelectOptions: keyworkersToSelectOptions(currentKeyworkers, 'upcoming'),
+        ...expectedRenderParameters('upcoming'),
       })
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getCurrentKeyworkers).toHaveBeenCalledWith(token, premisesId)
@@ -126,9 +124,7 @@ describe('PremisesController', () => {
       await premisesController.show()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
-        ...expectedRenderParameters,
-        activeTab: 'current',
-        keyworkersSelectOptions: keyworkersToSelectOptions(currentKeyworkers, 'current'),
+        ...expectedRenderParameters('current'),
         placementTableHeader: placementTableHeader(
           'current',
           'personName',
@@ -155,8 +151,8 @@ describe('PremisesController', () => {
       await premisesController.show()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/show', {
-        ...expectedRenderParameters,
-        activeTab: 'historic',
+        ...expectedRenderParameters('historic'),
+        keyworkersSelectOptions: undefined,
         placementTableHeader: placementTableHeader(
           'historic',
           'canonicalDepartureDate',
@@ -189,8 +185,8 @@ describe('PremisesController', () => {
       await premisesController.show()(request, response, next)
 
       expect(response.render.mock.calls[0][1]).toEqual({
-        ...expectedRenderParameters,
-        activeTab: 'historic',
+        ...expectedRenderParameters('historic'),
+        hrefPrefix: `/manage/premises/${premisesId}?activeTab=historic&sortBy=personName&sortDirection=asc&`,
         placementTableHeader: placementTableHeader(
           'historic',
           'personName',
@@ -198,6 +194,7 @@ describe('PremisesController', () => {
           `/manage/premises/${premisesId}?activeTab=historic&`,
         ),
         placementTableRows: placementTableRows('historic', premisesId, paginatedPlacements.data),
+        keyworkersSelectOptions: undefined,
       })
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getPlacements).toHaveBeenCalledWith({
@@ -245,13 +242,15 @@ describe('PremisesController', () => {
           await premisesController.show()(request, response, next)
 
           expect(response.render.mock.calls[0][1]).toEqual({
-            ...expectedRenderParameters,
+            ...expectedRenderParameters('search'),
             activeTab: 'search',
             crnOrName,
+            hrefPrefix,
             pageNumber: undefined,
             totalPages: undefined,
             placementTableHeader: placementTableHeader('search', 'canonicalArrivalDate', 'desc', hrefPrefix),
             placementTableRows: [],
+            keyworkersSelectOptions: undefined,
           })
           expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
           expect(premisesService.getPlacements).not.toHaveBeenCalled()
@@ -263,17 +262,15 @@ describe('PremisesController', () => {
 
         await premisesController.show()(request, response, next)
 
+        const hrefPrefix = `/manage/premises/${premisesId}?activeTab=search&crnOrName=X123456&`
         expect(response.render.mock.calls[0][1]).toEqual({
-          ...expectedRenderParameters,
+          ...expectedRenderParameters('search'),
           activeTab: 'search',
           crnOrName: 'X123456',
-          placementTableHeader: placementTableHeader(
-            'search',
-            'canonicalArrivalDate',
-            'desc',
-            `/manage/premises/${premisesId}?activeTab=search&crnOrName=X123456&`,
-          ),
+          hrefPrefix,
+          placementTableHeader: placementTableHeader('search', 'canonicalArrivalDate', 'desc', hrefPrefix),
           placementTableRows: placementTableRows('search', premisesId, paginatedPlacements.data),
+          keyworkersSelectOptions: undefined,
         })
         expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
         expect(premisesService.getPlacements).toHaveBeenCalledWith({

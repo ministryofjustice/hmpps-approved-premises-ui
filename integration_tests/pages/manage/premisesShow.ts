@@ -6,6 +6,7 @@ import paths from '../../../server/paths/manage'
 import { displayName } from '../../../server/utils/personUtils'
 import { canonicalDates } from '../../../server/utils/placements'
 import { detailedStatus, statusTextMap } from '../../../server/utils/placements/status'
+import { PremisesTab } from '../../../server/utils/premises'
 
 export default class PremisesShowPage extends Page {
   constructor(private readonly premises: Cas1Premises) {
@@ -65,8 +66,10 @@ export default class PremisesShowPage extends Page {
     cy.get('.govuk-table__body .govuk-table__row').should('have.length', length)
   }
 
-  shouldHavePaginationControl(): void {
-    cy.get('.govuk-pagination').contains('2')
+  shouldHavePaginationControl(tab: PremisesTab): void {
+    cy.get('.govuk-pagination')
+      .contains('2')
+      .should('have.attr', 'href', `/manage/premises/${this.premises.id}?activeTab=${tab}&page=2`)
     cy.get('.govuk-pagination').contains('Next')
   }
 
