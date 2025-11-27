@@ -2,10 +2,10 @@ import { ActiveOffence, Cas1OASysGroup, Cas1SpaceBooking, FullPerson } from '@ap
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 
-import { getResidentStatus, ResidentProfileTab } from '../../../../server/utils/resident'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { offenceSummaryList } from '../../../../server/utils/resident/sentence'
+import { getResidentStatus, ResidentProfileTab } from '../../../../server/utils/resident'
 
 export default class ResidentProfilePage extends Page {
   constructor(
@@ -68,6 +68,15 @@ export default class ResidentProfilePage extends Page {
       this.shouldShowDescription('Status', status)
       this.shouldShowDescription('Length of stay', duration)
     })
+  }
+
+  shouldShowOffencesInformation(offences: Array<ActiveOffence>, oasysOffenceDetails: Cas1OASysGroup) {
+    cy.get('.govuk-summary-card__title').contains('Offence').should('exist')
+    const expected = offenceSummaryList(offences, { ...oasysOffenceDetails, answers: [] })
+    expected.splice(2, 1)
+    expected.splice(5, 1)
+
+    this.shouldContainSummaryListItems(expected)
   }
 
   shouldShowOffencesInformation(offences: Array<ActiveOffence>, oasysOffenceDetails: Cas1OASysGroup) {

@@ -5,18 +5,23 @@
 <h2 class="govuk-heading-m">{{ subHeading }}</h2>
 
 {% for card in cardList %}
-    {% set html %}
-        {{ govukSummaryList({
-            rows: card.rows
-        }) }}
-        {% if card.card.actions %}
-            {% for action in card.card.actions.items %}
-                <p class="govuk-!-margin-top-6 govuk-!-margin-bottom-2">
-                    <a href="{{ action.href }}">{{ action.text }}</a>
-                </p>
-            {% endfor %}
-        {% endif %}
-    {% endset %}
+    {% if card.rows %}
+        {% set html %}
+            {{ govukSummaryList({
+                rows: card.rows
+            }) }}
+            {% if card.card.actions %}
+                {% for action in card.card.actions.items %}
+                    <p class="govuk-!-margin-top-6 govuk-!-margin-bottom-2">
+                        <a href="{{ action.href }}">{{ action.text }}</a>
+                    </p>
+                {% endfor %}
+            {% endif %}
+        {% endset %}
+    {% endif %}
+    {% if card.html %}
+        {% set html=card.html %}
+    {% endif %}
 
     {{ summaryCard({
         title: card.card.title,
