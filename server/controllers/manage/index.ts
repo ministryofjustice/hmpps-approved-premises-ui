@@ -72,7 +72,7 @@ export const controllers = (services: Services) => {
     services.placementRequestService,
   )
 
-  const residentProfileController = new ResidentProfileController(services.placementService)
+  const residentProfileController = new ResidentProfileController(services.placementService, services.personService)
 
   return {
     premisesController,

@@ -1,5 +1,10 @@
 import { signIn } from '../../signIn'
-import { cas1PremisesBasicSummaryFactory, cas1SpaceBookingFactory } from '../../../../server/testutils/factories'
+import {
+  activeOffenceFactory,
+  cas1OasysGroupFactory,
+  cas1PremisesBasicSummaryFactory,
+  cas1SpaceBookingFactory,
+} from '../../../../server/testutils/factories'
 import ResidentProfilePage from '../../../pages/manage/placements/residentProfile'
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
 
@@ -12,9 +17,18 @@ context('ResidentProfile', () => {
         premises: { name: premises.name, id: premises.id },
       })
 
+      const offences = activeOffenceFactory.buildList(3)
+      const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
+      oasysOffenceDetails.answers[0].questionNumber = '2.1'
+      oasysOffenceDetails.answers[1].questionNumber = '2.12'
+
       cy.task('stubSpaceBookingGetWithoutPremises', placement)
+      cy.task('stubPersonOffences', { offences, person: placement.person })
+      cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
       return {
         placement,
+        offences,
+        oasysOffenceDetails,
       }
     }
 
@@ -22,7 +36,7 @@ context('ResidentProfile', () => {
       cy.task('reset')
     })
 
-    it('should render the resident profile page', () => {
+    it('should render the resident profile page on the default tab', () => {
       GIVEN(' that I am signed in as a user with access resident profile')
       signIn(['manage_resident'])
       GIVEN('there is an existing placement')
@@ -33,6 +47,21 @@ context('ResidentProfile', () => {
       page.checkHeader()
       AND('the Personal tab should be selected')
       page.shouldHaveActiveTab('Personal')
+    })
+
+    it('should show the sentence tab', () => {
+      GIVEN(' that I am signed in as a user with access resident profile')
+      signIn(['manage_resident'])
+      GIVEN('there is an existing placemnt')
+      const { placement, offences, oasysOffenceDetails } = setup()
+      WHEN('I visit the resident profile page on the sentence tab')
+      const page = ResidentProfilePage.visit(placement, 'sentence')
+      THEN('I should see the person information in the header')
+      page.checkHeader()
+      AND('the Sentence tab should be selected')
+      page.shouldHaveActiveTab('Sentence')
+      AND('the Offences information should be shown')
+      page.shouldShowOffencesInformation(offences, oasysOffenceDetails)
     })
 
     it('should not allow access to the page if user lacks permission', () => {

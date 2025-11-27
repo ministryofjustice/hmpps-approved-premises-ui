@@ -1,5 +1,6 @@
 @use "govuk-frontend/dist/govuk/index" with (
-  $govuk-global-styles: true
+  $govuk-global-styles: true,
+  $govuk-page-width: 1200px
 );
 @use "@ministryofjustice/frontend/moj/all";
 
@@ -31,5 +32,6 @@
 @use './pages/assessments-index';
 @use './pages/applications-pages-attach-document';
 @use './pages/dashboard-index';
+@use './pages/manage_resident-profile';
 
 @use 'local';

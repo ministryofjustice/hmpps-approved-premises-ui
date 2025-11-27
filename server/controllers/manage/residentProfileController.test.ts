@@ -1,12 +1,15 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
+
 import { FullPerson } from '@approved-premises/api'
-import type { PlacementService } from '../../services'
+import { PersonService, PlacementService } from '../../services'
 
 import paths from '../../paths/manage'
 
 import ResidentProfileController from './residentProfileController'
 import { cas1SpaceBookingFactory } from '../../testutils/factories'
+import { residentTabItems } from '../../utils/resident'
+import { placementKeyDetails } from '../../utils/placements'
 
 describe('residentProfileController', () => {
   const token = 'TEST_TOKEN'
@@ -16,7 +19,8 @@ describe('residentProfileController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementService = createMock<PlacementService>({})
-  const placementController = new ResidentProfileController(placementService)
+  const personService = createMock<PersonService>({})
+  const placementController = new ResidentProfileController(placementService, personService)
 
   const setUp = () => {
     jest.resetAllMocks()
@@ -35,22 +39,28 @@ describe('residentProfileController', () => {
     })
     return { placement, request, response }
   }
+  describe('show', () => {
+    it('should render the Manage resident page on default tab', async () => {
+      const { request, response, placement } = setUp()
 
-  it('should render the Manage resident page on default tab', async () => {
-    const { request, response, placement } = setUp()
+      await placementController.show()(request, response, next)
 
-    await placementController.show()(request, response, next)
-
-    // TODO: Complete render context
-    expect(response.render).toHaveBeenCalledWith(
-      'manage/resident/residentProfile',
-      expect.objectContaining({
-        placement,
-        pageHeading: 'Manage a resident',
-        backLink: paths.premises.show({ premisesId: placement.premises.id }),
-        activeTab: 'personal',
-      }),
-    )
+      expect(response.render.mock.calls[0]).toEqual([
+        'manage/resident/residentProfile',
+        {
+          placement,
+          backLink: paths.premises.show({ premisesId: placement.premises.id }),
+          activeTab: 'personal',
+          tabItems: residentTabItems(placement, 'personal'),
+          crn,
+          arrivalDate: placement.expectedArrivalDate,
+          departureDate: placement.expectedDepartureDate,
+          pageHeading: 'Personal',
+          contextKeyDetails: placementKeyDetails(placement),
+          user,
+        },
+      ])
+    })
   })
 
   it('should render the Manage resident page with the correct actions for an upcoming placement', async () => {

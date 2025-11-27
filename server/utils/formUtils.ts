@@ -203,7 +203,7 @@ export const summaryListItemNoBlankRows = (
 
 /**
  * Performs validation on the area of a postcode (IE the first three or four characters)
- * @param string string to be validated.
+ * @param potentialPostcode string to be validated.
  * @returns true if the string is valid, false otherwise.
  */
 export function validPostcodeArea(potentialPostcode: string) {
@@ -289,4 +289,10 @@ export const placementRequestStatusSelectOptions = (
   })
 
   return options
+}
+
+export const bulletList = (items: Array<string>): string => {
+  return items.length
+    ? `<ul class="govuk-list govuk-list--bullet">${items.map(item => `<li>${item}</li>`).join('')}</ul>`
+    : ''
 }

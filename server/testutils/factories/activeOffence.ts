@@ -5,7 +5,7 @@ import type { ActiveOffence } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<ActiveOffence>(() => ({
-  deliusEventNumber: faker.string.uuid(),
+  deliusEventNumber: String(faker.number.int({ min: 0, max: 20 })),
   offenceDescription: faker.lorem.sentence(),
   offenceId: faker.string.uuid(),
   convictionId: faker.number.int(),
