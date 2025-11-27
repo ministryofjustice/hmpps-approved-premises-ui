@@ -142,7 +142,7 @@ context('Premises', () => {
 
       AND('it should be paginated (20/page)')
       page.shouldHavePlacementListLengthOf(20)
-      page.shouldHavePaginationControl()
+      page.shouldHavePaginationControl('upcoming')
 
       WHEN("I select the 'historical' tab")
       page.clickTab('Historical')
@@ -152,7 +152,7 @@ context('Premises', () => {
 
       AND('it should be paginated (20/page)')
       page.shouldHavePlacementListLengthOf(20)
-      page.shouldHavePaginationControl()
+      page.shouldHavePaginationControl('historic')
     })
 
     it('should let the user filter by keyworker', () => {
