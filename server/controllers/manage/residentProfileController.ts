@@ -12,7 +12,9 @@ import {
   getResidentHeader,
   tabLabels,
 } from '../../utils/resident'
+
 import { licenseCards, offencesCards, sentenceSideNavigation } from '../../utils/resident/sentence'
+import { riskOasysCards } from '../../utils/resident/risk'
 
 export default class ResidentProfileController {
   constructor(
@@ -26,6 +28,7 @@ export default class ResidentProfileController {
       const { user } = res.locals
       const placement = await this.placementService.getPlacement(req.user.token, placementId)
       const tabItems = residentTabItems(placement, activeTab)
+
       const pageHeading = tabLabels[activeTab].label
 
       let cardList: Array<SummaryListWithCard>
@@ -50,6 +53,22 @@ export default class ResidentProfileController {
       }
 
       const placementActions = actions(placement, user)
+
+      if (activeTab === 'risk') {
+        const [roshSummary, riskManagementPlan, offenceDetails, supportingInformation]: [
+          Cas1OASysGroup,
+          Cas1OASysGroup,
+          Cas1OASysGroup,
+          Cas1OASysGroup,
+        ] = await Promise.all([
+          this.personService.getOasysAnswers(req.user.token, crn, 'roshSummary'),
+          this.personService.getOasysAnswers(req.user.token, crn, 'riskManagementPlan'),
+          this.personService.getOasysAnswers(req.user.token, crn, 'offenceDetails'),
+          this.personService.getOasysAnswers(req.user.token, crn, 'supportingInformation'),
+        ])
+        subHeading = 'OASys risks'
+        cardList = riskOasysCards(roshSummary, riskManagementPlan, offenceDetails, supportingInformation)
+      }
 
       return res.render(`manage/resident/residentProfile`, {
         contextKeyDetails: placementKeyDetails(placement),

@@ -94,6 +94,30 @@ describe('residentProfileController', () => {
 
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'offenceDetails')
     })
+    it('should render the Manage resident page on sentence tab', async () => {
+      const { request, response, placement, offences, oasysGroup } = setUp()
+
+      await residentProfileController.show('sentence', 'offence')(request, response, next)
+
+      expect(response.render.mock.calls[0]).toEqual([
+        'manage/resident/residentProfile',
+        {
+          placement,
+          backLink: paths.premises.show({ premisesId: placement.premises.id }),
+          activeTab: 'sentence',
+          tabItems: residentTabItems(placement, 'sentence'),
+          crn,
+          arrivalDate: placement.expectedArrivalDate,
+          departureDate: placement.expectedDepartureDate,
+          pageHeading: 'Sentence',
+          subHeading: 'Offence and sentence',
+          contextKeyDetails: placementKeyDetails(placement),
+          user,
+          cardList: offencesCards(offences, oasysGroup),
+          sideNavigation: sentenceSideNavigation('offence', crn, placement.id),
+        },
+      ])
+    })
   })
 
   it('should render the Manage resident page with the correct actions for an upcoming placement', async () => {

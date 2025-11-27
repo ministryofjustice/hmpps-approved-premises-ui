@@ -64,6 +64,21 @@ context('ResidentProfile', () => {
       page.shouldShowOffencesInformation(offences, oasysOffenceDetails)
     })
 
+    it('should show the sentence tab', () => {
+      GIVEN(' that I am signed in as a user with access resident profile')
+      signIn(['manage_resident'])
+      GIVEN('there is an existing placemnt')
+      const { placement, offences, oasysOffenceDetails } = setup()
+      WHEN('I visit the resident profile page on the sentence tab')
+      const page = ResidentProfilePage.visit(placement, 'sentence')
+      THEN('I should see the person information in the header')
+      page.checkHeader()
+      AND('the Sentence tab should be selected')
+      page.shouldHaveActiveTab('Sentence')
+      AND('the Offences information should be shown')
+      page.shouldShowOffencesInformation(offences, oasysOffenceDetails)
+    })
+
     it('should not allow access to the page if user lacks permission', () => {
       const { placement } = setup()
       GIVEN(' that I am signed in as a user without access to the resident profile')
