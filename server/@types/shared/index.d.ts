@@ -121,6 +121,7 @@ export type { Cas1PremisesLocalRestrictionSummary } from './models/Cas1PremisesL
 export type { Cas1PremisesNewLocalRestriction } from './models/Cas1PremisesNewLocalRestriction';
 export type { Cas1PremisesSearchResultSummary } from './models/Cas1PremisesSearchResultSummary';
 export type { Cas1ProfileResponse } from './models/Cas1ProfileResponse';
+export type { Cas1ReferralHistory } from './models/Cas1ReferralHistory';
 export type { Cas1RejectChangeRequest } from './models/Cas1RejectChangeRequest';
 export type { Cas1RequestedPlacementPeriod } from './models/Cas1RequestedPlacementPeriod';
 export type { Cas1ShortenSpaceBooking } from './models/Cas1ShortenSpaceBooking';
@@ -279,6 +280,7 @@ export type { SeedRequest } from './models/SeedRequest';
 export type { SentenceTypeOption } from './models/SentenceTypeOption';
 export type { ServiceName } from './models/ServiceName';
 export type { ServiceScope } from './models/ServiceScope';
+export type { ServiceType } from './models/ServiceType';
 export type { SituationOption } from './models/SituationOption';
 export type { SortDirection } from './models/SortDirection';
 export type { SortOrder } from './models/SortOrder';
