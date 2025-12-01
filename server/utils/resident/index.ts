@@ -3,8 +3,16 @@ import { TabItem } from '@approved-premises/ui'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { detailedStatus, statusTextMap } from '../placements/status'
+import { canonicalDates } from '../placements'
 
 export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'enforcement'
+
+export type ResidentHeader = {
+  name: string
+  photoUrl: string
+  badges: Array<string>
+  attributes: Array<Array<{ title: string; description: string }>>
+}
 
 export const tabLabels: Record<
   ResidentProfileTab,
@@ -46,8 +54,9 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
   }))
 }
 
-export function getResidentHeader(placement: Cas1SpaceBooking) {
+export function getResidentHeader(placement: Cas1SpaceBooking): ResidentHeader {
   const person = placement.person as FullPerson
+  const { arrivalDate, departureDate } = canonicalDates(placement)
 
   return {
     name: person.name,
@@ -69,24 +78,23 @@ export function getResidentHeader(placement: Cas1SpaceBooking) {
       [
         {
           title: 'Arrival',
-          description: DateFormats.isoDateToUIDate(placement.expectedArrivalDate, { format: 'short' }),
+          description: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
         },
         {
           title: 'Departure',
-          description: DateFormats.isoDateToUIDate(placement.expectedDepartureDate, { format: 'short' }),
+          description: DateFormats.isoDateToUIDate(departureDate, { format: 'short' }),
         },
         { title: 'Status', description: getResidentStatus(placement) },
         {
           title: 'Length of stay',
-          description: DateFormats.durationBetweenDates(placement.expectedArrivalDate, placement.expectedDepartureDate)
-            .ui,
+          description: DateFormats.durationBetweenDates(arrivalDate, departureDate).ui,
         },
       ],
     ],
   }
 }
 
-function getBadge(text: string, colour: string) {
+function getBadge(text: string, colour: string): string {
   return `<span class="moj-badge moj-badge--${colour}">${text}</span>`
 }
 

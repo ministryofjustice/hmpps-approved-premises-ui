@@ -7,16 +7,6 @@
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "govuk-body govuk-!-padding-top-0" %}
 
-{% block head %}
-    {{ super() }}
-    <style nonce="{{ cspNonce }}">
-        {# override default width for all containers for this page - prototypes use 1200px, rest of CAS1 uses 960px #}
-        .govuk-width-container, .moj-primary-navigation__container, .hmpps-header__container, .hmpps-header__container {
-            max-width: 1200px;
-        }
-    </style>
-{% endblock %}
-
 {% block beforeContent %}
     {% if backLink %}
         {{ govukBackLink({
