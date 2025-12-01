@@ -7,9 +7,10 @@ import { PersonService, PlacementService } from '../../services'
 import paths from '../../paths/manage'
 
 import ResidentProfileController from './residentProfileController'
-import { cas1SpaceBookingFactory } from '../../testutils/factories'
+import { activeOffenceFactory, cas1OasysGroupFactory, cas1SpaceBookingFactory } from '../../testutils/factories'
 import { residentTabItems } from '../../utils/resident'
 import { placementKeyDetails } from '../../utils/placements'
+import { offencesCards, sentenceSideNavigation } from '../../utils/resident/sentence'
 
 describe('residentProfileController', () => {
   const token = 'TEST_TOKEN'
@@ -20,7 +21,7 @@ describe('residentProfileController', () => {
 
   const placementService = createMock<PlacementService>({})
   const personService = createMock<PersonService>({})
-  const placementController = new ResidentProfileController(placementService, personService)
+  const residentProfileController = new ResidentProfileController(placementService, personService)
 
   const setUp = () => {
     jest.resetAllMocks()
@@ -30,20 +31,26 @@ describe('residentProfileController', () => {
       expectedArrivalDate: '2024-11-16',
       expectedDepartureDate: '2025-03-26',
     })
+    const offences = activeOffenceFactory.buildList(3)
+    const oasysGroup = cas1OasysGroupFactory.offenceDetails().build()
+
     placementService.getPlacement.mockResolvedValue(placement)
+
+    personService.getOffences.mockResolvedValue(offences)
+    personService.getOasysAnswers.mockResolvedValue(oasysGroup)
 
     const response: DeepMocked<Response> = createMock<Response>({ locals: { user } })
     const request: DeepMocked<Request> = createMock<Request>({
       user: { token },
       params: { crn, placementId: placement.id },
     })
-    return { placement, request, response }
+    return { placement, request, response, oasysGroup, offences }
   }
   describe('show', () => {
     it('should render the Manage resident page on default tab', async () => {
       const { request, response, placement } = setUp()
 
-      await placementController.show()(request, response, next)
+      await residentProfileController.show()(request, response, next)
 
       expect(response.render.mock.calls[0]).toEqual([
         'manage/resident/residentProfile',
@@ -58,6 +65,30 @@ describe('residentProfileController', () => {
           pageHeading: 'Personal',
           contextKeyDetails: placementKeyDetails(placement),
           user,
+        },
+      ])
+    })
+    it('should render the Manage resident page on sentence tab', async () => {
+      const { request, response, placement, offences, oasysGroup } = setUp()
+
+      await residentProfileController.show('sentence', 'offence')(request, response, next)
+
+      expect(response.render.mock.calls[0]).toEqual([
+        'manage/resident/residentProfile',
+        {
+          placement,
+          backLink: paths.premises.show({ premisesId: placement.premises.id }),
+          activeTab: 'sentence',
+          tabItems: residentTabItems(placement, 'sentence'),
+          crn,
+          arrivalDate: placement.expectedArrivalDate,
+          departureDate: placement.expectedDepartureDate,
+          pageHeading: 'Sentence',
+          subHeading: 'Offence and sentence',
+          contextKeyDetails: placementKeyDetails(placement),
+          user,
+          cardList: offencesCards(offences, oasysGroup),
+          sideNavigation: sentenceSideNavigation('offence', crn, placement.id),
         },
       ])
     })

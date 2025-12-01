@@ -56,12 +56,7 @@ export const offenceSummaryList = (
         html: patternOfOffending ? detailsBody(patternOfOffending.label, `${patternOfOffending.answer}`) : '',
       },
     },
-    // TODO: We can't get a delius link yet - and the format of this needs tweaking
-    // {
-    //   key: { html: `<a href="${paths.premises.index({})}">View previous offences on Delius'</a>` },
-    //   value: { text: '' },
-    //   actions: { items: [{ text: 'View previous offences on Delius', href: paths.premises.index({}) }] },
-    // },
+    // TODO: Add Delius link in here
   ].filter(Boolean)
 }
 

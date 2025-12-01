@@ -8,6 +8,8 @@
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "govuk-body govuk-!-padding-top-0" %}
 
+{% set bodyClasses = "wide-page" %}
+
 {% block beforeContent %}
     {% if backLink %}
         {{ govukBackLink({

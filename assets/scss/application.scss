@@ -1,6 +1,5 @@
 @use "govuk-frontend/dist/govuk/index" with (
-  $govuk-global-styles: true,
-  $govuk-page-width: 1200px
+  $govuk-global-styles: true
 );
 @use "@ministryofjustice/frontend/moj/all";
 
@@ -28,10 +27,10 @@
 @use './components/details-card';
 @use './components/timeline';
 @use './components/profile-banner';
+@use './components/width_override';
 
 @use './pages/assessments-index';
 @use './pages/applications-pages-attach-document';
 @use './pages/dashboard-index';
-@use './pages/manage_resident-profile';
 
 @use 'local';
