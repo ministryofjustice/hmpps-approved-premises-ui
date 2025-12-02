@@ -1,21 +1,9 @@
 import { ActiveOffence, Cas1OASysGroup } from '@approved-premises/api'
 import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
-import nunjucks from 'nunjucks'
 import { bulletList, summaryListItem } from '../formUtils'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
-import { ResidentProfileSubTab } from './index'
-
-const card = (title: string, rows: Array<SummaryListItem>) => ({
-  card: {
-    title: { text: title },
-  },
-  rows,
-})
-
-export const detailsBody = (summaryText: string, text: string) => {
-  return nunjucks.render(`partials/detailsBlock.njk`, { summaryText, text })
-}
+import { card, detailsBody, ResidentProfileSubTab } from './index'
 
 export const offenceSummaryList = (
   offences: Array<ActiveOffence>,

@@ -1,5 +1,6 @@
 import { Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
-import { TabItem } from '@approved-premises/ui'
+import { SummaryListItem, TabItem } from '@approved-premises/ui'
+import nunjucks from 'nunjucks'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { detailedStatus, statusTextMap } from '../placements/status'
@@ -101,4 +102,15 @@ function getBadge(text: string, colour: string): string {
 
 export function getResidentStatus(placement: Cas1SpaceBooking): string {
   return statusTextMap[detailedStatus(placement)]
+
+
+export const card = (title: string, rows: Array<SummaryListItem>) => ({
+  card: {
+    title: { text: title },
+  },
+  rows,
+})
+
+export const detailsBody = (summaryText: string, text: string) => {
+  return nunjucks.render(`partials/detailsBlock.njk`, { summaryText, text })
 }

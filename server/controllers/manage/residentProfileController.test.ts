@@ -46,6 +46,7 @@ describe('residentProfileController', () => {
     })
     return { placement, request, response, oasysGroup, offences }
   }
+
   describe('show', () => {
     it('should render the Manage resident page on default tab', async () => {
       const { request, response, placement } = setUp()
@@ -68,7 +69,8 @@ describe('residentProfileController', () => {
         },
       ])
     })
-    it('should render the Manage resident page on sentence tab', async () => {
+
+    it('should render the Manage resident page on the sentence tab', async () => {
       const { request, response, placement, offences, oasysGroup } = setUp()
 
       await residentProfileController.show('sentence', 'offence')(request, response, next)
@@ -91,6 +93,12 @@ describe('residentProfileController', () => {
           sideNavigation: sentenceSideNavigation('offence', crn, placement.id),
         },
       ])
+
+      expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
+
+      expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
+
+      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'offenceDetails')
     })
   })
 
