@@ -28,7 +28,7 @@ context('ResidentProfile', () => {
       GIVEN('there is an existing placement')
       const { placement } = setup()
       WHEN('I visit the resident profile page')
-      const page = ResidentProfilePage.visit(placement)
+      const page = ResidentProfilePage.visit(placement, 'personal')
       THEN('I should see the person information in the header')
       page.checkHeader()
       AND('the Personal tab should be selected')

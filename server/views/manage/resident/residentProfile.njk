@@ -1,9 +1,11 @@
-{% extends "partials/layout-with-details.njk" %}
+{% extends "partials/layout.njk" %}
+{% from "components/manage/profile-banner/macro.njk" import profileBanner %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "moj/components/identity-bar/macro.njk" import mojIdentityBar %}
 {% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "govuk-body govuk-!-padding-top-0" %}
 
 {% block beforeContent %}
     {% if backLink %}
@@ -23,15 +25,15 @@
 
     {% include "_messages.njk" %}
 
-    {{ mojIdentityBar({
-        title: {
-            html: titleHtml
-        },
-        menus: PlacementUtils.actions(placement, user)
-    }) }}
+    {{ profileBanner(
+        resident,
+        actions
+    ) }}
 
     {{ mojSubNavigation({
         label: 'Sub navigation',
         items: tabItems
     }) }}
+
+    <h1 class="govuk-heading-l">Personal details</h1>
 {% endblock %}

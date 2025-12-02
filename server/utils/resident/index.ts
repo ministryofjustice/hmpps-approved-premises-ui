@@ -1,8 +1,18 @@
-import { Cas1SpaceBooking } from '@approved-premises/api'
+import { Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
 import { TabItem } from '@approved-premises/ui'
 import paths from '../../paths/manage'
+import { DateFormats } from '../dateUtils'
+import { detailedStatus, statusTextMap } from '../placements/status'
+import { canonicalDates } from '../placements'
 
 export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'enforcement'
+
+export type ResidentHeader = {
+  name: string
+  photoUrl: string
+  badges: Array<string>
+  attributes: Array<Array<{ title: string; description: string }>>
+}
 
 export const tabLabels: Record<
   ResidentProfileTab,
@@ -42,4 +52,52 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
     active: activeTab === key,
     href: getSelfLink(key as ResidentProfileTab),
   }))
+}
+
+export function getResidentHeader(placement: Cas1SpaceBooking): ResidentHeader {
+  const person = placement.person as FullPerson
+  const { arrivalDate, departureDate } = canonicalDates(placement)
+
+  return {
+    name: person.name,
+    photoUrl: '/assets/images/resident-placeholder.png',
+    badges: [
+      getBadge('Unknown RoSH', 'red'),
+      getBadge('Unknown MAPPA', 'purple'),
+      getBadge('Unknown ', 'black'),
+      getBadge('Unknown 2', 'black'),
+      getBadge('Unknown 3', 'black'),
+      '<span><a href="#">+3 risk flags</a></span>',
+    ],
+    attributes: [
+      [
+        { title: 'CRN', description: person.crn },
+        { title: 'Approved Premises', description: placement.premises.name },
+        { title: 'Key worker', description: placement.keyWorkerAllocation?.name ?? 'Not assigned' },
+      ],
+      [
+        {
+          title: 'Arrival',
+          description: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
+        },
+        {
+          title: 'Departure',
+          description: DateFormats.isoDateToUIDate(departureDate, { format: 'short' }),
+        },
+        { title: 'Status', description: getResidentStatus(placement) },
+        {
+          title: 'Length of stay',
+          description: DateFormats.durationBetweenDates(arrivalDate, departureDate).ui,
+        },
+      ],
+    ],
+  }
+}
+
+function getBadge(text: string, colour: string): string {
+  return `<span class="moj-badge moj-badge--${colour}">${text}</span>`
+}
+
+export function getResidentStatus(placement: Cas1SpaceBooking): string {
+  return statusTextMap[detailedStatus(placement)]
 }
