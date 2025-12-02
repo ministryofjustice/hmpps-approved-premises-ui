@@ -3,7 +3,6 @@ import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 
 import { getResidentStatus, ResidentProfileTab } from '../../../../server/utils/resident'
-import { convertToTitleCase } from '../../../../server/utils/utils'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { offenceSummaryList } from '../../../../server/utils/resident/sentence'
@@ -36,14 +35,6 @@ export default class ResidentProfilePage extends Page {
 
         default:
           return { path: paths.resident.show(params), title: 'Personal' }
-      }
-    })()
-    const title = (() => {
-      switch (tab) {
-        case 'personal':
-          return 'Personal details'
-        default:
-          return convertToTitleCase(tab)
       }
     })()
 

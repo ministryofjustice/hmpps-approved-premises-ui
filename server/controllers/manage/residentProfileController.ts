@@ -4,9 +4,14 @@ import { SummaryListWithCard, TabItem } from '@approved-premises/ui'
 import { PersonService, PlacementService } from '../../services'
 import paths from '../../paths/manage'
 
-
-import { canonicalDates,  actions ,placementKeyDetails } from '../../utils/placements'
-import { ResidentProfileSubTab, ResidentProfileTab, ResidentProfileTab, residentTabItems, getResidentHeader ,residentTabItems, tabLabels } from '../../utils/resident'
+import { actions, placementKeyDetails } from '../../utils/placements'
+import {
+  ResidentProfileSubTab,
+  ResidentProfileTab,
+  residentTabItems,
+  getResidentHeader,
+  tabLabels,
+} from '../../utils/resident'
 import { licenseCards, offencesCards, sentenceSideNavigation } from '../../utils/resident/sentence'
 
 export default class ResidentProfileController {
@@ -21,7 +26,6 @@ export default class ResidentProfileController {
       const { user } = res.locals
       const placement = await this.placementService.getPlacement(req.user.token, placementId)
       const tabItems = residentTabItems(placement, activeTab)
-      const { arrivalDate, departureDate } = canonicalDates(placement)
       const pageHeading = tabLabels[activeTab].label
 
       let cardList: Array<SummaryListWithCard>
@@ -47,8 +51,6 @@ export default class ResidentProfileController {
 
       const placementActions = actions(placement, user)
 
-      const resident = getResidentHeader(placement)
-
       return res.render(`manage/resident/residentProfile`, {
         contextKeyDetails: placementKeyDetails(placement),
         crn,
@@ -57,7 +59,7 @@ export default class ResidentProfileController {
         user,
         backLink: paths.premises.show({ premisesId: placement.premises.id }),
         tabItems,
-        resident,
+        resident: getResidentHeader(placement),
         actions: placementActions ? placementActions[0].items : [],
         activeTab,
         cardList,

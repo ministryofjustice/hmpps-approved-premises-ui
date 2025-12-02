@@ -72,7 +72,9 @@ describe('sentence', () => {
         { key: { text: 'Sub-category' }, value: { text: 'TBA' } },
         {
           key: {
-            html: `Offence analysis<p class="govuk-body-s">Imported from OASys R6.1</p><p class="govuk-body-s">Last updated on ${oasysUpdateDate}<p>`,
+            html: `Offence analysis
+<p class="govuk-body-s">Imported from OASys 2.1</p>
+<p class="govuk-body-s">Last updated on ${oasysUpdateDate}<p>`,
           },
           value: { html: 'rendered-output' },
         },
@@ -86,7 +88,9 @@ describe('sentence', () => {
         },
         {
           key: {
-            html: `Previous behaviours<p class="govuk-body-s">Imported from OASys R6.1</p><p class="govuk-body-s">Last updated on ${oasysUpdateDate}<p>`,
+            html: `Previous behaviours
+<p class="govuk-body-s">Imported from OASys 2.12</p>
+<p class="govuk-body-s">Last updated on ${oasysUpdateDate}<p>`,
           },
           value: { html: 'rendered-output' },
         },

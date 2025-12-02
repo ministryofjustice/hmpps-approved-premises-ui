@@ -15,7 +15,7 @@ describe('residentsUtils', () => {
         {
           active: false,
           href: `${baseUrl}personal`,
-          text: 'Personal',
+          text: 'Personal details',
         },
         {
           active: false,

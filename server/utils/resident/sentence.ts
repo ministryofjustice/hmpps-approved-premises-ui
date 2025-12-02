@@ -17,13 +17,12 @@ export const offenceSummaryList = (
     summaryListItem('Sub-category', 'TBA'),
     {
       key: {
-        html:
-          'Offence analysis' +
-          '<p class="govuk-body-s">Imported from OASys R6.1</p>' +
-          `<p class="govuk-body-s">Last updated on ${DateFormats.isoDateToUIDate(oasysAnswers.assessmentMetadata.dateCompleted)}<p>`,
+        html: `Offence analysis
+<p class="govuk-body-s">Imported from OASys ${offenceAnalysis?.questionNumber}</p>
+<p class="govuk-body-s">Last updated on ${DateFormats.isoDateToUIDate(oasysAnswers.assessmentMetadata.dateCompleted)}<p>`,
       },
       value: {
-        html: offenceAnalysis ? detailsBody(offenceAnalysis.label, `${offenceAnalysis.answer}`) : '',
+        html: offenceAnalysis ? detailsBody(offenceAnalysis.label, `${offenceAnalysis?.answer}`) : '',
       },
     },
     summaryListItem('Offence ID', offenceId),
@@ -35,10 +34,9 @@ export const offenceSummaryList = (
     ),
     {
       key: {
-        html:
-          'Previous behaviours' +
-          '<p class="govuk-body-s">Imported from OASys R6.1</p>' +
-          `<p class="govuk-body-s">Last updated on ${DateFormats.isoDateToUIDate(oasysAnswers.assessmentMetadata.dateCompleted)}<p>`,
+        html: `Previous behaviours
+<p class="govuk-body-s">Imported from OASys ${patternOfOffending?.questionNumber}</p>
+<p class="govuk-body-s">Last updated on ${DateFormats.isoDateToUIDate(oasysAnswers.assessmentMetadata.dateCompleted)}<p>`,
       },
       value: {
         html: patternOfOffending ? detailsBody(patternOfOffending.label, `${patternOfOffending.answer}`) : '',

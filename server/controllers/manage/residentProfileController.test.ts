@@ -1,14 +1,14 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 
-import { FullPerson } from '@approved-premises/api'
+import { Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
 import { PersonService, PlacementService } from '../../services'
 
 import paths from '../../paths/manage'
 
 import ResidentProfileController from './residentProfileController'
 import { activeOffenceFactory, cas1OasysGroupFactory, cas1SpaceBookingFactory } from '../../testutils/factories'
-import { residentTabItems } from '../../utils/resident'
+import { getResidentHeader, ResidentProfileTab, residentTabItems, tabLabels } from '../../utils/resident'
 import { placementKeyDetails } from '../../utils/placements'
 import { offencesCards, sentenceSideNavigation } from '../../utils/resident/sentence'
 
@@ -47,6 +47,19 @@ describe('residentProfileController', () => {
     return { placement, request, response, oasysGroup, offences }
   }
 
+  const renderParameters = (placement: Cas1SpaceBooking, tab: ResidentProfileTab) => ({
+    placement,
+    backLink: paths.premises.show({ premisesId: placement.premises.id }),
+    activeTab: tab,
+    tabItems: residentTabItems(placement, tab),
+    crn,
+    pageHeading: tabLabels[tab].label,
+    contextKeyDetails: placementKeyDetails(placement),
+    user,
+    actions: [] as Array<never>,
+    resident: getResidentHeader(placement),
+  })
+
   describe('show', () => {
     it('should render the Manage resident page on default tab', async () => {
       const { request, response, placement } = setUp()
@@ -55,18 +68,7 @@ describe('residentProfileController', () => {
 
       expect(response.render.mock.calls[0]).toEqual([
         'manage/resident/residentProfile',
-        {
-          placement,
-          backLink: paths.premises.show({ premisesId: placement.premises.id }),
-          activeTab: 'personal',
-          tabItems: residentTabItems(placement, 'personal'),
-          crn,
-          arrivalDate: placement.expectedArrivalDate,
-          departureDate: placement.expectedDepartureDate,
-          pageHeading: 'Personal',
-          contextKeyDetails: placementKeyDetails(placement),
-          user,
-        },
+        { ...renderParameters(placement, 'personal') },
       ])
     })
 
@@ -78,17 +80,9 @@ describe('residentProfileController', () => {
       expect(response.render.mock.calls[0]).toEqual([
         'manage/resident/residentProfile',
         {
-          placement,
-          backLink: paths.premises.show({ premisesId: placement.premises.id }),
-          activeTab: 'sentence',
-          tabItems: residentTabItems(placement, 'sentence'),
-          crn,
-          arrivalDate: placement.expectedArrivalDate,
-          departureDate: placement.expectedDepartureDate,
-          pageHeading: 'Sentence',
+          ...renderParameters(placement, 'sentence'),
           subHeading: 'Offence and sentence',
-          contextKeyDetails: placementKeyDetails(placement),
-          user,
+          tabItems: residentTabItems(placement, 'sentence'),
           cardList: offencesCards(offences, oasysGroup),
           sideNavigation: sentenceSideNavigation('offence', crn, placement.id),
         },
@@ -112,7 +106,7 @@ describe('residentProfileController', () => {
       'cas1_space_booking_create',
     ]
 
-    const handler = placementController.show()
+    const handler = residentProfileController.show()
     await handler(request, response, next)
 
     expect(response.render).toHaveBeenCalledWith(
@@ -148,7 +142,7 @@ describe('residentProfileController', () => {
     const { request, response, placement } = setUp()
     const person = placement.person as FullPerson
 
-    const handler = placementController.show()
+    const handler = residentProfileController.show()
     await handler(request, response, next)
 
     expect(response.render).toHaveBeenCalledWith(

@@ -20,7 +20,7 @@ export const tabLabels: Record<
   ResidentProfileTab,
   { label: string; disableRestricted?: boolean; disableOffline?: boolean }
 > = {
-  personal: { label: 'Personal' },
+  personal: { label: 'Personal details' },
   health: { label: 'Health' },
   placement: { label: 'Placement' },
   risk: { label: 'Risk' },
@@ -102,7 +102,7 @@ function getBadge(text: string, colour: string): string {
 
 export function getResidentStatus(placement: Cas1SpaceBooking): string {
   return statusTextMap[detailedStatus(placement)]
-
+}
 
 export const card = (title: string, rows: Array<SummaryListItem>) => ({
   card: {

@@ -46,13 +46,13 @@ context('ResidentProfile', () => {
       THEN('I should see the person information in the header')
       page.checkHeader()
       AND('the Personal tab should be selected')
-      page.shouldHaveActiveTab('Personal')
+      page.shouldHaveActiveTab('Personal details')
     })
 
     it('should show the sentence tab', () => {
       GIVEN(' that I am signed in as a user with access resident profile')
       signIn(['manage_resident'])
-      GIVEN('there is an existing placemnt')
+      GIVEN('there is an existing placement')
       const { placement, offences, oasysOffenceDetails } = setup()
       WHEN('I visit the resident profile page on the sentence tab')
       const page = ResidentProfilePage.visit(placement, 'sentence')
