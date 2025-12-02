@@ -8,6 +8,11 @@ import paths from '../../paths/manage'
 import ResidentProfileController from './residentProfileController'
 import { cas1SpaceBookingFactory } from '../../testutils/factories'
 
+jest.mock('../../utils/resident', () => ({
+  ...jest.requireActual('../../utils/resident'),
+  renderPlacementSection: jest.fn().mockReturnValue('<p>Mock section content</p>'),
+}))
+
 describe('residentProfileController', () => {
   const token = 'TEST_TOKEN'
   const crn = 'S123456'
@@ -16,9 +21,9 @@ describe('residentProfileController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementService = createMock<PlacementService>({})
-  const placementController = new ResidentProfileController(placementService)
+  const residentProfileController = new ResidentProfileController(placementService)
 
-  const setUp = () => {
+  const setUp = (section?: string) => {
     jest.resetAllMocks()
     jest.useFakeTimers()
 
@@ -31,26 +36,77 @@ describe('residentProfileController', () => {
     const response: DeepMocked<Response> = createMock<Response>({ locals: { user } })
     const request: DeepMocked<Request> = createMock<Request>({
       user: { token },
-      params: { crn, placementId: placement.id },
+      params: { crn, placementId: placement.id, ...(section && { section }) },
     })
     return { placement, request, response }
   }
 
-  it('should render the Manage resident page on default tab', async () => {
-    const { request, response, placement } = setUp()
+  describe('show', () => {
+    it('should render the Manage resident page on default tab (personal)', async () => {
+      const { request, response, placement } = setUp()
 
-    await placementController.show()(request, response, next)
+      await residentProfileController.show()(request, response, next)
 
-    // TODO: Complete render context
-    expect(response.render).toHaveBeenCalledWith(
-      'manage/resident/residentProfile',
-      expect.objectContaining({
-        placement,
-        pageHeading: 'Manage a resident',
-        backLink: paths.premises.show({ premisesId: placement.premises.id }),
-        activeTab: 'personal',
-      }),
-    )
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/resident/tabs/personal',
+        expect.objectContaining({
+          placement,
+          pageHeading: 'Manage a resident',
+          backLink: paths.premises.show({ premisesId: placement.premises.id }),
+          activeTab: 'personal',
+        }),
+      )
+    })
+
+    it('should render the correct tab template for each tab', async () => {
+      const { request, response, placement } = setUp()
+
+      await residentProfileController.show('health')(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/resident/tabs/health',
+        expect.objectContaining({
+          placement,
+          activeTab: 'health',
+        }),
+      )
+    })
+
+    it('should render the placement tab with sidebar on default section', async () => {
+      const { request, response, placement } = setUp()
+
+      await residentProfileController.show('placement')(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/resident/tabs/placement',
+        expect.objectContaining({
+          placement,
+          pageHeading: 'Manage a resident',
+          backLink: paths.premises.show({ premisesId: placement.premises.id }),
+          activeTab: 'placement',
+          activeSection: 'placement-details',
+          sectionHeading: 'Placement details',
+          sidebarItems: expect.any(Array),
+        }),
+      )
+    })
+
+    it('should render the placement tab with section from params', async () => {
+      const { request, response, placement } = setUp('previous-ap-stays')
+
+      await residentProfileController.show('placement')(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/resident/tabs/placement',
+        expect.objectContaining({
+          placement,
+          activeTab: 'placement',
+          activeSection: 'previous-ap-stays',
+          sectionHeading: 'Previous AP stays',
+          sidebarItems: expect.any(Array),
+        }),
+      )
+    })
   })
 
   it('should render the Manage resident page with the correct actions for an upcoming placement', async () => {
@@ -63,11 +119,11 @@ describe('residentProfileController', () => {
       'cas1_space_booking_create',
     ]
 
-    const handler = placementController.show()
+    const handler = residentProfileController.show()
     await handler(request, response, next)
 
     expect(response.render).toHaveBeenCalledWith(
-      'manage/resident/residentProfile',
+      'manage/resident/tabs/personal',
       expect.objectContaining({
         actions: [
           {
@@ -99,11 +155,11 @@ describe('residentProfileController', () => {
     const { request, response, placement } = setUp()
     const person = placement.person as FullPerson
 
-    const handler = placementController.show()
+    const handler = residentProfileController.show()
     await handler(request, response, next)
 
     expect(response.render).toHaveBeenCalledWith(
-      'manage/resident/residentProfile',
+      'manage/resident/tabs/personal',
       expect.objectContaining({
         resident: {
           name: person.name,

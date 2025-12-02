@@ -1,3 +1,4 @@
+import * as nunjucks from 'nunjucks'
 import { Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
 import { TabItem } from '@approved-premises/ui'
 import paths from '../../paths/manage'
@@ -14,6 +15,14 @@ export type ResidentHeader = {
   attributes: Array<Array<{ title: string; description: string }>>
 }
 
+export type PlacementSidebarSection =
+  | 'placement-details'
+  | 'application'
+  | 'previous-ap-stays'
+  | 'pre-arrival'
+  | 'induction'
+  | 'reviews'
+
 export const tabLabels: Record<
   ResidentProfileTab,
   { label: string; disableRestricted?: boolean; disableOffline?: boolean }
@@ -24,6 +33,15 @@ export const tabLabels: Record<
   risk: { label: 'Risk' },
   sentence: { label: 'Offence and sentence' },
   enforcement: { label: 'Enforcement' },
+}
+
+export const placementSidebarLabels: Record<PlacementSidebarSection, string> = {
+  'placement-details': 'Placement details',
+  application: 'Application',
+  'previous-ap-stays': 'Previous AP stays',
+  'pre-arrival': 'Pre-arrival',
+  induction: 'Induction',
+  reviews: 'Reviews',
 }
 
 export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: ResidentProfileTab): Array<TabItem> => {
@@ -100,4 +118,21 @@ function getBadge(text: string, colour: string): string {
 
 export function getResidentStatus(placement: Cas1SpaceBooking): string {
   return statusTextMap[detailedStatus(placement)]
+}
+
+export const placementSidebarItems = (
+  placement: Cas1SpaceBooking,
+  activeSection: PlacementSidebarSection,
+): Array<TabItem> => {
+  return Object.entries(placementSidebarLabels).map(([key, label]) => ({
+    text: label,
+    active: activeSection === key,
+    href: paths.resident.placement({ placementId: placement.id, crn: placement.person.crn, section: key }),
+  }))
+}
+
+// TODO: Will improve this in the next phase of this ticket/PR when we put more content. For example to have the tab as well as a variable
+export const renderPlacementSection = (section: PlacementSidebarSection): nunjucks.runtime.SafeString => {
+  const html = nunjucks.render(`manage/resident/tabs/placement-sections/${section}.njk`)
+  return new nunjucks.runtime.SafeString(html)
 }

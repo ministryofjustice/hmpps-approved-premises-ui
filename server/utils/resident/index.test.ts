@@ -1,4 +1,4 @@
-import { residentTabItems } from './index'
+import { residentTabItems, placementSidebarItems } from './index'
 import { cas1SpaceBookingFactory } from '../../testutils/factories'
 
 describe('residentsUtils', () => {
@@ -37,6 +37,46 @@ describe('residentsUtils', () => {
           active: false,
           href: `${baseUrl}enforcement`,
           text: 'Enforcement',
+        },
+      ])
+    })
+  })
+
+  describe('placementSidebarItems', () => {
+    it('Should generate a list of sidebar items for placement section', () => {
+      const placement = cas1SpaceBookingFactory.build()
+      const sidebarItems = placementSidebarItems(placement, 'previous-ap-stays')
+      const baseUrl = `/manage/resident/${placement.person.crn}/placement/${placement.id}/placement/`
+      expect(sidebarItems).toEqual([
+        {
+          active: false,
+          href: `${baseUrl}placement-details`,
+          text: 'Placement details',
+        },
+        {
+          active: false,
+          href: `${baseUrl}application`,
+          text: 'Application',
+        },
+        {
+          active: true,
+          href: `${baseUrl}previous-ap-stays`,
+          text: 'Previous AP stays',
+        },
+        {
+          active: false,
+          href: `${baseUrl}pre-arrival`,
+          text: 'Pre-arrival',
+        },
+        {
+          active: false,
+          href: `${baseUrl}induction`,
+          text: 'Induction',
+        },
+        {
+          active: false,
+          href: `${baseUrl}reviews`,
+          text: 'Reviews',
         },
       ])
     })

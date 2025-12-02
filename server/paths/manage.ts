@@ -54,6 +54,7 @@ const outOfServiceBedPath = outOfServiceBedsPath.path(':id')
 const outOfServiceBedsIndexPath = managePath.path('out-of-service-beds')
 const localRestrictionsPath = singlePremisesPath.path('local-restrictions')
 const residentPath = managePath.path('resident/:crn/placement/:placementId')
+const residentPlacementPath = residentPath.path('placement')
 
 const paths = {
   premises: {
@@ -116,10 +117,11 @@ const paths = {
     show: residentPath,
     tabPersonal: residentPath.path('personal'),
     tabHealth: residentPath.path('health'),
-    tabPlacement: residentPath.path('placement'),
+    tabPlacement: residentPlacementPath,
     tabRisk: residentPath.path('risk'),
     tabSentence: residentPath.path('sentence'),
     tabEnforcement: residentPath.path('enforcement'),
+    placement: residentPlacementPath.path(':section'),
   },
   bookings: {
     // In effect deprecated: legacy bookings have been migrated to space bookings. A redirect is now in place.

@@ -142,6 +142,10 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })
+  get(paths.resident.placement.pattern, residentProfileController.show('placement'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_ap_resident_profile'],
+  })
   get(paths.resident.tabRisk.pattern, residentProfileController.show('risk'), {
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],

@@ -1,0 +1,22 @@
+{% extends "../residentProfile.njk" %}
+{% from "moj/components/side-navigation/macro.njk" import mojSideNavigation %}
+
+{% block tabContent %}
+    <h1 class="govuk-heading-l">Placement</h1>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-quarter">
+            {{ mojSideNavigation({
+                label: 'Placement sections',
+                items: sidebarItems
+            }) }}
+        </div>
+
+        <div class="govuk-grid-column-three-quarters">
+            <h2 class="govuk-heading-m govuk-!-margin-top-4">{{ sectionHeading }}</h2>
+
+            {{ sectionContent }}
+        </div>
+    </div>
+{% endblock %}
+
