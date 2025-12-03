@@ -1,6 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express'
-import { ActiveOffence, Cas1OASysGroup } from '@approved-premises/api'
-import { SummaryListWithCard, TabItem } from '@approved-premises/ui'
+import { TabItem } from '@approved-premises/ui'
 import { PersonService, PlacementService } from '../../services'
 import paths from '../../paths/manage'
 
@@ -11,10 +10,15 @@ import {
   residentTabItems,
   getResidentHeader,
   tabLabels,
+  TabData,
 } from '../../utils/resident'
 
-import { licenseCards, offencesCards, sentenceSideNavigation } from '../../utils/resident/sentence'
-import { riskOasysCards } from '../../utils/resident/risk'
+import {
+  sentenceLicenceTabController,
+  sentenceOffencesTabController,
+  sentenceSideNavigation,
+} from '../../utils/resident/sentence'
+import { riskTabController } from '../../utils/resident/risk'
 
 export default class ResidentProfileController {
   constructor(
@@ -24,50 +28,33 @@ export default class ResidentProfileController {
 
   show(activeTab: ResidentProfileTab = 'personal', subTab?: ResidentProfileSubTab): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { crn, placementId } = req.params
+      const {
+        params: { crn, placementId },
+        user: { token },
+      } = req
       const { user } = res.locals
       const placement = await this.placementService.getPlacement(req.user.token, placementId)
       const tabItems = residentTabItems(placement, activeTab)
 
       const pageHeading = tabLabels[activeTab].label
 
-      let cardList: Array<SummaryListWithCard>
-      let subHeading: string
+      let tabData: TabData = {}
       let sideNavigation: Array<TabItem>
+      const placementActions = actions(placement, user)
 
-      if (['sentence'].includes(activeTab)) {
+      if (activeTab === 'sentence') {
         sideNavigation = sentenceSideNavigation(subTab, crn, placementId)
 
         if (subTab === 'offence') {
-          const [offences, offenceAnswers]: [Array<ActiveOffence>, Cas1OASysGroup] = await Promise.all([
-            this.personService.getOffences(req.user.token, crn),
-            this.personService.getOasysAnswers(req.user.token, crn, 'offenceDetails'),
-          ])
-          subHeading = 'Offence and sentence'
-          cardList = offencesCards(offences, offenceAnswers)
+          tabData = await sentenceOffencesTabController({ personService: this.personService, crn, token })
         }
         if (subTab === 'licence') {
-          subHeading = 'Licence'
-          cardList = licenseCards()
+          tabData = await sentenceLicenceTabController()
         }
       }
 
-      const placementActions = actions(placement, user)
-
       if (activeTab === 'risk') {
-        const [roshSummary, riskManagementPlan, offenceDetails, supportingInformation]: [
-          Cas1OASysGroup,
-          Cas1OASysGroup,
-          Cas1OASysGroup,
-          Cas1OASysGroup,
-        ] = await Promise.all([
-          this.personService.getOasysAnswers(req.user.token, crn, 'roshSummary'),
-          this.personService.getOasysAnswers(req.user.token, crn, 'riskManagementPlan'),
-          this.personService.getOasysAnswers(req.user.token, crn, 'offenceDetails'),
-          this.personService.getOasysAnswers(req.user.token, crn, 'supportingInformation'),
-        ])
-        subHeading = 'OASys risks'
-        cardList = riskOasysCards(roshSummary, riskManagementPlan, offenceDetails, supportingInformation)
+        tabData = await riskTabController({ personService: this.personService, crn, token })
       }
 
       return res.render(`manage/resident/residentProfile`, {
@@ -81,9 +68,8 @@ export default class ResidentProfileController {
         resident: getResidentHeader(placement),
         actions: placementActions ? placementActions[0].items : [],
         activeTab,
-        cardList,
-        subHeading,
         sideNavigation,
+        ...tabData,
       })
     }
   }

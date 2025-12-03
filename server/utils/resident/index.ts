@@ -1,10 +1,11 @@
 import { Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
-import { SummaryListItem, TabItem } from '@approved-premises/ui'
+import { SummaryListItem, SummaryListWithCard, TabItem } from '@approved-premises/ui'
 import nunjucks from 'nunjucks'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { detailedStatus, statusTextMap } from '../placements/status'
 import { canonicalDates } from '../placements'
+import PersonService from '../../services/personService'
 
 export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'enforcement'
 export type ResidentProfileSubTab = 'offence' | 'licence' | 'orders' | 'parole' | 'prison'
@@ -15,6 +16,10 @@ export type ResidentHeader = {
   badges: Array<string>
   attributes: Array<Array<{ title: string; description: string }>>
 }
+
+export type TabData = { cardList?: Array<SummaryListWithCard>; subHeading?: string }
+
+export type TabControllerParameters = { personService?: PersonService; crn?: string; token?: string }
 
 export const tabLabels: Record<
   ResidentProfileTab,
@@ -104,11 +109,12 @@ export function getResidentStatus(placement: Cas1SpaceBooking): string {
   return statusTextMap[detailedStatus(placement)]
 }
 
-export const card = (title: string, rows: Array<SummaryListItem>) => ({
-  card: {
+export const card = ({ title, rows, html }: { title?: string; rows?: Array<SummaryListItem>; html?: string }) => ({
+  card: title && {
     title: { text: title },
   },
   rows,
+  html,
 })
 
 export const detailsBody = (summaryText: string, text: string) => {

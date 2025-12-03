@@ -32,17 +32,13 @@ export default class ApplicationService {
   async createApplication(token: string, crn: string, activeOffence: ActiveOffence): Promise<Application> {
     const applicationClient = this.applicationClientFactory(token)
 
-    const application = await applicationClient.create(crn, activeOffence)
-
-    return application
+    return applicationClient.create(crn, activeOffence)
   }
 
   async findApplication(token: string, id: string): Promise<Application> {
     const applicationClient = this.applicationClientFactory(token)
 
-    const application = await applicationClient.find(id)
-
-    return application
+    return applicationClient.find(id)
   }
 
   async getAll(
