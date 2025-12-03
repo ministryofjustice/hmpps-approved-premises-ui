@@ -1,4 +1,5 @@
-import { residentTabItems, placementSidebarItems } from './index'
+import nunjucks from 'nunjucks'
+import { residentTabItems, placementSidebarItems, renderPlacementSection } from './index'
 import { cas1SpaceBookingFactory } from '../../testutils/factories'
 
 describe('residentsUtils', () => {
@@ -11,7 +12,7 @@ describe('residentsUtils', () => {
         {
           active: false,
           href: `${baseUrl}personal`,
-          text: 'Personal',
+          text: 'Personal Details',
         },
         {
           active: false,
@@ -79,6 +80,19 @@ describe('residentsUtils', () => {
           text: 'Reviews',
         },
       ])
+    })
+  })
+
+  describe('renderPlacementSection', () => {
+    it('Should render the placement section template', () => {
+      const mockHtml = '<div>Placement details content</div>'
+      jest.spyOn(nunjucks, 'render').mockImplementation(() => mockHtml)
+
+      const result = renderPlacementSection('placement-details')
+
+      expect(nunjucks.render).toHaveBeenCalledWith('manage/resident/tabs/placement-sections/placement-details.njk')
+      expect(result).toBeInstanceOf(nunjucks.runtime.SafeString)
+      expect(result.toString()).toEqual(mockHtml)
     })
   })
 })

@@ -1,4 +1,4 @@
-import * as nunjucks from 'nunjucks'
+import nunjucks from 'nunjucks'
 import { Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
 import { TabItem } from '@approved-premises/ui'
 import paths from '../../paths/manage'
@@ -27,7 +27,7 @@ export const tabLabels: Record<
   ResidentProfileTab,
   { label: string; disableRestricted?: boolean; disableOffline?: boolean }
 > = {
-  personal: { label: 'Personal' },
+  personal: { label: 'Personal Details' },
   health: { label: 'Health' },
   placement: { label: 'Placement' },
   risk: { label: 'Risk' },
