@@ -38,6 +38,17 @@ class Cas1OASysGroupFactory extends Factory<Cas1OASysGroup> {
       group: 'supportingInformation',
     })
   }
+
+  noAssessment() {
+    return this.params({
+      assessmentMetadata: {
+        dateCompleted: null,
+        dateStarted: null,
+        hasApplicableAssessment: false,
+      },
+      answers: oasysQuestionFactory.buildList(10, { answer: null }),
+    })
+  }
 }
 
 export default Cas1OASysGroupFactory.define(() => {

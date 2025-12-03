@@ -5,26 +5,38 @@ import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { card, detailsBody, ResidentProfileSubTab } from './index'
 
+const oasysAnswer = (oasysAnswers: Cas1OASysGroup, questionNumber: string, questionName: string): SummaryListItem => {
+  if (oasysAnswers?.assessmentMetadata?.hasApplicableAssessment) {
+    const question = oasysAnswers.answers.find(({ questionNumber: qn }) => questionNumber === qn)
+    return {
+      key: {
+        html: `${questionName}
+<p class="govuk-body-s">Imported from OASys ${questionNumber}</p>
+<p class="govuk-body-s">Last updated on ${DateFormats.isoDateToUIDate(oasysAnswers.assessmentMetadata.dateCompleted)}<p>`,
+      },
+      value: {
+        html: question ? detailsBody(question.label, `${question.answer}`) : '',
+      },
+    }
+  }
+  return {
+    key: {
+      html: `${questionName}
+<p class="govuk-body-s">OASys question ${questionNumber} not available</p>`,
+    },
+    value: { text: '' },
+  }
+}
+
 export const offenceSummaryList = (
   offences: Array<ActiveOffence>,
   oasysAnswers: Cas1OASysGroup,
 ): Array<SummaryListItem> => {
-  const { offenceDescription, offenceId, deliusEventNumber } = offences[0]
-  const offenceAnalysis = oasysAnswers.answers.find(({ questionNumber }) => questionNumber === '2.1')
-  const patternOfOffending = oasysAnswers.answers.find(({ questionNumber }) => questionNumber === '2.12')
+  const { offenceDescription, offenceId, deliusEventNumber } = offences && offences[0]
   return [
     summaryListItem('Offence type', offenceDescription),
     summaryListItem('Sub-category', 'TBA'),
-    {
-      key: {
-        html: `Offence analysis
-<p class="govuk-body-s">Imported from OASys ${offenceAnalysis?.questionNumber}</p>
-<p class="govuk-body-s">Last updated on ${DateFormats.isoDateToUIDate(oasysAnswers.assessmentMetadata.dateCompleted)}<p>`,
-      },
-      value: {
-        html: offenceAnalysis ? detailsBody(offenceAnalysis.label, `${offenceAnalysis?.answer}`) : '',
-      },
-    },
+    oasysAnswer(oasysAnswers, '2.1', 'Offence analysis'),
     summaryListItem('Offence ID', offenceId),
     summaryListItem('NDelius Event number', deliusEventNumber),
     summaryListItem(
@@ -32,16 +44,7 @@ export const offenceSummaryList = (
       bulletList(offences.map(({ offenceDescription: description }) => description)),
       'html',
     ),
-    {
-      key: {
-        html: `Previous behaviours
-<p class="govuk-body-s">Imported from OASys ${patternOfOffending?.questionNumber}</p>
-<p class="govuk-body-s">Last updated on ${DateFormats.isoDateToUIDate(oasysAnswers.assessmentMetadata.dateCompleted)}<p>`,
-      },
-      value: {
-        html: patternOfOffending ? detailsBody(patternOfOffending.label, `${patternOfOffending.answer}`) : '',
-      },
-    },
+    oasysAnswer(oasysAnswers, '2.12', 'Previous behaviours'),
     // TODO: Add Delius link in here
   ].filter(Boolean)
 }
