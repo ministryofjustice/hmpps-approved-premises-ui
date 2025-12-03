@@ -1,4 +1,12 @@
-import { placementSideNavigation, previousApStaysCards } from './placement'
+import {
+  placementSideNavigation,
+  previousApStaysCards,
+  placementDetailsCards,
+  applicationCards,
+  preArrivalCards,
+  inductionCards,
+  reviewsCards,
+} from './placement'
 import { PlacementSubTab } from './index'
 import { cas1SpaceBookingFactory } from '../../testutils/factories'
 
@@ -64,6 +72,29 @@ describe('placement', () => {
     // TODO: This might change in the future (maybe to use a placeholder text for example etc etc)
     it('should not render anything when there is no data', () => {
       expect(previousApStaysCards([])).toEqual([])
+    })
+  })
+
+  // TODO: These will be completed in the next PRs. Currently needed to satisfy unit test coverage
+  describe('empty card sections', () => {
+    it('should return an empty array for placementDetailsCards', () => {
+      expect(placementDetailsCards()).toEqual([])
+    })
+
+    it('should return an empty array for applicationCards', () => {
+      expect(applicationCards()).toEqual([])
+    })
+
+    it('should return an empty array for preArrivalCards', () => {
+      expect(preArrivalCards()).toEqual([])
+    })
+
+    it('should return an empty array for inductionCards', () => {
+      expect(inductionCards()).toEqual([])
+    })
+
+    it('should return an empty array for reviewsCards', () => {
+      expect(reviewsCards()).toEqual([])
     })
   })
 })
