@@ -1,11 +1,13 @@
 import { Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
-import { TabItem } from '@approved-premises/ui'
+import { SummaryListItem, TabItem } from '@approved-premises/ui'
+import nunjucks from 'nunjucks'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { detailedStatus, statusTextMap } from '../placements/status'
 import { canonicalDates } from '../placements'
 
 export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'enforcement'
+export type ResidentProfileSubTab = 'offence' | 'licence' | 'orders' | 'parole' | 'prison'
 
 export type ResidentHeader = {
   name: string
@@ -18,11 +20,11 @@ export const tabLabels: Record<
   ResidentProfileTab,
   { label: string; disableRestricted?: boolean; disableOffline?: boolean }
 > = {
-  personal: { label: 'Personal' },
+  personal: { label: 'Personal details' },
   health: { label: 'Health' },
   placement: { label: 'Placement' },
   risk: { label: 'Risk' },
-  sentence: { label: 'Offence and sentence' },
+  sentence: { label: 'Sentence' },
   enforcement: { label: 'Enforcement' },
 }
 
@@ -40,7 +42,7 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
       case 'risk':
         return pathRoot.tabRisk(pathParams)
       case 'sentence':
-        return pathRoot.tabSentence(pathParams)
+        return pathRoot.tabSentence.offence(pathParams)
       case 'enforcement':
         return pathRoot.tabEnforcement(pathParams)
       default:
@@ -100,4 +102,15 @@ function getBadge(text: string, colour: string): string {
 
 export function getResidentStatus(placement: Cas1SpaceBooking): string {
   return statusTextMap[detailedStatus(placement)]
+}
+
+export const card = (title: string, rows: Array<SummaryListItem>) => ({
+  card: {
+    title: { text: title },
+  },
+  rows,
+})
+
+export const detailsBody = (summaryText: string, text: string) => {
+  return nunjucks.render(`partials/detailsBlock.njk`, { summaryText, text })
 }

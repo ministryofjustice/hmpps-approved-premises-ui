@@ -1,12 +1,16 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
-import { FullPerson } from '@approved-premises/api'
-import type { PlacementService } from '../../services'
+
+import { Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
+import { PersonService, PlacementService } from '../../services'
 
 import paths from '../../paths/manage'
 
 import ResidentProfileController from './residentProfileController'
-import { cas1SpaceBookingFactory } from '../../testutils/factories'
+import { activeOffenceFactory, cas1OasysGroupFactory, cas1SpaceBookingFactory } from '../../testutils/factories'
+import { getResidentHeader, ResidentProfileTab, residentTabItems, tabLabels } from '../../utils/resident'
+import { placementKeyDetails } from '../../utils/placements'
+import { offencesCards, sentenceSideNavigation } from '../../utils/resident/sentence'
 
 describe('residentProfileController', () => {
   const token = 'TEST_TOKEN'
@@ -16,7 +20,8 @@ describe('residentProfileController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementService = createMock<PlacementService>({})
-  const placementController = new ResidentProfileController(placementService)
+  const personService = createMock<PersonService>({})
+  const residentProfileController = new ResidentProfileController(placementService, personService)
 
   const setUp = () => {
     jest.resetAllMocks()
@@ -26,31 +31,69 @@ describe('residentProfileController', () => {
       expectedArrivalDate: '2024-11-16',
       expectedDepartureDate: '2025-03-26',
     })
+    const offences = activeOffenceFactory.buildList(3)
+    const oasysGroup = cas1OasysGroupFactory.offenceDetails().build()
+
     placementService.getPlacement.mockResolvedValue(placement)
+
+    personService.getOffences.mockResolvedValue(offences)
+    personService.getOasysAnswers.mockResolvedValue(oasysGroup)
 
     const response: DeepMocked<Response> = createMock<Response>({ locals: { user } })
     const request: DeepMocked<Request> = createMock<Request>({
       user: { token },
       params: { crn, placementId: placement.id },
     })
-    return { placement, request, response }
+    return { placement, request, response, oasysGroup, offences }
   }
 
-  it('should render the Manage resident page on default tab', async () => {
-    const { request, response, placement } = setUp()
+  const renderParameters = (placement: Cas1SpaceBooking, tab: ResidentProfileTab) => ({
+    placement,
+    backLink: paths.premises.show({ premisesId: placement.premises.id }),
+    activeTab: tab,
+    tabItems: residentTabItems(placement, tab),
+    crn,
+    pageHeading: tabLabels[tab].label,
+    contextKeyDetails: placementKeyDetails(placement),
+    user,
+    actions: [] as Array<never>,
+    resident: getResidentHeader(placement),
+  })
 
-    await placementController.show()(request, response, next)
+  describe('show', () => {
+    it('should render the Manage resident page on default tab', async () => {
+      const { request, response, placement } = setUp()
 
-    // TODO: Complete render context
-    expect(response.render).toHaveBeenCalledWith(
-      'manage/resident/residentProfile',
-      expect.objectContaining({
-        placement,
-        pageHeading: 'Manage a resident',
-        backLink: paths.premises.show({ premisesId: placement.premises.id }),
-        activeTab: 'personal',
-      }),
-    )
+      await residentProfileController.show()(request, response, next)
+
+      expect(response.render.mock.calls[0]).toEqual([
+        'manage/resident/residentProfile',
+        { ...renderParameters(placement, 'personal') },
+      ])
+    })
+
+    it('should render the Manage resident page on the sentence tab', async () => {
+      const { request, response, placement, offences, oasysGroup } = setUp()
+
+      await residentProfileController.show('sentence', 'offence')(request, response, next)
+
+      expect(response.render.mock.calls[0]).toEqual([
+        'manage/resident/residentProfile',
+        {
+          ...renderParameters(placement, 'sentence'),
+          subHeading: 'Offence and sentence',
+          tabItems: residentTabItems(placement, 'sentence'),
+          cardList: offencesCards(offences, oasysGroup),
+          sideNavigation: sentenceSideNavigation('offence', crn, placement.id),
+        },
+      ])
+
+      expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
+
+      expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
+
+      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'offenceDetails')
+    })
   })
 
   it('should render the Manage resident page with the correct actions for an upcoming placement', async () => {
@@ -63,7 +106,7 @@ describe('residentProfileController', () => {
       'cas1_space_booking_create',
     ]
 
-    const handler = placementController.show()
+    const handler = residentProfileController.show()
     await handler(request, response, next)
 
     expect(response.render).toHaveBeenCalledWith(
@@ -99,7 +142,7 @@ describe('residentProfileController', () => {
     const { request, response, placement } = setUp()
     const person = placement.person as FullPerson
 
-    const handler = placementController.show()
+    const handler = residentProfileController.show()
     await handler(request, response, next)
 
     expect(response.render).toHaveBeenCalledWith(

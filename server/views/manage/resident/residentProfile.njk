@@ -3,9 +3,12 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "moj/components/identity-bar/macro.njk" import mojIdentityBar %}
 {% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
+{% from "moj/components/side-navigation/macro.njk" import mojSideNavigation %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "govuk-body govuk-!-padding-top-0" %}
+
+{% set bodyClasses = "wide-page" %}
 
 {% block beforeContent %}
     {% if backLink %}
@@ -17,8 +20,7 @@
 {% endblock %}
 
 {% set titleHtml %}
-    <span class="govuk-caption-xl">{{ placement.premises.name }}</span>
-    <h1>{{ pageHeading }}</h1>
+    <h1>{{ placement.premises.name }}</h1>
 {% endset %}
 
 {% block content %}
@@ -35,5 +37,21 @@
         items: tabItems
     }) }}
 
-    <h1 class="govuk-heading-l">Personal details</h1>
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+    <div class="govuk-grid-row">
+
+    {% if sideNavigation %}
+        <div class="govuk-grid-column-one-quarter">
+        {{ mojSideNavigation({items:sideNavigation}) }}
+        </div>
+    {% endif %}
+
+    <div class="govuk-grid-column-three-quarters">
+    {% if cardList %}
+        {% include "./partials/cardList.njk" %}
+    {% endif %}
+    </div>
+    </div>
+
 {% endblock %}

@@ -1,9 +1,11 @@
-import { Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
+import { ActiveOffence, Cas1OASysGroup, Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
+
 import { getResidentStatus, ResidentProfileTab } from '../../../../server/utils/resident'
-import { convertToTitleCase } from '../../../../server/utils/utils'
 import { DateFormats } from '../../../../server/utils/dateUtils'
+
+import { offenceSummaryList } from '../../../../server/utils/resident/sentence'
 
 export default class ResidentProfilePage extends Page {
   constructor(
@@ -16,31 +18,23 @@ export default class ResidentProfilePage extends Page {
 
   static visit(placement: Cas1SpaceBooking, tab: ResidentProfileTab = null): ResidentProfilePage {
     const params = { crn: placement.person.crn, placementId: placement.id }
-    const path = (() => {
+    const { path, title } = (() => {
       switch (tab) {
         case 'personal':
-          return paths.resident.tabPersonal(params)
+          return { path: paths.resident.tabPersonal(params), title: 'Personal' }
         case 'health':
-          return paths.resident.tabHealth(params)
+          return { path: paths.resident.tabHealth(params), title: 'Health' }
         case 'placement':
-          return paths.resident.tabPlacement(params)
+          return { path: paths.resident.tabPlacement(params), title: 'Placement' }
         case 'risk':
-          return paths.resident.tabRisk(params)
+          return { path: paths.resident.tabRisk(params), title: 'Risk' }
         case 'sentence':
-          return paths.resident.tabSentence(params)
+          return { path: paths.resident.tabSentence.offence(params), title: 'Sentence' }
         case 'enforcement':
-          return paths.resident.tabEnforcement(params)
+          return { path: paths.resident.tabEnforcement(params), title: 'Enforcement' }
 
         default:
-          return paths.resident.show(params)
-      }
-    })()
-    const title = (() => {
-      switch (tab) {
-        case 'personal':
-          return 'Personal details'
-        default:
-          return convertToTitleCase(tab)
+          return { path: paths.resident.show(params), title: 'Personal' }
       }
     })()
 
@@ -74,5 +68,14 @@ export default class ResidentProfilePage extends Page {
       this.shouldShowDescription('Status', status)
       this.shouldShowDescription('Length of stay', duration)
     })
+  }
+
+  shouldShowOffencesInformation(offences: Array<ActiveOffence>, oasysOffenceDetails: Cas1OASysGroup) {
+    cy.get('.govuk-summary-card__title').contains('Offence').should('exist')
+    const expected = offenceSummaryList(offences, { ...oasysOffenceDetails, answers: [] })
+    expected.splice(2, 1)
+    expected.splice(5, 1)
+
+    this.shouldContainSummaryListItems(expected)
   }
 }

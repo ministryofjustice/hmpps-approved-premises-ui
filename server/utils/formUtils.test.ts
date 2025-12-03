@@ -20,6 +20,7 @@ import {
   validPostcodeArea,
   validWeeksAndDaysDuration,
   summaryListItemNoBlankRows,
+  bulletList,
 } from './formUtils'
 import { DateFormats } from './dateUtils'
 
@@ -723,5 +724,16 @@ describe('placementRequestStatusSelectOptions', () => {
       { selected: false, text: 'Unable to book', value: 'unableToMatch' },
       { selected: true, text: 'Booked', value: 'matched' },
     ])
+  })
+})
+
+describe('bulletList', () => {
+  it('should render a bulletted list of strings', () => {
+    const strings = [1, 1].map(() => faker.string.alphanumeric(10))
+    expect(bulletList(strings)).toMatchStringIgnoringWhitespace(`
+      <ul class="govuk-list govuk-list--bullet">
+        <li>${strings[0]}</li>
+        <li>${strings[1]}</li>
+      </ul>`)
   })
 })
