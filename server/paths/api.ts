@@ -174,6 +174,7 @@ export default {
       answers: cas1Oasys.path('answers'),
     },
     timeline: cas1Person.path('timeline'),
+    spaceBookings: cas1Person.path('space-bookings'),
   },
   users: {
     index: cas1Users,

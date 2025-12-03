@@ -24,4 +24,5 @@ export const fieldValidators: Validators = {
   appealId: validators.uuid,
   tab: validators.key,
   taskType: validators.taskType,
+  section: validators.key,
 }

@@ -9,6 +9,7 @@ import {
   acctAlertFactory,
   activeOffenceFactory,
   adjudicationFactory,
+  cas1SpaceBookingFactory,
   cas1OasysGroupFactory,
   cas1OASysMetadataFactory,
   personFactory,
@@ -287,6 +288,38 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
       })
 
       await personClient.timeline(crn)
+    })
+  })
+
+  describe('spaceBookings', () => {
+    it('calls tthe API with CRN and includeCancelled=false by default', async () => {
+      const crn = 'crn'
+      const spaceBookings = cas1SpaceBookingFactory.buildList(3)
+      const basePath = paths.people.spaceBookings({ crn })
+      const expectedPath = basePath.endsWith('/') ? basePath : `${basePath}/`
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get space bookings for a person',
+        withRequest: {
+          method: 'GET',
+          path: expectedPath,
+          query: {
+            includeCancelled: 'false',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: spaceBookings,
+        },
+      })
+
+      const result = await personClient.spaceBookings(crn)
+
+      expect(result).toEqual(spaceBookings)
     })
   })
 

@@ -11,6 +11,7 @@ import { activeOffenceFactory, cas1OasysGroupFactory, cas1SpaceBookingFactory } 
 import { getResidentHeader, ResidentProfileTab, residentTabItems, tabLabels } from '../../utils/resident'
 import { placementKeyDetails } from '../../utils/placements'
 import { offencesCards, sentenceSideNavigation } from '../../utils/resident/sentence'
+import { placementDetailsCards, placementSideNavigation, previousApStaysCards } from '../../utils/resident/placement'
 
 describe('residentProfileController', () => {
   const token = 'TEST_TOKEN'
@@ -42,9 +43,15 @@ describe('residentProfileController', () => {
     const response: DeepMocked<Response> = createMock<Response>({ locals: { user } })
     const request: DeepMocked<Request> = createMock<Request>({
       user: { token },
-      params: { crn, placementId: placement.id },
+      params: { crn, placementId: placement.id, section: undefined },
     })
     return { placement, request, response, oasysGroup, offences }
+  }
+
+  const setUpWithSection = (section: string) => {
+    const result = setUp()
+    result.request.params.section = section
+    return result
   }
 
   const renderParameters = (placement: Cas1SpaceBooking, tab: ResidentProfileTab) => ({
@@ -73,9 +80,9 @@ describe('residentProfileController', () => {
     })
 
     it('should render the Manage resident page on the sentence tab', async () => {
-      const { request, response, placement, offences, oasysGroup } = setUp()
+      const { request, response, placement, offences, oasysGroup } = setUpWithSection('offence')
 
-      await residentProfileController.show('sentence', 'offence')(request, response, next)
+      await residentProfileController.show('sentence')(request, response, next)
 
       expect(response.render.mock.calls[0]).toEqual([
         'manage/resident/residentProfile',
@@ -85,6 +92,7 @@ describe('residentProfileController', () => {
           tabItems: residentTabItems(placement, 'sentence'),
           cardList: offencesCards(offences, oasysGroup),
           sideNavigation: sentenceSideNavigation('offence', crn, placement.id),
+          sectionTemplate: 'manage/resident/partials/cardList.njk',
         },
       ])
 
@@ -93,6 +101,48 @@ describe('residentProfileController', () => {
       expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
 
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'offenceDetails')
+    })
+
+    it('should render the Manage resident page on the placement tab', async () => {
+      const { request, response, placement } = setUpWithSection('placement-details')
+
+      await residentProfileController.show('placement')(request, response, next)
+
+      expect(response.render.mock.calls[0]).toEqual([
+        'manage/resident/residentProfile',
+        {
+          ...renderParameters(placement, 'placement'),
+          subHeading: 'Placement details',
+          tabItems: residentTabItems(placement, 'placement'),
+          cardList: placementDetailsCards(),
+          sideNavigation: placementSideNavigation('placement-details', crn, placement.id),
+          sectionTemplate: 'manage/resident/partials/cardList.njk',
+        },
+      ])
+
+      expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
+    })
+
+    it('should render the Manage resident page on the placement tab previous AP stays sub tab', async () => {
+      const { request, response, placement } = setUpWithSection('previous-ap-stays')
+      const previousStays = cas1SpaceBookingFactory.buildList(2)
+      personService.getSpaceBookings.mockResolvedValue(previousStays)
+
+      await residentProfileController.show('placement')(request, response, next)
+
+      expect(personService.getSpaceBookings).toHaveBeenCalledWith(token, crn, false)
+
+      expect(response.render.mock.calls[0]).toEqual([
+        'manage/resident/residentProfile',
+        {
+          ...renderParameters(placement, 'placement'),
+          subHeading: 'Previous AP stays',
+          tabItems: residentTabItems(placement, 'placement'),
+          cardList: previousApStaysCards(previousStays),
+          sideNavigation: placementSideNavigation('previous-ap-stays', crn, placement.id),
+          sectionTemplate: 'manage/resident/partials/cardList.njk',
+        },
+      ])
     })
   })
 

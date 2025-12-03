@@ -8,6 +8,7 @@ import type {
   Cas1OASysGroup,
   Cas1OASysSupportingInformationQuestionMetaData,
   Cas1PersonalTimeline,
+  Cas1SpaceBooking,
   Document,
   Person,
   PersonAcctAlert,
@@ -195,6 +196,21 @@ export default {
         status: 404,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: { status: 404 },
+      },
+    }),
+
+  stubSpaceBookings: (args: { person: Person; bookings: Array<Cas1SpaceBooking>; includeCancelled?: boolean }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `${paths.people.spaceBookings({ crn: args.person.crn })}/?${createQueryString({
+          includeCancelled: args.includeCancelled ?? false,
+        })}`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.bookings,
       },
     }),
 

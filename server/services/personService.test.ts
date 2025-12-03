@@ -15,6 +15,7 @@ import {
   prisonCaseNotesFactory,
   cas1OasysGroupFactory,
   cas1OASysMetadataFactory,
+  cas1SpaceBookingFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/personClient.ts')
@@ -235,6 +236,20 @@ describe('PersonService', () => {
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
       expect(personClient.timeline).toHaveBeenCalledWith('crn')
+      expect(actual).toEqual(expected)
+    })
+  })
+
+  describe('getSpaceBookings', () => {
+    it('calls the enddpoint and returns the result', async () => {
+      const expected = cas1SpaceBookingFactory.buildList(3)
+      const crn = 'crn'
+      personClient.spaceBookings.mockResolvedValue(expected as never)
+
+      const actual = await service.getSpaceBookings(token, crn)
+
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.spaceBookings).toHaveBeenCalledWith('crn', false)
       expect(actual).toEqual(expected)
     })
   })
