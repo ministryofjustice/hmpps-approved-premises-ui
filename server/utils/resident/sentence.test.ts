@@ -1,5 +1,6 @@
 import { render } from 'nunjucks'
 import { Cas1OASysGroup } from '@approved-premises/api'
+import { createMock } from '@golevelup/ts-jest'
 import { ResidentProfileSubTab } from './index'
 import {
   licenseCards,
@@ -12,8 +13,14 @@ import * as sentenceFns from './sentence'
 import { activeOffenceFactory, cas1OasysGroupFactory, cas1SpaceBookingFactory } from '../../testutils/factories'
 import { bulletList } from '../formUtils'
 import { DateFormats } from '../dateUtils'
+import { PersonService } from '../../services'
+
+const personService = createMock<PersonService>({})
 
 jest.mock('nunjucks')
+
+const crn = 'S123456'
+const token = 'token'
 
 describe('sentence', () => {
   const offences = activeOffenceFactory.buildList(2)
@@ -33,7 +40,6 @@ describe('sentence', () => {
     it('Builds the side navigation for the sentence tab', () => {
       const subTab: ResidentProfileSubTab = 'offence'
       const placement = cas1SpaceBookingFactory.build()
-      const crn = 'S123456'
       const basePath: string = `/manage/resident/${crn}/placement/${placement.id}/sentence/`
 
       expect(sentenceSideNavigation(subTab, crn, placement.id)).toEqual([
@@ -190,6 +196,31 @@ describe('sentence', () => {
           ],
         },
       ])
+    })
+  })
+
+  describe('sentenceOffencesTabController', () => {
+    it('should render the sentenceOffencesTab card list', async () => {
+      const offenceDetails = cas1OasysGroupFactory.offenceDetails().build()
+      personService.getOasysAnswers.mockResolvedValue(offenceDetails)
+      personService.getOffences.mockResolvedValue(offences)
+
+      expect(await sentenceFns.sentenceOffencesTabController({ personService, token, crn })).toEqual({
+        subHeading: 'Offence and sentence',
+        cardList: offencesCards(offences, offenceDetails),
+      })
+
+      expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
+      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'offenceDetails')
+    })
+  })
+
+  describe('sentenceLicenceTabController', () => {
+    it('should render the sentenceLicenceTab card list', async () => {
+      expect(await sentenceFns.sentenceLicenceTabController()).toEqual({
+        subHeading: 'Licence',
+        cardList: licenseCards(),
+      })
     })
   })
 })

@@ -79,12 +79,11 @@ export default class ResidentProfilePage extends Page {
     this.shouldContainSummaryListItems(expected)
   }
 
-  shouldShowOffencesInformation(offences: Array<ActiveOffence>, oasysOffenceDetails: Cas1OASysGroup) {
-    cy.get('.govuk-summary-card__title').contains('Offence').should('exist')
-    const expected = offenceSummaryList(offences, { ...oasysOffenceDetails, answers: [] })
-    expected.splice(2, 1)
-    expected.splice(5, 1)
-
-    this.shouldContainSummaryListItems(expected)
+  shouldShowCards(numbers: Array<string>, group: Cas1OASysGroup, groupName: string) {
+    numbers.forEach(questionNumber => {
+      const blockTitle = `${questionNumber} ${groupName}`
+      const question = group.answers.find(({ questionNumber: qnumber }) => qnumber === questionNumber)
+      cy.contains(blockTitle).parents('.govuk-summary-card').contains(question.label)
+    })
   }
 }
