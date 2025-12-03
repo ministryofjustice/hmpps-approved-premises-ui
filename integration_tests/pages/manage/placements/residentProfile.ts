@@ -24,12 +24,14 @@ export default class ResidentProfilePage extends Page {
           return { path: paths.resident.tabPersonal(params), title: 'Personal' }
         case 'health':
           return { path: paths.resident.tabHealth(params), title: 'Health' }
-        case 'placement':
-          return { path: paths.resident.tabPlacement(params), title: 'Placement' }
+        case 'placement': {
+          const placementParams = { ...params, section: 'placement-details' }
+          return { path: paths.resident.tabPlacement(placementParams), title: 'Placement' }
+        }
         case 'risk':
           return { path: paths.resident.tabRisk(params), title: 'Risk' }
         case 'sentence':
-          return { path: paths.resident.tabSentence.offence(params), title: 'Sentence' }
+          return { path: paths.resident.tabSentence({ ...params, section: 'offence' }), title: 'Sentence' }
         case 'enforcement':
           return { path: paths.resident.tabEnforcement(params), title: 'Enforcement' }
 
@@ -77,5 +79,16 @@ export default class ResidentProfilePage extends Page {
     expected.splice(5, 1)
 
     this.shouldContainSummaryListItems(expected)
+  }
+
+  shouldShowPlacementSideNavigation() {
+    cy.get('.moj-side-navigation').within(() => {
+      cy.get('a').contains('Placement details').should('exist')
+      cy.get('a').contains('Application').should('exist')
+      cy.get('a').contains('Previous AP stays').should('exist')
+      cy.get('a').contains('Pre-arrival').should('exist')
+      cy.get('a').contains('Induction').should('exist')
+      cy.get('a').contains('Reviews').should('exist')
+    })
   }
 }

@@ -5,6 +5,7 @@ import {
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
 } from '../../../../server/testutils/factories'
+import paths from '../../../../server/paths/manage'
 import ResidentProfilePage from '../../../pages/manage/placements/residentProfile'
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
 
@@ -62,6 +63,41 @@ context('ResidentProfile', () => {
       page.shouldHaveActiveTab('Sentence')
       AND('the Offences information should be shown')
       page.shouldShowOffencesInformation(offences, oasysOffenceDetails)
+    })
+
+    it('should show the placement tab with sidebar navigation', () => {
+      GIVEN(' that I am signed in as a user with access resident profile')
+      signIn(['manage_resident'])
+      GIVEN('there is an existing placement')
+      const { placement } = setup()
+      WHEN('I visit the resident profile page on the placement tab')
+      const page = ResidentProfilePage.visit(placement, 'placement')
+      THEN('I should see the person information in the header')
+      page.checkHeader()
+      AND('the Placement tab should be selected')
+      page.shouldHaveActiveTab('Placement')
+      AND('the placement sidebar navigation should be shown')
+      page.shouldShowPlacementSideNavigation()
+    })
+
+    it('should show previous AP stays when there are previous bookings', () => {
+      GIVEN(' that I am signed in as a user with access resident profile')
+      signIn(['manage_resident'])
+      GIVEN('there is an existing placement and previous AP stays')
+      const { placement } = setup()
+      const previousStays = cas1SpaceBookingFactory.buildList(2)
+      cy.task('stubSpaceBookings', { person: placement.person, bookings: previousStays })
+      WHEN('I visit the previous AP stays sub tab on the placement tab')
+      const path = paths.resident.tabPlacement({
+        crn: placement.person.crn,
+        placementId: placement.id,
+        section: 'previous-ap-stays',
+      })
+      cy.visit(path)
+      THEN('I should see a card for each previous AP stay')
+      previousStays.forEach(booking => {
+        cy.get('.govuk-summary-card__title').contains(booking.premises.name).should('exist')
+      })
     })
 
     it('should not allow access to the page if user lacks permission', () => {

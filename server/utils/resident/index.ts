@@ -7,7 +7,15 @@ import { detailedStatus, statusTextMap } from '../placements/status'
 import { canonicalDates } from '../placements'
 
 export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'enforcement'
-export type ResidentProfileSubTab = 'offence' | 'licence' | 'orders' | 'parole' | 'prison'
+export type SentenceSubTab = 'offence' | 'licence' | 'orders' | 'parole' | 'prison'
+export type PlacementSubTab =
+  | 'placement-details'
+  | 'application'
+  | 'previous-ap-stays'
+  | 'pre-arrival'
+  | 'induction'
+  | 'reviews'
+export type ResidentProfileSubTab = SentenceSubTab | PlacementSubTab
 
 export type ResidentHeader = {
   name: string
@@ -38,11 +46,11 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
       case 'health':
         return pathRoot.tabHealth(pathParams)
       case 'placement':
-        return pathRoot.tabPlacement(pathParams)
+        return pathRoot.tabPlacement({ ...pathParams, section: 'placement-details' })
       case 'risk':
         return pathRoot.tabRisk(pathParams)
       case 'sentence':
-        return pathRoot.tabSentence.offence(pathParams)
+        return pathRoot.tabSentence({ ...pathParams, section: 'offence' })
       case 'enforcement':
         return pathRoot.tabEnforcement(pathParams)
       default:

@@ -6,6 +6,7 @@ import type {
   Cas1OASysGroupName,
   Cas1OASysMetadata,
   Cas1PersonalTimeline,
+  Cas1SpaceBooking,
   Person,
   PersonAcctAlert,
   PrisonCaseNote,
@@ -96,5 +97,11 @@ export default class PersonService {
     const personClient = this.personClientFactory(token)
 
     return personClient.timeline(crn)
+  }
+
+  async getSpaceBookings(token: string, crn: string, includeCancelled = false): Promise<Array<Cas1SpaceBooking>> {
+    const personClient = this.personClientFactory(token)
+
+    return personClient.spaceBookings(crn, includeCancelled)
   }
 }
