@@ -86,9 +86,6 @@ export default class ResidentProfilePage extends Page {
       cy.get('a').contains('Placement details').should('exist')
       cy.get('a').contains('Application').should('exist')
       cy.get('a').contains('Previous AP stays').should('exist')
-      cy.get('a').contains('Pre-arrival').should('exist')
-      cy.get('a').contains('Induction').should('exist')
-      cy.get('a').contains('Reviews').should('exist')
     })
   }
 }

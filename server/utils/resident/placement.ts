@@ -23,21 +23,6 @@ export const placementSideNavigation = (subTab: PlacementSubTab, crn: string, pl
       href: getPath('previous-ap-stays'),
       active: subTab === 'previous-ap-stays',
     },
-    {
-      text: 'Pre-arrival',
-      href: getPath('pre-arrival'),
-      active: subTab === 'pre-arrival',
-    },
-    {
-      text: 'Induction',
-      href: getPath('induction'),
-      active: subTab === 'induction',
-    },
-    {
-      text: 'Reviews',
-      href: getPath('reviews'),
-      active: subTab === 'reviews',
-    },
   ]
 }
 

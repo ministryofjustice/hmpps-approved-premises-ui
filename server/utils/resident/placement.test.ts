@@ -4,8 +4,6 @@ import {
   placementDetailsCards,
   applicationCards,
   preArrivalCards,
-  inductionCards,
-  reviewsCards,
 } from './placement'
 import { PlacementSubTab } from './index'
 import { cas1SpaceBookingFactory } from '../../testutils/factories'
@@ -33,21 +31,6 @@ describe('placement', () => {
           active: false,
           href: `${basePath}previous-ap-stays`,
           text: 'Previous AP stays',
-        },
-        {
-          active: false,
-          href: `${basePath}pre-arrival`,
-          text: 'Pre-arrival',
-        },
-        {
-          active: false,
-          href: `${basePath}induction`,
-          text: 'Induction',
-        },
-        {
-          active: false,
-          href: `${basePath}reviews`,
-          text: 'Reviews',
         },
       ])
     })
@@ -87,14 +70,6 @@ describe('placement', () => {
 
     it('should return an empty array for preArrivalCards', () => {
       expect(preArrivalCards()).toEqual([])
-    })
-
-    it('should return an empty array for inductionCards', () => {
-      expect(inductionCards()).toEqual([])
-    })
-
-    it('should return an empty array for reviewsCards', () => {
-      expect(reviewsCards()).toEqual([])
     })
   })
 })
