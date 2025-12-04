@@ -18,7 +18,6 @@ import {
   applicationCards,
   placementDetailsCards,
   placementSideNavigation,
-  preArrivalCards,
   previousApStaysCards,
 } from '../../utils/resident/placement'
 
@@ -84,11 +83,6 @@ export default class ResidentProfileController {
               cardList = previousApStaysCards(spaceBookings)
               sectionTemplate = 'manage/resident/partials/cardList.njk'
             }
-            break
-          case 'pre-arrival':
-            subHeading = 'Pre-arrival'
-            cardList = preArrivalCards()
-            sectionTemplate = 'manage/resident/partials/cardList.njk'
             break
           default:
             break

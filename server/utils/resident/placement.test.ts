@@ -1,10 +1,5 @@
-import {
-  placementSideNavigation,
-  previousApStaysCards,
-  placementDetailsCards,
-  applicationCards,
-  preArrivalCards,
-} from './placement'
+import { TransferReason } from '@approved-premises/api'
+import { placementSideNavigation, previousApStaysCards, placementDetailsCards, applicationCards } from './placement'
 import { PlacementSubTab } from './index'
 import { cas1SpaceBookingFactory } from '../../testutils/factories'
 
@@ -38,11 +33,16 @@ describe('placement', () => {
 
   describe('previousApStaysCards', () => {
     it('should render the previous AP stays cards', () => {
-      const bookings = cas1SpaceBookingFactory.buildList(2)
+      const bookings = cas1SpaceBookingFactory.buildList(2, {
+        additionalInformation: 'Some departure notes',
+        transferReason: { id: 'some-id', name: 'Planned move-on' } as unknown as TransferReason,
+      })
+
       const cards = previousApStaysCards(bookings)
 
       expect(cards).toHaveLength(2)
       expect(cards[0].card.title.text).toEqual(bookings[0].premises.name)
+
       const rowKeys = cards[0].rows.map(row => {
         if ('text' in row.key) return row.key.text
         if ('html' in row.key) return row.key.html
@@ -66,10 +66,6 @@ describe('placement', () => {
 
     it('should return an empty array for applicationCards', () => {
       expect(applicationCards()).toEqual([])
-    })
-
-    it('should return an empty array for preArrivalCards', () => {
-      expect(preArrivalCards()).toEqual([])
     })
   })
 })
