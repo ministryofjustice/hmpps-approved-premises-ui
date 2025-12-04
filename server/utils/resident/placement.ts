@@ -2,7 +2,7 @@ import type { Cas1SpaceBooking } from '@approved-premises/api'
 import { SummaryListWithCard } from '@approved-premises/ui'
 import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
 import paths from '../../paths/manage'
-import { canonicalDates, BREACH_OR_RECALL_REASON_ID } from '../placements'
+import { canonicalDates } from '../placements'
 import { card, PlacementSubTab } from './index'
 
 export const placementSideNavigation = (subTab: PlacementSubTab, crn: string, placementId: string) => {
@@ -36,26 +36,17 @@ export const previousApStaysCards = (bookings: Array<Cas1SpaceBooking>): Array<S
 
   return bookings.map(booking => {
     const { arrivalDate, departureDate } = canonicalDates(booking)
-
-    let departureReason = booking.departure?.reason?.name || booking.departure?.parentReason?.name
-    if (booking.departure?.parentReason?.id === BREACH_OR_RECALL_REASON_ID) {
-      const parentName = booking.departure.parentReason.name
-      const childName = booking.departure.reason?.name
-      departureReason = childName ? `${parentName} - ${childName}` : parentName
-    }
-
-    const departureNotes = booking.departure?.notes
+    const departureNotes = booking.additionalInformation
+    const transferReasonName = booking.transferReason
 
     return card(
       booking.premises.name,
       [
         summaryListItem('Arrival date', arrivalDate, 'date'),
         summaryListItem('Departure date', departureDate, 'date'),
-        summaryListItemNoBlankRows('Departure reason', departureReason),
+        summaryListItemNoBlankRows('Departure reason', transferReasonName, 'textBlock'),
         summaryListItemNoBlankRows('Departure reason notes', departureNotes, 'textBlock'),
       ].filter(Boolean),
     )
   })
 }
-
-export const preArrivalCards = (): Array<SummaryListWithCard> => []
