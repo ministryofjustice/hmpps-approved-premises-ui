@@ -16,12 +16,10 @@ import {
 import { licenseCards, offencesCards, sentenceSideNavigation } from '../../utils/resident/sentence'
 import {
   applicationCards,
-  inductionCards,
   placementDetailsCards,
   placementSideNavigation,
   preArrivalCards,
   previousApStaysCards,
-  reviewsCards,
 } from '../../utils/resident/placement'
 
 export default class ResidentProfileController {
@@ -90,16 +88,6 @@ export default class ResidentProfileController {
           case 'pre-arrival':
             subHeading = 'Pre-arrival'
             cardList = preArrivalCards()
-            sectionTemplate = 'manage/resident/partials/cardList.njk'
-            break
-          case 'induction':
-            subHeading = 'Induction'
-            cardList = inductionCards()
-            sectionTemplate = 'manage/resident/partials/cardList.njk'
-            break
-          case 'reviews':
-            subHeading = 'Reviews'
-            cardList = reviewsCards()
             sectionTemplate = 'manage/resident/partials/cardList.njk'
             break
           default:
