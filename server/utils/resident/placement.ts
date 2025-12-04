@@ -59,7 +59,3 @@ export const previousApStaysCards = (bookings: Array<Cas1SpaceBooking>): Array<S
 }
 
 export const preArrivalCards = (): Array<SummaryListWithCard> => []
-
-export const inductionCards = (): Array<SummaryListWithCard> => []
-
-export const reviewsCards = (): Array<SummaryListWithCard> => []
