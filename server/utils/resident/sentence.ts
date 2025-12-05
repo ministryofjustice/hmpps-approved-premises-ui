@@ -60,17 +60,17 @@ export const sentenceSummaryList = () => {
 }
 
 export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
-  const getPath = (section: string) => paths.resident.tabSentence({ crn, placementId, section })
+  const basePath = paths.resident.tabSentence
   return [
     {
       text: 'Offence and sentence',
-      href: getPath('offence'),
+      href: basePath.offence({ crn, placementId }),
       active: subTab === 'offence',
     },
-    { text: 'Licence', href: getPath('licence'), active: subTab === 'licence' },
-    { text: 'Orders', href: getPath('orders'), active: subTab === 'orders' },
-    { text: 'Parole', href: getPath('parole'), active: subTab === 'parole' },
-    { text: 'Prison', href: getPath('prison'), active: subTab === 'prison' },
+    { text: 'Licence', href: basePath.licence({ crn, placementId }), active: subTab === 'licence' },
+    { text: 'Orders', href: basePath.orders({ crn, placementId }), active: subTab === 'orders' },
+    { text: 'Parole', href: basePath.parole({ crn, placementId }), active: subTab === 'parole' },
+    { text: 'Prison', href: basePath.prison({ crn, placementId }), active: subTab === 'prison' },
   ]
 }
 

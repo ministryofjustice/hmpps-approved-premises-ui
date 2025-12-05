@@ -11,7 +11,12 @@ import { activeOffenceFactory, cas1OasysGroupFactory, cas1SpaceBookingFactory } 
 import { getResidentHeader, ResidentProfileTab, residentTabItems, tabLabels } from '../../utils/resident'
 import { placementKeyDetails } from '../../utils/placements'
 import { offencesCards, sentenceSideNavigation } from '../../utils/resident/sentence'
-import { placementDetailsCards, placementSideNavigation, previousApStaysCards } from '../../utils/resident/placement'
+import {
+  applicationCards,
+  placementDetailsCards,
+  placementSideNavigation,
+  previousApStaysCards,
+} from '../../utils/resident/placement'
 
 describe('residentProfileController', () => {
   const token = 'TEST_TOKEN'
@@ -43,15 +48,9 @@ describe('residentProfileController', () => {
     const response: DeepMocked<Response> = createMock<Response>({ locals: { user } })
     const request: DeepMocked<Request> = createMock<Request>({
       user: { token },
-      params: { crn, placementId: placement.id, section: undefined },
+      params: { crn, placementId: placement.id },
     })
     return { placement, request, response, oasysGroup, offences }
-  }
-
-  const setUpWithSection = (section: string) => {
-    const result = setUp()
-    result.request.params.section = section
-    return result
   }
 
   const renderParameters = (placement: Cas1SpaceBooking, tab: ResidentProfileTab) => ({
@@ -80,9 +79,9 @@ describe('residentProfileController', () => {
     })
 
     it('should render the Manage resident page on the sentence tab', async () => {
-      const { request, response, placement, offences, oasysGroup } = setUpWithSection('offence')
+      const { request, response, placement, offences, oasysGroup } = setUp()
 
-      await residentProfileController.show('sentence')(request, response, next)
+      await residentProfileController.show('sentence', 'offence')(request, response, next)
 
       expect(response.render.mock.calls[0]).toEqual([
         'manage/resident/residentProfile',
@@ -104,9 +103,9 @@ describe('residentProfileController', () => {
     })
 
     it('should render the Manage resident page on the placement tab', async () => {
-      const { request, response, placement } = setUpWithSection('placement-details')
+      const { request, response, placement } = setUp()
 
-      await residentProfileController.show('placement')(request, response, next)
+      await residentProfileController.show('placement', 'placement-details')(request, response, next)
 
       expect(response.render.mock.calls[0]).toEqual([
         'manage/resident/residentProfile',
@@ -123,12 +122,32 @@ describe('residentProfileController', () => {
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
     })
 
+    it('should render the Manage resident page on the placement tab application sub tab', async () => {
+      const { request, response, placement } = setUp()
+
+      await residentProfileController.show('placement', 'application')(request, response, next)
+
+      expect(response.render.mock.calls[0]).toEqual([
+        'manage/resident/residentProfile',
+        {
+          ...renderParameters(placement, 'placement'),
+          subHeading: 'Application',
+          tabItems: residentTabItems(placement, 'placement'),
+          cardList: applicationCards(),
+          sideNavigation: placementSideNavigation('application', crn, placement.id),
+          sectionTemplate: 'manage/resident/partials/cardList.njk',
+        },
+      ])
+
+      expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
+    })
+
     it('should render the Manage resident page on the placement tab previous AP stays sub tab', async () => {
-      const { request, response, placement } = setUpWithSection('previous-ap-stays')
+      const { request, response, placement } = setUp()
       const previousStays = cas1SpaceBookingFactory.buildList(2)
       personService.getSpaceBookings.mockResolvedValue(previousStays)
 
-      await residentProfileController.show('placement')(request, response, next)
+      await residentProfileController.show('placement', 'previous-ap-stays')(request, response, next)
 
       expect(personService.getSpaceBookings).toHaveBeenCalledWith(token, crn, false)
 
@@ -138,7 +157,7 @@ describe('residentProfileController', () => {
           ...renderParameters(placement, 'placement'),
           subHeading: 'Previous AP stays',
           tabItems: residentTabItems(placement, 'placement'),
-          cardList: previousApStaysCards(previousStays),
+          cardList: previousApStaysCards(previousStays, placement.id),
           sideNavigation: placementSideNavigation('previous-ap-stays', crn, placement.id),
           sectionTemplate: 'manage/resident/partials/cardList.njk',
         },

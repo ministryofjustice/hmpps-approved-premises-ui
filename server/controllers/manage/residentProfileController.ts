@@ -7,6 +7,7 @@ import paths from '../../paths/manage'
 import { actions, placementKeyDetails } from '../../utils/placements'
 import {
   PlacementSubTab,
+  ResidentProfileSubTab,
   ResidentProfileTab,
   SentenceSubTab,
   residentTabItems,
@@ -27,9 +28,9 @@ export default class ResidentProfileController {
     private readonly personService: PersonService,
   ) {}
 
-  show(activeTab: ResidentProfileTab = 'personal'): RequestHandler {
+  show(activeTab: ResidentProfileTab = 'personal', subTab?: ResidentProfileSubTab): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { crn, placementId, section } = req.params
+      const { crn, placementId } = req.params
       const { user } = res.locals
       const includeCancelled = (req.query.includeCancelled as string) === 'true'
       const placement = await this.placementService.getPlacement(req.user.token, placementId)
@@ -42,8 +43,7 @@ export default class ResidentProfileController {
       let sectionTemplate: string
 
       if (activeTab === 'sentence') {
-        const subTab = section as SentenceSubTab
-        sideNavigation = sentenceSideNavigation(subTab, crn, placementId)
+        sideNavigation = sentenceSideNavigation(subTab as SentenceSubTab, crn, placementId)
 
         if (subTab === 'offence') {
           const [offences, offenceAnswers]: [Array<ActiveOffence>, Cas1OASysGroup] = await Promise.all([
@@ -62,9 +62,7 @@ export default class ResidentProfileController {
       }
 
       if (activeTab === 'placement') {
-        const subTab = section as PlacementSubTab
-        sideNavigation = placementSideNavigation(subTab, crn, placementId)
-
+        sideNavigation = placementSideNavigation(subTab as PlacementSubTab, crn, placementId)
         switch (subTab) {
           case 'placement-details':
             subHeading = 'Placement details'
@@ -80,7 +78,8 @@ export default class ResidentProfileController {
             subHeading = 'Previous AP stays'
             {
               const spaceBookings = await this.personService.getSpaceBookings(req.user.token, crn, includeCancelled)
-              cardList = previousApStaysCards(spaceBookings)
+
+              cardList = previousApStaysCards(spaceBookings, placementId)
               sectionTemplate = 'manage/resident/partials/cardList.njk'
             }
             break

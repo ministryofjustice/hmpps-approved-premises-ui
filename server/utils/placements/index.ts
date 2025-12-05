@@ -3,6 +3,7 @@ import {
   Cas1CurrentKeyWorker,
   Cas1SpaceBooking,
   Cas1SpaceBookingDates,
+  Cas1SpaceBookingShortSummary,
   Cas1SpaceBookingSummary,
 } from '@approved-premises/api'
 import { RadioItem, SummaryList, TabItem, TableCell, UserDetails } from '@approved-premises/ui'
@@ -38,7 +39,9 @@ export const placementStatusCell = (placement: Cas1SpaceBookingSummary): TableCe
   return { html: statusElements.join('<br/>') }
 }
 
-export const canonicalDates = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary) => ({
+export const canonicalDates = (
+  placement: Cas1SpaceBooking | Cas1SpaceBookingSummary | Cas1SpaceBookingShortSummary,
+) => ({
   arrivalDate: placement.actualArrivalDate || placement.expectedArrivalDate,
   departureDate: placement.actualDepartureDate || placement.expectedDepartureDate,
 })

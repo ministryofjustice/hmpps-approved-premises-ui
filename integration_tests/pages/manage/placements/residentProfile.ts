@@ -2,7 +2,7 @@ import { ActiveOffence, Cas1OASysGroup, Cas1SpaceBooking, FullPerson } from '@ap
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 
-import { getResidentStatus, ResidentProfileTab } from '../../../../server/utils/resident'
+import { getResidentStatus, PlacementSubTab, ResidentProfileTab } from '../../../../server/utils/resident'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { offenceSummaryList } from '../../../../server/utils/resident/sentence'
@@ -24,14 +24,12 @@ export default class ResidentProfilePage extends Page {
           return { path: paths.resident.tabPersonal(params), title: 'Personal' }
         case 'health':
           return { path: paths.resident.tabHealth(params), title: 'Health' }
-        case 'placement': {
-          const placementParams = { ...params, section: 'placement-details' }
-          return { path: paths.resident.tabPlacement(placementParams), title: 'Placement' }
-        }
+        case 'placement':
+          return { path: paths.resident.tabPlacement.placementDetails(params), title: 'Placement' }
         case 'risk':
           return { path: paths.resident.tabRisk(params), title: 'Risk' }
         case 'sentence':
-          return { path: paths.resident.tabSentence({ ...params, section: 'offence' }), title: 'Sentence' }
+          return { path: paths.resident.tabSentence.offence(params), title: 'Sentence' }
         case 'enforcement':
           return { path: paths.resident.tabEnforcement(params), title: 'Enforcement' }
 
@@ -42,6 +40,25 @@ export default class ResidentProfilePage extends Page {
 
     cy.visit(path)
     return new ResidentProfilePage(placement, title)
+  }
+
+  static visitPlacementSubTab(placement: Cas1SpaceBooking, subTab: PlacementSubTab): ResidentProfilePage {
+    const params = { crn: placement.person.crn, placementId: placement.id }
+    const path = (() => {
+      switch (subTab) {
+        case 'placement-details':
+          return paths.resident.tabPlacement.placementDetails(params)
+        case 'application':
+          return paths.resident.tabPlacement.application(params)
+        case 'previous-ap-stays':
+          return paths.resident.tabPlacement.previousApStays(params)
+        default:
+          return paths.resident.tabPlacement.placementDetails(params)
+      }
+    })()
+
+    cy.visit(path)
+    return new ResidentProfilePage(placement, 'Placement')
   }
 
   static visitUnauthorised(placement: Cas1SpaceBooking): ResidentProfilePage {
