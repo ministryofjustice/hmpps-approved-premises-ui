@@ -64,6 +64,22 @@ context('ResidentProfile', () => {
       page.shouldShowOffencesInformation(offences, oasysOffenceDetails)
     })
 
+    // TODO: Enrich this test with full ap-stays page data check
+    it('should show the placement tab with sidebar navigation', () => {
+      GIVEN(' that I am signed in as a user with access resident profile')
+      signIn(['manage_resident'])
+      GIVEN('there is an existing placement')
+      const { placement } = setup()
+      WHEN('I visit the resident profile page on the placement tab')
+      const page = ResidentProfilePage.visit(placement, 'placement')
+      THEN('I should see the person information in the header')
+      page.checkHeader()
+      AND('the Placement tab should be selected')
+      page.shouldHaveActiveTab('Placement')
+      AND('the placement sidebar navigation should be shown')
+      page.shouldShowPlacementSideNavigation()
+    })
+
     it('should not allow access to the page if user lacks permission', () => {
       const { placement } = setup()
       GIVEN(' that I am signed in as a user without access to the resident profile')

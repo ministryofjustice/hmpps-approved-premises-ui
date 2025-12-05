@@ -11,6 +11,7 @@ import {
   adjudicationFactory,
   cas1OasysGroupFactory,
   cas1OASysMetadataFactory,
+  cas1SpaceBookingShortSummaryFactory,
   personFactory,
   prisonCaseNotesFactory,
 } from '../testutils/factories'
@@ -287,6 +288,37 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
       })
 
       await personClient.timeline(crn)
+    })
+  })
+
+  describe('spaceBookings', () => {
+    it('should return space bookings for a person', async () => {
+      const crn = 'crn'
+      const includeCancelled = false
+      const bookings = cas1SpaceBookingShortSummaryFactory.buildList(3)
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get space bookings for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.spaceBookings({ crn }),
+          query: {
+            includeCancelled: String(includeCancelled),
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: bookings,
+        },
+      })
+
+      const result = await personClient.spaceBookings(crn, includeCancelled)
+
+      expect(result).toEqual(bookings)
     })
   })
 
