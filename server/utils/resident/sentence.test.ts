@@ -1,4 +1,5 @@
 import { render } from 'nunjucks'
+import { Cas1OASysGroup } from '@approved-premises/api'
 import { ResidentProfileSubTab } from './index'
 import {
   licenseCards,
@@ -104,6 +105,30 @@ describe('sentence', () => {
         summaryText: oasysAnswers.answers[1].label,
         text: oasysAnswers.answers[1].answer,
       })
+    })
+
+    it.each([
+      ['there is no assessment', cas1OasysGroupFactory.noAssessment().build()],
+      ['the assessment is undefined', undefined],
+    ])('should render if %s', ([_, oasysGroup]) => {
+      expect(offenceSummaryList(offences, oasysGroup as unknown as Cas1OASysGroup)).toEqual(
+        expect.arrayContaining([
+          {
+            key: {
+              html: `Offence analysis
+<p class="govuk-body-s">OASys question 2.1 not available</p>`,
+            },
+            value: { text: '' },
+          },
+          {
+            key: {
+              html: `Previous behaviours
+<p class="govuk-body-s">OASys question 2.12 not available</p>`,
+            },
+            value: { text: '' },
+          },
+        ]),
+      )
     })
   })
 
