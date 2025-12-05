@@ -2,10 +2,10 @@ import { ActiveOffence, Cas1OASysGroup, Cas1SpaceBooking, FullPerson } from '@ap
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 
-import { getResidentStatus, ResidentProfileTab } from '../../../../server/utils/resident'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { offenceSummaryList } from '../../../../server/utils/resident/sentence'
+import { getResidentStatus, ResidentProfileTab } from '../../../../server/utils/resident'
 
 export default class ResidentProfilePage extends Page {
   constructor(
@@ -77,5 +77,13 @@ export default class ResidentProfilePage extends Page {
     expected.splice(5, 1)
 
     this.shouldContainSummaryListItems(expected)
+  }
+
+  shouldShowCards(numbers: Array<string>, group: Cas1OASysGroup, groupName: string) {
+    numbers.forEach(questionNumber => {
+      const blockTitle = `${questionNumber} ${groupName}`
+      const question = group.answers.find(({ questionNumber: qnumber }) => qnumber === questionNumber)
+      cy.contains(blockTitle).parents('.govuk-summary-card').contains(question.label)
+    })
   }
 }
