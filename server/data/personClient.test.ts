@@ -9,9 +9,9 @@ import {
   acctAlertFactory,
   activeOffenceFactory,
   adjudicationFactory,
-  cas1SpaceBookingFactory,
   cas1OasysGroupFactory,
   cas1OASysMetadataFactory,
+  cas1SpaceBookingShortSummaryFactory,
   personFactory,
   prisonCaseNotesFactory,
 } from '../testutils/factories'
@@ -292,20 +292,19 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
   })
 
   describe('spaceBookings', () => {
-    it('calls tthe API with CRN and includeCancelled=false by default', async () => {
+    it('should return space bookings for a person', async () => {
       const crn = 'crn'
-      const spaceBookings = cas1SpaceBookingFactory.buildList(3)
-      const basePath = paths.people.spaceBookings({ crn })
-      const expectedPath = basePath.endsWith('/') ? basePath : `${basePath}/`
+      const includeCancelled = false
+      const bookings = cas1SpaceBookingShortSummaryFactory.buildList(3)
 
       await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get space bookings for a person',
         withRequest: {
           method: 'GET',
-          path: expectedPath,
+          path: paths.people.spaceBookings({ crn }),
           query: {
-            includeCancelled: 'false',
+            includeCancelled: String(includeCancelled),
           },
           headers: {
             authorization: `Bearer ${token}`,
@@ -313,13 +312,13 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
         },
         willRespondWith: {
           status: 200,
-          body: spaceBookings,
+          body: bookings,
         },
       })
 
-      const result = await personClient.spaceBookings(crn)
+      const result = await personClient.spaceBookings(crn, includeCancelled)
 
-      expect(result).toEqual(spaceBookings)
+      expect(result).toEqual(bookings)
     })
   })
 
