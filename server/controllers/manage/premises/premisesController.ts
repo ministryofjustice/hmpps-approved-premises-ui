@@ -99,6 +99,7 @@ export default class PremisesController {
         crnOrName,
         keyworker,
         keyworkersSelectOptions,
+        hrefPrefix,
         pageNumber: Number(paginatedPlacements?.pageNumber) || undefined,
         totalPages: Number(paginatedPlacements?.totalPages) || undefined,
         viewSpacesLink: managePaths.premises.occupancy.view({ premisesId }),

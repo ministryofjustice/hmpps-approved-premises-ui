@@ -1,0 +1,42 @@
+{%- from "moj/components/button-menu/macro.njk" import mojButtonMenu -%}
+
+{% macro profileBanner(resident, actions) %}
+
+    <div class="profile-banner govuk-!-margin-bottom-2">
+        <div class="one-eighth">
+            <img class="residents-profile-pic" alt="Photo of {{ resident.name }}" src="{{ resident.photoUrl }}">
+        </div>
+        <div class="six-eighths">
+            <h2 class="govuk-heading-l govuk-!-margin-bottom-0">{{ resident.name }}</h2>
+
+            <div class="residents-badge-container govuk-!-padding-bottom-2">
+                {% for badge in resident.badges %}
+                    {{ badge | safe }}
+                {% endfor %}
+            </div>
+
+            {% for row in resident.attributes %}
+                <div>
+                    {% for attribute in row %}
+                        <dl class="residents-definition-list">
+                            <dt>{{ attribute.title }}</dt>
+                            <dd>{{ attribute.description }}</dd>
+                        </dl>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        {% if actions %}
+            <div class="one-eighth resident-actions govuk-!-padding-top-2">
+                {{ mojButtonMenu({
+                    "button": {
+                        "text": "Actions"
+                    },
+                    "alignMenu": "left",
+                    "items": actions
+                }) }}
+            </div>
+        {% endif %}
+    </div>
+
+{% endmacro %}

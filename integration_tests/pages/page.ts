@@ -903,4 +903,8 @@ export default class Page {
   shouldShowLink(text: string, href: string) {
     cy.get('a').contains(text).should('have.attr', 'href', href)
   }
+
+  shouldShowDescription(term: string, description: string) {
+    cy.get('dt').contains(term).siblings('dd').should('contain', description)
+  }
 }

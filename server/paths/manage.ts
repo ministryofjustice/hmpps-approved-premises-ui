@@ -118,7 +118,13 @@ const paths = {
     tabHealth: residentPath.path('health'),
     tabPlacement: residentPath.path('placement'),
     tabRisk: residentPath.path('risk'),
-    tabSentence: residentPath.path('sentence'),
+    tabSentence: {
+      offence: residentPath.path('sentence').path('offence'),
+      licence: residentPath.path('sentence').path('licence'),
+      orders: residentPath.path('sentence').path('orders'),
+      parole: residentPath.path('sentence').path('parole'),
+      prison: residentPath.path('sentence').path('prison'),
+    },
     tabEnforcement: residentPath.path('enforcement'),
   },
   bookings: {

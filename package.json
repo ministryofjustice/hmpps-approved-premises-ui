@@ -36,7 +36,8 @@
     "create-application:emergency": "APPLICATION_TYPE='emergency' npx playwright test --config ./e2e/playwright.config.ts --project=local utils/createApplication.spec.ts",
     "create-application:emergency:assess": "ASSESS_APPLICATION='true' npm run create-application:emergency",
     "create-application:short-notice": "APPLICATION_TYPE='shortNotice' npx playwright test --config ./e2e/playwright.config.ts --project=local utils/createApplication.spec.ts",
-    "create-application:short-notice:assess": "ASSESS_APPLICATION='true' npm run create-application:short-notice"
+    "create-application:short-notice:assess": "ASSESS_APPLICATION='true' npm run create-application:short-notice",
+    "setup": "npm ci && hmpps-npm-script-run-allowlist"
   },
   "engines": {
     "node": "^22.0.0",
@@ -110,6 +111,7 @@
     "@faker-js/faker": "^8.0.0",
     "@microsoft/applicationinsights-web": "^3.3.8",
     "@ministryofjustice/frontend": "^5.1.5",
+    "@ministryofjustice/hmpps-npm-script-allowlist": "0.0.3",
     "@playwright/test": "^1.56.1",
     "@sentry/node": "^10.11.0",
     "@total-typescript/shoehorn": "^0.1.0",

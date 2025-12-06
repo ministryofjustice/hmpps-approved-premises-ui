@@ -1,5 +1,9 @@
-import { residentTabItems } from './index'
+import { SummaryListItem } from '@approved-premises/ui'
+import { render } from 'nunjucks'
+import { card, detailsBody, residentTabItems } from './index'
 import { cas1SpaceBookingFactory } from '../../testutils/factories'
+
+jest.mock('nunjucks')
 
 describe('residentsUtils', () => {
   describe('residentTabItems', () => {
@@ -11,7 +15,7 @@ describe('residentsUtils', () => {
         {
           active: false,
           href: `${baseUrl}personal`,
-          text: 'Personal',
+          text: 'Personal details',
         },
         {
           active: false,
@@ -30,8 +34,8 @@ describe('residentsUtils', () => {
         },
         {
           active: false,
-          href: `${baseUrl}sentence`,
-          text: 'Offence and sentence',
+          href: `${baseUrl}sentence/offence`,
+          text: 'Sentence',
         },
         {
           active: false,
@@ -40,5 +44,31 @@ describe('residentsUtils', () => {
         },
       ])
     })
+  })
+
+  describe('card', () => {
+    it('should generate a card', () => {
+      const rows: Array<SummaryListItem> = [
+        { key: { text: 'key1' }, value: { text: 'val1' } },
+        { key: { text: 'key2' }, value: { text: 'val2' } },
+      ]
+      expect(card('title', rows)).toEqual({
+        card: {
+          title: {
+            text: 'title',
+          },
+        },
+        rows,
+      })
+    })
+  })
+})
+
+describe('detailsBody', () => {
+  it('should call nunjucks to render a details section', () => {
+    ;(render as jest.Mock).mockReturnValue('rendered-content')
+    expect(detailsBody('summary', 'content')).toEqual('rendered-content')
+
+    expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', { summaryText: 'summary', text: 'content' })
   })
 })
