@@ -2,4 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ServiceType = 'CAS1' | 'CAS2' | 'CAS2v2' | 'CAS3';
+export type RiskStatus = 'Retrieved' | 'NotFound' | 'Error';
