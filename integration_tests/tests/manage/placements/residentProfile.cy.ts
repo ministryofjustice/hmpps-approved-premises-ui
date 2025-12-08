@@ -4,6 +4,7 @@ import {
   cas1OasysGroupFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
+  risksFactory,
 } from '../../../../server/testutils/factories'
 import ResidentProfilePage from '../../../pages/manage/placements/residentProfile'
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
@@ -17,11 +18,14 @@ context('ResidentProfile', () => {
         ...placementParameters,
         premises: { name: premises.name, id: premises.id },
       })
+      const personRisks = risksFactory.build({ roshRisks: { status: 'retrieved' }, flags: { status: 'retrieved' } })
 
       cy.task('stubSpaceBookingGetWithoutPremises', placement)
+      cy.task('stubRiskProfile', { person: placement.person, personRisks })
 
       return {
         placement,
+        personRisks,
       }
     }
 
@@ -33,9 +37,9 @@ context('ResidentProfile', () => {
       GIVEN(' that I am signed in as a user with access resident profile')
       signIn(['manage_resident'])
       GIVEN('there is an existing placement')
-      const { placement } = setup()
+      const { placement, personRisks } = setup()
       WHEN('I visit the resident profile page')
-      const page = ResidentProfilePage.visit(placement, 'personal')
+      const page = ResidentProfilePage.visit(placement, personRisks, 'personal')
       THEN('I should see the person information in the header')
       page.checkHeader()
       AND('the Personal tab should be selected')
@@ -43,7 +47,7 @@ context('ResidentProfile', () => {
     })
 
     it('should show the sentence -> Offence tab', () => {
-      const { placement } = setup()
+      const { placement, personRisks } = setup()
       const offences = activeOffenceFactory.buildList(3)
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
       cy.task('stubPersonOffences', { offences, person: placement.person })
@@ -53,7 +57,7 @@ context('ResidentProfile', () => {
       signIn(['manage_resident'])
 
       WHEN('I visit the resident profile page on the sentence tab')
-      const page = ResidentProfilePage.visit(placement, 'sentence')
+      const page = ResidentProfilePage.visit(placement, personRisks, 'sentence')
       THEN('I should see the person information in the header')
       page.checkHeader()
 
@@ -64,7 +68,7 @@ context('ResidentProfile', () => {
     })
 
     it('should show the risk tab', () => {
-      const { placement } = setup()
+      const { placement, personRisks } = setup()
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
       const oasysRoshSummary = cas1OasysGroupFactory.roshSummary().build()
       const oasysRiskManagementPlan = cas1OasysGroupFactory.riskManagementPlan().build()
@@ -77,7 +81,7 @@ context('ResidentProfile', () => {
       GIVEN(' that I am signed in as a user with access resident profile')
       signIn(['manage_resident'])
       WHEN('I visit the resident profile page on the risk tab')
-      const page = ResidentProfilePage.visit(placement, 'risk')
+      const page = ResidentProfilePage.visit(placement, personRisks, 'risk')
       THEN('I should see the person information in the header')
       page.checkHeader()
 
@@ -88,6 +92,9 @@ context('ResidentProfile', () => {
       page.shouldShowInsetText(
         `OASys last updated on ${DateFormats.isoDateToUIDate(oasysRoshSummary.assessmentMetadata.dateCompleted)}`,
       )
+
+      AND('The ROSH widget should be populated')
+      page.shouldShowRoshWidget(personRisks.roshRisks.value)
 
       AND('the OASys risk cards should be populated')
       page.shouldShowCards(['R10.1', 'R10.2', 'SUM10'], oasysRoshSummary, 'ROSH summary')

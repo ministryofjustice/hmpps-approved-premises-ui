@@ -13,6 +13,7 @@ import {
   cas1OASysMetadataFactory,
   personFactory,
   prisonCaseNotesFactory,
+  risksFactory,
 } from '../testutils/factories'
 import paths from '../paths/api'
 
@@ -287,6 +288,31 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
       })
 
       await personClient.timeline(crn)
+    })
+  })
+
+  describe('riskProfile', () => {
+    it('calls the API with CRN and retrieves a risk profile', async () => {
+      const crn = 'crn'
+      const personRisks = risksFactory.build()
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the risk profile for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.riskProfile({ crn }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: personRisks,
+        },
+      })
+
+      await personClient.riskProfile(crn)
     })
   })
 

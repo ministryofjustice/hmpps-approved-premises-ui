@@ -1,16 +1,15 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 
-import { Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
+import { Cas1SpaceBooking, PersonRisks } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { PersonService, PlacementService } from '../../services'
 
 import paths from '../../paths/manage'
 
 import ResidentProfileController from './residentProfileController'
-import { cas1SpaceBookingFactory } from '../../testutils/factories'
+import { cas1SpaceBookingFactory, risksFactory } from '../../testutils/factories'
 import { TabData, card, getResidentHeader, ResidentProfileTab, residentTabItems, tabLabels } from '../../utils/resident'
-import { placementKeyDetails } from '../../utils/placements'
 import * as riskTabUtils from '../../utils/resident/risk'
 import * as sentenceTabUtils from '../../utils/resident/sentence'
 
@@ -26,32 +25,30 @@ describe('residentProfileController', () => {
   const residentProfileController = new ResidentProfileController(placementService, personService)
 
   const setUp = () => {
-    const placement = cas1SpaceBookingFactory.upcoming().build({
-      expectedArrivalDate: '2024-11-16',
-      expectedDepartureDate: '2025-03-26',
-    })
+    const placement = cas1SpaceBookingFactory.upcoming().build()
+    const personRisks = risksFactory.build()
 
     placementService.getPlacement.mockResolvedValue(placement)
+    personService.riskProfile.mockResolvedValue(personRisks)
 
     const response: DeepMocked<Response> = createMock<Response>({ locals: { user } })
     const request: DeepMocked<Request> = createMock<Request>({
       user: { token },
       params: { crn, placementId: placement.id },
     })
-    return { placement, request, response }
+    return { placement, personRisks, request, response }
   }
 
-  const renderParameters = (placement: Cas1SpaceBooking, tab: ResidentProfileTab) => ({
+  const renderParameters = (placement: Cas1SpaceBooking, personRisks: PersonRisks, tab: ResidentProfileTab) => ({
     placement,
     backLink: paths.premises.show({ premisesId: placement.premises.id }),
     activeTab: tab,
     tabItems: residentTabItems(placement, tab),
     crn,
     pageHeading: tabLabels[tab].label,
-    contextKeyDetails: placementKeyDetails(placement),
     user,
     actions: [] as Array<never>,
-    resident: getResidentHeader(placement),
+    resident: getResidentHeader(placement, personRisks),
   })
 
   describe('show', () => {
@@ -60,18 +57,18 @@ describe('residentProfileController', () => {
     })
 
     it('should render the Manage resident page on default tab', async () => {
-      const { request, response, placement } = setUp()
+      const { request, response, placement, personRisks } = setUp()
 
       await residentProfileController.show()(request, response, next)
 
       expect(response.render.mock.calls[0]).toEqual([
         'manage/resident/residentProfile',
-        { ...renderParameters(placement, 'personal') },
+        { ...renderParameters(placement, personRisks, 'personal') },
       ])
     })
 
     it('should render the Sentence -> Offence tab', async () => {
-      const { request, response, placement } = setUp()
+      const { request, response, placement, personRisks } = setUp()
 
       const tabData: TabData = {
         subHeading: 'OASys risks',
@@ -89,7 +86,7 @@ describe('residentProfileController', () => {
       expect(response.render.mock.calls[0]).toEqual([
         'manage/resident/residentProfile',
         {
-          ...renderParameters(placement, 'sentence'),
+          ...renderParameters(placement, personRisks, 'sentence'),
           subHeading: 'Offence and sentence',
           tabItems: residentTabItems(placement, 'sentence'),
           sideNavigation: sentenceTabUtils.sentenceSideNavigation('offence', crn, placement.id),
@@ -103,7 +100,7 @@ describe('residentProfileController', () => {
     })
 
     it('should render the Risk tab', async () => {
-      const { request, response, placement } = setUp()
+      const { request, response, placement, personRisks } = setUp()
       const tabData: TabData = {
         subHeading: 'OASys risks',
         cardList: [
@@ -121,7 +118,7 @@ describe('residentProfileController', () => {
       expect(response.render.mock.calls[0]).toEqual([
         'manage/resident/residentProfile',
         {
-          ...renderParameters(placement, 'risk'),
+          ...renderParameters(placement, personRisks, 'risk'),
           ...tabData,
         },
       ])
@@ -172,8 +169,7 @@ describe('residentProfileController', () => {
     })
 
     it('should render the Manage resident page with the residents banner', async () => {
-      const { request, response, placement } = setUp()
-      const person = placement.person as FullPerson
+      const { request, response, placement, personRisks } = setUp()
 
       const handler = residentProfileController.show()
       await handler(request, response, next)
@@ -181,31 +177,7 @@ describe('residentProfileController', () => {
       expect(response.render).toHaveBeenCalledWith(
         'manage/resident/residentProfile',
         expect.objectContaining({
-          resident: {
-            name: person.name,
-            photoUrl: '/assets/images/resident-placeholder.png',
-            badges: [
-              '<span class="moj-badge moj-badge--red">Unknown RoSH</span>',
-              '<span class="moj-badge moj-badge--purple">Unknown MAPPA</span>',
-              '<span class="moj-badge moj-badge--black">Unknown </span>',
-              '<span class="moj-badge moj-badge--black">Unknown 2</span>',
-              '<span class="moj-badge moj-badge--black">Unknown 3</span>',
-              '<span><a href="#">+3 risk flags</a></span>',
-            ],
-            attributes: [
-              [
-                { title: 'CRN', description: person.crn },
-                { title: 'Approved Premises', description: placement.premises.name },
-                { title: 'Key worker', description: placement.keyWorkerAllocation.name },
-              ],
-              [
-                { title: 'Arrival', description: '16 Nov 2024' },
-                { title: 'Departure', description: '26 Mar 2025' },
-                { title: 'Status', description: 'Overdue arrival' },
-                { title: 'Length of stay', description: '18 weeks 4 days' },
-              ],
-            ],
-          },
+          resident: getResidentHeader(placement, personRisks),
         }),
       )
     })

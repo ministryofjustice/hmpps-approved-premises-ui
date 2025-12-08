@@ -8,6 +8,7 @@ import type {
   Cas1PersonalTimeline,
   Person,
   PersonAcctAlert,
+  PersonRisks,
   PrisonCaseNote,
 } from '@approved-premises/api'
 import { HttpError } from 'http-errors'
@@ -19,40 +20,23 @@ export default class PersonService {
   constructor(private readonly personClientFactory: RestClientBuilder<PersonClient>) {}
 
   async findByCrn(token: string, crn: string, checkCaseload = false): Promise<Person> {
-    const personClient = this.personClientFactory(token)
-
-    return personClient.search(crn, checkCaseload)
+    return this.personClientFactory(token).search(crn, checkCaseload)
   }
 
   async getOffences(token: string, crn: string): Promise<Array<ActiveOffence>> {
-    const personClient = this.personClientFactory(token)
-
-    const offences = await personClient.offences(crn)
-    return offences
+    return this.personClientFactory(token).offences(crn)
   }
 
   async getPrisonCaseNotes(token: string, crn: string): Promise<Array<PrisonCaseNote>> {
-    const personClient = this.personClientFactory(token)
-
-    const prisonCaseNotes = await personClient.prisonCaseNotes(crn)
-
-    return prisonCaseNotes
+    return this.personClientFactory(token).prisonCaseNotes(crn)
   }
 
   async getAdjudications(token: string, crn: string): Promise<Array<Adjudication>> {
-    const personClient = this.personClientFactory(token)
-
-    const adjudications = await personClient.adjudications(crn)
-
-    return adjudications
+    return this.personClientFactory(token).adjudications(crn)
   }
 
   async getAcctAlerts(token: string, crn: string): Promise<Array<PersonAcctAlert>> {
-    const personClient = this.personClientFactory(token)
-
-    const acctAlerts = await personClient.acctAlerts(crn)
-
-    return acctAlerts
+    return this.personClientFactory(token).acctAlerts(crn)
   }
 
   async getOasysMetadata(token: string, crn: string): Promise<Cas1OASysMetadata> {
@@ -86,15 +70,15 @@ export default class PersonService {
     }
   }
 
-  async getDocument(token: string, crn: string, documentId: string, response: Response): Promise<void> {
-    const personClient = this.personClientFactory(token)
+  async riskProfile(token: string, crn: string): Promise<PersonRisks> {
+    return this.personClientFactory(token).riskProfile(crn)
+  }
 
-    return personClient.document(crn, documentId, response)
+  async getDocument(token: string, crn: string, documentId: string, response: Response): Promise<void> {
+    return this.personClientFactory(token).document(crn, documentId, response)
   }
 
   async getTimeline(token: string, crn: string): Promise<Cas1PersonalTimeline> {
-    const personClient = this.personClientFactory(token)
-
-    return personClient.timeline(crn)
+    return this.personClientFactory(token).timeline(crn)
   }
 }

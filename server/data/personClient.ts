@@ -9,6 +9,7 @@ import type {
   Cas1PersonalTimeline,
   Person,
   PersonAcctAlert,
+  PersonRisks,
   PrisonCaseNote,
 } from '@approved-premises/api'
 
@@ -99,6 +100,10 @@ export default class PersonClient {
       { path: paths.people.documents({ crn, documentId }), passThroughHeaders: ['content-disposition'] },
       response,
     )
+  }
+
+  async riskProfile(crn: string): Promise<PersonRisks> {
+    return this.restClient.get({ path: paths.people.riskProfile({ crn }) }) as Promise<PersonRisks>
   }
 
   async timeline(crn: string): Promise<Cas1PersonalTimeline> {

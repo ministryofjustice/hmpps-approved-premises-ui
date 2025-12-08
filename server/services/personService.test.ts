@@ -15,6 +15,7 @@ import {
   prisonCaseNotesFactory,
   cas1OasysGroupFactory,
   cas1OASysMetadataFactory,
+  risksFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/personClient.ts')
@@ -212,6 +213,21 @@ describe('PersonService', () => {
       })
 
       await expect(() => service.getOasysAnswers(token, 'crn', oasysGroup.group)).rejects.toThrowError(Error)
+    })
+  })
+
+  describe('getPersonRisks', () => {
+    it('returns the risk profile for a person', async () => {
+      const personRisks = risksFactory.build()
+
+      personClient.riskProfile.mockResolvedValue(personRisks)
+
+      const result = await service.riskProfile(token, 'crn')
+
+      expect(result).toEqual(personRisks)
+
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.riskProfile).toHaveBeenCalledWith('crn')
     })
   })
 

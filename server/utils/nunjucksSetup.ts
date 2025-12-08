@@ -118,7 +118,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('displayName', displayName)
   njkEnv.addGlobal('dateFieldValues', dateFieldValues)
   njkEnv.addGlobal('formatDate', (date: string, options: { format: 'short' | 'long' } = { format: 'long' }) =>
-    DateFormats.isoDateToUIDate(date, options),
+    /^\d{4}-\d{2}-\d{2}/.test(date) ? DateFormats.isoDateToUIDate(date, options) : date,
   )
   njkEnv.addGlobal('formatDuration', (days: number) => DateFormats.formatDuration(days))
   njkEnv.addGlobal('formatDateTime', (date: string) => DateFormats.isoDateTimeToUIDateTime(date))

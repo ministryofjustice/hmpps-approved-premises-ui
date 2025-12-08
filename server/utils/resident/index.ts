@@ -1,4 +1,4 @@
-import { Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
+import { Cas1SpaceBooking, FullPerson, PersonRisks, RiskEnvelopeStatus } from '@approved-premises/api'
 import { SummaryListItem, SummaryListWithCard, TabItem } from '@approved-premises/ui'
 import nunjucks from 'nunjucks'
 import paths from '../../paths/manage'
@@ -19,7 +19,13 @@ export type ResidentHeader = {
 
 export type TabData = { cardList?: Array<SummaryListWithCard>; subHeading?: string }
 
-export type TabControllerParameters = { personService?: PersonService; crn?: string; token?: string }
+export type TabControllerParameters = {
+  personService?: PersonService
+  crn?: string
+  token?: string
+  personRisks?: PersonRisks
+  placement?: Cas1SpaceBooking
+}
 
 export const tabLabels: Record<
   ResidentProfileTab,
@@ -61,21 +67,40 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
   }))
 }
 
-export function getResidentHeader(placement: Cas1SpaceBooking): ResidentHeader {
+const badgeColours: Record<string, string> = {
+  'Very High': 'badge--very-high',
+  High: 'badge--high',
+  Medium: 'badge--medium',
+  Low: 'badge--low',
+}
+
+const isRetrieved = (status: RiskEnvelopeStatus) => status.toLowerCase() === 'retrieved'
+
+export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: PersonRisks): ResidentHeader {
   const person = placement.person as FullPerson
   const { arrivalDate, departureDate } = canonicalDates(placement)
+
+  const {
+    roshRisks: {
+      status: roshStatus,
+      value: { overallRisk: roshRisk },
+    },
+    mappa: { status: mappaStatus, value: mappaValue },
+    flags: { status: flagsStatus, value: flags },
+  } = personRisks
+  const badges: Array<string> = [
+    getBadge(
+      `${isRetrieved(roshStatus) ? roshRisk : 'Unknown'} RoSH`,
+      isRetrieved(roshStatus) && badgeColours[roshRisk],
+    ),
+    isRetrieved(mappaStatus) && getBadge(`${mappaValue?.level} MAPPA`, ''),
+    ...(isRetrieved(flagsStatus) ? flags.map(flag => getBadge(flag, '')) : []),
+  ].filter(Boolean)
 
   return {
     name: person.name,
     photoUrl: '/assets/images/resident-placeholder.png',
-    badges: [
-      getBadge('Unknown RoSH', 'red'),
-      getBadge('Unknown MAPPA', 'purple'),
-      getBadge('Unknown ', 'black'),
-      getBadge('Unknown 2', 'black'),
-      getBadge('Unknown 3', 'black'),
-      '<span><a href="#">+3 risk flags</a></span>',
-    ],
+    badges: [...badges, '<span><a href="#">+3 risk flags</a></span>'],
     attributes: [
       [
         { title: 'CRN', description: person.crn },
@@ -101,11 +126,11 @@ export function getResidentHeader(placement: Cas1SpaceBooking): ResidentHeader {
   }
 }
 
-function getBadge(text: string, colour: string): string {
-  return `<span class="moj-badge moj-badge--${colour}">${text}</span>`
+function getBadge(text: string, classString: string): string {
+  return `<span class="moj-badge ${classString || 'badge--low'}">${text}</span>`
 }
 
-export function getResidentStatus(placement: Cas1SpaceBooking): string {
+export const getResidentStatus = (placement: Cas1SpaceBooking): string => {
   return statusTextMap[detailedStatus(placement)]
 }
 

@@ -1,10 +1,11 @@
 import { render } from 'nunjucks'
 import { createMock } from '@golevelup/ts-jest'
-import { Cas1OASysGroupName } from '@approved-premises/api'
-import { cas1OasysGroupFactory } from '../../testutils/factories'
-import { riskTabController, summaryCards, tableRow } from './risk'
+import { Cas1OASysGroupName, type RiskEnvelopeStatus } from '@approved-premises/api'
+import { cas1OasysGroupFactory, risksFactory } from '../../testutils/factories'
+import { riskTabController, roshWidget, summaryCards, tableRow } from './risk'
 import { PersonService } from '../../services'
 import { DateFormats } from '../dateUtils'
+import { roshRisksFactory } from '../../testutils/factories/risks'
 
 const personService = createMock<PersonService>({})
 
@@ -12,7 +13,17 @@ jest.mock('nunjucks')
 describe('risk utils', () => {
   beforeEach(() => {
     jest.resetAllMocks()
-    ;(render as jest.Mock).mockReturnValue('rendered-output')
+    ;(render as jest.Mock).mockImplementation(template => `Nunjucks template ${template}`)
+  })
+
+  describe('template renderers', () => {
+    it('should render the rosh widget', async () => {
+      const roshRisks = roshRisksFactory.build().value
+      expect(roshWidget(roshRisks)).toEqual({
+        html: 'Nunjucks template components/riskWidgets/rosh-widget/template.njk',
+      })
+      expect(render).toHaveBeenCalledWith('components/riskWidgets/rosh-widget/template.njk', { params: roshRisks })
+    })
   })
 
   describe('summaryCards', () => {
@@ -33,7 +44,7 @@ describe('risk utils', () => {
             </td>
           </tr>
         </tbody>
-      </table>rendered-output`)
+      </table>Nunjucks template partials/detailsBlock.njk`)
       })
     })
 
@@ -43,6 +54,12 @@ describe('risk utils', () => {
         const riskManagementPlan = cas1OasysGroupFactory.riskManagementPlan().build()
         const offenceDetails = cas1OasysGroupFactory.offenceDetails().build()
         const supportingInformation = cas1OasysGroupFactory.supportingInformation().build()
+        const retrieved: { status: RiskEnvelopeStatus } = { status: 'retrieved' }
+        const personRisks = risksFactory.build({
+          roshRisks: retrieved,
+          mappa: retrieved,
+          flags: retrieved,
+        })
         const token = 'token'
         const crn = 'crn'
 
@@ -61,22 +78,34 @@ describe('risk utils', () => {
           }
         })
 
-        const result = await riskTabController({ personService, token, crn })
+        const result = await riskTabController({ personService, token, crn, personRisks })
 
         expect(result.subHeading).toEqual('OASys risks')
-        expect(result.cardList).toHaveLength(12)
-        expect(result.cardList[0].html).toMatchStringIgnoringWhitespace(
-          `OASys last updated on ${DateFormats.isoDateToUIDate(roshSummary.assessmentMetadata.dateCompleted)}`,
-        )
+        expect(result.cardList).toHaveLength(13)
+        expect(result.cardList[0].html).toMatchStringIgnoringWhitespace('Nunjucks template partials/insetText.njk')
+        expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
+          html: `OASys last updated on ${DateFormats.isoDateToUIDate(roshSummary.assessmentMetadata.dateCompleted)}`,
+        })
+
         expect(result.cardList[1].html).toMatchStringIgnoringWhitespace(
-          `${tableRow('R10.1 ROSH summary')}rendered-output`,
+          'Nunjucks template components/riskWidgets/rosh-widget/template.njk',
         )
-        expect(result.cardList[5].html).toMatchStringIgnoringWhitespace(
-          `${tableRow('RM32 OASys risk management plan')}rendered-output`,
+        expect(render).toHaveBeenCalledWith('components/riskWidgets/rosh-widget/template.njk', {
+          params: personRisks.roshRisks.value,
+        })
+
+        expect(result.cardList[2].html).toMatchStringIgnoringWhitespace(
+          `${tableRow('R10.1 ROSH summary')}Nunjucks template partials/detailsBlock.njk`,
         )
-        expect(result.cardList[6].html).toMatchStringIgnoringWhitespace(`${tableRow('2.4.1 OASys')}rendered-output`)
-        expect(result.cardList[11].html).toMatchStringIgnoringWhitespace(
-          `${tableRow('9.9 OASys supporting information')}rendered-output`,
+
+        expect(result.cardList[6].html).toMatchStringIgnoringWhitespace(
+          `${tableRow('RM32 OASys risk management plan')}Nunjucks template partials/detailsBlock.njk`,
+        )
+        expect(result.cardList[7].html).toMatchStringIgnoringWhitespace(
+          `${tableRow('2.4.1 OASys')}Nunjucks template partials/detailsBlock.njk`,
+        )
+        expect(result.cardList[12].html).toMatchStringIgnoringWhitespace(
+          `${tableRow('9.9 OASys supporting information')}Nunjucks template partials/detailsBlock.njk`,
         )
       })
     })
