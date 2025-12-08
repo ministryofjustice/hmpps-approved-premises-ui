@@ -52,7 +52,7 @@ describe('residentsUtils', () => {
         { key: { text: 'key1' }, value: { text: 'val1' } },
         { key: { text: 'key2' }, value: { text: 'val2' } },
       ]
-      expect(card('title', rows)).toEqual({
+      expect(card({ title: 'title', rows })).toEqual({
         card: {
           title: {
             text: 'title',
