@@ -3,7 +3,7 @@ import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
 import { bulletList, summaryListItem } from '../formUtils'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
-import { card, detailsBody, ResidentProfileSubTab } from './index'
+import { card, detailsBody, ResidentProfileSubTab, TabControllerParameters, TabData } from './index'
 
 const oasysAnswer = (oasysAnswers: Cas1OASysGroup, questionNumber: string, questionName: string): SummaryListItem => {
   if (oasysAnswers?.assessmentMetadata?.hasApplicableAssessment) {
@@ -93,15 +93,37 @@ export const offencesCards = (
 ]
 
 export const licenseCards = (): Array<SummaryListWithCard> => [
-  card('Licence conditions', [
-    summaryListItem('Licence start date', 'TBA'),
-    summaryListItem('Licence end date', 'TBA'),
-    summaryListItem('Additional conditions', 'TBA'),
-    summaryListItem('Licence documents', 'TBA'),
-  ]),
-  card('Licence conditions', [
-    summaryListItem('EM licence conditions', 'TBA'),
-    summaryListItem('Drug and alcohol monitoring', 'TBA'),
-    summaryListItem('Exclusion zones', 'TBA'),
-  ]),
+  card({
+    title: 'Licence conditions',
+    rows: [
+      summaryListItem('Licence start date', 'TBA'),
+      summaryListItem('Licence end date', 'TBA'),
+      summaryListItem('Additional conditions', 'TBA'),
+      summaryListItem('Licence documents', 'TBA'),
+    ],
+  }),
+  card({
+    title: 'Licence conditions',
+    rows: [
+      summaryListItem('EM licence conditions', 'TBA'),
+      summaryListItem('Drug and alcohol monitoring', 'TBA'),
+      summaryListItem('Exclusion zones', 'TBA'),
+    ],
+  }),
 ]
+
+export const sentenceOffencesTabController = async ({
+  personService,
+  token,
+  crn,
+}: TabControllerParameters): Promise<TabData> => {
+  const [offences, offenceAnswers]: [Array<ActiveOffence>, Cas1OASysGroup] = await Promise.all([
+    personService.getOffences(token, crn),
+    personService.getOasysAnswers(token, crn, 'offenceDetails'),
+  ])
+  return { subHeading: 'Offence and sentence', cardList: offencesCards(offences, offenceAnswers) }
+}
+
+export const sentenceLicenceTabController = async () => {
+  return { subHeading: 'Licence', cardList: licenseCards() }
+}
