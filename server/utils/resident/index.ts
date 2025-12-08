@@ -40,7 +40,7 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
       case 'health':
         return pathRoot.tabHealth(pathParams)
       case 'placement':
-        return pathRoot.tabPlacement.placementDetails(pathParams)
+        return pathRoot.tabPlacement.previousApStays(pathParams)
       case 'risk':
         return pathRoot.tabRisk(pathParams)
       case 'sentence':

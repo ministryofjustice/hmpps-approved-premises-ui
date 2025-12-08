@@ -11,12 +11,7 @@ import { activeOffenceFactory, cas1OasysGroupFactory, cas1SpaceBookingFactory } 
 import { getResidentHeader, ResidentProfileTab, residentTabItems, tabLabels } from '../../utils/resident'
 import { placementKeyDetails } from '../../utils/placements'
 import { offencesCards, sentenceSideNavigation } from '../../utils/resident/sentence'
-import {
-  applicationCards,
-  placementDetailsCards,
-  placementSideNavigation,
-  previousApStaysCards,
-} from '../../utils/resident/placement'
+import { placementSideNavigation, previousApStaysCards } from '../../utils/resident/placement'
 
 describe('residentProfileController', () => {
   const token = 'TEST_TOKEN'
@@ -100,46 +95,6 @@ describe('residentProfileController', () => {
       expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
 
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'offenceDetails')
-    })
-
-    it('should render the Manage resident page on the placement tab', async () => {
-      const { request, response, placement } = setUp()
-
-      await residentProfileController.show('placement', 'placement-details')(request, response, next)
-
-      expect(response.render.mock.calls[0]).toEqual([
-        'manage/resident/residentProfile',
-        {
-          ...renderParameters(placement, 'placement'),
-          subHeading: 'Placement details',
-          tabItems: residentTabItems(placement, 'placement'),
-          cardList: placementDetailsCards(),
-          sideNavigation: placementSideNavigation('placement-details', crn, placement.id),
-          sectionTemplate: 'manage/resident/partials/cardList.njk',
-        },
-      ])
-
-      expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
-    })
-
-    it('should render the Manage resident page on the placement tab application sub tab', async () => {
-      const { request, response, placement } = setUp()
-
-      await residentProfileController.show('placement', 'application')(request, response, next)
-
-      expect(response.render.mock.calls[0]).toEqual([
-        'manage/resident/residentProfile',
-        {
-          ...renderParameters(placement, 'placement'),
-          subHeading: 'Application',
-          tabItems: residentTabItems(placement, 'placement'),
-          cardList: applicationCards(),
-          sideNavigation: placementSideNavigation('application', crn, placement.id),
-          sectionTemplate: 'manage/resident/partials/cardList.njk',
-        },
-      ])
-
-      expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
     })
 
     it('should render the Manage resident page on the placement tab previous AP stays sub tab', async () => {

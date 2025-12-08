@@ -4,6 +4,8 @@ import {
   cas1OasysGroupFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
+  cas1SpaceBookingShortSummaryFactory,
+  cas1SpaceBookingDepartureFactory,
 } from '../../../../server/testutils/factories'
 import ResidentProfilePage from '../../../pages/manage/placements/residentProfile'
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
@@ -64,20 +66,37 @@ context('ResidentProfile', () => {
       page.shouldShowOffencesInformation(offences, oasysOffenceDetails)
     })
 
-    // TODO: Enrich this test with full ap-stays page data check
-    it('should show the placement tab with sidebar navigation', () => {
+    it('should show the Placement/AP stays tab', () => {
       GIVEN(' that I am signed in as a user with access resident profile')
       signIn(['manage_resident'])
       GIVEN('there is an existing placement')
       const { placement } = setup()
+
+      AND('there are previous AP stays for the person')
+      const previousStays = [
+        cas1SpaceBookingShortSummaryFactory.departed().build({
+          departure: cas1SpaceBookingDepartureFactory.build(),
+        }),
+        cas1SpaceBookingShortSummaryFactory.nonArrival().build(),
+        cas1SpaceBookingShortSummaryFactory.upcoming().build(),
+      ]
+
+      cy.task('stubPersonSpaceBookings', {
+        person: placement.person,
+        spaceBookings: previousStays,
+        includeCancelled: false,
+      })
+
       WHEN('I visit the resident profile page on the placement tab')
       const page = ResidentProfilePage.visit(placement, 'placement')
       THEN('I should see the person information in the header')
       page.checkHeader()
       AND('the Placement tab should be selected')
       page.shouldHaveActiveTab('Placement')
-      AND('the placement sidebar navigation should be shown')
+      AND('the side navigation should show Previous AP stays')
       page.shouldShowPlacementSideNavigation()
+      AND('the Previous AP stays information should be shown')
+      page.shouldShowPreviousApStaysInformation(previousStays, placement.id)
     })
 
     it('should not allow access to the page if user lacks permission', () => {

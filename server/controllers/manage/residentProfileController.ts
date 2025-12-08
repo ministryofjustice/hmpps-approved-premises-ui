@@ -9,18 +9,12 @@ import {
   PlacementSubTab,
   ResidentProfileSubTab,
   ResidentProfileTab,
-  SentenceSubTab,
   residentTabItems,
   getResidentHeader,
   tabLabels,
 } from '../../utils/resident'
 import { licenseCards, offencesCards, sentenceSideNavigation } from '../../utils/resident/sentence'
-import {
-  applicationCards,
-  placementDetailsCards,
-  placementSideNavigation,
-  previousApStaysCards,
-} from '../../utils/resident/placement'
+import { placementSideNavigation, previousApStaysCards } from '../../utils/resident/placement'
 
 export default class ResidentProfileController {
   constructor(
@@ -43,7 +37,7 @@ export default class ResidentProfileController {
       let sectionTemplate: string
 
       if (activeTab === 'sentence') {
-        sideNavigation = sentenceSideNavigation(subTab as SentenceSubTab, crn, placementId)
+        sideNavigation = sentenceSideNavigation(subTab, crn, placementId)
 
         if (subTab === 'offence') {
           const [offences, offenceAnswers]: [Array<ActiveOffence>, Cas1OASysGroup] = await Promise.all([
@@ -64,16 +58,6 @@ export default class ResidentProfileController {
       if (activeTab === 'placement') {
         sideNavigation = placementSideNavigation(subTab as PlacementSubTab, crn, placementId)
         switch (subTab) {
-          case 'placement-details':
-            subHeading = 'Placement details'
-            cardList = placementDetailsCards()
-            sectionTemplate = 'manage/resident/partials/cardList.njk'
-            break
-          case 'application':
-            subHeading = 'Application'
-            cardList = applicationCards()
-            sectionTemplate = 'manage/resident/partials/cardList.njk'
-            break
           case 'previous-ap-stays':
             subHeading = 'Previous AP stays'
             {

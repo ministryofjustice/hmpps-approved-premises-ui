@@ -1,6 +1,6 @@
 import { SummaryListItem } from '@approved-premises/ui'
 import { render } from 'nunjucks'
-import { card, detailsBody, residentTabItems, tabLabels } from './index'
+import { card, detailsBody, residentTabItems } from './index'
 import { cas1SpaceBookingFactory } from '../../testutils/factories'
 
 jest.mock('nunjucks')
@@ -24,7 +24,7 @@ describe('residentsUtils', () => {
         },
         {
           active: true,
-          href: `${baseUrl}placement/placement-details`,
+          href: `${baseUrl}placement/previous-ap-stays`,
           text: 'Placement',
         },
         {
@@ -43,24 +43,6 @@ describe('residentsUtils', () => {
           text: 'Enforcement',
         },
       ])
-    })
-
-    it('falls back to the resident show path when a tab has no explicit route', () => {
-      const placement = cas1SpaceBookingFactory.build()
-      const uknownLabel = 'label123'
-      const tabLabelsRecord = tabLabels as unknown as Record<string, { label: string }>
-      tabLabelsRecord.mystery = { label: uknownLabel }
-
-      const tabs = residentTabItems(placement, 'personal')
-      const mysteryTab = tabs.find(tab => tab.text === uknownLabel)
-
-      expect(mysteryTab).toEqual({
-        active: false,
-        href: `/manage/resident/${placement.person.crn}/placement/${placement.id}`,
-        text: uknownLabel,
-      })
-
-      delete tabLabelsRecord.mystery
     })
   })
 
