@@ -104,21 +104,6 @@ export default Cas1OASysGroupFactory.define(() => {
     },
   } as Cas1OASysGroup
 })
-//
-// const riskManagementPlanFactory = Factory.define<OASysQuestion>(() => ({
-//   questionNumber: faker.helpers.arrayElement(['RM30', 'RM31', 'RM32', 'RM33']),
-//   label: faker.helpers.arrayElement([
-//     'Key information about current situation',
-//     'Further considerations about current situation',
-//     'Supervision',
-//     'Monitoring and control',
-//     'Intervention and treatment',
-//     'Victim safety planning',
-//     'Contingency plans',
-//     'Additional comments',
-//   ]),
-//   answer: faker.lorem.paragraph(),
-// }))
 
 const offenceDetailsFactory = Factory.define<OASysQuestion>(options => ({
   questionNumber: options.sequence.toString(),
