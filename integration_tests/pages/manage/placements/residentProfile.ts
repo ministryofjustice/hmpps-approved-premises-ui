@@ -101,6 +101,14 @@ export default class ResidentProfilePage extends Page {
     this.shouldContainSummaryListItems(expected)
   }
 
+  shouldShowCards(numbers: Array<string>, group: Cas1OASysGroup, groupName: string) {
+    numbers.forEach(questionNumber => {
+      const blockTitle = `${questionNumber} ${groupName}`
+      const question = group.answers.find(({ questionNumber: qnumber }) => qnumber === questionNumber)
+      cy.contains(blockTitle).parents('.govuk-summary-card').contains(question.label)
+    })
+  }
+
   shouldShowPlacementSideNavigation() {
     cy.get('.moj-side-navigation').within(() => {
       cy.get('a').contains('Previous AP stays').should('exist')

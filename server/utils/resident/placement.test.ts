@@ -1,7 +1,9 @@
-import { placementSideNavigation, previousApStaysCards } from './placement'
+import { createMock } from '@golevelup/ts-jest'
+import { placementSideNavigation, placementPreviousApStaysTabController, previousApStaysCards } from './placement'
 import { PlacementSubTab } from './index'
 import { cas1SpaceBookingFactory } from '../../testutils/factories'
 import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
+import PersonService from '../../services/personService'
 
 describe('placement', () => {
   describe('placementSideNavigation', () => {
@@ -116,6 +118,101 @@ describe('placement', () => {
     // TODO: This might change in the future (maybe to use a placeholder text for example etc etc)
     it('should not render anything when there is no data', () => {
       expect(previousApStaysCards([], 'current-placement-id')).toEqual([])
+    })
+  })
+
+  describe('placementPreviousApStaysTabController', () => {
+    const token = 'SOME_TOKEN'
+    const crn = 'B1663R'
+    const placementId = 'current-placement-id'
+
+    let personService: jest.Mocked<PersonService>
+
+    beforeEach(() => {
+      personService = createMock<PersonService>({})
+    })
+
+    it('should call personService.getSpaceBookings with correct parameters', async () => {
+      const bookings = cas1SpaceBookingFactory.buildList(2)
+      personService.getSpaceBookings.mockResolvedValue(bookings)
+
+      await placementPreviousApStaysTabController({
+        personService,
+        token,
+        crn,
+        placementId,
+      })
+
+      expect(personService.getSpaceBookings).toHaveBeenCalledWith(token, crn, false)
+    })
+
+    it('should call personService.getSpaceBookings with includeCancelled=true when specified', async () => {
+      const bookings = cas1SpaceBookingFactory.buildList(2)
+      personService.getSpaceBookings.mockResolvedValue(bookings)
+
+      await placementPreviousApStaysTabController({
+        personService,
+        token,
+        crn,
+        placementId,
+        includeCancelled: true,
+      })
+
+      expect(personService.getSpaceBookings).toHaveBeenCalledWith(token, crn, true)
+    })
+
+    it('should return TabData with correct subHeading and cardList', async () => {
+      const currentPlacement = cas1SpaceBookingFactory.build({ id: placementId })
+      const otherPlacement = cas1SpaceBookingFactory.departed().build({ id: 'other-placement-id' })
+      const bookings = [currentPlacement, otherPlacement]
+
+      personService.getSpaceBookings.mockResolvedValue(bookings)
+
+      const result = await placementPreviousApStaysTabController({
+        personService,
+        token,
+        crn,
+        placementId,
+      })
+
+      expect(result).toEqual({
+        subHeading: 'Previous AP stays',
+        cardList: previousApStaysCards(bookings, placementId),
+      })
+    })
+
+    it('should return empty cardList when no bookings exist', async () => {
+      personService.getSpaceBookings.mockResolvedValue([])
+
+      const result = await placementPreviousApStaysTabController({
+        personService,
+        token,
+        crn,
+        placementId,
+      })
+
+      expect(result).toEqual({
+        subHeading: 'Previous AP stays',
+        cardList: [],
+      })
+    })
+
+    it('should filter out current placement from cardList', async () => {
+      const currentPlacement = cas1SpaceBookingFactory.build({ id: placementId })
+      const otherPlacement = cas1SpaceBookingFactory.departed().build({ id: 'other-placement-id' })
+      const bookings = [currentPlacement, otherPlacement]
+
+      personService.getSpaceBookings.mockResolvedValue(bookings)
+
+      const result = await placementPreviousApStaysTabController({
+        personService,
+        token,
+        crn,
+        placementId,
+      })
+
+      expect(result.cardList).toHaveLength(1)
+      expect(result.cardList[0].card.title.text).toEqual(otherPlacement.premises.name)
     })
   })
 })

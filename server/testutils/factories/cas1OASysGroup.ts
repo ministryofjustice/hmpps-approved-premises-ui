@@ -8,21 +8,45 @@ class Cas1OASysGroupFactory extends Factory<Cas1OASysGroup> {
   riskManagementPlan() {
     return this.params({
       group: 'riskManagementPlan',
-      answers: riskManagementPlanFactory.buildList(5),
+      answers: [
+        { label: 'Further considerations', questionNumber: 'RM28' },
+        { label: 'Additional comments', questionNumber: 'RM35' },
+        { label: 'Contingency plans', questionNumber: 'RM34' },
+        { label: 'Victim safety planning', questionNumber: 'RM33' },
+        { label: 'Interventions and treatment', questionNumber: 'RM32' },
+        { label: 'Monitoring and control', questionNumber: 'RM31' },
+        { label: 'Supervision', questionNumber: 'RM30' },
+        { label: 'Key information about current situation', questionNumber: 'RM28.1' },
+      ].map(params => ({ ...params, answer: faker.lorem.paragraph() })),
     })
   }
 
   offenceDetails() {
     return this.params({
       group: 'offenceDetails',
-      answers: offenceDetailsFactory.buildList(5),
+      answers: [
+        { label: 'Offence analysis', questionNumber: '2.1' },
+        { label: 'Victim - perpetrator relationship', questionNumber: '2.4.1' },
+        { label: 'Other victim information', questionNumber: '2.4.2' },
+        { label: 'Impact on the victim', questionNumber: '2.5' },
+        { label: 'Motivation and triggers', questionNumber: '2.8.3' },
+        { label: 'Issues contributing to risks', questionNumber: '2.98' },
+        { label: 'Pattern of offending', questionNumber: '2.12' },
+      ].map(params => offenceDetailsFactory.build(params)),
     })
   }
 
   roshSummary() {
+    const answers = [
+      { label: 'Who is at risk', questionNumber: 'R10.1' },
+      { label: 'What is the nature of the risk', questionNumber: 'R10.2' },
+      { label: 'Circumstances or situations where offending is most likely to occur', questionNumber: 'SUM11' },
+      { label: 'Analysis of risk factors', questionNumber: 'SUM9' },
+      { label: 'Strengths and protective factors', questionNumber: 'SUM10' },
+    ].map(params => roshSummaryFactory.build(params))
     return this.params({
       group: 'roshSummary',
-      answers: roshSummaryFactory.buildList(5),
+      answers,
     })
   }
 
@@ -36,6 +60,16 @@ class Cas1OASysGroupFactory extends Factory<Cas1OASysGroup> {
   supportingInformation() {
     return this.params({
       group: 'supportingInformation',
+      answers: [
+        { label: 'Accommodation issues contributing to risks of offending and harm', questionNumber: '3.9' },
+        { label: 'Relationship issues contributing to risks of offending and harm', questionNumber: '6.9' },
+        { label: 'Lifestyle issues contributing to risks of offending and harm', questionNumber: '7.9' },
+        { label: 'Drug misuse issues contributing to risks of offending and harm', questionNumber: '8.9' },
+        { label: 'Alcohol misuse issues contributing to risks of offending and harm', questionNumber: '9.9' },
+        { label: 'Issues of emotional well-being contributing to risks of offending and harm', questionNumber: '10.9' },
+        { label: 'Thinking / behavioural issues contributing to risks of offending and harm', questionNumber: '11.9' },
+        { label: 'Issues about attitudes contributing to risks of offending and harm', questionNumber: '12.9' },
+      ].map(params => ({ ...params, answer: faker.lorem.paragraph() })),
     })
   }
 
@@ -70,21 +104,6 @@ export default Cas1OASysGroupFactory.define(() => {
     },
   } as Cas1OASysGroup
 })
-
-const riskManagementPlanFactory = Factory.define<OASysQuestion>(options => ({
-  questionNumber: options.sequence.toString(),
-  label: faker.helpers.arrayElement([
-    'Key information about current situation',
-    'Further considerations about current situation',
-    'Supervision',
-    'Monitoring and control',
-    'Intervention and treatment',
-    'Victim safety planning',
-    'Contingency plans',
-    'Additional comments',
-  ]),
-  answer: faker.lorem.paragraph(),
-}))
 
 const offenceDetailsFactory = Factory.define<OASysQuestion>(options => ({
   questionNumber: options.sequence.toString(),

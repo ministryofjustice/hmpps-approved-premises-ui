@@ -1,28 +1,39 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "partials/summaryCard.njk" import summaryCard %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 <h2 class="govuk-heading-m govuk-!-margin-top-4">{{ subHeading }}</h2>
 
 {% for card in cardList %}
-    {% set html %}
-        {{ govukSummaryList({
-            rows: card.rows
+    {% if card.rows %}
+        {% set html %}
+            {{ govukSummaryList({
+                rows: card.rows
+            }) }}
+            {% if card.card.actions %}
+                {% for action in card.card.actions.items %}
+                    <p class="govuk-!-margin-top-6 govuk-!-margin-bottom-2">
+                        <a href="{{ action.href }}">{{ action.text }}</a>
+                    </p>
+                {% endfor %}
+            {% endif %}
+        {% endset %}
+    {% endif %}
+    {% if card.html %}
+        {% set html=card.html %}
+    {% endif %}
+    {% if card.card.title %}
+        {{ summaryCard({
+            title: card.card.title,
+            actions:card.card.actions,
+            html:html
         }) }}
-        {% if card.card.actions %}
-            {% for action in card.card.actions.items %}
-                <p class="govuk-!-margin-top-6 govuk-!-margin-bottom-2">
-                    <a href="{{ action.href }}">{{ action.text }}</a>
-                </p>
-            {% endfor %}
-        {% endif %}
-    {% endset %}
-
-    {{ summaryCard({
-        title: card.card.title,
-        actions:card.card.actions,
-        html:html
-    }) }}
+    {% else %}
+        {{ govukInsetText({
+            html: html
+        }) }}
+    {% endif %}
 {% endfor %}
 
 
