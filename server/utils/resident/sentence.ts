@@ -64,7 +64,7 @@ export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: strin
   return [
     {
       text: 'Offence and sentence',
-      href: basePath.offence({ crn, placementId }),
+      href: paths.resident.tabSentence.offence({ crn, placementId }),
       active: subTab === 'offence',
     },
     { text: 'Licence', href: basePath.licence({ crn, placementId }), active: subTab === 'licence' },
