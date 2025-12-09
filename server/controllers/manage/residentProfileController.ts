@@ -20,6 +20,7 @@ import {
 } from '../../utils/resident/sentence'
 import { riskTabController } from '../../utils/resident/risk'
 import { personalSideNavigation, personalDetailsTabController } from '../../utils/resident/personal'
+import { placementTabController } from '../../utils/resident/placement'
 
 export default class ResidentProfileController {
   constructor(
@@ -63,6 +64,10 @@ export default class ResidentProfileController {
           tabData = await riskTabController(tabParameters)
           break
         default:
+      }
+
+      if (activeTab === 'placement') {
+        tabData = placementTabController(placement)
       }
 
       return res.render(`manage/resident/residentProfile`, {
