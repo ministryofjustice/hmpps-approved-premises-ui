@@ -19,6 +19,7 @@ import {
   sentenceSideNavigation,
 } from '../../utils/resident/sentence'
 import { riskTabController } from '../../utils/resident/risk'
+import { placementTabController } from '../../utils/resident/placement'
 
 export default class ResidentProfileController {
   constructor(
@@ -55,6 +56,10 @@ export default class ResidentProfileController {
 
       if (activeTab === 'risk') {
         tabData = await riskTabController({ personService: this.personService, crn, token })
+      }
+
+      if (activeTab === 'placement') {
+        tabData = placementTabController(placement)
       }
 
       return res.render(`manage/resident/residentProfile`, {
