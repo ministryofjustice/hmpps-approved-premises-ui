@@ -110,6 +110,22 @@ context('ResidentProfile', () => {
       page.shouldShowCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
     })
 
+    it('should show the placement tab', () => {
+      const { placement } = setup()
+      GIVEN(' that I am signed in as a user with access resident profile')
+      signIn(['manage_resident'])
+      WHEN('I visit the resident profile page on the placement tab')
+      const page = ResidentProfilePage.visit(placement, 'placement')
+      THEN('I should see the person information in the header')
+      page.checkHeader()
+
+      AND('the placement tab should be selected')
+      page.shouldHaveActiveTab('Placement')
+
+      AND('the placement details cards should be shown')
+      page.shouldShowPlacementDetails()
+    })
+
     it('should not allow access to the page if user lacks permission', () => {
       const { placement } = setup()
       GIVEN(' that I am signed in as a user without access to the resident profile')
