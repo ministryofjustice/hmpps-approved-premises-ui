@@ -7,6 +7,7 @@ import type {
   Cas1OASysGroupName,
   Cas1OASysMetadata,
   Cas1PersonalTimeline,
+  Cas1SpaceBookingShortSummary,
   Person,
   PersonAcctAlert,
   PrisonCaseNote,
@@ -64,6 +65,13 @@ export default class PersonClient {
     const response = await this.restClient.get({ path: paths.people.offences({ crn }) })
 
     return response as Array<ActiveOffence>
+  }
+
+  async spaceBookings(crn: string, includeCancelled = false): Promise<Array<Cas1SpaceBookingShortSummary>> {
+    return (await this.restClient.get({
+      path: paths.people.spaceBookings({ crn }),
+      query: { includeCancelled: String(includeCancelled) },
+    })) as Array<Cas1SpaceBookingShortSummary>
   }
 
   async oasysMetadata(crn: string): Promise<Cas1OASysMetadata> {

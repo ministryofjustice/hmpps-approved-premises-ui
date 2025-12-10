@@ -13,6 +13,8 @@ import { TabData, card, getResidentHeader, ResidentProfileTab, residentTabItems,
 import { placementKeyDetails } from '../../utils/placements'
 import * as riskTabUtils from '../../utils/resident/risk'
 import * as sentenceTabUtils from '../../utils/resident/sentence'
+import * as placementTabUtils from '../../utils/resident/placement'
+import { placementSideNavigation } from '../../utils/resident/placement'
 
 describe('residentProfileController', () => {
   const token = 'TEST_TOKEN'
@@ -127,6 +129,45 @@ describe('residentProfileController', () => {
       ])
 
       expect(tabController).toHaveBeenCalledWith(expect.objectContaining({ crn, personService, token }))
+    })
+
+    it('should render the Manage resident page on the placement tab previous AP stays sub tab', async () => {
+      const { request, response, placement } = setUp()
+      const tabData: TabData = {
+        subHeading: 'Previous AP stays',
+        cardList: [
+          card({
+            title: faker.word.words({ count: { min: 1, max: 3 } }),
+            rows: [],
+          }),
+        ],
+      }
+
+      const tabController = jest
+        .spyOn(placementTabUtils, 'placementPreviousApStaysTabController')
+        .mockResolvedValue(tabData)
+
+      await residentProfileController.show('placement', 'previous-ap-stays')(request, response, next)
+
+      expect(response.render.mock.calls[0]).toEqual([
+        'manage/resident/residentProfile',
+        {
+          ...renderParameters(placement, 'placement'),
+          tabItems: residentTabItems(placement, 'placement'),
+          sideNavigation: placementSideNavigation('previous-ap-stays', crn, placement.id),
+          ...tabData,
+        },
+      ])
+
+      expect(tabController).toHaveBeenCalledWith(
+        expect.objectContaining({
+          crn,
+          personService,
+          token,
+          placementId: placement.id,
+          includeCancelled: false,
+        }),
+      )
     })
 
     it('should render the Manage resident page with the correct actions for an upcoming placement', async () => {

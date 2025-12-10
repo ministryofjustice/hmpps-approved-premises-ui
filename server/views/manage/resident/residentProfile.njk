@@ -50,9 +50,11 @@
     {% endif %}
 
     <div class="govuk-grid-column-three-quarters">
-    {% if cardList %}
+      {% if sectionTemplate %}
+        {% include sectionTemplate %}
+      {% elseif cardList %}
         {% include "./partials/cardList.njk" %}
-    {% endif %}
+      {% endif %}
     </div>
     </div>
 

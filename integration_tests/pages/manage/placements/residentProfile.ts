@@ -1,11 +1,18 @@
-import { ActiveOffence, Cas1OASysGroup, Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
+import {
+  ActiveOffence,
+  Cas1OASysGroup,
+  Cas1SpaceBooking,
+  Cas1SpaceBookingShortSummary,
+  FullPerson,
+} from '@approved-premises/api'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 
+import { getResidentStatus, PlacementSubTab, ResidentProfileTab } from '../../../../server/utils/resident'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { offenceSummaryList } from '../../../../server/utils/resident/sentence'
-import { getResidentStatus, ResidentProfileTab } from '../../../../server/utils/resident'
+import { previousApStaysCards } from '../../../../server/utils/resident/placement'
 
 export default class ResidentProfilePage extends Page {
   constructor(
@@ -25,7 +32,7 @@ export default class ResidentProfilePage extends Page {
         case 'health':
           return { path: paths.resident.tabHealth(params), title: 'Health' }
         case 'placement':
-          return { path: paths.resident.tabPlacement(params), title: 'Placement' }
+          return { path: paths.resident.tabPlacement.previousApStays(params), title: 'Placement' }
         case 'risk':
           return { path: paths.resident.tabRisk(params), title: 'Risk' }
         case 'sentence':
@@ -40,6 +47,21 @@ export default class ResidentProfilePage extends Page {
 
     cy.visit(path)
     return new ResidentProfilePage(placement, title)
+  }
+
+  static visitPlacementSubTab(placement: Cas1SpaceBooking, subTab: PlacementSubTab): ResidentProfilePage {
+    const params = { crn: placement.person.crn, placementId: placement.id }
+    const path = (() => {
+      switch (subTab) {
+        case 'previous-ap-stays':
+          return paths.resident.tabPlacement.previousApStays(params)
+        default:
+          return paths.resident.tabPlacement.previousApStays(params)
+      }
+    })()
+
+    cy.visit(path)
+    return new ResidentProfilePage(placement, 'Placement')
   }
 
   static visitUnauthorised(placement: Cas1SpaceBooking): ResidentProfilePage {
@@ -84,6 +106,26 @@ export default class ResidentProfilePage extends Page {
       const blockTitle = `${questionNumber} ${groupName}`
       const question = group.answers.find(({ questionNumber: qnumber }) => qnumber === questionNumber)
       cy.contains(blockTitle).parents('.govuk-summary-card').contains(question.label)
+    })
+  }
+
+  shouldShowPlacementSideNavigation() {
+    cy.get('.moj-side-navigation').within(() => {
+      cy.get('a').contains('Previous AP stays').should('exist')
+    })
+  }
+
+  shouldShowPreviousApStaysInformation(previousStays: Array<Cas1SpaceBookingShortSummary>, currentPlacementId: string) {
+    const cards = previousApStaysCards(previousStays, currentPlacementId)
+    cy.get('.govuk-summary-card').should('have.length', cards.length)
+
+    cards.forEach(card => {
+      cy.get('.govuk-summary-card')
+        .contains('.govuk-summary-card__title', card.card.title.text)
+        .parents('.govuk-summary-card')
+        .within(() => {
+          this.shouldContainSummaryListItems(card.rows)
+        })
     })
   }
 }
