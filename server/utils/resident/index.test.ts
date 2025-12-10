@@ -17,7 +17,7 @@ describe('residentsUtils', () => {
       expect(tabs).toEqual([
         {
           active: false,
-          href: `${baseUrl}personal`,
+          href: `${baseUrl}personal/personalDetails`,
           text: 'Personal details',
         },
         {
@@ -76,11 +76,12 @@ describe('residentsUtils', () => {
   })
 
   describe('getResidentHeader', () => {
+    const placement = cas1SpaceBookingFactory.build({
+      expectedArrivalDate: '2024-11-16',
+      expectedDepartureDate: '2025-03-26',
+    })
+
     it(`should render the resident header`, () => {
-      const placement = cas1SpaceBookingFactory.build({
-        expectedArrivalDate: '2024-11-16',
-        expectedDepartureDate: '2025-03-26',
-      })
       const person = placement.person as FullPerson
       // The API currently returns capitalised strings that contradict the type.
       const retrieved = { status: 'Retrieved' } as unknown as { status: RiskEnvelopeStatus }
@@ -99,6 +100,7 @@ describe('residentsUtils', () => {
           ...personRisks.flags.value.map(label => `<span class="moj-badge badge--low">${label}</span>`),
           '<span><a href="#">+3 risk flags</a></span>',
         ],
+
         attributes: [
           [
             { title: 'CRN', description: person.crn },
@@ -113,6 +115,23 @@ describe('residentsUtils', () => {
           ],
         ],
       })
+    })
+
+    it(`should render the resident header, even if the risks cannot be retrieved`, () => {
+      const notRetrieved = { status: 'error', value: undefined } as { status: RiskEnvelopeStatus }
+      const personRisks = risksFactory.build({
+        roshRisks: notRetrieved,
+        mappa: notRetrieved,
+        flags: notRetrieved,
+      })
+      expect(getResidentHeader(placement, personRisks)).toEqual(
+        expect.objectContaining({
+          badges: [
+            '<span class="moj-badge badge--low">Unknown RoSH</span>',
+            '<span><a href="#">+3 risk flags</a></span>',
+          ],
+        }),
+      )
     })
   })
 })

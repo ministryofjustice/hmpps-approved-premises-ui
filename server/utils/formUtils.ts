@@ -175,7 +175,7 @@ export function convertKeyValuePairsToSummaryListItems<T extends object>(
   return Object.keys(values).map(key => summaryListItem(titles[key], String(values[key as keyof T])))
 }
 
-type RenderAs = keyof TextItem | keyof HtmlItem | 'textBlock' | 'date'
+export type RenderAs = keyof TextItem | keyof HtmlItem | 'textBlock' | 'date'
 
 const renderSummaryValue = (value: string, renderAs: RenderAs) => {
   switch (renderAs) {
