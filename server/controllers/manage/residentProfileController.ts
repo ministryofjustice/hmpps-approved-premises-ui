@@ -19,6 +19,7 @@ import {
   sentenceSideNavigation,
 } from '../../utils/resident/sentence'
 import { riskTabController } from '../../utils/resident/risk'
+import { personalSideNavigation, personalDetailsTabController } from '../../utils/resident/personal'
 
 export default class ResidentProfileController {
   constructor(
@@ -46,20 +47,22 @@ export default class ResidentProfileController {
       let tabData: TabData = {}
       let sideNavigation: Array<TabItem>
       const placementActions = actions(placement, user)
+      const tabParameters = { personService: this.personService, crn, token, personRisks, placement }
 
-      if (activeTab === 'sentence') {
-        sideNavigation = sentenceSideNavigation(subTab, crn, placementId)
-
-        if (subTab === 'offence') {
-          tabData = await sentenceOffencesTabController({ personService: this.personService, crn, token })
-        }
-        if (subTab === 'licence') {
-          tabData = await sentenceLicenceTabController()
-        }
-      }
-
-      if (activeTab === 'risk') {
-        tabData = await riskTabController({ personService: this.personService, crn, token, personRisks })
+      switch (activeTab) {
+        case 'personal':
+          sideNavigation = personalSideNavigation(subTab, crn, placement.id)
+          if (subTab === 'personalDetails') tabData = await personalDetailsTabController(tabParameters)
+          break
+        case 'sentence':
+          sideNavigation = sentenceSideNavigation(subTab, crn, placementId)
+          if (subTab === 'offence') tabData = await sentenceOffencesTabController(tabParameters)
+          if (subTab === 'licence') tabData = await sentenceLicenceTabController()
+          break
+        case 'risk':
+          tabData = await riskTabController(tabParameters)
+          break
+        default:
       }
 
       return res.render(`manage/resident/residentProfile`, {

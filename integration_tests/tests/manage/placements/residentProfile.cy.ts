@@ -22,6 +22,7 @@ context('ResidentProfile', () => {
 
       cy.task('stubSpaceBookingGetWithoutPremises', placement)
       cy.task('stubRiskProfile', { person: placement.person, personRisks })
+      cy.task('stubFindPerson', { person: placement.person })
 
       return {
         placement,
@@ -33,17 +34,19 @@ context('ResidentProfile', () => {
       cy.task('reset')
     })
 
-    it('should render the resident profile page on the default tab', () => {
+    it('should show the personal -> personal details tab', () => {
       GIVEN(' that I am signed in as a user with access resident profile')
       signIn(['manage_resident'])
       GIVEN('there is an existing placement')
       const { placement, personRisks } = setup()
       WHEN('I visit the resident profile page')
-      const page = ResidentProfilePage.visit(placement, personRisks, 'personal')
+      const page = ResidentProfilePage.visit(placement, personRisks)
+      page.clickLink('Personal details')
       THEN('I should see the person information in the header')
       page.checkHeader()
       AND('the Personal tab should be selected')
       page.shouldHaveActiveTab('Personal details')
+      page.shouldShowPersonalInformation(placement.person, personRisks, placement)
     })
 
     it('should show the sentence -> Offence tab', () => {
@@ -57,7 +60,9 @@ context('ResidentProfile', () => {
       signIn(['manage_resident'])
 
       WHEN('I visit the resident profile page on the sentence tab')
-      const page = ResidentProfilePage.visit(placement, personRisks, 'sentence')
+      const page = ResidentProfilePage.visit(placement, personRisks)
+      page.clickLink('Sentence')
+
       THEN('I should see the person information in the header')
       page.checkHeader()
 
@@ -81,7 +86,9 @@ context('ResidentProfile', () => {
       GIVEN(' that I am signed in as a user with access resident profile')
       signIn(['manage_resident'])
       WHEN('I visit the resident profile page on the risk tab')
-      const page = ResidentProfilePage.visit(placement, personRisks, 'risk')
+      const page = ResidentProfilePage.visit(placement, personRisks)
+      page.clickLink('Risk')
+
       THEN('I should see the person information in the header')
       page.checkHeader()
 

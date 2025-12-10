@@ -176,7 +176,7 @@ export const numberToOrdinal = (number: number | string): string =>
   ['First', 'Second', 'Third', 'Fourth', 'Fifth'][Number(number)]
 
 export const linebreaksToParagraphs = (text: string) =>
-  `<p class="govuk-body">${text
+  `<p class="govuk-body">${(text ?? '')
     .replace(/\r?\n([ \t]*\r?\n)+/g, '</p><p class="govuk-body">')
     .replace(/\r?\n/g, '<br />')}</p>`
 

@@ -130,7 +130,15 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })
-  get(paths.resident.tabPersonal.pattern, residentProfileController.show('personal'), {
+  get(
+    paths.resident.tabPersonal.personalDetails.pattern,
+    residentProfileController.show('personal', 'personalDetails'),
+    {
+      auditEvent: 'MANAGE_RESIDENT',
+      allowedPermissions: ['cas1_ap_resident_profile'],
+    },
+  )
+  get(paths.resident.tabPersonal.contacts.pattern, residentProfileController.show('personal', 'contacts'), {
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })
