@@ -1,7 +1,7 @@
-import { Cas1SpaceBooking, Cas1SpaceBookingSummary } from '@approved-premises/api'
+import { Cas1SpaceBooking, Cas1SpaceBookingStatus, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import { differenceInCalendarDays } from 'date-fns'
 
-export const overallStatusTextMap = {
+export const overallStatusTextMap: Record<Cas1SpaceBookingStatus, string> = {
   upcoming: 'Upcoming',
   arrived: 'Arrived',
   notArrived: 'Not arrived',
@@ -20,25 +20,10 @@ export const statusTextMap = {
   overdueDeparture: 'Overdue departure',
 } as const
 
-export type SpaceBookingOverallStatus = keyof typeof overallStatusTextMap
 export type SpaceBookingStatus = keyof typeof statusTextMap
 
-const isSpaceBooking = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary): placement is Cas1SpaceBooking =>
-  Boolean((placement as Cas1SpaceBooking).otherBookingsInPremisesForCrn)
-
-export const overallStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingOverallStatus => {
-  const isNonArrival = isSpaceBooking(placement) ? placement.nonArrival : placement.isNonArrival
-  const isCancelled = isSpaceBooking(placement) ? placement.cancellation : placement.isCancelled
-
-  if (isCancelled) return 'cancelled'
-  if (isNonArrival) return 'notArrived'
-  if (placement.actualDepartureDate) return 'departed'
-  if (placement.actualArrivalDate) return 'arrived'
-  return 'upcoming'
-}
-
 export const detailedStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingStatus => {
-  const status = overallStatus(placement)
+  const { status } = placement
 
   if (['notArrived', 'departed', 'cancelled'].includes(status)) return status
 

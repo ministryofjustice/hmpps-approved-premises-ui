@@ -1,5 +1,5 @@
 import { cas1SpaceBookingFactory, cas1SpaceBookingSummaryFactory } from '../../testutils/factories'
-import { detailedStatus, overallStatus } from './status'
+import { detailedStatus } from './status'
 
 describe('placement status utilities', () => {
   describe.each([
@@ -21,80 +21,78 @@ describe('placement status utilities', () => {
         label: 'an upcoming placement',
         factory: upcoming,
         params: { expectedArrivalDate: '2025-05-01' },
-        expected: { overall: 'upcoming', detailed: 'upcoming' },
+        expected: { detailed: 'upcoming' },
       },
       {
         label: 'an upcoming placement starting within 6 weeks',
         factory: upcoming,
         params: { expectedArrivalDate: '2025-04-11' },
-        expected: { overall: 'upcoming', detailed: 'arrivingWithin6Weeks' },
+        expected: { detailed: 'arrivingWithin6Weeks' },
       },
       {
         label: 'an upcoming placement starting within 2 weeks',
         factory: upcoming,
         params: { expectedArrivalDate: '2025-03-14' },
-        expected: { overall: 'upcoming', detailed: 'arrivingWithin2Weeks' },
+        expected: { detailed: 'arrivingWithin2Weeks' },
       },
       {
         label: 'an upcoming placement starting today',
         factory: upcoming,
         params: { expectedArrivalDate: '2025-03-01' },
-        expected: { overall: 'upcoming', detailed: 'arrivingToday' },
+        expected: { detailed: 'arrivingToday' },
       },
       {
         label: 'an upcoming placement overdue arrival',
         factory: upcoming,
         params: { expectedArrivalDate: '2025-02-28' },
-        expected: { overall: 'upcoming', detailed: 'overdueArrival' },
+        expected: { detailed: 'overdueArrival' },
       },
       {
         label: 'a current placement departing in more than 6 weeks',
         factory: current,
         params: { expectedDepartureDate: '2025-05-01' },
-        expected: { overall: 'arrived', detailed: 'arrived' },
+        expected: { detailed: 'arrived' },
       },
       {
         label: 'a current placement departing within 2 weeks',
         factory: current,
         params: { expectedDepartureDate: '2025-03-14' },
-        expected: { overall: 'arrived', detailed: 'departingWithin2Weeks' },
+        expected: { detailed: 'departingWithin2Weeks' },
       },
       {
         label: 'a current placement departing today',
         factory: current,
         params: { expectedDepartureDate: '2025-03-01' },
-        expected: { overall: 'arrived', detailed: 'departingToday' },
+        expected: { detailed: 'departingToday' },
       },
       {
         label: 'a current placement overdue departure',
         factory: current,
         params: { expectedDepartureDate: '2025-02-28' },
-        expected: { overall: 'arrived', detailed: 'overdueDeparture' },
+        expected: { detailed: 'overdueDeparture' },
       },
       {
         label: 'a departed placement',
         factory: departed,
         params: {},
-        expected: { overall: 'departed', detailed: 'departed' },
+        expected: { detailed: 'departed' },
       },
       {
         label: 'a non-arrived placement',
         factory: nonArrival,
         params: {},
-        expected: { overall: 'notArrived', detailed: 'notArrived' },
+        expected: { detailed: 'notArrived' },
       },
       {
         label: 'a cancelled placement',
         factory: cancelled,
         params: { expectedArrivalDate: '2025-05-01' },
-        expected: { overall: 'cancelled', detailed: 'cancelled' },
+        expected: { detailed: 'cancelled' },
       },
     ]
 
     it.each(testCases)('should return a status for $label', ({ factory, params, expected }) => {
       const placement = factory.build(params)
-
-      expect(overallStatus(placement)).toEqual(expected.overall)
       expect(detailedStatus(placement)).toEqual(expected.detailed)
     })
   })

@@ -5,6 +5,7 @@ import type {
   Cas1SpaceBookingAction,
   Cas1SpaceBookingCancellation,
   Cas1SpaceBookingNonArrival,
+  Cas1SpaceBookingStatus,
   Person,
   UserSummary,
 } from '@approved-premises/api'
@@ -23,6 +24,7 @@ import { filterOutAPTypes } from '../../utils/match'
 import cas1ChangeRequestSummary from './cas1ChangeRequestSummary'
 import { placementCriteria } from './cas1PlacementRequestDetail'
 import cas1KeyworkerAllocationFactory from './cas1KeyworkerAllocation'
+import { overallStatusTextMap } from '../../utils/placements/status'
 
 class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   upcoming() {
@@ -32,6 +34,7 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
       actualDepartureDate: undefined,
       actualDepartureTime: undefined,
       departure: undefined,
+      status: 'upcoming',
     })
   }
 
@@ -44,6 +47,7 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
       actualDepartureDate: undefined,
       actualDepartureTime: undefined,
       departure: undefined,
+      status: 'arrived',
     })
   }
 
@@ -55,6 +59,7 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
       actualDepartureTime: undefined,
       departure: undefined,
       nonArrival: cas1SpaceBookingNonArrivalFactory.build(),
+      status: 'notArrived',
     })
   }
 
@@ -69,6 +74,7 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
       departure: cas1SpaceBookingDepartureFactory.build({
         moveOnCategory: undefined,
       }),
+      status: 'departed',
     })
   }
 
@@ -96,6 +102,7 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   cancelled() {
     return this.params({
       cancellation: cas1NewSpaceBookingCancellationFactory.build(),
+      status: 'cancelled',
     })
   }
 
@@ -139,5 +146,6 @@ export default Cas1SpaceBookingFactory.define(({ params }) => {
     cancellation: undefined as Cas1SpaceBookingCancellation,
     allowedActions: [] as Array<Cas1SpaceBookingAction>,
     openChangeRequests: cas1ChangeRequestSummary.buildList(3),
+    status: faker.helpers.arrayElement(Object.keys(overallStatusTextMap)) as Cas1SpaceBookingStatus,
   }
 })

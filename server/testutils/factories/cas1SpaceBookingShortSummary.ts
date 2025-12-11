@@ -1,10 +1,14 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
-import { Cas1SpaceBookingShortSummary, Cas1SpaceCharacteristic } from '@approved-premises/api'
+import {
+  Cas1SpaceBookingShortSummary,
+  type Cas1SpaceBookingStatus,
+  Cas1SpaceCharacteristic,
+} from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 import { allSpaceBookingCharacteristicMap } from '../../utils/characteristicsUtils'
 import cas1PremisesFactory from './cas1Premises'
-import { statusTextMap } from '../../utils/placements/status'
+import { overallStatusTextMap, statusTextMap } from '../../utils/placements/status'
 import { apAreaFactory } from './referenceData'
 import cas1NewSpaceBookingCancellationFactory from './cas1NewSpaceBookingCancellation'
 
@@ -16,6 +20,7 @@ class Cas1SpaceBookingShortSummaryFactory extends Factory<Cas1SpaceBookingShortS
       actualArrivalDate: undefined,
       actualDepartureDate: undefined,
       isNonArrival: false,
+      status: 'upcoming',
     })
   }
 
@@ -29,6 +34,7 @@ class Cas1SpaceBookingShortSummaryFactory extends Factory<Cas1SpaceBookingShortS
       actualArrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
       actualDepartureDate: undefined,
       isNonArrival: false,
+      status: 'arrived',
     })
   }
 
@@ -42,12 +48,14 @@ class Cas1SpaceBookingShortSummaryFactory extends Factory<Cas1SpaceBookingShortS
       actualArrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
       actualDepartureDate: DateFormats.dateObjToIsoDate(departureDate),
       isNonArrival: false,
+      status: 'departed',
     })
   }
 
   nonArrival() {
     return this.upcoming().params({
       isNonArrival: true,
+      status: 'notArrived',
     })
   }
 
@@ -57,6 +65,7 @@ class Cas1SpaceBookingShortSummaryFactory extends Factory<Cas1SpaceBookingShortS
       actualDepartureDate: undefined,
       isNonArrival: false,
       cancellation: cas1NewSpaceBookingCancellationFactory.build(),
+      status: 'cancelled',
     })
   }
 }
@@ -83,5 +92,6 @@ export default Cas1SpaceBookingShortSummaryFactory.define(() => {
       max: 3,
     }) as Array<Cas1SpaceCharacteristic>,
     deliusEventNumber: faker.string.numeric({ length: 6 }),
+    status: faker.helpers.arrayElement(Object.keys(overallStatusTextMap)) as Cas1SpaceBookingStatus,
   }
 })
