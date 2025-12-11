@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { Cas1ChangeRequestType } from './Cas1ChangeRequestType';
 import type { Cas1KeyWorkerAllocation } from './Cas1KeyWorkerAllocation';
+import type { Cas1SpaceBookingStatus } from './Cas1SpaceBookingStatus';
 import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 import type { FullPersonSummary } from './FullPersonSummary';
 import type { NamedId } from './NamedId';
@@ -36,6 +37,7 @@ export type Cas1SpaceBookingSummary = {
      */
     plannedTransferRequested?: boolean;
     premises: NamedId;
+    status?: Cas1SpaceBookingStatus;
     tier?: string;
     transferReason?: TransferReason;
 };

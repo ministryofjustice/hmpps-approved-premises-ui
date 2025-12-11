@@ -9,7 +9,6 @@ import paths from '../../../paths/admin'
 import managePaths from '../../../paths/manage'
 import { ValidationError } from '../../../utils/errors'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
-import { overallStatus } from '../../../utils/placements/status'
 import { changePlacementLink } from '../../../utils/placementRequests/adminIdentityBar'
 
 export default class PlacementRequestsController {
@@ -58,7 +57,7 @@ export default class PlacementRequestsController {
       )
 
       const placementsToChange = placementRequest.spaceBookings.filter(placement =>
-        ['upcoming', 'arrived'].includes(overallStatus(placement)),
+        ['upcoming', 'arrived'].includes(placement.status),
       )
 
       res.render('admin/placementRequests/select-placement', {

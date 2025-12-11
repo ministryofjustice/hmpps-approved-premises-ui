@@ -21,7 +21,7 @@ import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSe
 import { characteristicsBulletList, roomCharacteristicMap } from '../characteristicsUtils'
 import { StatusTagOptions } from '../statusTag'
 import { PlacementStatusTag } from './statusTag'
-import { detailedStatus, overallStatus, statusTextMap } from './status'
+import { detailedStatus, statusTextMap } from './status'
 
 const changeRequestStatuses: Record<Cas1ChangeRequestType, string> = {
   placementAppeal: 'Appeal requested',
@@ -45,7 +45,7 @@ export const canonicalDates = (placement: Cas1SpaceBooking | Cas1SpaceBookingSum
 
 export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
   const actionList = []
-  const status = overallStatus(placement)
+  const { status } = placement
 
   if (['upcoming', 'arrived'].includes(status) && hasPermission(user, ['cas1_space_booking_record_keyworker'])) {
     actionList.push({
