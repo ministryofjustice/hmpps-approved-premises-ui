@@ -135,3 +135,20 @@ $mappa-colour: #4c2c92;
     margin-bottom: 0;
   }
 }
+
+.badge--low {
+  color:$low-score-colour;
+  border-color:$low-score-border-colour;
+}
+.badge--medium {
+  color:$medium-score-colour;
+  border-color:$medium-score-border-colour;
+}
+.badge--high {
+  color:$high-score-colour;
+  border-color:$high-score-border-colour;
+}
+.badge--very-high {
+  color:$very-high-score-colour;
+  border-color:$very-high-score-border-colour;
+}

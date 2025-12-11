@@ -30,9 +30,7 @@
             html:html
         }) }}
     {% else %}
-        {{ govukInsetText({
-            html: html
-        }) }}
+        {{ html | safe }}
     {% endif %}
 {% endfor %}
 

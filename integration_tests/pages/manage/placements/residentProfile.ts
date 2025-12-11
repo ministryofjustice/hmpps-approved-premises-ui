@@ -1,4 +1,11 @@
-import { ActiveOffence, Cas1OASysGroup, Cas1SpaceBooking, FullPerson } from '@approved-premises/api'
+import {
+  ActiveOffence,
+  Cas1OASysGroup,
+  Cas1SpaceBooking,
+  FullPerson,
+  PersonRisks,
+  RoshRisks,
+} from '@approved-premises/api'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 
@@ -10,13 +17,18 @@ import { getResidentStatus, ResidentProfileTab } from '../../../../server/utils/
 export default class ResidentProfilePage extends Page {
   constructor(
     private placement: Cas1SpaceBooking,
+    private personRisks: PersonRisks,
     title: string,
   ) {
     super(title)
     this.checkPhaseBanner()
   }
 
-  static visit(placement: Cas1SpaceBooking, tab: ResidentProfileTab = null): ResidentProfilePage {
+  static visit(
+    placement: Cas1SpaceBooking,
+    personRisks: PersonRisks,
+    tab: ResidentProfileTab = null,
+  ): ResidentProfilePage {
     const params = { crn: placement.person.crn, placementId: placement.id }
     const { path, title } = (() => {
       switch (tab) {
@@ -39,14 +51,14 @@ export default class ResidentProfilePage extends Page {
     })()
 
     cy.visit(path)
-    return new ResidentProfilePage(placement, title)
+    return new ResidentProfilePage(placement, personRisks, title)
   }
 
   static visitUnauthorised(placement: Cas1SpaceBooking): ResidentProfilePage {
     cy.visit(paths.resident.show({ crn: placement.person.crn, placementId: placement.id }), {
       failOnStatusCode: false,
     })
-    return new ResidentProfilePage(undefined, `Authorisation Error`)
+    return new ResidentProfilePage(undefined, undefined, `Authorisation Error`)
   }
 
   checkHeader() {
@@ -67,6 +79,10 @@ export default class ResidentProfilePage extends Page {
       this.shouldShowDescription('Departure', departureDate)
       this.shouldShowDescription('Status', status)
       this.shouldShowDescription('Length of stay', duration)
+      this.shouldShowBadge(`${this.personRisks.roshRisks.value.overallRisk} RoSH`)
+      this.personRisks.flags.value.forEach((flag: string) => {
+        this.shouldShowBadge(flag)
+      })
     })
   }
 
@@ -84,6 +100,20 @@ export default class ResidentProfilePage extends Page {
       const blockTitle = `${questionNumber} ${groupName}`
       const question = group.answers.find(({ questionNumber: qnumber }) => qnumber === questionNumber)
       cy.contains(blockTitle).parents('.govuk-summary-card').contains(question.label)
+    })
+  }
+
+  shouldShowRoshWidget(risks: RoshRisks) {
+    const mapText = (text: string) => (text === 'Very High' ? 'Very high' : text)
+
+    cy.get('.rosh-widget').within(() => {
+      cy.contains(`Last updated: ${DateFormats.isoDateToUIDate(risks.lastUpdated)}`)
+      this.shouldContainTableRows([
+        [{ text: 'Children' }, { text: mapText(risks.riskToChildren) }],
+        [{ text: 'Public' }, { text: mapText(risks.riskToPublic) }],
+        [{ text: 'Known adult' }, { text: mapText(risks.riskToKnownAdult) }],
+        [{ text: 'Staff' }, { text: mapText(risks.riskToStaff) }],
+      ])
     })
   }
 }

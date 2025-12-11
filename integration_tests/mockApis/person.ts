@@ -198,6 +198,19 @@ export default {
       },
     }),
 
+  stubRiskProfile: (args: { person: Person; personRisks: PersonRisks }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPath: paths.people.riskProfile({ crn: args.person.crn }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.personRisks,
+      },
+    }),
+
   stubPersonDocument: (args: { person: Person; document: Document }) =>
     stubFor({
       request: {

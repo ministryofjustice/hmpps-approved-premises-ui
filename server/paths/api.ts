@@ -174,6 +174,7 @@ export default {
       answers: cas1Oasys.path('answers'),
     },
     timeline: cas1Person.path('timeline'),
+    riskProfile: cas1Person.path('risk-profile'),
   },
   users: {
     index: cas1Users,

@@ -3,7 +3,7 @@ import { TabItem } from '@approved-premises/ui'
 import { PersonService, PlacementService } from '../../services'
 import paths from '../../paths/manage'
 
-import { actions, placementKeyDetails } from '../../utils/placements'
+import { actions } from '../../utils/placements'
 import {
   ResidentProfileSubTab,
   ResidentProfileTab,
@@ -32,8 +32,13 @@ export default class ResidentProfileController {
         params: { crn, placementId },
         user: { token },
       } = req
+
       const { user } = res.locals
-      const placement = await this.placementService.getPlacement(req.user.token, placementId)
+
+      const [placement, personRisks] = await Promise.all([
+        this.placementService.getPlacement(token, placementId),
+        this.personService.riskProfile(token, crn),
+      ])
       const tabItems = residentTabItems(placement, activeTab)
 
       const pageHeading = tabLabels[activeTab].label
@@ -54,18 +59,17 @@ export default class ResidentProfileController {
       }
 
       if (activeTab === 'risk') {
-        tabData = await riskTabController({ personService: this.personService, crn, token })
+        tabData = await riskTabController({ personService: this.personService, crn, token, personRisks })
       }
 
       return res.render(`manage/resident/residentProfile`, {
-        contextKeyDetails: placementKeyDetails(placement),
         crn,
         placement,
         pageHeading,
         user,
         backLink: paths.premises.show({ premisesId: placement.premises.id }),
         tabItems,
-        resident: getResidentHeader(placement),
+        resident: getResidentHeader(placement, personRisks),
         actions: placementActions ? placementActions[0].items : [],
         activeTab,
         sideNavigation,

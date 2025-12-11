@@ -907,4 +907,8 @@ export default class Page {
   shouldShowDescription(term: string, description: string) {
     cy.get('dt').contains(term).siblings('dd').should('contain', description)
   }
+
+  shouldShowBadge(label: string) {
+    cy.get('.moj-badge').contains(label)
+  }
 }
