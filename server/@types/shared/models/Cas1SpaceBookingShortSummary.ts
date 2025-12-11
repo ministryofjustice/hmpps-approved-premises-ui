@@ -7,6 +7,7 @@ import type { Cas1KeyWorkerAllocation } from './Cas1KeyWorkerAllocation';
 import type { Cas1SpaceBookingCancellation } from './Cas1SpaceBookingCancellation';
 import type { Cas1SpaceBookingDeparture } from './Cas1SpaceBookingDeparture';
 import type { Cas1SpaceBookingNonArrival } from './Cas1SpaceBookingNonArrival';
+import type { Cas1SpaceBookingStatus } from './Cas1SpaceBookingStatus';
 import type { Cas1SpaceCharacteristic } from './Cas1SpaceCharacteristic';
 import type { NamedId } from './NamedId';
 import type { TemporaryAccommodationUser } from './TemporaryAccommodationUser';
@@ -29,6 +30,7 @@ export type Cas1SpaceBookingShortSummary = {
     keyWorkerAllocation?: Cas1KeyWorkerAllocation;
     nonArrival?: Cas1SpaceBookingNonArrival;
     premises: NamedId;
+    status?: Cas1SpaceBookingStatus;
     transferReason?: TransferReason;
 };
 

@@ -135,6 +135,7 @@ export type { Cas1SpaceBookingDeparture } from './models/Cas1SpaceBookingDepartu
 export type { Cas1SpaceBookingNonArrival } from './models/Cas1SpaceBookingNonArrival';
 export type { Cas1SpaceBookingResidency } from './models/Cas1SpaceBookingResidency';
 export type { Cas1SpaceBookingShortSummary } from './models/Cas1SpaceBookingShortSummary';
+export type { Cas1SpaceBookingStatus } from './models/Cas1SpaceBookingStatus';
 export type { Cas1SpaceBookingSummary } from './models/Cas1SpaceBookingSummary';
 export type { Cas1SpaceBookingSummarySortField } from './models/Cas1SpaceBookingSummarySortField';
 export type { Cas1SpaceCharacteristic } from './models/Cas1SpaceCharacteristic';
