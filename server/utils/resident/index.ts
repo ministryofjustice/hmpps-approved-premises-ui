@@ -8,7 +8,14 @@ import { canonicalDates } from '../placements'
 import PersonService from '../../services/personService'
 
 export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'enforcement'
-export type ResidentProfileSubTab = 'offence' | 'licence' | 'orders' | 'parole' | 'prison'
+export type ResidentProfileSubTab =
+  | 'offence'
+  | 'licence'
+  | 'orders'
+  | 'parole'
+  | 'prison'
+  | 'personalDetails'
+  | 'contacts'
 
 export type ResidentHeader = {
   name: string
@@ -45,7 +52,7 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
     const pathParams = { placementId: placement.id, crn: placement.person.crn }
     switch (tab) {
       case 'personal':
-        return pathRoot.tabPersonal(pathParams)
+        return pathRoot.tabPersonal.personalDetails(pathParams)
       case 'health':
         return pathRoot.tabHealth(pathParams)
       case 'placement':
@@ -81,20 +88,19 @@ export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: Pers
   const { arrivalDate, departureDate } = canonicalDates(placement)
 
   const {
-    roshRisks: {
-      status: roshStatus,
-      value: { overallRisk: roshRisk },
-    },
+    roshRisks: { status: roshStatus, value: roshValue },
     mappa: { status: mappaStatus, value: mappaValue },
     flags: { status: flagsStatus, value: flags },
   } = personRisks
+  const roshRisk = roshValue?.overallRisk
+
   const badges: Array<string> = [
     getBadge(
-      `${isRetrieved(roshStatus) ? roshRisk : 'Unknown'} RoSH`,
+      `${isRetrieved(roshStatus) && roshRisk ? roshRisk : 'Unknown'} RoSH`,
       isRetrieved(roshStatus) && badgeColours[roshRisk],
     ),
     isRetrieved(mappaStatus) && getBadge(`${mappaValue?.level} MAPPA`, ''),
-    ...(isRetrieved(flagsStatus) ? flags.map(flag => getBadge(flag, '')) : []),
+    ...(isRetrieved(flagsStatus) && flags ? flags.map(flag => getBadge(flag, '')) : []),
   ].filter(Boolean)
 
   return {

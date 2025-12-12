@@ -12,6 +12,7 @@ import { cas1SpaceBookingFactory, risksFactory } from '../../testutils/factories
 import { TabData, card, getResidentHeader, ResidentProfileTab, residentTabItems, tabLabels } from '../../utils/resident'
 import * as riskTabUtils from '../../utils/resident/risk'
 import * as sentenceTabUtils from '../../utils/resident/sentence'
+import * as personalTabUtils from '../../utils/resident/personal'
 
 describe('residentProfileController', () => {
   const token = 'TEST_TOKEN'
@@ -36,9 +37,19 @@ describe('residentProfileController', () => {
       user: { token },
       params: { crn, placementId: placement.id },
     })
+
     return { placement, personRisks, request, response }
   }
 
+  const tabData: TabData = {
+    subHeading: faker.word.words({ count: 2 }),
+    cardList: [
+      card({
+        title: faker.word.words({ count: { min: 1, max: 3 } }),
+        html: faker.lorem.words({ min: 10, max: 50 }),
+      }),
+    ],
+  }
   const renderParameters = (placement: Cas1SpaceBooking, personRisks: PersonRisks, tab: ResidentProfileTab) => ({
     placement,
     backLink: paths.premises.show({ premisesId: placement.premises.id }),
@@ -53,32 +64,31 @@ describe('residentProfileController', () => {
 
   describe('show', () => {
     beforeEach(() => {
-      jest.resetAllMocks()
+      jest.restoreAllMocks()
     })
 
-    it('should render the Manage resident page on default tab', async () => {
+    it('should render the Manage resident page on the personal -> personal details tab', async () => {
       const { request, response, placement, personRisks } = setUp()
 
-      await residentProfileController.show()(request, response, next)
+      const tabController = jest.spyOn(personalTabUtils, 'personalDetailsTabController').mockResolvedValue(tabData)
+
+      await residentProfileController.show('personal', 'personalDetails')(request, response, next)
 
       expect(response.render.mock.calls[0]).toEqual([
         'manage/resident/residentProfile',
-        { ...renderParameters(placement, personRisks, 'personal') },
+        {
+          ...renderParameters(placement, personRisks, 'personal'),
+          sideNavigation: personalTabUtils.personalSideNavigation('personalDetails', crn, placement.id),
+          ...tabData,
+        },
       ])
+
+      expect(tabController).toBeCalledWith({ crn, personRisks, personService, token, placement })
     })
 
     it('should render the Sentence -> Offence tab', async () => {
       const { request, response, placement, personRisks } = setUp()
 
-      const tabData: TabData = {
-        subHeading: 'OASys risks',
-        cardList: [
-          card({
-            title: faker.word.words({ count: { min: 1, max: 3 } }),
-            html: faker.lorem.words({ min: 10, max: 50 }),
-          }),
-        ],
-      }
       const tabController = jest.spyOn(sentenceTabUtils, 'sentenceOffencesTabController').mockResolvedValue(tabData)
 
       await residentProfileController.show('sentence', 'offence')(request, response, next)
@@ -94,22 +104,13 @@ describe('residentProfileController', () => {
         },
       ])
 
-      expect(tabController).toHaveBeenCalledWith({ crn, personService, token })
+      expect(tabController).toHaveBeenCalledWith({ crn, personRisks, personService, token, placement })
 
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
     })
 
     it('should render the Risk tab', async () => {
       const { request, response, placement, personRisks } = setUp()
-      const tabData: TabData = {
-        subHeading: 'OASys risks',
-        cardList: [
-          card({
-            title: faker.word.words({ count: { min: 1, max: 3 } }),
-            html: faker.lorem.words({ min: 10, max: 50 }),
-          }),
-        ],
-      }
 
       const tabController = jest.spyOn(riskTabUtils, 'riskTabController').mockResolvedValue(tabData)
 

@@ -192,7 +192,7 @@ export const placementTableRows = (
     const { id, person, tier, keyWorkerAllocation } = placement
     const { arrivalDate, departureDate } = canonicalDates(placement)
     const link = residentLink
-      ? managePaths.resident.tabPersonal({ crn: person.crn, placementId: id })
+      ? managePaths.resident.tabPersonal.personalDetails({ crn: person.crn, placementId: id })
       : managePaths.premises.placements.show({
           premisesId,
           placementId: id,
