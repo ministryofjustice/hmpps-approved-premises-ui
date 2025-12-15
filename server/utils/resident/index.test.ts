@@ -103,7 +103,6 @@ describe('residentsUtils', () => {
           '<span class="moj-badge badge--very-high">Very High RoSH</span>',
           '<span class="moj-badge badge--low">CAT 2 / LEVEL 1 MAPPA</span>',
           ...personRisks.flags.value.map(label => `<span class="moj-badge badge--low">${label}</span>`),
-          '<span><a href="#">+3 risk flags</a></span>',
         ],
 
         attributes: [
@@ -131,10 +130,7 @@ describe('residentsUtils', () => {
       })
       expect(getResidentHeader(placement, personRisks)).toEqual(
         expect.objectContaining({
-          badges: [
-            '<span class="moj-badge badge--low">Unknown RoSH</span>',
-            '<span><a href="#">+3 risk flags</a></span>',
-          ],
+          badges: ['<span class="moj-badge badge--low">Unknown RoSH</span>'],
         }),
       )
     })
