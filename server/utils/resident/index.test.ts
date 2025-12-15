@@ -9,6 +9,10 @@ import { DateFormats } from '../dateUtils'
 jest.mock('nunjucks')
 
 describe('residentsUtils', () => {
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
   describe('residentTabItems', () => {
     it('Should generate a list of tab items', () => {
       const placement = cas1SpaceBookingFactory.build()
@@ -77,7 +81,9 @@ describe('residentsUtils', () => {
 
   describe('getResidentHeader', () => {
     it(`should render the resident header`, () => {
-      const placement = cas1SpaceBookingFactory.build({
+      jest.useFakeTimers().setSystemTime(new Date('2025-12-15'))
+
+      const placement = cas1SpaceBookingFactory.upcoming().build({
         expectedArrivalDate: '2024-11-16',
         expectedDepartureDate: '2025-03-26',
       })
