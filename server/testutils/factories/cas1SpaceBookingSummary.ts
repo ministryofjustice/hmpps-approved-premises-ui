@@ -2,6 +2,7 @@ import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker'
 import {
   Cas1ChangeRequestType,
+  type Cas1SpaceBookingStatus,
   Cas1SpaceBookingSummary,
   Cas1SpaceCharacteristic,
   PersonSummary,
@@ -12,7 +13,7 @@ import { DateFormats } from '../../utils/dateUtils'
 import cas1KeyworkerAllocationFactory from './cas1KeyworkerAllocation'
 import { allSpaceBookingCharacteristicMap } from '../../utils/characteristicsUtils'
 import cas1PremisesFactory from './cas1Premises'
-import { statusTextMap } from '../../utils/placements/status'
+import { overallStatusTextMap, statusTextMap } from '../../utils/placements/status'
 import { newPlacementReasons } from '../../utils/match'
 
 const arrivedStatuses = ['arrived', 'departingWithin2Weeks', 'departed', 'departingToday', 'overdueDeparture']
@@ -23,6 +24,7 @@ class Cas1SpaceBookingSummaryFactory extends Factory<Cas1SpaceBookingSummary> {
       actualArrivalDate: undefined,
       actualDepartureDate: undefined,
       isNonArrival: false,
+      status: 'upcoming',
     })
   }
 
@@ -36,6 +38,7 @@ class Cas1SpaceBookingSummaryFactory extends Factory<Cas1SpaceBookingSummary> {
       actualArrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
       actualDepartureDate: undefined,
       isNonArrival: false,
+      status: 'arrived',
     })
   }
 
@@ -49,12 +52,14 @@ class Cas1SpaceBookingSummaryFactory extends Factory<Cas1SpaceBookingSummary> {
       actualArrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
       actualDepartureDate: DateFormats.dateObjToIsoDate(departureDate),
       isNonArrival: false,
+      status: 'departed',
     })
   }
 
   nonArrival() {
     return this.upcoming().params({
       isNonArrival: true,
+      status: 'notArrived',
     })
   }
 
@@ -64,6 +69,7 @@ class Cas1SpaceBookingSummaryFactory extends Factory<Cas1SpaceBookingSummary> {
       actualDepartureDate: undefined,
       isNonArrival: false,
       isCancelled: true,
+      status: 'cancelled',
     })
   }
 }
@@ -101,5 +107,6 @@ export default Cas1SpaceBookingSummaryFactory.define(() => {
     openChangeRequestTypes: [] as Array<Cas1ChangeRequestType>,
     transferReason: faker.helpers.arrayElement(Object.keys(newPlacementReasons)) as TransferReason,
     additionalInformation: faker.lorem.words(50),
+    status: faker.helpers.arrayElement(Object.keys(overallStatusTextMap)) as Cas1SpaceBookingStatus,
   }
 })

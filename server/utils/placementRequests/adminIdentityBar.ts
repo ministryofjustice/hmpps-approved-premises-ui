@@ -6,7 +6,6 @@ import managePaths from '../../paths/manage'
 import matchPaths from '../../paths/match'
 import applyPaths from '../../paths/apply'
 import { hasPermission } from '../users'
-import { overallStatus } from '../placements/status'
 
 export const adminIdentityBar = (placementRequest: Cas1PlacementRequestDetail, user: UserDetails): IdentityBar => {
   const identityBar: IdentityBar = {
@@ -23,7 +22,7 @@ export const adminIdentityBar = (placementRequest: Cas1PlacementRequestDetail, u
 
 export const changePlacementLink = (placementRequest: Cas1PlacementRequestDetail) => {
   const changeablePlacements = placementRequest.spaceBookings.filter(placement =>
-    ['upcoming', 'arrived'].includes(overallStatus(placement)),
+    ['upcoming', 'arrived'].includes(placement.status),
   )
 
   if (changeablePlacements.length > 1) {
