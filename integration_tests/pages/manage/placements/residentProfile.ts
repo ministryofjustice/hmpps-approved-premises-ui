@@ -3,6 +3,7 @@ import {
   Cas1OASysGroup,
   Cas1SpaceBooking,
   FullPerson,
+  Person,
   PersonRisks,
   RoshRisks,
 } from '@approved-premises/api'
@@ -12,7 +13,8 @@ import paths from '../../../../server/paths/manage'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { offenceSummaryList } from '../../../../server/utils/resident/sentence'
-import { getResidentStatus, ResidentProfileTab } from '../../../../server/utils/resident'
+import { getResidentStatus } from '../../../../server/utils/resident'
+import { personDetailsCardList } from '../../../../server/utils/resident/personal'
 
 export default class ResidentProfilePage extends Page {
   constructor(
@@ -24,38 +26,13 @@ export default class ResidentProfilePage extends Page {
     this.checkPhaseBanner()
   }
 
-  static visit(
-    placement: Cas1SpaceBooking,
-    personRisks: PersonRisks,
-    tab: ResidentProfileTab = null,
-  ): ResidentProfilePage {
-    const params = { crn: placement.person.crn, placementId: placement.id }
-    const { path, title } = (() => {
-      switch (tab) {
-        case 'personal':
-          return { path: paths.resident.tabPersonal(params), title: 'Personal' }
-        case 'health':
-          return { path: paths.resident.tabHealth(params), title: 'Health' }
-        case 'placement':
-          return { path: paths.resident.tabPlacement(params), title: 'Placement' }
-        case 'risk':
-          return { path: paths.resident.tabRisk(params), title: 'Risk' }
-        case 'sentence':
-          return { path: paths.resident.tabSentence.offence(params), title: 'Sentence' }
-        case 'enforcement':
-          return { path: paths.resident.tabEnforcement(params), title: 'Enforcement' }
-
-        default:
-          return { path: paths.resident.show(params), title: 'Personal' }
-      }
-    })()
-
-    cy.visit(path)
-    return new ResidentProfilePage(placement, personRisks, title)
+  static visit(placement: Cas1SpaceBooking, personRisks: PersonRisks): ResidentProfilePage {
+    cy.visit(paths.resident.tabPersonal.personalDetails({ crn: placement.person.crn, placementId: placement.id }))
+    return new ResidentProfilePage(placement, personRisks, 'Personal')
   }
 
   static visitUnauthorised(placement: Cas1SpaceBooking): ResidentProfilePage {
-    cy.visit(paths.resident.show({ crn: placement.person.crn, placementId: placement.id }), {
+    cy.visit(paths.resident.tabPersonal.personalDetails({ crn: placement.person.crn, placementId: placement.id }), {
       failOnStatusCode: false,
     })
     return new ResidentProfilePage(undefined, undefined, `Authorisation Error`)
@@ -93,6 +70,18 @@ export default class ResidentProfilePage extends Page {
     expected.splice(5, 1)
 
     this.shouldContainSummaryListItems(expected)
+  }
+
+  shouldShowPersonalInformation(person: Person, personRisks: PersonRisks, placement: Cas1SpaceBooking) {
+    const cards = personDetailsCardList(person as FullPerson, personRisks, placement)
+    cards.forEach(card => {
+      cy.get('.govuk-summary-card__title')
+        .contains(card.card.title.text)
+        .parents('.govuk-summary-card')
+        .within(() => {
+          this.shouldContainSummaryListItems(card.rows)
+        })
+    })
   }
 
   shouldShowCards(numbers: Array<string>, group: Cas1OASysGroup, groupName: string) {

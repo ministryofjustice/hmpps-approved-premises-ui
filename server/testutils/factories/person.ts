@@ -18,11 +18,14 @@ export const fullPersonFactory = Factory.define<FullPerson>(() => ({
   sex: faker.helpers.arrayElement(['Male', 'Female', 'Other', 'Prefer not to say']),
   status: faker.helpers.arrayElement(['InCustody', 'InCommunity']),
   nomsNumber: `NOMS${faker.number.int({ min: 100, max: 999 })}`,
+  pncNumber: `${faker.number.int({ min: 1000, max: 9999 })}/${faker.number.int({ min: 10000, max: 99999 })}A`,
   nationality: faker.location.country(),
   religionOrBelief: faker.helpers.arrayElement(['Christian', 'Muslim', 'Jewish', 'Hindu', 'Buddhist', 'Sikh', 'None']),
   prisonName: `HMP ${faker.location.street()}`,
   type: 'FullPerson',
   isRestricted: false,
+  ethnicity: faker.helpers.arrayElement(['White', 'Black', 'Asian', 'Mixed', undefined]),
+  genderIdentity: faker.helpers.arrayElement(['Man', 'Woman', undefined]),
 }))
 
 export const restrictedPersonFactory = Factory.define<RestrictedPerson>(() => ({

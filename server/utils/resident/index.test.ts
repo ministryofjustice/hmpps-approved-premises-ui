@@ -5,6 +5,7 @@ import { card, detailsBody, getResidentHeader, residentTabItems } from './index'
 import { cas1SpaceBookingFactory, risksFactory } from '../../testutils/factories'
 import { canonicalDates } from '../placements'
 import { DateFormats } from '../dateUtils'
+import { detailedStatus, statusTextMap } from '../placements/status'
 
 jest.mock('nunjucks')
 
@@ -21,7 +22,7 @@ describe('residentsUtils', () => {
       expect(tabs).toEqual([
         {
           active: false,
-          href: `${baseUrl}personal`,
+          href: `${baseUrl}personal/personalDetails`,
           text: 'Personal details',
         },
         {
@@ -80,13 +81,12 @@ describe('residentsUtils', () => {
   })
 
   describe('getResidentHeader', () => {
-    it(`should render the resident header`, () => {
-      jest.useFakeTimers().setSystemTime(new Date('2025-12-15'))
+    const placement = cas1SpaceBookingFactory.upcoming().build({
+      expectedArrivalDate: '2024-11-16',
+      expectedDepartureDate: '2025-03-26',
+    })
 
-      const placement = cas1SpaceBookingFactory.upcoming().build({
-        expectedArrivalDate: '2024-11-16',
-        expectedDepartureDate: '2025-03-26',
-      })
+    it(`should render the resident header`, () => {
       const person = placement.person as FullPerson
       // The API currently returns capitalised strings that contradict the type.
       const retrieved = { status: 'Retrieved' } as unknown as { status: RiskEnvelopeStatus }
@@ -105,6 +105,7 @@ describe('residentsUtils', () => {
           ...personRisks.flags.value.map(label => `<span class="moj-badge badge--low">${label}</span>`),
           '<span><a href="#">+3 risk flags</a></span>',
         ],
+
         attributes: [
           [
             { title: 'CRN', description: person.crn },
@@ -114,11 +115,28 @@ describe('residentsUtils', () => {
           [
             { title: 'Arrival', description: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) },
             { title: 'Departure', description: DateFormats.isoDateToUIDate(departureDate, { format: 'short' }) },
-            { title: 'Status', description: 'Overdue arrival' },
+            { title: 'Status', description: statusTextMap[detailedStatus(placement)] },
             { title: 'Length of stay', description: '18 weeks 4 days' },
           ],
         ],
       })
+    })
+
+    it(`should render the resident header, even if the risks cannot be retrieved`, () => {
+      const notRetrieved = { status: 'error', value: undefined } as { status: RiskEnvelopeStatus }
+      const personRisks = risksFactory.build({
+        roshRisks: notRetrieved,
+        mappa: notRetrieved,
+        flags: notRetrieved,
+      })
+      expect(getResidentHeader(placement, personRisks)).toEqual(
+        expect.objectContaining({
+          badges: [
+            '<span class="moj-badge badge--low">Unknown RoSH</span>',
+            '<span><a href="#">+3 risk flags</a></span>',
+          ],
+        }),
+      )
     })
   })
 })
