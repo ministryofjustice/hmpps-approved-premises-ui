@@ -129,24 +129,14 @@ describe('residentProfileController', () => {
     })
 
     it('should render the placement details tab', async () => {
-      const { request, response, placement } = setUp()
-
-      const tabData: TabData = {
-        subHeading: 'Placement details',
-        cardList: [
-          card({
-            title: faker.word.words({ count: { min: 1, max: 3 } }),
-            html: faker.lorem.words({ min: 10, max: 50 }),
-          }),
-        ],
-      }
+      const { request, response, placement, personRisks } = setUp()
 
       const detailsController = jest.spyOn(placementTabUtils, 'placementTabController').mockReturnValue(tabData)
 
       await residentProfileController.show('placement')(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/resident/residentProfile', {
-        ...renderParameters(placement, 'placement'),
+        ...renderParameters(placement, personRisks, 'placement'),
         ...tabData,
       })
 

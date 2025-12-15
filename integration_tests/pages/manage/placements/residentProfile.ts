@@ -13,8 +13,9 @@ import paths from '../../../../server/paths/manage'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { offenceSummaryList } from '../../../../server/utils/resident/sentence'
-import { getResidentStatus, ResidentProfileTab } from '../../../../server/utils/resident'
+import { getResidentStatus } from '../../../../server/utils/resident'
 import { placementDetailsCards } from '../../../../server/utils/resident/placement'
+import { personDetailsCardList } from '../../../../server/utils/resident/personal'
 
 export default class ResidentProfilePage extends Page {
   constructor(
@@ -103,7 +104,7 @@ export default class ResidentProfilePage extends Page {
         .parents('.govuk-summary-card')
         .within(() => {
           this.shouldContainSummaryListItems(rows)
-      })
+        })
     })
   }
 

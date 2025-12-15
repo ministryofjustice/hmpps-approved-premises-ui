@@ -111,11 +111,12 @@ context('ResidentProfile', () => {
     })
 
     it('should show the placement tab', () => {
-      const { placement } = setup()
+      const { placement, personRisks } = setup()
       GIVEN(' that I am signed in as a user with access resident profile')
       signIn(['manage_resident'])
       WHEN('I visit the resident profile page on the placement tab')
-      const page = ResidentProfilePage.visit(placement, 'placement')
+      const page = ResidentProfilePage.visit(placement, personRisks)
+      page.clickLink('Placement')
       THEN('I should see the person information in the header')
       page.checkHeader()
 
