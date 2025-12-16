@@ -7,8 +7,8 @@
 <h2 class="govuk-heading-m">{{ subHeading }}</h2>
 
 {% for card in cardList %}
-    {% if card.rows %}
-        {% set html %}
+    {% set html %}
+        {% if card.rows %}
             {{ govukSummaryList({
                 rows: card.rows
             }) }}
@@ -19,18 +19,16 @@
                     </p>
                 {% endfor %}
             {% endif %}
-        {% endset %}
-    {% endif %}
+        {% endif %}
 
-    {% if card.table %}
-        {% set html %}
+        {% if card.table %}
             {{ sortableTable(card.table) }}
-        {% endset %}
-    {% endif %}
+        {% endif %}
 
-    {% if card.html %}
-        {% set html=card.html %}
-    {% endif %}
+        {% if card.html %}
+            {{ card.html | safe }}
+        {% endif %}
+    {% endset %}
 
     {% if card.card.title %}
         {{ summaryCard({
