@@ -2,6 +2,7 @@
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "partials/summaryCard.njk" import summaryCard %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "components/sortableTable/macro.njk" import sortableTable %}
 
 <h2 class="govuk-heading-m">{{ subHeading }}</h2>
 
@@ -20,9 +21,17 @@
             {% endif %}
         {% endset %}
     {% endif %}
+
+    {% if card.table %}
+        {% set html %}
+            {{ sortableTable(card.table) }}
+        {% endset %}
+    {% endif %}
+
     {% if card.html %}
         {% set html=card.html %}
     {% endif %}
+
     {% if card.card.title %}
         {{ summaryCard({
             title: card.card.title,

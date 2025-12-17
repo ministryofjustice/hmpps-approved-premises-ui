@@ -1,19 +1,26 @@
 import { render } from 'nunjucks'
-import { Cas1OASysGroup } from '@approved-premises/api'
+import { Adjudication, Cas1OASysGroup } from '@approved-premises/api'
 import { createMock } from '@golevelup/ts-jest'
 import { ResidentProfileSubTab } from './index'
 import {
   licenseCards,
   offencesCards,
   offenceSummaryList,
+  sentencePrisonTabController,
   sentenceSideNavigation,
   sentenceSummaryList,
 } from './sentence'
 import * as sentenceFns from './sentence'
-import { activeOffenceFactory, cas1OasysGroupFactory, cas1SpaceBookingFactory } from '../../testutils/factories'
+import {
+  activeOffenceFactory,
+  adjudicationFactory,
+  cas1OasysGroupFactory,
+  cas1SpaceBookingFactory,
+} from '../../testutils/factories'
 import { bulletList } from '../formUtils'
 import { DateFormats } from '../dateUtils'
 import { PersonService } from '../../services'
+import { sentenceCase } from '../utils'
 
 const personService = createMock<PersonService>({})
 
@@ -221,6 +228,68 @@ describe('sentence', () => {
         subHeading: 'Licence',
         cardList: licenseCards(),
       })
+    })
+  })
+
+  describe('prisonCards', () => {
+    it('should render the adjutcations table rows', () => {
+      const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
+
+      expect(sentenceFns.adjudicationRows(adjudications)).toEqual([
+        [
+          { text: DateFormats.isoDateToUIDate(adjudications[0].reportedAt) },
+          { text: adjudications[0].offenceDescription },
+          { text: sentenceCase(adjudications[0].finding) },
+          { text: 'TBA' },
+        ],
+        [
+          { text: DateFormats.isoDateToUIDate(adjudications[1].reportedAt) },
+          { text: adjudications[1].offenceDescription },
+          { text: sentenceCase(adjudications[1].finding) },
+          { text: 'TBA' },
+        ],
+      ])
+    })
+
+    it('should render the card list for the prison tab', () => {
+      const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
+      jest.spyOn(sentenceFns, 'adjudicationRows').mockReturnValue([])
+
+      const result = sentenceFns.prisonCards(adjudications)
+
+      expect(result).toEqual([
+        {
+          card: { title: { text: 'Prison details' } },
+          rows: [{ key: { text: 'Prison name' }, value: { text: 'TBA' } }],
+        },
+        {
+          card: { title: { text: 'Cell Sharing Risk Assessment (CRSA)' } },
+          rows: [{ key: { text: 'Type' }, value: { text: 'TBA' } }],
+        },
+        {
+          card: { title: { text: 'Adjudications' } },
+          table: {
+            head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }, { text: 'Sanction' }],
+            rows: [],
+          },
+        },
+      ])
+      expect(sentenceFns.adjudicationRows).toHaveBeenCalledWith(adjudications)
+    })
+  })
+
+  describe('sentencePrisonTabController', () => {
+    it('should call the sentencePrisonTabController', async () => {
+      const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
+      jest.spyOn(sentenceFns, 'prisonCards').mockReturnValue([])
+      personService.getAdjudications.mockResolvedValue(adjudications)
+
+      expect(await sentencePrisonTabController({ personService, token, crn })).toEqual({
+        cardList: [],
+        subHeading: 'Prison',
+      })
+      expect(sentenceFns.prisonCards).toHaveBeenCalledWith(adjudications)
+      expect(personService.getAdjudications).toHaveBeenCalledWith(token, crn)
     })
   })
 })

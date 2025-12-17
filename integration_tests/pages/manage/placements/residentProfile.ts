@@ -1,5 +1,6 @@
 import {
   ActiveOffence,
+  Adjudication,
   Cas1OASysGroup,
   Cas1SpaceBooking,
   FullPerson,
@@ -12,7 +13,7 @@ import paths from '../../../../server/paths/manage'
 
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
-import { offenceSummaryList } from '../../../../server/utils/resident/sentence'
+import { adjudicationRows, offenceSummaryList } from '../../../../server/utils/resident/sentence'
 import { getResidentStatus } from '../../../../server/utils/resident'
 import { personDetailsCardList } from '../../../../server/utils/resident/personal'
 
@@ -70,6 +71,18 @@ export default class ResidentProfilePage extends Page {
     expected.splice(5, 1)
 
     this.shouldContainSummaryListItems(expected)
+  }
+
+  shouldShowPrisonInformation(adjudications: Array<Adjudication>) {
+    cy.get('.govuk-summary-card__title').contains('Prison details').should('exist')
+    cy.get('.govuk-summary-card__title').contains('Cell Sharing Risk Assessment (CRSA)').should('exist')
+    cy.get('.govuk-summary-card__title')
+      .contains('Adjudications')
+      .parents('.govuk-summary-card')
+      .within(() => {
+        this.shouldContainTableColumns(['Date created', 'Description', 'Outcome', 'Sanction'])
+        this.shouldContainTableRows(adjudicationRows(adjudications))
+      })
   }
 
   shouldShowPersonalInformation(person: Person, personRisks: PersonRisks, placement: Cas1SpaceBooking) {
