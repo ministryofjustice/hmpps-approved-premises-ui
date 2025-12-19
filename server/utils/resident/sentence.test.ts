@@ -1,19 +1,26 @@
 import { render } from 'nunjucks'
-import { Cas1OASysGroup } from '@approved-premises/api'
+import { Adjudication, Cas1OASysGroup } from '@approved-premises/api'
 import { createMock } from '@golevelup/ts-jest'
 import { ResidentProfileSubTab } from './index'
 import {
   licenseCards,
-  offencesCards,
-  offenceSummaryList,
+  offenceCards,
+  sentencePrisonTabController,
   sentenceSideNavigation,
   sentenceSummaryList,
+  additionalOffencesRows,
+  offencesTabCards,
 } from './sentence'
 import * as sentenceFns from './sentence'
-import { activeOffenceFactory, cas1OasysGroupFactory, cas1SpaceBookingFactory } from '../../testutils/factories'
-import { bulletList } from '../formUtils'
+import {
+  activeOffenceFactory,
+  adjudicationFactory,
+  cas1OasysGroupFactory,
+  cas1SpaceBookingFactory,
+} from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
 import { PersonService } from '../../services'
+import { sentenceCase } from '../utils'
 
 const personService = createMock<PersonService>({})
 
@@ -23,16 +30,20 @@ const crn = 'S123456'
 const token = 'token'
 
 describe('sentence', () => {
-  const offences = activeOffenceFactory.buildList(2)
+  const offences = [
+    ...activeOffenceFactory.buildList(5, { mainOffence: false }),
+    activeOffenceFactory.build({ mainOffence: true }),
+  ]
   const oasysAnswers = cas1OasysGroupFactory.offenceDetails().build()
   oasysAnswers.answers[0].questionNumber = '2.1'
   oasysAnswers.answers[1].questionNumber = '2.12'
 
-  const indexOffence = offences[0]
+  const indexOffence = offences[5]
+
   const oasysUpdateDate = DateFormats.isoDateToUIDate(oasysAnswers.assessmentMetadata.dateCompleted)
 
   beforeEach(() => {
-    jest.resetAllMocks()
+    jest.restoreAllMocks()
     ;(render as jest.Mock).mockReturnValue('rendered-output')
   })
 
@@ -72,37 +83,94 @@ describe('sentence', () => {
     })
   })
 
-  describe('offenceSummaryList', () => {
+  describe('offenceCards', () => {
     it('should render the offence summary list', () => {
-      expect(offenceSummaryList(offences, oasysAnswers)).toEqual([
-        { key: { text: 'Offence type' }, value: { text: indexOffence.offenceDescription } },
-        { key: { text: 'Sub-category' }, value: { text: 'TBA' } },
+      expect(offenceCards(offences)).toEqual([
         {
-          key: {
-            html: `Offence analysis
-<p class="govuk-body-s">Imported from OASys 2.1</p>
-<p class="govuk-body-s">Last updated on ${oasysUpdateDate}<p>`,
-          },
-          value: { html: 'rendered-output' },
-        },
-        { key: { text: 'Offence ID' }, value: { text: indexOffence.offenceId } },
-        { key: { text: 'NDelius Event number' }, value: { text: indexOffence.deliusEventNumber } },
-        {
-          key: { text: 'Additional offences' },
-          value: {
-            html: bulletList(offences.map(({ offenceDescription: description }) => description)),
-          },
+          card: { title: { text: 'Offence' } },
+          rows: [
+            { key: { text: 'Offence type' }, value: { text: indexOffence.mainCategoryDescription } },
+            { key: { text: 'Sub-category' }, value: { text: indexOffence.subCategoryDescription } },
+            {
+              key: { text: 'Date of offence' },
+              value: { text: DateFormats.isoDateToUIDate(indexOffence.offenceDate) },
+            },
+            { key: { text: 'Offence ID' }, value: { text: indexOffence.offenceId } },
+            { key: { text: 'NDelius Event number' }, value: { text: indexOffence.deliusEventNumber } },
+          ],
         },
         {
-          key: {
-            html: `Previous behaviours
-<p class="govuk-body-s">Imported from OASys 2.12</p>
-<p class="govuk-body-s">Last updated on ${oasysUpdateDate}<p>`,
+          card: { title: { text: 'Additional offences' } },
+          table: {
+            head: [{ text: 'Main category' }, { text: 'Sub-category' }, { text: 'Date of offence' }],
+            rows: additionalOffencesRows(offences, indexOffence),
           },
-          value: { html: 'rendered-output' },
         },
       ])
+    })
 
+    it(`should not show duplicated sub-category`, async () => {
+      const offence = activeOffenceFactory.build({ mainOffence: true })
+      offence.subCategoryDescription = offence.mainCategoryDescription
+      expect(offenceCards([offence])[0].rows).toEqual(
+        expect.arrayContaining([
+          { key: { text: 'Offence type' }, value: { text: offence.mainCategoryDescription } },
+          { key: { text: 'Sub-category' }, value: { text: '' } },
+        ]),
+      )
+    })
+
+    it(`should show an empty additional offences card`, async () => {
+      const offence = activeOffenceFactory.build({ mainOffence: true })
+      offence.subCategoryDescription = offence.mainCategoryDescription
+      expect(offenceCards([offence])[1].html).toEqual('No additional offences')
+    })
+  })
+
+  describe('additionalOffencesRows', () => {
+    it('builds rows for the additional offences table', () => {
+      const mainOffence = activeOffenceFactory.build({ mainOffence: true })
+      const additionalOffence = activeOffenceFactory.build({ mainOffence: false })
+      expect(additionalOffencesRows([mainOffence, additionalOffence], mainOffence)).toEqual([
+        [
+          { text: additionalOffence.mainCategoryDescription },
+          { text: additionalOffence.subCategoryDescription },
+          { text: DateFormats.isoDateToUIDate(additionalOffence.offenceDate, { format: 'short' }) },
+        ],
+      ])
+    })
+  })
+
+  describe('oasysOffenceCards', () => {
+    it('renders the oasys offences cards when there is a valid assessment', () => {
+      expect(sentenceFns.oasysOffenceCards(oasysAnswers)).toEqual([
+        {
+          card: { title: { text: 'Offence analysis' } },
+          rows: [
+            {
+              key: {
+                html: `Offence analysis
+<p class="govuk-body-s">Imported from OASys 2.1</p>
+<p class="govuk-body-s">Last updated on ${oasysUpdateDate}<p>`,
+              },
+              value: { html: 'rendered-output' },
+            },
+          ],
+        },
+        {
+          card: { title: { text: 'Previous behaviours' } },
+          rows: [
+            {
+              key: {
+                html: `Previous behaviours
+<p class="govuk-body-s">Imported from OASys 2.12</p>
+<p class="govuk-body-s">Last updated on ${oasysUpdateDate}<p>`,
+              },
+              value: { html: 'rendered-output' },
+            },
+          ],
+        },
+      ])
       expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', {
         summaryText: oasysAnswers.answers[0].label,
         text: oasysAnswers.answers[0].answer,
@@ -117,24 +185,15 @@ describe('sentence', () => {
       ['there is no assessment', cas1OasysGroupFactory.noAssessment().build()],
       ['the assessment is undefined', undefined],
     ])('should render if %s', ([_, oasysGroup]) => {
-      expect(offenceSummaryList(offences, oasysGroup as unknown as Cas1OASysGroup)).toEqual(
-        expect.arrayContaining([
-          {
-            key: {
-              html: `Offence analysis
+      const result = offencesTabCards(offences, oasysGroup as unknown as Cas1OASysGroup)
+      expect(result[2].rows[0].key).toEqual({
+        html: `Offence analysis
 <p class="govuk-body-s">OASys question 2.1 not available</p>`,
-            },
-            value: { text: '' },
-          },
-          {
-            key: {
-              html: `Previous behaviours
+      })
+      expect(result[3].rows[0].key).toEqual({
+        html: `Previous behaviours
 <p class="govuk-body-s">OASys question 2.12 not available</p>`,
-            },
-            value: { text: '' },
-          },
-        ]),
-      )
+      })
     })
   })
 
@@ -150,15 +209,17 @@ describe('sentence', () => {
     })
   })
 
-  describe('offencesCards', () => {
+  describe('offencesTabCards', () => {
     it('should render the offence cards', () => {
-      jest.spyOn(sentenceFns, 'offenceSummaryList').mockReturnValue([])
+      jest.spyOn(sentenceFns, 'offenceCards').mockReturnValue([])
       jest.spyOn(sentenceFns, 'sentenceSummaryList').mockReturnValue([])
+      jest.spyOn(sentenceFns, 'oasysOffenceCards').mockReturnValue([])
 
-      expect(offencesCards(offences, oasysAnswers)).toEqual([
-        { card: { title: { text: 'Offence' } }, rows: [] },
+      expect(offencesTabCards(offences, oasysAnswers)).toEqual([
         { card: { title: { text: 'Sentence information' } }, rows: [] },
       ])
+      expect(sentenceFns.offenceCards).toHaveBeenCalledWith(offences)
+      expect(sentenceFns.oasysOffenceCards).toHaveBeenCalledWith(oasysAnswers)
     })
   })
 
@@ -207,7 +268,7 @@ describe('sentence', () => {
 
       expect(await sentenceFns.sentenceOffencesTabController({ personService, token, crn })).toEqual({
         subHeading: 'Offence and sentence',
-        cardList: offencesCards(offences, offenceDetails),
+        cardList: offencesTabCards(offences, offenceDetails),
       })
 
       expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
@@ -221,6 +282,68 @@ describe('sentence', () => {
         subHeading: 'Licence',
         cardList: licenseCards(),
       })
+    })
+  })
+
+  describe('prisonCards', () => {
+    it('should render the adjutcations table rows', () => {
+      const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
+
+      expect(sentenceFns.adjudicationRows(adjudications)).toEqual([
+        [
+          { text: DateFormats.isoDateToUIDate(adjudications[0].reportedAt) },
+          { text: adjudications[0].offenceDescription },
+          { text: sentenceCase(adjudications[0].finding) },
+          { text: 'TBA' },
+        ],
+        [
+          { text: DateFormats.isoDateToUIDate(adjudications[1].reportedAt) },
+          { text: adjudications[1].offenceDescription },
+          { text: sentenceCase(adjudications[1].finding) },
+          { text: 'TBA' },
+        ],
+      ])
+    })
+
+    it('should render the card list for the prison tab', () => {
+      const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
+      jest.spyOn(sentenceFns, 'adjudicationRows').mockReturnValue([])
+
+      const result = sentenceFns.prisonCards(adjudications)
+
+      expect(result).toEqual([
+        {
+          card: { title: { text: 'Prison details' } },
+          rows: [{ key: { text: 'Prison name' }, value: { text: 'TBA' } }],
+        },
+        {
+          card: { title: { text: 'Cell Sharing Risk Assessment (CRSA)' } },
+          rows: [{ key: { text: 'Type' }, value: { text: 'TBA' } }],
+        },
+        {
+          card: { title: { text: 'Adjudications' } },
+          table: {
+            head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }, { text: 'Sanction' }],
+            rows: [],
+          },
+        },
+      ])
+      expect(sentenceFns.adjudicationRows).toHaveBeenCalledWith(adjudications)
+    })
+  })
+
+  describe('sentencePrisonTabController', () => {
+    it('should call the sentencePrisonTabController', async () => {
+      const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
+      jest.spyOn(sentenceFns, 'prisonCards').mockReturnValue([])
+      personService.getAdjudications.mockResolvedValue(adjudications)
+
+      expect(await sentencePrisonTabController({ personService, token, crn })).toEqual({
+        cardList: [],
+        subHeading: 'Prison',
+      })
+      expect(sentenceFns.prisonCards).toHaveBeenCalledWith(adjudications)
+      expect(personService.getAdjudications).toHaveBeenCalledWith(token, crn)
     })
   })
 })

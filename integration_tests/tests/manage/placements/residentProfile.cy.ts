@@ -1,6 +1,7 @@
 import { signIn } from '../../signIn'
 import {
   activeOffenceFactory,
+  adjudicationFactory,
   cas1OasysGroupFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
@@ -49,12 +50,15 @@ context('ResidentProfile', () => {
       page.shouldShowPersonalInformation(placement.person, personRisks, placement)
     })
 
-    it('should show the sentence -> Offence tab', () => {
+    it('should show the sentence tab', () => {
       const { placement, personRisks } = setup()
       const offences = activeOffenceFactory.buildList(3)
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
+      const adjudications = adjudicationFactory.buildList(5)
+
       cy.task('stubPersonOffences', { offences, person: placement.person })
       cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
+      cy.task('stubAdjudications', { person: placement.person, adjudications })
 
       GIVEN(' that I am signed in as a user with access resident profile')
       signIn(['manage_resident'])
@@ -70,6 +74,12 @@ context('ResidentProfile', () => {
       page.shouldHaveActiveTab('Sentence')
       AND('the Offences information should be shown')
       page.shouldShowOffencesInformation(offences, oasysOffenceDetails)
+
+      WHEN('I select the prison sub-tab')
+      page.clickLink('Prison')
+
+      THEN('I should see the prison cards')
+      page.shouldShowPrisonInformation(adjudications)
     })
 
     it('should show the risk tab', () => {
@@ -104,10 +114,10 @@ context('ResidentProfile', () => {
       page.shouldShowRoshWidget(personRisks.roshRisks.value)
 
       AND('the OASys risk cards should be populated')
-      page.shouldShowCards(['R10.1', 'R10.2', 'SUM10'], oasysRoshSummary, 'ROSH summary')
-      page.shouldShowCards(['RM30', 'RM31', 'RM32', 'RM33'], oasysRiskManagementPlan, 'OASys risk management plan')
-      page.shouldShowCards(['2.4.1', '2.4.2'], oasysOffenceDetails, 'OASys')
-      page.shouldShowCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
+      page.shouldShowOasysCards(['R10.1', 'R10.2', 'SUM10'], oasysRoshSummary, 'ROSH summary')
+      page.shouldShowOasysCards(['RM30', 'RM31', 'RM32', 'RM33'], oasysRiskManagementPlan, 'OASys risk management plan')
+      page.shouldShowOasysCards(['2.4.1', '2.4.2'], oasysOffenceDetails, 'OASys')
+      page.shouldShowOasysCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
     })
 
     it('should show the placement tab', () => {

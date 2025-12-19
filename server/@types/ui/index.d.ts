@@ -124,6 +124,11 @@ export type TableCell = (TextItem | HtmlItem) & {
 
 export type TableRow = Array<TableCell>
 
+export type Table = {
+  head: Array<TableCell>
+  rows: Array<TableRow>
+}
+
 export type RadioItemButton = (
   | {
       text: string
@@ -187,6 +192,7 @@ export type SummaryListWithCard = {
   classes?: string
   attributes?: HtmlAttributes
   rows?: Array<SummaryListItem>
+  table?: Table
   html?: string
 }
 

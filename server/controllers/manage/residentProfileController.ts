@@ -16,6 +16,7 @@ import {
 import {
   sentenceLicenceTabController,
   sentenceOffencesTabController,
+  sentencePrisonTabController,
   sentenceSideNavigation,
 } from '../../utils/resident/sentence'
 import { riskTabController } from '../../utils/resident/risk'
@@ -59,6 +60,7 @@ export default class ResidentProfileController {
           sideNavigation = sentenceSideNavigation(subTab, crn, placementId)
           if (subTab === 'offence') tabData = await sentenceOffencesTabController(tabParameters)
           if (subTab === 'licence') tabData = await sentenceLicenceTabController()
+          if (subTab === 'prison') tabData = await sentencePrisonTabController(tabParameters)
           break
         case 'risk':
           tabData = await riskTabController(tabParameters)

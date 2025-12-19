@@ -1,11 +1,12 @@
 import { Cas1SpaceBooking, FullPerson, PersonRisks, RiskEnvelopeStatus } from '@approved-premises/api'
-import { SummaryListItem, SummaryListWithCard, TabItem } from '@approved-premises/ui'
+import { SummaryListItem, SummaryListWithCard, TabItem, Table } from '@approved-premises/ui'
 import nunjucks from 'nunjucks'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { detailedStatus, statusTextMap } from '../placements/status'
 import { canonicalDates } from '../placements'
 import PersonService from '../../services/personService'
+import { objectClean } from '../utils'
 
 export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'enforcement'
 export type ResidentProfileSubTab =
@@ -109,7 +110,7 @@ export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: Pers
   return {
     name: person.name,
     photoUrl: '/assets/images/resident-placeholder.png',
-    badges: [...badges, '<span><a href="#">+3 risk flags</a></span>'],
+    badges,
     attributes: [
       [
         { title: 'CRN', description: person.crn },
@@ -143,13 +144,25 @@ export const getResidentStatus = (placement: Cas1SpaceBooking): string => {
   return statusTextMap[detailedStatus(placement)]
 }
 
-export const card = ({ title, rows, html }: { title?: string; rows?: Array<SummaryListItem>; html?: string }) => ({
-  card: title && {
-    title: { text: title },
-  },
+export const card = ({
+  title,
   rows,
+  table,
   html,
-})
+}: {
+  title?: string
+  rows?: Array<SummaryListItem>
+  table?: Table
+  html?: string
+}) =>
+  objectClean<SummaryListWithCard>({
+    card: title && {
+      title: { text: title },
+    },
+    table,
+    rows,
+    html,
+  })
 
 export const detailsBody = (summaryText: string, text: string) => {
   return nunjucks.render(`partials/detailsBlock.njk`, { summaryText, text })

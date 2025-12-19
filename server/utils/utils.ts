@@ -233,3 +233,14 @@ export const objectFilter = (obj: Record<string, unknown>, fields: Array<string>
     return out
   }, {})
 }
+
+/**
+ * Returns a copy of an object with all undefined keys removed
+ * @param object object to clean
+ * @return copy of object with undefined keys removed
+ */
+export const objectClean = <T>(object: Record<string, unknown>): T => {
+  const obj = { ...object } as T
+  Object.keys(obj).forEach(key => obj[key as keyof T] === undefined && delete obj[key as keyof T])
+  return obj
+}

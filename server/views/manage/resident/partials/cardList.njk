@@ -2,12 +2,13 @@
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "partials/summaryCard.njk" import summaryCard %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "components/sortableTable/macro.njk" import sortableTable %}
 
 <h2 class="govuk-heading-m">{{ subHeading }}</h2>
 
 {% for card in cardList %}
-    {% if card.rows %}
-        {% set html %}
+    {% set html %}
+        {% if card.rows %}
             {{ govukSummaryList({
                 rows: card.rows
             }) }}
@@ -18,11 +19,17 @@
                     </p>
                 {% endfor %}
             {% endif %}
-        {% endset %}
-    {% endif %}
-    {% if card.html %}
-        {% set html=card.html %}
-    {% endif %}
+        {% endif %}
+
+        {% if card.table %}
+            {{ sortableTable(card.table) }}
+        {% endif %}
+
+        {% if card.html %}
+            {{ card.html | safe }}
+        {% endif %}
+    {% endset %}
+
     {% if card.card.title %}
         {{ summaryCard({
             title: card.card.title,

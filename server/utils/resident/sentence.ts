@@ -1,9 +1,26 @@
-import { ActiveOffence, Cas1OASysGroup } from '@approved-premises/api'
-import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
-import { bulletList, summaryListItem } from '../formUtils'
+import { ActiveOffence, Adjudication, Cas1OASysGroup } from '@approved-premises/api'
+import { SummaryListItem, SummaryListWithCard, TableRow } from '@approved-premises/ui'
+import { summaryListItem } from '../formUtils'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { card, detailsBody, ResidentProfileSubTab, TabControllerParameters, TabData } from './index'
+import { sentenceCase } from '../utils'
+import { dateCell, textCell } from '../tableUtils'
+
+export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
+  const basePath = paths.resident.tabSentence
+  return [
+    {
+      text: 'Offence and sentence',
+      href: paths.resident.tabSentence.offence({ crn, placementId }),
+      active: subTab === 'offence',
+    },
+    { text: 'Licence', href: basePath.licence({ crn, placementId }), active: subTab === 'licence' },
+    { text: 'Orders', href: basePath.orders({ crn, placementId }), active: subTab === 'orders' },
+    { text: 'Parole', href: basePath.parole({ crn, placementId }), active: subTab === 'parole' },
+    { text: 'Prison', href: basePath.prison({ crn, placementId }), active: subTab === 'prison' },
+  ]
+}
 
 const oasysAnswer = (oasysAnswers: Cas1OASysGroup, questionNumber: string, questionName: string): SummaryListItem => {
   if (oasysAnswers?.assessmentMetadata?.hasApplicableAssessment) {
@@ -28,26 +45,61 @@ const oasysAnswer = (oasysAnswers: Cas1OASysGroup, questionNumber: string, quest
   }
 }
 
-export const offenceSummaryList = (
-  offences: Array<ActiveOffence>,
-  oasysAnswers: Cas1OASysGroup,
-): Array<SummaryListItem> => {
-  const { offenceDescription, offenceId, deliusEventNumber } = offences && offences[0]
-  return [
-    summaryListItem('Offence type', offenceDescription),
-    summaryListItem('Sub-category', 'TBA'),
-    oasysAnswer(oasysAnswers, '2.1', 'Offence analysis'),
-    summaryListItem('Offence ID', offenceId),
-    summaryListItem('NDelius Event number', deliusEventNumber),
-    summaryListItem(
-      'Additional offences',
-      bulletList(offences.map(({ offenceDescription: description }) => description)),
-      'html',
-    ),
-    oasysAnswer(oasysAnswers, '2.12', 'Previous behaviours'),
-    // TODO: Add Delius link in here
-  ].filter(Boolean)
+const getOffenceDescriptions = (
+  offence: ActiveOffence,
+): { mainCategoryDescription: string; subCategoryDescription: string } => {
+  const { mainCategoryDescription, subCategoryDescription: sub } = offence || {}
+  return { mainCategoryDescription, subCategoryDescription: mainCategoryDescription === sub ? '' : sub }
 }
+
+export const offenceCards = (offences: Array<ActiveOffence>): Array<SummaryListWithCard> => {
+  const mainOffence: ActiveOffence = offences.find(({ mainOffence: isMain }) => isMain) || offences[0]
+
+  const { offenceId, deliusEventNumber, offenceDate } = mainOffence
+  const { mainCategoryDescription, subCategoryDescription } = getOffenceDescriptions(mainOffence)
+  return [
+    card({
+      title: 'Offence',
+      rows: [
+        summaryListItem('Offence type', mainCategoryDescription),
+        summaryListItem('Sub-category', subCategoryDescription),
+        summaryListItem('Date of offence', offenceDate, 'date'),
+        summaryListItem('Offence ID', offenceId),
+        summaryListItem('NDelius Event number', deliusEventNumber),
+      ],
+    }),
+    card({
+      title: 'Additional offences',
+      table:
+        offences.length > 1
+          ? {
+              head: [textCell('Main category'), textCell('Sub-category'), textCell('Date of offence')],
+              rows: additionalOffencesRows(offences, mainOffence),
+            }
+          : undefined,
+      html: offences.length <= 1 ? 'No additional offences' : undefined,
+    }),
+  ]
+}
+
+export const additionalOffencesRows = (offences: Array<ActiveOffence>, mainOffence: ActiveOffence): Array<TableRow> =>
+  offences
+    .map((offence: ActiveOffence) => {
+      const { mainCategoryDescription, subCategoryDescription } = getOffenceDescriptions(offence)
+      return (
+        offence !== mainOffence && [
+          textCell(mainCategoryDescription),
+          textCell(subCategoryDescription),
+          dateCell(offence.offenceDate),
+        ]
+      )
+    })
+    .filter(Boolean)
+
+export const oasysOffenceCards = (oasysAnswers: Cas1OASysGroup): Array<SummaryListWithCard> => [
+  card({ title: 'Offence analysis', rows: [oasysAnswer(oasysAnswers, '2.1', 'Offence analysis')] }),
+  card({ title: 'Previous behaviours', rows: [oasysAnswer(oasysAnswers, '2.12', 'Previous behaviours')] }),
+]
 
 export const sentenceSummaryList = () => {
   return [
@@ -59,37 +111,13 @@ export const sentenceSummaryList = () => {
   ]
 }
 
-export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
-  const basePath = paths.resident.tabSentence
-  return [
-    {
-      text: 'Offence and sentence',
-      href: paths.resident.tabSentence.offence({ crn, placementId }),
-      active: subTab === 'offence',
-    },
-    { text: 'Licence', href: basePath.licence({ crn, placementId }), active: subTab === 'licence' },
-    { text: 'Orders', href: basePath.orders({ crn, placementId }), active: subTab === 'orders' },
-    { text: 'Parole', href: basePath.parole({ crn, placementId }), active: subTab === 'parole' },
-    { text: 'Prison', href: basePath.prison({ crn, placementId }), active: subTab === 'prison' },
-  ]
-}
-
-export const offencesCards = (
+export const offencesTabCards = (
   offences: Array<ActiveOffence>,
   oasysAnswers: Cas1OASysGroup,
 ): Array<SummaryListWithCard> => [
-  {
-    card: {
-      title: { text: 'Offence' },
-    },
-    rows: offenceSummaryList(offences, oasysAnswers),
-  },
-  {
-    card: {
-      title: { text: 'Sentence information' },
-    },
-    rows: sentenceSummaryList(),
-  },
+  ...offenceCards(offences),
+  ...oasysOffenceCards(oasysAnswers),
+  card({ title: 'Sentence information', rows: sentenceSummaryList() }),
 ]
 
 export const licenseCards = (): Array<SummaryListWithCard> => [
@@ -112,6 +140,35 @@ export const licenseCards = (): Array<SummaryListWithCard> => [
   }),
 ]
 
+export const adjudicationRows = (adjudications: Array<Adjudication>): Array<TableRow> => {
+  return adjudications.map(adjudication => {
+    return [
+      { text: DateFormats.isoDateToUIDate(adjudication.reportedAt) },
+      { text: adjudication.offenceDescription },
+      { text: sentenceCase(adjudication.finding) },
+      { text: 'TBA' },
+    ]
+  })
+}
+
+export const prisonCards = (adjudications: Array<Adjudication>): Array<SummaryListWithCard> => [
+  card({
+    title: 'Prison details',
+    rows: [summaryListItem('Prison name', 'TBA')],
+  }),
+  card({
+    title: 'Cell Sharing Risk Assessment (CRSA)',
+    rows: [summaryListItem('Type', 'TBA')],
+  }),
+  card({
+    title: 'Adjudications',
+    table: {
+      head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }, { text: 'Sanction' }],
+      rows: adjudicationRows(adjudications),
+    },
+  }),
+]
+
 export const sentenceOffencesTabController = async ({
   personService,
   token,
@@ -121,9 +178,19 @@ export const sentenceOffencesTabController = async ({
     personService.getOffences(token, crn),
     personService.getOasysAnswers(token, crn, 'offenceDetails'),
   ])
-  return { subHeading: 'Offence and sentence', cardList: offencesCards(offences, offenceAnswers) }
+
+  return { subHeading: 'Offence and sentence', cardList: offencesTabCards(offences, offenceAnswers) }
 }
 
 export const sentenceLicenceTabController = async () => {
   return { subHeading: 'Licence', cardList: licenseCards() }
+}
+
+export const sentencePrisonTabController = async ({
+  personService,
+  token,
+  crn,
+}: TabControllerParameters): Promise<TabData> => {
+  const [adjudications]: [Array<Adjudication>] = await Promise.all([personService.getAdjudications(token, crn)])
+  return { subHeading: 'Prison', cardList: prisonCards(adjudications) }
 }
