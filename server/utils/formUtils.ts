@@ -13,7 +13,7 @@ import type {
 import type { RiskTierLevel } from '@approved-premises/api'
 import { PlacementRequestStatus } from '@approved-premises/api'
 import { isCardinal, resolvePath, sentenceCase } from './utils'
-import { DateFormats, twelveHourTime } from './dateUtils'
+import { DateFormats } from './dateUtils'
 import postcodeAreas from '../etc/postcodeAreas.json'
 
 export const dateFieldValues = (
@@ -175,7 +175,7 @@ export function convertKeyValuePairsToSummaryListItems<T extends object>(
   return Object.keys(values).map(key => summaryListItem(titles[key], String(values[key as keyof T])))
 }
 
-export type RenderAs = keyof TextItem | keyof HtmlItem | 'textBlock' | 'date' | 'shortDate' | 'time'
+export type RenderAs = keyof TextItem | keyof HtmlItem | 'textBlock' | 'date' | 'time'
 
 const renderSummaryValue = (value: string, renderAs: RenderAs) => {
   switch (renderAs) {
@@ -183,12 +183,10 @@ const renderSummaryValue = (value: string, renderAs: RenderAs) => {
       return { html: `<span class="govuk-summary-list__textblock">${value}</span>` }
     case 'date':
       return { text: (value && DateFormats.isoDateToUIDate(value)) || '' }
-    case 'shortDate':
-      return { text: value && DateFormats.isoDateToUIDate(value, { format: 'short' }) }
     case 'html':
       return { html: value }
     case 'time':
-      return { text: (value && twelveHourTime(value)) || '' }
+      return { text: (value && DateFormats.formatTime(value)) || '' }
     default:
       return { text: value }
   }

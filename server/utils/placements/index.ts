@@ -11,6 +11,12 @@ import { htmlValue, personKeyDetails, textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
 import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
+import {
+  ApTypeCriteria,
+  apTypeCriteriaLabels,
+  SpecialistApTypeCriteria,
+  specialistApTypeCriteria,
+} from '../placementCriteriaUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import { characteristicsBulletList, roomCharacteristicMap } from '../characteristicsUtils'
 import { StatusTagOptions } from '../statusTag'
@@ -113,13 +119,6 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
 
 export const placementKeyDetails = (placement: Cas1SpaceBooking) => personKeyDetails(placement.person, placement.tier)
 
-const formatTimeFromIsoDateTime = (dateTime: string | null) =>
-  dateTime && DateFormats.timeFromDate(DateFormats.isoToDateObj(dateTime))
-
-const formatTime = (time: string) => {
-  return time ? DateFormats.timeFromDate(new Date(`2024-01-01T${time}`)) : ''
-}
-
 export const placementName = (placement: Cas1SpaceBookingSummary): string =>
   `${placement.premises.name} from ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate)}`
 
@@ -184,10 +183,11 @@ export const arrivalInformation = (placement: Cas1SpaceBooking): SummaryList => 
     rows: [
       summaryListItemNoBlankRows('Expected arrival date', expectedArrivalDate, 'date'),
       summaryListItemNoBlankRows('Actual arrival date', actualArrivalDate, 'date'),
-      summaryListItemNoBlankRows('Arrival time', formatTime(actualArrivalTime)),
+      summaryListItemNoBlankRows('Arrival time', DateFormats.formatTime(actualArrivalTime)),
       summaryListItemNoBlankRows(
         'Non arrival recorded at',
-        confirmedAt && `${DateFormats.isoDateToUIDate(confirmedAt)} ${formatTimeFromIsoDateTime(confirmedAt)}`,
+        confirmedAt &&
+          `${DateFormats.isoDateToUIDate(confirmedAt)} ${DateFormats.formatTimeFromIsoDateTime(confirmedAt)}`,
       ),
       summaryListItemNoBlankRows('Non arrival reason', reason?.name),
       summaryListItemNoBlankRows('Non arrival any other information', notes),
@@ -208,7 +208,7 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
     rows: [
       summaryListItemNoBlankRows('Expected departure date', placement.expectedDepartureDate, 'date'),
       summaryListItemNoBlankRows('Actual departure date', placement.actualDepartureDate, 'date'),
-      summaryListItemNoBlankRows('Departure time', formatTime(placement.actualDepartureTime)),
+      summaryListItemNoBlankRows('Departure time', DateFormats.formatTime(placement.actualDepartureTime)),
       summaryListItemNoBlankRows('Departure reason', reason),
       summaryListItemNoBlankRows('Breach or recall', breachOrRecall),
       summaryListItemNoBlankRows('Move on', placement.departure?.moveOnCategory?.name),
@@ -219,11 +219,17 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
 
 export const requirementsInformation = (placement: Cas1SpaceBooking): SummaryList => {
   const requirements = placement.characteristics
+  const apType =
+    apTypeCriteriaLabels[
+      (requirements.find(requirement => specialistApTypeCriteria.includes(requirement as SpecialistApTypeCriteria)) ||
+        'normal') as ApTypeCriteria
+    ]
   const apRequirements = filterApLevelCriteria(requirements)
   const roomRequirements = filterRoomLevelCriteria(requirements)
 
   return {
     rows: [
+      summaryListItem('AP type', apType),
       summaryListItem('AP requirements', characteristicsBulletList(apRequirements), 'html'),
       summaryListItem('Room requirements', characteristicsBulletList(roomRequirements), 'html'),
     ],

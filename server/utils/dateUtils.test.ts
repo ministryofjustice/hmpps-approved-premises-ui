@@ -18,7 +18,6 @@ import {
   yearOptions,
   timeAddLeadingZero,
   isoDateIsValid,
-  twelveHourTime,
 } from './dateUtils'
 
 jest.mock('../data/bankHolidays/bank-holidays.json', () => {
@@ -670,17 +669,5 @@ describe('isoDateTimeToIsoTime', () => {
     ['2025-01-01T09:30:00.000Z', '09:30'], // UTC date during GMT
   ])('returns an iso time only from a local iso datetime, %s', (dateStr, expected) => {
     expect(DateFormats.isoDateTimeToTime(dateStr)).toEqual(expected)
-  })
-})
-
-describe('twelveHourTime', () => {
-  it.each([
-    ['00:00', '0:00am'],
-    ['09:30', '9:30am'],
-    ['12:34', '12:34pm'],
-    ['13:45', '1:45pm'],
-    ['23:59', '11:59pm'],
-  ])('returns %s formatted as a 12 hour time', (time, expected) => {
-    expect(twelveHourTime(time)).toEqual(expected)
   })
 })

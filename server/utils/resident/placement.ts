@@ -31,10 +31,10 @@ function arrivalCardRows(placement: Cas1SpaceBooking): Array<SummaryListItem> {
   return [
     summaryListItemNoBlankRows(
       'Expected arrival date',
-      placement.actualArrivalDate ? '' : placement.expectedArrivalDate,
-      'shortDate',
+      placement.actualArrivalDate ? undefined : placement.expectedArrivalDate,
+      'date',
     ),
-    summaryListItemNoBlankRows('Actual arrival date', placement.actualArrivalDate, 'shortDate'),
+    summaryListItemNoBlankRows('Actual arrival date', placement.actualArrivalDate, 'date'),
     summaryListItemNoBlankRows('Arrival time', placement.actualArrivalTime, 'time'),
   ].filter(Boolean)
 }
@@ -43,10 +43,10 @@ function departureCardRows(placement: Cas1SpaceBooking): Array<SummaryListItem> 
   return [
     summaryListItemNoBlankRows(
       'Expected departure date',
-      placement.actualDepartureDate ? '' : placement.expectedDepartureDate,
-      'shortDate',
+      placement.actualDepartureDate ? undefined : placement.expectedDepartureDate,
+      'date',
     ),
-    summaryListItemNoBlankRows('Actual departure date', placement.actualDepartureDate, 'shortDate'),
+    summaryListItemNoBlankRows('Actual departure date', placement.actualDepartureDate, 'date'),
     summaryListItemNoBlankRows('Departure time', placement.actualDepartureTime, 'time'),
     summaryListItemNoBlankRows('Parent departure reason', placement.departure?.parentReason?.name),
     summaryListItemNoBlankRows('Departure reason', placement.departure?.reason?.name),
@@ -58,7 +58,7 @@ function departureCardRows(placement: Cas1SpaceBooking): Array<SummaryListItem> 
 export const placementDetailsCards = (placement: Cas1SpaceBooking): Array<SummaryListWithCard> => {
   const rows = [
     summaryListItem('Approved Premises', placement.premises.name),
-    summaryListItem('Date allocated', placement.createdAt, 'shortDate'),
+    summaryListItem('Date allocated', placement.createdAt, 'date'),
     summaryListItem('Status', placementStatusTag(placement), 'html'),
     ...arrivalCardRows(placement),
     ...departureCardRows(placement),
