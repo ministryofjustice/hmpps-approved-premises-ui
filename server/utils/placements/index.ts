@@ -11,12 +11,6 @@ import { htmlValue, personKeyDetails, textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
 import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
-import {
-  ApTypeCriteria,
-  apTypeCriteriaLabels,
-  SpecialistApTypeCriteria,
-  specialistApTypeCriteria,
-} from '../placementCriteriaUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import { characteristicsBulletList, roomCharacteristicMap } from '../characteristicsUtils'
 import { StatusTagOptions } from '../statusTag'
@@ -225,17 +219,11 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
 
 export const requirementsInformation = (placement: Cas1SpaceBooking): SummaryList => {
   const requirements = placement.characteristics
-  const apType =
-    apTypeCriteriaLabels[
-      (requirements.find(requirement => specialistApTypeCriteria.includes(requirement as SpecialistApTypeCriteria)) ||
-        'normal') as ApTypeCriteria
-    ]
   const apRequirements = filterApLevelCriteria(requirements)
   const roomRequirements = filterRoomLevelCriteria(requirements)
 
   return {
     rows: [
-      summaryListItem('AP type', apType),
       summaryListItem('AP requirements', characteristicsBulletList(apRequirements), 'html'),
       summaryListItem('Room requirements', characteristicsBulletList(roomRequirements), 'html'),
     ],

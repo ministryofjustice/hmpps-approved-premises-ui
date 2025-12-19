@@ -383,3 +383,14 @@ export const isoDateAndTimeToDateObj = (isoDate: string, time: string): Date => 
   }
   return date
 }
+
+export const twelveHourTime = (time: string): string => {
+  if (timeIsValid24hrFormat(time)) {
+    const [h, m] = time.split(':').map(Number)
+    const hour = h > 12 ? h % 12 : h
+    const minute = m < 10 ? `0${m}` : m
+    const suffix = h < 12 ? 'am' : 'pm'
+    return `${hour}:${minute}${suffix}`
+  }
+  return time
+}

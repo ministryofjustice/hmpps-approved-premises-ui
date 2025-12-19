@@ -1,64 +1,70 @@
 import { Cas1SpaceBooking } from '@approved-premises/api'
 import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
-import { TabData } from './index'
-import { summaryListItem } from '../formUtils'
+import { ResidentProfileSubTab, TabData } from './index'
+import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
 import { placementStatusTag, requirementsInformation } from '../placements'
+import paths from '../../paths/manage'
+
+export const placementSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placement: Cas1SpaceBooking) => {
+  const basePath = paths.resident.tabPlacement
+  const placementId = placement.id
+  return [
+    {
+      text: `${placement.premises.name} placement`,
+      href: basePath.placementDetails({ crn, placementId }),
+      active: subTab === 'placementDetails',
+    },
+    {
+      text: 'All AP placements',
+      href: basePath.allApPlacements({ crn, placementId }),
+      active: subTab === 'allApPlacements',
+    },
+    {
+      text: 'Application',
+      href: basePath.application({ crn, placementId }),
+      active: subTab === 'application',
+    },
+  ]
+}
 
 function arrivalCardRows(placement: Cas1SpaceBooking): Array<SummaryListItem> {
-  const rows = [summaryListItem('Expected arrival date', placement.expectedArrivalDate, 'date')]
-
-  if (placement.actualArrivalDate) {
-    rows.push(summaryListItem('Actual arrival date', placement.actualArrivalDate, 'date'))
-  }
-
-  if (placement.actualArrivalTime) {
-    rows.push(summaryListItem('Arrival time', placement.actualArrivalTime))
-  }
-
-  return rows
+  return [
+    summaryListItemNoBlankRows(
+      'Expected arrival date',
+      placement.actualArrivalDate ? '' : placement.expectedArrivalDate,
+      'shortDate',
+    ),
+    summaryListItemNoBlankRows('Actual arrival date', placement.actualArrivalDate, 'shortDate'),
+    summaryListItemNoBlankRows('Arrival time', placement.actualArrivalTime, 'time'),
+  ].filter(Boolean)
 }
 
 function departureCardRows(placement: Cas1SpaceBooking): Array<SummaryListItem> {
-  const rows = [summaryListItem('Expected departure date', placement.expectedDepartureDate, 'date')]
-
-  if (placement.actualDepartureDate) {
-    rows.push(summaryListItem('Actual departure date', placement.actualDepartureDate, 'date'))
-  }
-
-  if (placement.actualDepartureTime) {
-    rows.push(summaryListItem('Departure time', placement.actualDepartureTime))
-  }
-
-  if (placement.departure?.parentReason) {
-    rows.push(summaryListItem('Parent departure reason', placement.departure.parentReason.name))
-  }
-
-  if (placement.departure?.reason) {
-    rows.push(summaryListItem('Departure reason', placement.departure.reason.name))
-  }
-
-  if (placement.departure?.moveOnCategory) {
-    rows.push(summaryListItem('Move-on category', placement.departure.moveOnCategory.name))
-  }
-
-  if (placement.departure?.notes) {
-    rows.push(summaryListItem('Departure notes', placement.departure.notes))
-  }
-
-  return rows
+  return [
+    summaryListItemNoBlankRows(
+      'Expected departure date',
+      placement.actualDepartureDate ? '' : placement.expectedDepartureDate,
+      'shortDate',
+    ),
+    summaryListItemNoBlankRows('Actual departure date', placement.actualDepartureDate, 'shortDate'),
+    summaryListItemNoBlankRows('Departure time', placement.actualDepartureTime, 'time'),
+    summaryListItemNoBlankRows('Parent departure reason', placement.departure?.parentReason?.name),
+    summaryListItemNoBlankRows('Departure reason', placement.departure?.reason?.name),
+    summaryListItemNoBlankRows('Move-on category', placement.departure?.moveOnCategory?.name),
+    summaryListItemNoBlankRows('Departure notes', placement.departure?.notes),
+  ].filter(Boolean)
 }
 
 export const placementDetailsCards = (placement: Cas1SpaceBooking): Array<SummaryListWithCard> => {
-  let rows = [
+  const rows = [
     summaryListItem('Approved Premises', placement.premises.name),
-    summaryListItem('Date allocated', placement.createdAt, 'date'),
+    summaryListItem('Date allocated', placement.createdAt, 'shortDate'),
     summaryListItem('Status', placementStatusTag(placement), 'html'),
-    summaryListItem('NDelius event number', placement.deliusEventNumber),
+    ...arrivalCardRows(placement),
+    ...departureCardRows(placement),
+    ...requirementsInformation(placement).rows,
+    summaryListItem('Delius event number', placement.deliusEventNumber),
   ]
-
-  rows = rows.concat(arrivalCardRows(placement))
-  rows = rows.concat(departureCardRows(placement))
-  rows = rows.concat(requirementsInformation(placement).rows)
 
   return [
     {
@@ -70,7 +76,7 @@ export const placementDetailsCards = (placement: Cas1SpaceBooking): Array<Summar
 
 export const placementTabController = (placement: Cas1SpaceBooking): TabData => {
   return {
-    subHeading: 'Current placement',
+    subHeading: `${placement.premises.name} AP placement`,
     cardList: placementDetailsCards(placement),
   }
 }

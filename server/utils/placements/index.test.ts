@@ -502,7 +502,6 @@ describe('placementUtils', () => {
 
         expect(requirementsInformation(placementStandardAp)).toEqual({
           rows: [
-            { key: { text: 'AP type' }, value: { text: 'Standard AP' } },
             {
               key: { text: 'AP requirements' },
               value: {
@@ -521,7 +520,6 @@ describe('placementUtils', () => {
 
         expect(requirementsInformation(placementSpecialistAp)).toEqual({
           rows: [
-            { key: { text: 'AP type' }, value: { text: 'Enhanced Security AP (ESAP)' } },
             {
               key: { text: 'AP requirements' },
               value: { html: characteristicsBulletList(['acceptsChildSexOffenders']) },
@@ -541,7 +539,6 @@ describe('placementUtils', () => {
 
         expect(requirementsInformation(placementNoRequirements)).toEqual({
           rows: [
-            { key: { text: 'AP type' }, value: { text: 'Standard AP' } },
             { key: { text: 'AP requirements' }, value: { html: `<span class="text-grey">None</span>` } },
             { key: { text: 'Room requirements' }, value: { html: `<span class="text-grey">None</span>` } },
           ],

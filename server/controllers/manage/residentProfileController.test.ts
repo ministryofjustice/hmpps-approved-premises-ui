@@ -133,10 +133,11 @@ describe('residentProfileController', () => {
 
       const detailsController = jest.spyOn(placementTabUtils, 'placementTabController').mockReturnValue(tabData)
 
-      await residentProfileController.show('placement')(request, response, next)
+      await residentProfileController.show('placement', 'placementDetails')(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/resident/residentProfile', {
         ...renderParameters(placement, personRisks, 'placement'),
+        sideNavigation: placementTabUtils.placementSideNavigation('placementDetails', crn, placement),
         ...tabData,
       })
 
