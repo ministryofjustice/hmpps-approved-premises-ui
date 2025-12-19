@@ -21,6 +21,7 @@ import {
 } from '../../utils/resident/sentence'
 import { riskTabController } from '../../utils/resident/risk'
 import { personalSideNavigation, personalDetailsTabController } from '../../utils/resident/personal'
+import { placementSideNavigation, placementTabController } from '../../utils/resident/placement'
 
 export default class ResidentProfileController {
   constructor(
@@ -63,6 +64,10 @@ export default class ResidentProfileController {
           break
         case 'risk':
           tabData = await riskTabController(tabParameters)
+          break
+        case 'placement':
+          tabData = placementTabController(placement)
+          sideNavigation = placementSideNavigation(subTab, crn, placement)
           break
         default:
       }

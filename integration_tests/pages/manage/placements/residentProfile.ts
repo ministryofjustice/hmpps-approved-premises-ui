@@ -16,6 +16,7 @@ import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { adjudicationRows, offencesTabCards } from '../../../../server/utils/resident/sentence'
 import { getResidentStatus } from '../../../../server/utils/resident'
+import { placementDetailsCards } from '../../../../server/utils/resident/placement'
 import { personDetailsCardList } from '../../../../server/utils/resident/personal'
 
 export default class ResidentProfilePage extends Page {
@@ -118,6 +119,21 @@ export default class ResidentProfilePage extends Page {
       const blockTitle = `${questionNumber} ${groupName}`
       const question = group.answers.find(({ questionNumber: qnumber }) => qnumber === questionNumber)
       cy.contains(blockTitle).parents('.govuk-summary-card').contains(question.label)
+    })
+  }
+
+  shouldShowPlacementDetails() {
+    const expected = placementDetailsCards(this.placement)
+
+    expected.forEach(summaryListWithCard => {
+      const { card, rows } = summaryListWithCard
+
+      cy.get('.govuk-summary-card')
+        .contains('h2', card.title.text)
+        .parents('.govuk-summary-card')
+        .within(() => {
+          this.shouldContainSummaryListItems(rows)
+        })
     })
   }
 

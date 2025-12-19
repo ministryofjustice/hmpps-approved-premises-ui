@@ -13,6 +13,7 @@ import { TabData, card, getResidentHeader, ResidentProfileTab, residentTabItems,
 import * as riskTabUtils from '../../utils/resident/risk'
 import * as sentenceTabUtils from '../../utils/resident/sentence'
 import * as personalTabUtils from '../../utils/resident/personal'
+import * as placementTabUtils from '../../utils/resident/placement'
 
 describe('residentProfileController', () => {
   const token = 'TEST_TOKEN'
@@ -125,6 +126,22 @@ describe('residentProfileController', () => {
       ])
 
       expect(tabController).toHaveBeenCalledWith(expect.objectContaining({ crn, personService, token }))
+    })
+
+    it('should render the placement details tab', async () => {
+      const { request, response, placement, personRisks } = setUp()
+
+      const detailsController = jest.spyOn(placementTabUtils, 'placementTabController').mockReturnValue(tabData)
+
+      await residentProfileController.show('placement', 'placementDetails')(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('manage/resident/residentProfile', {
+        ...renderParameters(placement, personRisks, 'placement'),
+        sideNavigation: placementTabUtils.placementSideNavigation('placementDetails', crn, placement),
+        ...tabData,
+      })
+
+      expect(detailsController).toHaveBeenCalledWith(placement)
     })
 
     it('should render the Manage resident page with the correct actions for an upcoming placement', async () => {

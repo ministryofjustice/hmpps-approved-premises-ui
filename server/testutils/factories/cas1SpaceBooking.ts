@@ -69,6 +69,7 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
 
     return this.params({
       actualArrivalDate: DateFormats.dateObjToIsoDate(actualArrivalDate),
+      actualArrivalTime: '12:00',
       actualDepartureDate: DateFormats.dateObjToIsoDate(actualDepartureDate),
       actualDepartureTime: '18:30',
       departure: cas1SpaceBookingDepartureFactory.build({
