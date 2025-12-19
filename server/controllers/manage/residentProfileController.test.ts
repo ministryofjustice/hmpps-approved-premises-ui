@@ -14,6 +14,7 @@ import * as riskTabUtils from '../../utils/resident/risk'
 import * as sentenceTabUtils from '../../utils/resident/sentence'
 import * as personalTabUtils from '../../utils/resident/personal'
 import * as placementTabUtils from '../../utils/resident/placement'
+import { ErrorWithData } from '../../utils/errors'
 
 describe('residentProfileController', () => {
   const token = 'TEST_TOKEN'
@@ -189,13 +190,36 @@ describe('residentProfileController', () => {
     it('should render the Manage resident page with the residents banner', async () => {
       const { request, response, placement, personRisks } = setUp()
 
-      const handler = residentProfileController.show()
-      await handler(request, response, next)
+      await residentProfileController.show()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'manage/resident/residentProfile',
         expect.objectContaining({
           resident: getResidentHeader(placement, personRisks),
+        }),
+      )
+    })
+
+    it('should render the page if the risk data API call fails', async () => {
+      const errorPersonRisks = {
+        roshRisks: { status: 'error' },
+        mappa: { status: 'error' },
+        flags: { status: 'error' },
+        tier: { status: 'error' },
+      } as PersonRisks
+
+      const { request, response, placement } = setUp()
+
+      personService.riskProfile.mockImplementation(async () => {
+        throw new ErrorWithData({ status: 404 })
+      })
+
+      await residentProfileController.show()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/resident/residentProfile',
+        expect.objectContaining({
+          resident: getResidentHeader(placement, errorPersonRisks),
         }),
       )
     })

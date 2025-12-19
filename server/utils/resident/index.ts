@@ -167,3 +167,7 @@ export const card = ({
 export const detailsBody = (summaryText: string, text: string) => {
   return nunjucks.render(`partials/detailsBlock.njk`, { summaryText, text })
 }
+
+export const insetText = (html: string): string => {
+  return nunjucks.render(`partials/insetText.njk`, { html })
+}
