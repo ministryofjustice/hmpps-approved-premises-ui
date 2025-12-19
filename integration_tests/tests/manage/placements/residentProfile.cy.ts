@@ -114,10 +114,10 @@ context('ResidentProfile', () => {
       page.shouldShowRoshWidget(personRisks.roshRisks.value)
 
       AND('the OASys risk cards should be populated')
-      page.shouldShowCards(['R10.1', 'R10.2', 'SUM10'], oasysRoshSummary, 'ROSH summary')
-      page.shouldShowCards(['RM30', 'RM31', 'RM32', 'RM33'], oasysRiskManagementPlan, 'OASys risk management plan')
-      page.shouldShowCards(['2.4.1', '2.4.2'], oasysOffenceDetails, 'OASys')
-      page.shouldShowCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
+      page.shouldShowOasysCards(['R10.1', 'R10.2', 'SUM10'], oasysRoshSummary, 'ROSH summary')
+      page.shouldShowOasysCards(['RM30', 'RM31', 'RM32', 'RM33'], oasysRiskManagementPlan, 'OASys risk management plan')
+      page.shouldShowOasysCards(['2.4.1', '2.4.2'], oasysOffenceDetails, 'OASys')
+      page.shouldShowOasysCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
     })
 
     it('should not allow access to the page if user lacks permission', () => {
