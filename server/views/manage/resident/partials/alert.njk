@@ -1,0 +1,10 @@
+{%- from "moj/components/alert/macro.njk" import mojAlert -%}
+
+    {{ mojAlert({
+        variant: variant,
+        title: title,
+        showTitleAsHeading: true,
+        dismissible: false,
+        html: html
+    }) }}
+

@@ -244,3 +244,26 @@ export const objectClean = <T>(object: Record<string, unknown>): T => {
   Object.keys(obj).forEach(key => obj[key as keyof T] === undefined && delete obj[key as keyof T])
   return obj
 }
+
+/**
+ * Waits until all promises have either resolved or rejected.
+ * @param promises Array of promises to settle
+ * @param defaults Array of default values to return if a promise rejects
+ * @return Array containing either the result, if a promise has resolved, or undefined if it rejected.
+ *
+ * @example
+ *   const [offences, offenceAnswers] = await settlePromises<[Array<ActiveOffence>,Cas1OASysGroup]>([
+ *     personService.getOffences(token, crn),
+ *     personService.getOasysAnswers(token, crn, 'offenceDetails'),
+ *   ])
+ */
+
+export const settlePromises = async <T>(promises: Array<Promise<unknown>>, defaults?: Array<unknown>): Promise<T> => {
+  const results = await Promise.allSettled(promises)
+  return results.map((result, index) => {
+    if (result.status === 'fulfilled') {
+      return result.value
+    }
+    return defaults ? defaults[index] : undefined
+  }) as T
+}

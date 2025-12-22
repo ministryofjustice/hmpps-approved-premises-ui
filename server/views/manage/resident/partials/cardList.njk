@@ -4,8 +4,6 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "components/sortableTable/macro.njk" import sortableTable %}
 
-<h2 class="govuk-heading-m">{{ subHeading }}</h2>
-
 {% for card in cardList %}
     {% set html %}
         {% if card.rows %}

@@ -1,11 +1,16 @@
-import { Cas1SpaceBooking, FullPerson, PersonRisks, RiskEnvelopeStatus } from '@approved-premises/api'
-import { SummaryListItem, SummaryListWithCard, TabItem, Table } from '@approved-premises/ui'
+import {
+  ApprovedPremisesApplication,
+  Cas1SpaceBooking,
+  FullPerson,
+  PersonRisks,
+  RiskEnvelopeStatus,
+} from '@approved-premises/api'
+import { HtmlItem, SummaryListItem, SummaryListWithCard, TabItem, Table, TextItem } from '@approved-premises/ui'
 import nunjucks from 'nunjucks'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { detailedStatus, statusTextMap } from '../placements/status'
 import { canonicalDates } from '../placements'
-import PersonService from '../../services/personService'
 import { objectClean } from '../utils'
 
 export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'enforcement'
@@ -28,15 +33,25 @@ export type ResidentHeader = {
   attributes: Array<Array<{ title: string; description: string }>>
 }
 
-export type TabData = { cardList?: Array<SummaryListWithCard>; subHeading?: string }
+type TextOrHtml = TextItem | HtmlItem
 
-export type TabControllerParameters = {
-  personService?: PersonService
-  crn?: string
-  token?: string
-  personRisks?: PersonRisks
-  placement?: Cas1SpaceBooking
+type AccordionSection = {
+  heading: TextOrHtml
+  content: TextOrHtml
 }
+
+export type Accordion = {
+  id: string
+  headingLevel?: number
+  classes?: string
+  attributes?: Record<string, string>
+  rememberExpanded?: boolean
+  hideAllSectionsText?: string
+  showAllSectionsText?: string
+  items: Array<AccordionSection>
+}
+
+export type TabData = { cardList?: Array<SummaryListWithCard>; subHeading?: string; accordion?: Accordion }
 
 export const tabLabels: Record<
   ResidentProfileTab,
@@ -166,4 +181,21 @@ export const card = ({
 
 export const detailsBody = (summaryText: string, text: string) => {
   return nunjucks.render(`partials/detailsBlock.njk`, { summaryText, text })
+}
+
+export const insetText = (html: string): string => {
+  return nunjucks.render(`partials/insetText.njk`, { html })
+}
+
+export const renderCardList = (cardListData: Array<SummaryListWithCard>) => {
+  return nunjucks.render(`manage/resident/partials/cardList.njk`, { cardList: cardListData })
+}
+
+export const renderPersonDetails = (application: ApprovedPremisesApplication): string => {
+  return nunjucks.render(`manage/resident/partials/personDetails.njk`, { application })
+}
+
+type AlertVariant = 'information' | 'success' | 'warning' | 'error'
+export const alertBanner = (parameters: { variant: AlertVariant; title: string; html?: string }) => {
+  return nunjucks.render(`manage/resident/partials/alert.njk`, parameters)
 }

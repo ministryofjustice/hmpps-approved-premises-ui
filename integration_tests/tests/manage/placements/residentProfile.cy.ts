@@ -2,6 +2,7 @@ import { signIn } from '../../signIn'
 import {
   activeOffenceFactory,
   adjudicationFactory,
+  applicationFactory,
   cas1OasysGroupFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
@@ -10,6 +11,8 @@ import {
 import ResidentProfilePage from '../../../pages/manage/placements/residentProfile'
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
 import { DateFormats } from '../../../../server/utils/dateUtils'
+import { fullPersonFactory } from '../../../../server/testutils/factories/person'
+import applicationDocument from '../../../fixtures/applicationDocument.json'
 
 context('ResidentProfile', () => {
   describe('show', () => {
@@ -20,7 +23,7 @@ context('ResidentProfile', () => {
         premises: { name: premises.name, id: premises.id },
       })
       const personRisks = risksFactory.build({ roshRisks: { status: 'retrieved' }, flags: { status: 'retrieved' } })
-
+      GIVEN('there is an existing placement and the person has a risk profile')
       cy.task('stubSpaceBookingGetWithoutPremises', placement)
       cy.task('stubRiskProfile', { person: placement.person, personRisks })
       cy.task('stubFindPerson', { person: placement.person })
@@ -31,44 +34,81 @@ context('ResidentProfile', () => {
       }
     }
 
+    const visitPage = ({ placement, personRisks }, tab?: string): ResidentProfilePage => {
+      GIVEN(' that I am signed in as a user with access resident profile')
+      signIn(['manage_resident'])
+
+      WHEN('I visit the resident profile page')
+      const page = ResidentProfilePage.visit(placement, personRisks)
+      THEN('I should see the person information in the header')
+      page.checkHeader()
+
+      if (tab) {
+        AND(`select the ${tab} tab`)
+        page.clickTab(tab)
+      }
+      return page
+    }
+
     beforeEach(() => {
       cy.task('reset')
     })
 
     it('should show the personal -> personal details tab', () => {
-      GIVEN(' that I am signed in as a user with access resident profile')
-      signIn(['manage_resident'])
-      GIVEN('there is an existing placement')
-      const { placement, personRisks } = setup()
-      WHEN('I visit the resident profile page')
-      const page = ResidentProfilePage.visit(placement, personRisks)
-      page.clickLink('Personal details')
-      THEN('I should see the person information in the header')
-      page.checkHeader()
-      AND('the Personal tab should be selected')
+      const { placement, personRisks } = setup({})
+      const page = visitPage({ placement, personRisks })
+
+      THEN('the Personal tab should be selected')
       page.shouldHaveActiveTab('Personal details')
       page.shouldShowPersonalInformation(placement.person, personRisks, placement)
     })
 
-    it('should show the sentence tab', () => {
+    it('should show the placement tab', () => {
       const { placement, personRisks } = setup()
+      const application = applicationFactory.completed('accepted').build({
+        person: fullPersonFactory.build(),
+        document: applicationDocument,
+      })
+      placement.applicationId = application.id
+      cy.task('stubApplicationGet', { application })
+
+      GIVEN(' that I am signed in as a user with access resident profile')
+      signIn(['manage_resident'])
+
+      WHEN('I visit the resident profile page on the placement tab')
+      const page = ResidentProfilePage.visit(placement, personRisks)
+      page.clickLink('Placement')
+
+      THEN('I should see the person information in the header')
+      page.checkHeader()
+
+      AND('the placement tab should be selected')
+      page.shouldHaveActiveTab('Placement')
+
+      AND('the placement details cards should be shown')
+      page.shouldShowPlacementDetails()
+
+      WHEN('I select the Application sidenav')
+      page.clickLink('Application')
+
+      AND('I expand all the sections')
+      page.clickButton('Show all sections')
+
+      THEN('I should see the application details')
+      page.shouldShowApplication(application)
+    })
+
+    it('should show the sentence tab', () => {
       const offences = activeOffenceFactory.buildList(3)
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
       const adjudications = adjudicationFactory.buildList(5)
+      const { placement, personRisks } = setup()
 
       cy.task('stubPersonOffences', { offences, person: placement.person })
       cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
       cy.task('stubAdjudications', { person: placement.person, adjudications })
 
-      GIVEN(' that I am signed in as a user with access resident profile')
-      signIn(['manage_resident'])
-
-      WHEN('I visit the resident profile page on the sentence tab')
-      const page = ResidentProfilePage.visit(placement, personRisks)
-      page.clickLink('Sentence')
-
-      THEN('I should see the person information in the header')
-      page.checkHeader()
+      const page = visitPage({ placement, personRisks }, 'Sentence')
 
       AND('the Sentence tab should be selected')
       page.shouldHaveActiveTab('Sentence')
@@ -76,7 +116,7 @@ context('ResidentProfile', () => {
       page.shouldShowOffencesInformation(offences, oasysOffenceDetails)
 
       WHEN('I select the prison sub-tab')
-      page.clickLink('Prison')
+      page.clickSideNav('Prison')
 
       THEN('I should see the prison cards')
       page.shouldShowPrisonInformation(adjudications)
@@ -93,16 +133,9 @@ context('ResidentProfile', () => {
       cy.task('stubOasysGroup', { person: placement.person, group: oasysRiskManagementPlan })
       cy.task('stubOasysGroup', { person: placement.person, group: oasysSupportingInformation })
 
-      GIVEN(' that I am signed in as a user with access resident profile')
-      signIn(['manage_resident'])
-      WHEN('I visit the resident profile page on the risk tab')
-      const page = ResidentProfilePage.visit(placement, personRisks)
-      page.clickLink('Risk')
+      const page = visitPage({ placement, personRisks }, 'Risk')
 
-      THEN('I should see the person information in the header')
-      page.checkHeader()
-
-      AND('the Risk tab should be selected')
+      THEN('the Risk tab should be selected')
       page.shouldHaveActiveTab('Risk')
 
       AND('the OASys meta-data should be shown')
@@ -118,6 +151,54 @@ context('ResidentProfile', () => {
       page.shouldShowOasysCards(['RM30', 'RM31', 'RM32', 'RM33'], oasysRiskManagementPlan, 'OASys risk management plan')
       page.shouldShowOasysCards(['2.4.1', '2.4.2'], oasysOffenceDetails, 'OASys')
       page.shouldShowOasysCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
+    })
+
+    it('should show the placement tab', () => {
+      const { placement, personRisks } = setup()
+      GIVEN(' that I am signed in as a user with access resident profile')
+      signIn(['manage_resident'])
+      WHEN('I visit the resident profile page on the placement tab')
+      const page = ResidentProfilePage.visit(placement, personRisks)
+      page.clickLink('Placement')
+      THEN('I should see the person information in the header')
+      page.checkHeader()
+
+      AND('the placement tab should be selected')
+      page.shouldHaveActiveTab('Placement')
+
+      AND('the placement details cards should be shown')
+      page.shouldShowPlacementDetails()
+    })
+
+    it('should render the page tab if there are no external data', () => {
+      const { placement, personRisks } = setup()
+      cy.task('stubOasysGroup404', { person: placement.person })
+      cy.task('stubAdjudications404', { person: placement.person })
+      cy.task('stubPersonOffences404', { person: placement.person })
+
+      const page = visitPage({ placement, personRisks })
+
+      THEN('The page should render')
+      page.shouldHaveActiveTab('Personal details')
+
+      WHEN('I select the risk tab')
+      page.clickTab('Risk')
+      THEN('The Risk tab should be selected')
+      page.shouldHaveActiveTab('Risk')
+      cy.contains('No OASys risk assessment for person added')
+
+      WHEN('I select the sentence tab')
+      page.clickTab('Sentence')
+      THEN('The Sentence tab should be selected')
+      page.shouldHaveActiveTab('Sentence')
+      cy.contains('No offences found')
+      cy.contains('OASys question 2.1 not available')
+
+      WHEN('I select the prison side-tab')
+      page.clickSideNav('Prison')
+      page.shouldHaveActiveSideNav('Prison')
+
+      cy.contains('No adjudications found')
     })
 
     it('should show the placement tab', () => {

@@ -32,7 +32,7 @@ describe('residentsUtils', () => {
         },
         {
           active: true,
-          href: `${baseUrl}placement`,
+          href: `${baseUrl}placement/placement`,
           text: 'Placement',
         },
         {
@@ -71,12 +71,25 @@ describe('residentsUtils', () => {
     })
   })
 
-  describe('detailsBody', () => {
-    it('should call nunjucks to render a details section', () => {
-      ;(render as jest.Mock).mockReturnValue('rendered-content')
-      expect(detailsBody('summary', 'content')).toEqual('rendered-content')
+  describe('Template renderers', () => {
+    beforeEach(() => {
+      ;(render as jest.Mock).mockImplementation((templateName: string) => `render "${templateName}"`)
+    })
 
-      expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', { summaryText: 'summary', text: 'content' })
+    describe('detailsBody', () => {
+      it('should call nunjucks to render a details section', () => {
+        expect(detailsBody('summary', 'content')).toEqual('render "partials/detailsBlock.njk"')
+
+        expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', { summaryText: 'summary', text: 'content' })
+      })
+    })
+
+    describe('insetText', () => {
+      it('should call nunjucks to render an inset text ', () => {
+        expect(detailsBody('summary', 'content')).toEqual('render "partials/detailsBlock.njk"')
+
+        expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', { summaryText: 'summary', text: 'content' })
+      })
     })
   })
 

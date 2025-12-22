@@ -1,0 +1,3 @@
+{% from "partials/personDetails.njk" import personDetails %}
+
+{{ personDetails(application.person, statusOnSubmission = application.personStatusOnSubmission) }}
