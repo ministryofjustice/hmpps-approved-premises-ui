@@ -21,7 +21,9 @@ export const summaryCards = (
 ): Array<SummaryListWithCard> => {
   return questionNumbers
     .map(qNumber => {
-      const question: OASysQuestion = block.answers.find(({ questionNumber }) => questionNumber === qNumber)
+      const question: OASysQuestion = block?.answers
+        ? block.answers.find(({ questionNumber }) => questionNumber === qNumber)
+        : undefined
       return (
         question &&
         card({

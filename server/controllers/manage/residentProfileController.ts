@@ -1,14 +1,14 @@
 import type { Request, RequestHandler, Response } from 'express'
 import { TabItem } from '@approved-premises/ui'
 import { Cas1SpaceBooking, PersonRisks } from '@approved-premises/api'
-import { placementSideNavigation } from '../../utils/resident/placementUtils'
 import { personalSideNavigation } from '../../utils/resident/personalUtils'
+import { placementSideNavigation } from '../../utils/resident/placementUtils'
 import {
   sentenceLicenceTabController,
   sentenceOffencesTabController,
   sentencePrisonTabController,
 } from '../../utils/resident/sentence'
-import { placementApplicationTabController } from '../../utils/resident/placement'
+import { placementApplicationTabController, placementTabController } from '../../utils/resident/placement'
 import { ApplicationService, PersonService, PlacementService } from '../../services'
 import paths from '../../paths/manage'
 
@@ -24,11 +24,8 @@ import {
 
 import { sentenceSideNavigation } from '../../utils/resident/sentenceUtils'
 import { riskTabController } from '../../utils/resident/risk'
-import { personalSideNavigation, personalDetailsTabController } from '../../utils/resident/personal'
-import { placementSideNavigation, placementTabController } from '../../utils/resident/placement'
 import { settlePromises } from '../../utils/utils'
 import { personalDetailsTabController } from '../../utils/resident/personal'
-import { placementTabController } from '../../utils/resident/placement'
 
 export default class ResidentProfileController {
   constructor(
@@ -82,8 +79,8 @@ export default class ResidentProfileController {
           break
         case 'placement':
           sideNavigation = placementSideNavigation(subTab, crn, placement)
-          if (subTab === 'application') tabData = await placementApplicationTabController(tabParameters)
           if (subTab === 'placementDetails') tabData = placementTabController(placement)
+          if (subTab === 'application') tabData = await placementApplicationTabController(tabParameters)
           break
         case 'risk':
           tabData = await riskTabController(tabParameters)
@@ -93,13 +90,6 @@ export default class ResidentProfileController {
           if (subTab === 'offence') tabData = await sentenceOffencesTabController(tabParameters)
           if (subTab === 'licence') tabData = await sentenceLicenceTabController()
           if (subTab === 'prison') tabData = await sentencePrisonTabController(tabParameters)
-          break
-        case 'risk':
-          tabData = await riskTabController(tabParameters)
-          break
-        case 'placement':
-          tabData = placementTabController(placement)
-          sideNavigation = placementSideNavigation(subTab, crn, placement)
           break
         default:
       }

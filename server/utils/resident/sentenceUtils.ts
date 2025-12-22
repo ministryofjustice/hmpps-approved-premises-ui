@@ -162,11 +162,15 @@ export const prisonCards = (adjudications: Array<Adjudication>): Array<SummaryLi
     title: 'Cell Sharing Risk Assessment (CRSA)',
     rows: [summaryListItem('Type', 'TBA')],
   }),
-  card({
-    title: 'Adjudications',
-    table: {
-      head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }, { text: 'Sanction' }],
-      rows: adjudicationRows(adjudications),
-    },
-  }),
+  card(
+    adjudications
+      ? {
+          title: 'Adjudications',
+          table: {
+            head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }, { text: 'Sanction' }],
+            rows: adjudicationRows(adjudications),
+          },
+        }
+      : { html: insetText('No adjudications found') },
+  ),
 ]

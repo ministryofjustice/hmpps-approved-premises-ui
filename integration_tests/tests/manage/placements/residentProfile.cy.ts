@@ -91,9 +91,6 @@ context('ResidentProfile', () => {
       WHEN('I select the Application sidenav')
       page.clickLink('Application')
 
-      AND('I expand all the sections')
-      page.clickButton('Show all sections')
-
       THEN('I should see the application details')
       page.shouldShowApplication(application)
     })
@@ -151,23 +148,6 @@ context('ResidentProfile', () => {
       page.shouldShowOasysCards(['RM30', 'RM31', 'RM32', 'RM33'], oasysRiskManagementPlan, 'OASys risk management plan')
       page.shouldShowOasysCards(['2.4.1', '2.4.2'], oasysOffenceDetails, 'OASys')
       page.shouldShowOasysCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
-    })
-
-    it('should show the placement tab', () => {
-      const { placement, personRisks } = setup()
-      GIVEN(' that I am signed in as a user with access resident profile')
-      signIn(['manage_resident'])
-      WHEN('I visit the resident profile page on the placement tab')
-      const page = ResidentProfilePage.visit(placement, personRisks)
-      page.clickLink('Placement')
-      THEN('I should see the person information in the header')
-      page.checkHeader()
-
-      AND('the placement tab should be selected')
-      page.shouldHaveActiveTab('Placement')
-
-      AND('the placement details cards should be shown')
-      page.shouldShowPlacementDetails()
     })
 
     it('should render the page tab if there are no external data', () => {

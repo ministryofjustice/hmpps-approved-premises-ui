@@ -10,7 +10,6 @@ export const placementTabController = (placement: Cas1SpaceBooking): TabData => 
   }
 }
 
-
 export const placementApplicationTabController = async ({
   applicationService,
   token,
@@ -26,4 +25,3 @@ export const placementApplicationTabController = async ({
     accordion: applicationDocumentAccordion(application),
   }
 }
-

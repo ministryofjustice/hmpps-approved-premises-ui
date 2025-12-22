@@ -83,19 +83,21 @@ export const applicationDocumentAccordion = (application: ApprovedPremisesApplic
   const personDetails = { heading: { text: 'Person details' }, content: { html: renderPersonDetails(application) } }
 
   return {
-    id: 'applicationId',
+    id: 'applicationAccordion',
 
     items: [
       personDetails,
       ...sections.map(section => {
-        const content: string = renderCardList(section.tasks as unknown as Array<SummaryListWithCard>)
-        return { heading: { text: section.title }, content: { html: content } }
+        return {
+          heading: { text: section.title },
+          content: { html: renderCardList(section.tasks as unknown as Array<SummaryListWithCard>) },
+        }
       }),
     ],
   }
 }
 
-export const applicationCardList = (application:ApprovedPremisesApplication):Array<SummaryListWithCard> => {
+export const applicationCardList = (application: ApprovedPremisesApplication): Array<SummaryListWithCard> => {
   return [
     card({
       html: alertBanner({
@@ -111,4 +113,3 @@ export const applicationCardList = (application:ApprovedPremisesApplication):Arr
     }),
   ]
 }
-

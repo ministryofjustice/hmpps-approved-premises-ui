@@ -1,6 +1,4 @@
 import { Cas1SpaceBooking } from '@approved-premises/api'
-import { placementTabController } from './placement'
-import { cas1SpaceBookingFactory } from '../../testutils/factories'
 import { createMock } from '@golevelup/ts-jest'
 import { ApplicationService } from 'server/services'
 import { placementApplicationTabController, placementTabController } from './placement'
@@ -11,7 +9,6 @@ import { characteristicsBulletList } from '../characteristicsUtils'
 import { placementStatusTag } from '../placements'
 
 import * as placementUtils from './placementUtils'
-import { Accordion } from './index'
 
 const token = 'token'
 
@@ -204,7 +201,7 @@ describe('tabController', () => {
   )
 
   describe('placementApplicationTabController', () => {
-    it('should render the application document as a carousel', async () => {
+    it('should render the application document as an accordion', async () => {
       const applicationService = createMock<ApplicationService>({})
       const application = applicationFactory.build()
 
