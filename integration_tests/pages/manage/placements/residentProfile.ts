@@ -1,6 +1,7 @@
 import {
   ActiveOffence,
   Adjudication,
+  ApprovedPremisesApplication,
   Cas1OASysGroup,
   Cas1SpaceBooking,
   FullPerson,
@@ -14,10 +15,12 @@ import paths from '../../../../server/paths/manage'
 
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
-import { adjudicationRows, offencesTabCards } from '../../../../server/utils/resident/sentence'
+import { adjudicationRows, offencesTabCards } from '../../../../server/utils/resident/sentenceUtils'
 import { getResidentStatus } from '../../../../server/utils/resident'
-import { placementDetailsCards } from '../../../../server/utils/resident/placement'
-import { personDetailsCardList } from '../../../../server/utils/resident/personal'
+import { placementDetailsCards } from '../../../../server/utils/resident/placementUtils'
+import { personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
+import { AND, THEN, WHEN } from '../../../helpers'
+import { SubmittedDocumentRenderer } from '../../../../server/utils/forms/submittedDocumentRenderer'
 
 export default class ResidentProfilePage extends Page {
   constructor(
@@ -148,6 +151,40 @@ export default class ResidentProfilePage extends Page {
         [{ text: 'Known adult' }, { text: mapText(risks.riskToKnownAdult) }],
         [{ text: 'Staff' }, { text: mapText(risks.riskToStaff) }],
       ])
+    })
+  }
+
+  shouldShowApplication(application: ApprovedPremisesApplication) {
+    const person = application.person as FullPerson
+    const sections = new SubmittedDocumentRenderer(application).response
+
+    AND('I should see a warning banner')
+    this.shouldShowAlert('This application may not show the latest resident information')
+
+    WHEN('I expand all the sections')
+    this.clickButton('Show all sections')
+
+    THEN('I should see the personal details card')
+    cy.get('.govuk-summary-card__title')
+      .contains('Person Details')
+      .parents('.govuk-summary-card')
+      .within(() => {
+        this.shouldContainSummaryListItems([
+          { key: { text: 'Name' }, value: { text: person.name } },
+          { key: { text: 'CRN' }, value: { text: person.crn } },
+          { key: { text: 'Date of Birth' }, value: { text: DateFormats.isoDateToUIDate(person.dateOfBirth) } },
+        ])
+      })
+    AND('I should see all the section cards')
+    sections.forEach(section => {
+      cy.get('.govuk-accordion__section-heading')
+        .contains(section.title)
+        .parents('.govuk-accordion__section')
+        .within(() => {
+          section.tasks.forEach(task => {
+            this.shouldShowCard(task as never as SummaryListWithCard)
+          })
+        })
     })
   }
 }

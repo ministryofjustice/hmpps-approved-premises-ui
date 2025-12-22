@@ -32,7 +32,7 @@ describe('residentsUtils', () => {
         },
         {
           active: true,
-          href: `${baseUrl}placement`,
+          href: `${baseUrl}placement/placement`,
           text: 'Placement',
         },
         {

@@ -2,6 +2,7 @@ import { signIn } from '../../signIn'
 import {
   activeOffenceFactory,
   adjudicationFactory,
+  applicationFactory,
   cas1OasysGroupFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
@@ -10,6 +11,8 @@ import {
 import ResidentProfilePage from '../../../pages/manage/placements/residentProfile'
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
 import { DateFormats } from '../../../../server/utils/dateUtils'
+import { fullPersonFactory } from '../../../../server/testutils/factories/person'
+import applicationDocument from '../../../fixtures/applicationDocument.json'
 
 context('ResidentProfile', () => {
   describe('show', () => {
@@ -58,6 +61,40 @@ context('ResidentProfile', () => {
       THEN('the Personal tab should be selected')
       page.shouldHaveActiveTab('Personal details')
       page.shouldShowPersonalInformation(placement.person, personRisks, placement)
+    })
+
+    it('should show the placement tab', () => {
+      const { placement, personRisks } = setup()
+      const application = applicationFactory.completed('accepted').build({
+        person: fullPersonFactory.build(),
+        document: applicationDocument,
+      })
+      placement.applicationId = application.id
+      cy.task('stubApplicationGet', { application })
+
+      GIVEN(' that I am signed in as a user with access resident profile')
+      signIn(['manage_resident'])
+
+      WHEN('I visit the resident profile page on the placement tab')
+      const page = ResidentProfilePage.visit(placement, personRisks)
+      page.clickLink('Placement')
+
+      THEN('I should see the person information in the header')
+      page.checkHeader()
+
+      AND('the placement tab should be selected')
+      page.shouldHaveActiveTab('Placement')
+      page.shouldHaveActiveSideNav(`${placement.premises.name} placement`)
+
+      AND('the placement details cards should be shown')
+      page.shouldShowPlacementDetails()
+
+      WHEN('I select the Application sidenav')
+      page.clickLink('Application')
+
+      THEN('I should see the application details')
+      page.shouldHaveActiveSideNav(`Application`)
+      page.shouldShowApplication(application)
     })
 
     it('should show the sentence tab', () => {
@@ -113,23 +150,6 @@ context('ResidentProfile', () => {
       page.shouldShowOasysCards(['RM30', 'RM31', 'RM32', 'RM33'], oasysRiskManagementPlan, 'OASys risk management plan')
       page.shouldShowOasysCards(['2.4.1', '2.4.2'], oasysOffenceDetails, 'OASys')
       page.shouldShowOasysCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
-    })
-
-    it('should show the placement tab', () => {
-      const { placement, personRisks } = setup()
-      GIVEN(' that I am signed in as a user with access resident profile')
-      signIn(['manage_resident'])
-      WHEN('I visit the resident profile page on the placement tab')
-      const page = ResidentProfilePage.visit(placement, personRisks)
-      page.clickLink('Placement')
-      THEN('I should see the person information in the header')
-      page.checkHeader()
-
-      AND('the placement tab should be selected')
-      page.shouldHaveActiveTab('Placement')
-
-      AND('the placement details cards should be shown')
-      page.shouldShowPlacementDetails()
     })
 
     it('should render the page tab if there are no external data', () => {

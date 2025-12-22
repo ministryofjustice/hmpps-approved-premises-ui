@@ -4,6 +4,7 @@
 {% from "moj/components/identity-bar/macro.njk" import mojIdentityBar %}
 {% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
 {% from "moj/components/side-navigation/macro.njk" import mojSideNavigation %}
+{% from "govuk/components/accordion/macro.njk" import govukAccordion %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "govuk-body govuk-!-padding-top-0" %}
@@ -41,17 +42,24 @@
 
     <div class="govuk-grid-row">
 
-    {% if sideNavigation %}
-        <div class="govuk-grid-column-one-quarter">
-        {{ mojSideNavigation({items:sideNavigation}) }}
-        </div>
-    {% endif %}
+        {% if sideNavigation %}
+            <div class="govuk-grid-column-one-quarter">
+                {{ mojSideNavigation({items:sideNavigation}) }}
+            </div>
+        {% endif %}
 
-    <div class="govuk-grid-column-three-quarters">
-    {% if cardList %}
-        {% include "./partials/cardList.njk" %}
-    {% endif %}
-    </div>
+        <div class="govuk-grid-column-three-quarters">
+
+            <h2 class="govuk-heading-m">{{ subHeading }}</h2>
+
+            {% if cardList %}
+                {% include "./partials/cardList.njk" %}
+            {% endif %}
+
+            {% if accordion %}
+                {{ govukAccordion(accordion) }}
+            {% endif %}
+        </div>
     </div>
 
 {% endblock %}
