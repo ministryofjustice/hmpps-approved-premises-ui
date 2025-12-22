@@ -13,6 +13,8 @@ import { TabData, card, getResidentHeader, ResidentProfileTab, residentTabItems,
 import * as riskTabUtils from '../../utils/resident/risk'
 import * as sentenceTabUtils from '../../utils/resident/sentence'
 import * as personalTabUtils from '../../utils/resident/personal'
+import * as placementTabUtils from '../../utils/resident/placement'
+import { ErrorWithData } from '../../utils/errors'
 
 describe('residentProfileController', () => {
   const token = 'TEST_TOKEN'
@@ -127,6 +129,22 @@ describe('residentProfileController', () => {
       expect(tabController).toHaveBeenCalledWith(expect.objectContaining({ crn, personService, token }))
     })
 
+    it('should render the placement details tab', async () => {
+      const { request, response, placement, personRisks } = setUp()
+
+      const detailsController = jest.spyOn(placementTabUtils, 'placementTabController').mockReturnValue(tabData)
+
+      await residentProfileController.show('placement', 'placementDetails')(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('manage/resident/residentProfile', {
+        ...renderParameters(placement, personRisks, 'placement'),
+        sideNavigation: placementTabUtils.placementSideNavigation('placementDetails', crn, placement),
+        ...tabData,
+      })
+
+      expect(detailsController).toHaveBeenCalledWith(placement)
+    })
+
     it('should render the Manage resident page with the correct actions for an upcoming placement', async () => {
       const { request, response, placement } = setUp()
 
@@ -172,13 +190,36 @@ describe('residentProfileController', () => {
     it('should render the Manage resident page with the residents banner', async () => {
       const { request, response, placement, personRisks } = setUp()
 
-      const handler = residentProfileController.show()
-      await handler(request, response, next)
+      await residentProfileController.show()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'manage/resident/residentProfile',
         expect.objectContaining({
           resident: getResidentHeader(placement, personRisks),
+        }),
+      )
+    })
+
+    it('should render the page if the risk data API call fails', async () => {
+      const errorPersonRisks = {
+        roshRisks: { status: 'error' },
+        mappa: { status: 'error' },
+        flags: { status: 'error' },
+        tier: { status: 'error' },
+      } as PersonRisks
+
+      const { request, response, placement } = setUp()
+
+      personService.riskProfile.mockImplementation(async () => {
+        throw new ErrorWithData({ status: 404 })
+      })
+
+      await residentProfileController.show()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/resident/residentProfile',
+        expect.objectContaining({
+          resident: getResidentHeader(placement, errorPersonRisks),
         }),
       )
     })

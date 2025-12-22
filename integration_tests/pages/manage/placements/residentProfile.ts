@@ -8,13 +8,15 @@ import {
   PersonRisks,
   RoshRisks,
 } from '@approved-premises/api'
+import { SummaryListWithCard, TextItem } from '@approved-premises/ui'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
-import { adjudicationRows, offenceSummaryList } from '../../../../server/utils/resident/sentence'
+import { adjudicationRows, offencesTabCards } from '../../../../server/utils/resident/sentence'
 import { getResidentStatus } from '../../../../server/utils/resident'
+import { placementDetailsCards } from '../../../../server/utils/resident/placement'
 import { personDetailsCardList } from '../../../../server/utils/resident/personal'
 
 export default class ResidentProfilePage extends Page {
@@ -37,6 +39,25 @@ export default class ResidentProfilePage extends Page {
       failOnStatusCode: false,
     })
     return new ResidentProfilePage(undefined, undefined, `Authorisation Error`)
+  }
+
+  shouldShowCard(card: SummaryListWithCard, checkContents = true) {
+    const title = card.card.title.text
+    cy.get('.govuk-summary-card__title').contains(title).should('exist')
+    if (checkContents) {
+      cy.get('.govuk-summary-card__title')
+        .contains(title)
+        .parents('.govuk-summary-card')
+        .within(() => {
+          if (card.rows) {
+            this.shouldContainSummaryListItems(card.rows)
+          }
+          if (card.table) {
+            this.shouldContainTableColumns(card.table.head.map(cell => (cell as TextItem).text))
+            this.shouldContainTableRows(card.table.rows)
+          }
+        })
+    }
   }
 
   checkHeader() {
@@ -66,11 +87,12 @@ export default class ResidentProfilePage extends Page {
 
   shouldShowOffencesInformation(offences: Array<ActiveOffence>, oasysOffenceDetails: Cas1OASysGroup) {
     cy.get('.govuk-summary-card__title').contains('Offence').should('exist')
-    const expected = offenceSummaryList(offences, { ...oasysOffenceDetails, answers: [] })
-    expected.splice(2, 1)
-    expected.splice(5, 1)
-
-    this.shouldContainSummaryListItems(expected)
+    const cards = offencesTabCards(offences, { ...oasysOffenceDetails, answers: [] })
+    this.shouldShowCard(cards[0])
+    this.shouldShowCard(cards[1])
+    this.shouldShowCard(cards[2], false)
+    this.shouldShowCard(cards[3], false)
+    this.shouldShowCard(cards[4])
   }
 
   shouldShowPrisonInformation(adjudications: Array<Adjudication>) {
@@ -88,20 +110,30 @@ export default class ResidentProfilePage extends Page {
   shouldShowPersonalInformation(person: Person, personRisks: PersonRisks, placement: Cas1SpaceBooking) {
     const cards = personDetailsCardList(person as FullPerson, personRisks, placement)
     cards.forEach(card => {
-      cy.get('.govuk-summary-card__title')
-        .contains(card.card.title.text)
-        .parents('.govuk-summary-card')
-        .within(() => {
-          this.shouldContainSummaryListItems(card.rows)
-        })
+      this.shouldShowCard(card)
     })
   }
 
-  shouldShowCards(numbers: Array<string>, group: Cas1OASysGroup, groupName: string) {
+  shouldShowOasysCards(numbers: Array<string>, group: Cas1OASysGroup, groupName: string) {
     numbers.forEach(questionNumber => {
       const blockTitle = `${questionNumber} ${groupName}`
       const question = group.answers.find(({ questionNumber: qnumber }) => qnumber === questionNumber)
       cy.contains(blockTitle).parents('.govuk-summary-card').contains(question.label)
+    })
+  }
+
+  shouldShowPlacementDetails() {
+    const expected = placementDetailsCards(this.placement)
+
+    expected.forEach(summaryListWithCard => {
+      const { card, rows } = summaryListWithCard
+
+      cy.get('.govuk-summary-card')
+        .contains('h2', card.title.text)
+        .parents('.govuk-summary-card')
+        .within(() => {
+          this.shouldContainSummaryListItems(rows)
+        })
     })
   }
 

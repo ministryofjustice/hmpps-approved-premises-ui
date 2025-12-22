@@ -686,6 +686,14 @@ export default class Page {
     cy.get('.moj-sub-navigation__list').contains(tabTitle).click()
   }
 
+  shouldHaveActiveSideNav(tabName: string): void {
+    cy.get('.moj-side-navigation__item--active').should('contain.text', tabName)
+  }
+
+  clickSideNav(tabName: string): void {
+    cy.get('.moj-side-navigation__item').contains(tabName).click()
+  }
+
   shouldHaveSelectText(id: string, text: string): void {
     cy.get(`#${id}`).find('option:selected').should('have.text', text)
   }

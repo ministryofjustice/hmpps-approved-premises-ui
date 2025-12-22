@@ -175,7 +175,7 @@ export function convertKeyValuePairsToSummaryListItems<T extends object>(
   return Object.keys(values).map(key => summaryListItem(titles[key], String(values[key as keyof T])))
 }
 
-export type RenderAs = keyof TextItem | keyof HtmlItem | 'textBlock' | 'date'
+export type RenderAs = keyof TextItem | keyof HtmlItem | 'textBlock' | 'date' | 'time'
 
 const renderSummaryValue = (value: string, renderAs: RenderAs) => {
   switch (renderAs) {
@@ -185,6 +185,8 @@ const renderSummaryValue = (value: string, renderAs: RenderAs) => {
       return { text: (value && DateFormats.isoDateToUIDate(value)) || '' }
     case 'html':
       return { html: value }
+    case 'time':
+      return { text: (value && DateFormats.formatTime(value)) || '' }
     default:
       return { text: value }
   }

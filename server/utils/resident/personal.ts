@@ -45,7 +45,7 @@ export const personDetailsCardList = (person: FullPerson, personRisks: PersonRis
         summaryListItem('Status', new PersonStatusTag(person.status).html(), 'html'),
         summaryListItem(
           'Prison',
-          `<p>${isNotRestricted ? person.prisonName : 'Restricted'}</p>${linkTo(paths.resident.tabSentence.prison({ crn: person.crn, placementId: placement.id }), { text: 'View all prison information' })}`,
+          `<p>${isNotRestricted ? (person.prisonName ?? 'Not known') : 'Restricted'}</p>${linkTo(paths.resident.tabSentence.prison({ crn: person.crn, placementId: placement.id }), { text: 'View all prison information' })}`,
           'html',
         ),
         restrictedRow('Nationality', person.nationality),

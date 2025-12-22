@@ -17,6 +17,9 @@ export type ResidentProfileSubTab =
   | 'prison'
   | 'personalDetails'
   | 'contacts'
+  | 'placementDetails'
+  | 'allApPlacements'
+  | 'application'
 
 export type ResidentHeader = {
   name: string
@@ -57,7 +60,7 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
       case 'health':
         return pathRoot.tabHealth(pathParams)
       case 'placement':
-        return pathRoot.tabPlacement(pathParams)
+        return pathRoot.tabPlacement.placementDetails(pathParams)
       case 'risk':
         return pathRoot.tabRisk(pathParams)
       case 'sentence':
@@ -163,4 +166,8 @@ export const card = ({
 
 export const detailsBody = (summaryText: string, text: string) => {
   return nunjucks.render(`partials/detailsBlock.njk`, { summaryText, text })
+}
+
+export const insetText = (html: string): string => {
+  return nunjucks.render(`partials/insetText.njk`, { html })
 }

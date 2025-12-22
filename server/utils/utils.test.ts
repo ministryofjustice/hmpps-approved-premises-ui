@@ -12,11 +12,13 @@ import {
   makeArrayOfType,
   mapApiPersonRisksForUi,
   numberToOrdinal,
+  objectClean,
   objectIfNotEmpty,
   pascalCase,
   pluralize,
   removeBlankSummaryListItems,
   resolvePath,
+  settlePromises,
 } from './utils'
 import { risksFactory } from '../testutils/factories'
 import { DateFormats } from './dateUtils'
@@ -375,5 +377,30 @@ describe('isCardinal', () => {
     ['1a', false],
   ])('tests "%s" giving %s', (str, expected) => {
     expect(isCardinal(str)).toBe(expected)
+  })
+})
+
+describe('objectClean', () => {
+  it('removes undefined values from object', () => {
+    const object = { zero: 0, one: 1, two: undefined, three: 'three' } as Record<string, string | number>
+    expect(objectClean(object)).toEqual({ zero: 0, one: 1, three: 'three' })
+  })
+})
+
+describe('settlePromises', () => {
+  const fn = async (val: string) => {
+    if (val === 'error') throw new Error(val)
+    return val
+  }
+  const promises = [fn('one'), fn('error'), fn('two')] as Array<Promise<never>>
+
+  it('should wait for all promises to resolve or reject, and return results', async () => {
+    const result = await settlePromises(promises)
+    expect(result).toEqual(['one', undefined, 'two'])
+  })
+
+  it('should return a default value if provided', async () => {
+    const result = await settlePromises(promises, ['', 'error default', ''])
+    expect(result).toEqual(['one', 'error default', 'two'])
   })
 })
