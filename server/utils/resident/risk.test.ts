@@ -121,7 +121,7 @@ describe('risk utils', () => {
         expect(result.cardList).toHaveLength(2)
         expect(result.cardList[0].html).toMatchStringIgnoringWhitespace('Nunjucks template partials/insetText.njk')
         expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
-          html: `<p class="govuk-!-margin-bottom-2">No OASys risk assessment for person added</p><p>Go to the <a href="/manage/resident/crn/placement/${placement.id}/placement">application</a> to view risk information for this person.</p>`,
+          html: `<p class="govuk-!-margin-bottom-2">No OASys risk assessment for person added</p><p>Go to the <a href="/manage/resident/crn/placement/${placement.id}/placement/application">application</a> to view risk information for this person.</p>`,
         })
 
         expect(result.cardList[1].html).toMatchStringIgnoringWhitespace(

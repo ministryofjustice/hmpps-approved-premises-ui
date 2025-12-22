@@ -115,7 +115,6 @@ context('ResidentProfile', () => {
       page.shouldShowOasysCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
     })
 
-
     it('should show the placement tab', () => {
       const { placement, personRisks } = setup()
       GIVEN(' that I am signed in as a user with access resident profile')
@@ -131,6 +130,7 @@ context('ResidentProfile', () => {
 
       AND('the placement details cards should be shown')
       page.shouldShowPlacementDetails()
+    })
 
     it('should render the page tab if there are no external data', () => {
       const { placement, personRisks } = setup()

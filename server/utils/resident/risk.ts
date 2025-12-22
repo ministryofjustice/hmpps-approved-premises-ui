@@ -81,8 +81,7 @@ export const riskTabController = async ({
         html: insetText(
           roshSummary
             ? `OASys last updated on ${DateFormats.isoDateToUIDate(roshSummary?.assessmentMetadata?.dateCompleted)}`
-            : // TODO: Update this path to application sub-tab once application view implemented
-              `<p class="govuk-!-margin-bottom-2">No OASys risk assessment for person added</p><p>Go to the ${linkTo(paths.resident.tabPlacement({ placementId: placement.id, crn }), { text: 'application' })} to view risk information for this person.</p>`,
+            : `<p class="govuk-!-margin-bottom-2">No OASys risk assessment for person added</p><p>Go to the ${linkTo(paths.resident.tabPlacement.application({ placementId: placement.id, crn }), { text: 'application' })} to view risk information for this person.</p>`,
         ),
       }),
       roshWidget(personRisks.roshRisks?.status?.toLowerCase() === 'retrieved' && personRisks.roshRisks.value),
