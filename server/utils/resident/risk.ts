@@ -1,8 +1,10 @@
 import { Cas1OASysGroup, OASysQuestion, RoshRisks } from '@approved-premises/api'
 import { SummaryListWithCard } from '@approved-premises/ui'
 import nunjucks from 'nunjucks'
-import { card, detailsBody, TabControllerParameters, TabData } from './index'
+import { card, detailsBody, insetText, TabControllerParameters, TabData } from './index'
 import { DateFormats } from '../dateUtils'
+import { linkTo, settlePromises } from '../utils'
+import paths from '../../paths/manage'
 
 export const tableRow = (content: string) =>
   `<table class="govuk-table">
@@ -22,7 +24,9 @@ export const summaryCards = (
 ): Array<SummaryListWithCard> => {
   return questionNumbers
     .map(qNumber => {
-      const question: OASysQuestion = block.answers.find(({ questionNumber }) => questionNumber === qNumber)
+      const question: OASysQuestion = block?.answers
+        ? block.answers.find(({ questionNumber }) => questionNumber === qNumber)
+        : undefined
       return (
         question &&
         card({
@@ -36,10 +40,6 @@ export const summaryCards = (
 
 export const roshWidget = (params: RoshRisks) => {
   return card({ html: nunjucks.render(`components/riskWidgets/rosh-widget/template.njk`, { params }) })
-}
-
-const insetText = (html: string): string => {
-  return nunjucks.render(`partials/insetText.njk`, { html })
 }
 
 export const riskOasysCards = (
@@ -63,13 +63,11 @@ export const riskTabController = async ({
   token,
   crn,
   personRisks,
+  placement,
 }: TabControllerParameters): Promise<TabData> => {
-  const [roshSummary, riskManagementPlan, offenceDetails, supportingInformation]: [
-    Cas1OASysGroup,
-    Cas1OASysGroup,
-    Cas1OASysGroup,
-    Cas1OASysGroup,
-  ] = await Promise.all([
+  const [roshSummary, riskManagementPlan, offenceDetails, supportingInformation] = await settlePromises<
+    [Cas1OASysGroup, Cas1OASysGroup, Cas1OASysGroup, Cas1OASysGroup]
+  >([
     personService.getOasysAnswers(token, crn, 'roshSummary'),
     personService.getOasysAnswers(token, crn, 'riskManagementPlan'),
     personService.getOasysAnswers(token, crn, 'offenceDetails'),
@@ -81,7 +79,9 @@ export const riskTabController = async ({
     cardList: [
       card({
         html: insetText(
-          `OASys last updated on ${DateFormats.isoDateToUIDate(roshSummary.assessmentMetadata.dateCompleted)}`,
+          roshSummary
+            ? `OASys last updated on ${DateFormats.isoDateToUIDate(roshSummary?.assessmentMetadata?.dateCompleted)}`
+            : `<p class="govuk-!-margin-bottom-2">No OASys risk assessment for person added</p><p>Go to the ${linkTo(paths.resident.tabPlacement.application({ placementId: placement.id, crn }), { text: 'application' })} to view risk information for this person.</p>`,
         ),
       }),
       roshWidget(personRisks.roshRisks?.status?.toLowerCase() === 'retrieved' && personRisks.roshRisks.value),

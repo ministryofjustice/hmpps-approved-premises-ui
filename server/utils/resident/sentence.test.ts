@@ -21,6 +21,7 @@ import {
 import { DateFormats } from '../dateUtils'
 import { PersonService } from '../../services'
 import { sentenceCase } from '../utils'
+import { ErrorWithData } from '../errors'
 
 const personService = createMock<PersonService>({})
 
@@ -28,6 +29,10 @@ jest.mock('nunjucks')
 
 const crn = 'S123456'
 const token = 'token'
+
+const mockService404 = async () => {
+  throw new ErrorWithData({ status: 404 })
+}
 
 describe('sentence', () => {
   const offences = [
@@ -210,16 +215,25 @@ describe('sentence', () => {
   })
 
   describe('offencesTabCards', () => {
-    it('should render the offence cards', () => {
+    beforeEach(() => {
       jest.spyOn(sentenceFns, 'offenceCards').mockReturnValue([])
       jest.spyOn(sentenceFns, 'sentenceSummaryList').mockReturnValue([])
       jest.spyOn(sentenceFns, 'oasysOffenceCards').mockReturnValue([])
-
+    })
+    it('should render the offence cards', () => {
       expect(offencesTabCards(offences, oasysAnswers)).toEqual([
         { card: { title: { text: 'Sentence information' } }, rows: [] },
       ])
       expect(sentenceFns.offenceCards).toHaveBeenCalledWith(offences)
       expect(sentenceFns.oasysOffenceCards).toHaveBeenCalledWith(oasysAnswers)
+    })
+
+    it('should render the offence cards if there are no offence or OASys data', () => {
+      expect(offencesTabCards(undefined, undefined)).toEqual([
+        { card: { title: { text: 'Sentence information' } }, rows: [] },
+      ])
+      expect(sentenceFns.offenceCards).toHaveBeenCalledWith(undefined)
+      expect(sentenceFns.oasysOffenceCards).toHaveBeenCalledWith(undefined)
     })
   })
 
@@ -269,6 +283,19 @@ describe('sentence', () => {
       expect(await sentenceFns.sentenceOffencesTabController({ personService, token, crn })).toEqual({
         subHeading: 'Offence and sentence',
         cardList: offencesTabCards(offences, offenceDetails),
+      })
+
+      expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
+      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'offenceDetails')
+    })
+
+    it('should render the sentenceOffencesTab card list if there is no oasys record and no offences', async () => {
+      personService.getOasysAnswers.mockImplementation(mockService404)
+      personService.getOffences.mockImplementation(mockService404)
+
+      expect(await sentenceFns.sentenceOffencesTabController({ personService, token, crn })).toEqual({
+        subHeading: 'Offence and sentence',
+        cardList: offencesTabCards(undefined, undefined),
       })
 
       expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
@@ -333,16 +360,31 @@ describe('sentence', () => {
   })
 
   describe('sentencePrisonTabController', () => {
-    it('should call the sentencePrisonTabController', async () => {
+    it('should render the prison side-tab', async () => {
       const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
-      jest.spyOn(sentenceFns, 'prisonCards').mockReturnValue([])
+
       personService.getAdjudications.mockResolvedValue(adjudications)
+      jest.spyOn(sentenceFns, 'prisonCards').mockReturnValue([])
 
       expect(await sentencePrisonTabController({ personService, token, crn })).toEqual({
         cardList: [],
         subHeading: 'Prison',
       })
       expect(sentenceFns.prisonCards).toHaveBeenCalledWith(adjudications)
+      expect(personService.getAdjudications).toHaveBeenCalledWith(token, crn)
+    })
+
+    it('should render the prison side-tab when external call returns 404', async () => {
+      personService.getAdjudications.mockImplementation(mockService404)
+
+      jest.spyOn(sentenceFns, 'prisonCards').mockReturnValue([])
+
+      expect(await sentencePrisonTabController({ personService, token, crn })).toEqual({
+        cardList: [],
+        subHeading: 'Prison',
+      })
+
+      expect(sentenceFns.prisonCards).toHaveBeenCalledWith(undefined)
       expect(personService.getAdjudications).toHaveBeenCalledWith(token, crn)
     })
   })

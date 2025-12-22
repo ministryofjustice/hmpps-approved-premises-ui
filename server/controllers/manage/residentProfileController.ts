@@ -1,5 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 import { TabItem } from '@approved-premises/ui'
+import { Cas1SpaceBooking, PersonRisks } from '@approved-premises/api'
 import { PersonService, PlacementService } from '../../services'
 import paths from '../../paths/manage'
 
@@ -22,6 +23,7 @@ import {
 import { riskTabController } from '../../utils/resident/risk'
 import { personalSideNavigation, personalDetailsTabController } from '../../utils/resident/personal'
 import { placementSideNavigation, placementTabController } from '../../utils/resident/placement'
+import { settlePromises } from '../../utils/utils'
 
 export default class ResidentProfileController {
   constructor(
@@ -38,10 +40,19 @@ export default class ResidentProfileController {
 
       const { user } = res.locals
 
-      const [placement, personRisks] = await Promise.all([
-        this.placementService.getPlacement(token, placementId),
-        this.personService.riskProfile(token, crn),
-      ])
+      const defaultRisks: PersonRisks = {
+        crn,
+        roshRisks: { status: 'error' },
+        mappa: { status: 'error' },
+        flags: { status: 'error' },
+        tier: { status: 'error' },
+      }
+
+      const [placement, personRisks] = await settlePromises<[Cas1SpaceBooking, PersonRisks]>(
+        [this.placementService.getPlacement(token, placementId), this.personService.riskProfile(token, crn)],
+        [undefined, defaultRisks],
+      )
+
       const tabItems = residentTabItems(placement, activeTab)
 
       const pageHeading = tabLabels[activeTab].label

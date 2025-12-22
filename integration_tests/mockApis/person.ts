@@ -78,6 +78,19 @@ export default {
         jsonBody: args.offences,
       },
     }),
+
+  stubPersonOffences404: (args: { person: Person }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/people/${args.person.crn}/offences`,
+      },
+      response: {
+        status: 404,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { status: 404 },
+      },
+    }),
   stubPersonalTimeline: (args: { person: Person; timeline: Cas1PersonalTimeline }): SuperAgentRequest =>
     stubFor({
       request: {
@@ -126,6 +139,19 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: args.adjudications,
+      },
+    }),
+
+  stubAdjudications404: (args: { person: Person }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/people/${args.person.crn}/adjudications`,
+      },
+      response: {
+        status: 404,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { status: 404 },
       },
     }),
 

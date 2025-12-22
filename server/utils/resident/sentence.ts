@@ -3,8 +3,8 @@ import { SummaryListItem, SummaryListWithCard, TableRow } from '@approved-premis
 import { summaryListItem } from '../formUtils'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
-import { card, detailsBody, ResidentProfileSubTab, TabControllerParameters, TabData } from './index'
-import { sentenceCase } from '../utils'
+import { card, detailsBody, insetText, ResidentProfileSubTab, TabControllerParameters, TabData } from './index'
+import { sentenceCase, settlePromises } from '../utils'
 import { dateCell, textCell } from '../tableUtils'
 
 export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
@@ -53,6 +53,8 @@ const getOffenceDescriptions = (
 }
 
 export const offenceCards = (offences: Array<ActiveOffence>): Array<SummaryListWithCard> => {
+  if (!offences?.length) return [card({ html: insetText('No offences found') })]
+
   const mainOffence: ActiveOffence = offences.find(({ mainOffence: isMain }) => isMain) || offences[0]
 
   const { offenceId, deliusEventNumber, offenceDate } = mainOffence
@@ -160,13 +162,17 @@ export const prisonCards = (adjudications: Array<Adjudication>): Array<SummaryLi
     title: 'Cell Sharing Risk Assessment (CRSA)',
     rows: [summaryListItem('Type', 'TBA')],
   }),
-  card({
-    title: 'Adjudications',
-    table: {
-      head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }, { text: 'Sanction' }],
-      rows: adjudicationRows(adjudications),
-    },
-  }),
+  card(
+    adjudications
+      ? {
+          title: 'Adjudications',
+          table: {
+            head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }, { text: 'Sanction' }],
+            rows: adjudicationRows(adjudications),
+          },
+        }
+      : { html: insetText('No adjudications found') },
+  ),
 ]
 
 export const sentenceOffencesTabController = async ({
@@ -174,7 +180,7 @@ export const sentenceOffencesTabController = async ({
   token,
   crn,
 }: TabControllerParameters): Promise<TabData> => {
-  const [offences, offenceAnswers]: [Array<ActiveOffence>, Cas1OASysGroup] = await Promise.all([
+  const [offences, offenceAnswers] = await settlePromises<[Array<ActiveOffence>, Cas1OASysGroup]>([
     personService.getOffences(token, crn),
     personService.getOasysAnswers(token, crn, 'offenceDetails'),
   ])
@@ -191,6 +197,6 @@ export const sentencePrisonTabController = async ({
   token,
   crn,
 }: TabControllerParameters): Promise<TabData> => {
-  const [adjudications]: [Array<Adjudication>] = await Promise.all([personService.getAdjudications(token, crn)])
+  const [adjudications] = await settlePromises<[Array<Adjudication>]>([personService.getAdjudications(token, crn)])
   return { subHeading: 'Prison', cardList: prisonCards(adjudications) }
 }
