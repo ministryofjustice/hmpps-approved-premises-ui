@@ -1,10 +1,17 @@
-import { ActiveOffence, Adjudication, Cas1OASysGroup } from '@approved-premises/api'
+import {
+  ActiveOffence,
+  AdditionalCondition,
+  Adjudication,
+  Cas1OASysGroup,
+  Licence,
+  StandardCondition,
+} from '@approved-premises/api'
 import { SummaryListItem, SummaryListWithCard, TableRow } from '@approved-premises/ui'
 import { summaryListItem } from '../formUtils'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { card, detailsBody, insetText, ResidentProfileSubTab } from './index'
-import { sentenceCase } from '../utils'
+import { makeArrayOfType, sentenceCase } from '../utils'
 import { dateCell, textCell } from '../tableUtils'
 
 export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
@@ -122,25 +129,39 @@ export const offencesTabCards = (
   card({ title: 'Sentence information', rows: sentenceSummaryList() }),
 ]
 
-export const licenseCards = (): Array<SummaryListWithCard> => [
-  card({
-    title: 'Licence conditions',
-    rows: [
-      summaryListItem('Licence start date', 'TBA'),
-      summaryListItem('Licence end date', 'TBA'),
-      summaryListItem('Additional conditions', 'TBA'),
-      summaryListItem('Licence documents', 'TBA'),
-    ],
-  }),
-  card({
-    title: 'Licence conditions',
-    rows: [
-      summaryListItem('EM licence conditions', 'TBA'),
-      summaryListItem('Drug and alcohol monitoring', 'TBA'),
-      summaryListItem('Exclusion zones', 'TBA'),
-    ],
-  }),
-]
+export const licenseCards = (licence: Licence): Array<SummaryListWithCard> => {
+  const bespokeConditions = licence.conditions?.AP?.bespoke
+  const standardConditions = makeArrayOfType<StandardCondition>(licence.conditions?.AP?.standard)
+  const additionalConditions = makeArrayOfType<AdditionalCondition>(licence.conditions?.AP?.additional)
+
+  return [
+    card({ html: insetText('Imported from Create and vary a licence service.') }),
+    card({
+      title: 'Licence overview',
+      rows: [
+        summaryListItem('Licence start date', licence.licenceStartDate, 'date'),
+        summaryListItem('Licence approved date', licence.approvedDateTime, 'date'),
+        summaryListItem('Last updated', licence.updatedDateTime, 'date'),
+        summaryListItem('Licence type', licence.licenceType),
+        summaryListItem('Licence kind', licence.kind),
+        summaryListItem('Status', licence.statusCode),
+      ],
+    }),
+    standardConditions?.length &&
+      card({
+        title: `Standard licence conditions (${standardConditions.length})`,
+        rows: standardConditions.map(({ code, text }) => summaryListItem(code, text)),
+      }),
+    card({
+      title: `Bespoke licence conditions (${bespokeConditions.length})`,
+      rows: bespokeConditions.map(({ text }) => summaryListItem('Bespoke licence condition', text)),
+    }),
+    card({
+      title: `Additional licence conditions (${additionalConditions.length})`,
+      rows: additionalConditions.map(({ text, code }) => summaryListItem(code, text)),
+    }),
+  ]
+}
 
 export const adjudicationRows = (adjudications: Array<Adjudication>): Array<TableRow> => {
   return adjudications.map(adjudication => {

@@ -6,6 +6,7 @@ import {
   cas1OasysGroupFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
+  licenceFactory,
   risksFactory,
 } from '../../../../server/testutils/factories'
 import ResidentProfilePage from '../../../pages/manage/placements/residentProfile'
@@ -101,11 +102,13 @@ context('ResidentProfile', () => {
       const offences = activeOffenceFactory.buildList(3)
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
       const adjudications = adjudicationFactory.buildList(5)
+      const licence = licenceFactory.build()
       const { placement, personRisks } = setup()
 
       cy.task('stubPersonOffences', { offences, person: placement.person })
       cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
       cy.task('stubAdjudications', { person: placement.person, adjudications })
+      cy.task('stubLicence', { person: placement.person, licence })
 
       const page = visitPage({ placement, personRisks }, 'Sentence')
 
@@ -113,6 +116,10 @@ context('ResidentProfile', () => {
       page.shouldHaveActiveTab('Sentence')
       AND('the Offences information should be shown')
       page.shouldShowOffencesInformation(offences, oasysOffenceDetails)
+
+      WHEN('I select the licence side-nav')
+      page.clickSideNav('Licence')
+      THEN('The licence section should be selected')
 
       WHEN('I select the prison sub-tab')
       page.clickSideNav('Prison')

@@ -11,6 +11,7 @@ import {
   adjudicationFactory,
   cas1OasysGroupFactory,
   cas1OASysMetadataFactory,
+  licenceFactory,
   personFactory,
   prisonCaseNotesFactory,
   risksFactory,
@@ -313,6 +314,31 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
       })
 
       await personClient.riskProfile(crn)
+    })
+  })
+
+  describe('licenceDetails', () => {
+    it('calls the API with CRN and retrieves a licence', async () => {
+      const crn = 'crn'
+      const licence = licenceFactory.build()
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the licence for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.licenceDetails({ crn }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: licence,
+        },
+      })
+
+      await personClient.licenceDetails(crn)
     })
   })
 
