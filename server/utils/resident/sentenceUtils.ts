@@ -2,7 +2,6 @@ import {
   ActiveOffence,
   AdditionalCondition,
   Adjudication,
-  BespokeCondition,
   Cas1OASysGroup,
   Licence,
   StandardCondition,
@@ -148,10 +147,11 @@ export const licenseCards = (licence: Licence): Array<SummaryListWithCard> => {
         summaryListItem('Status', licence.statusCode),
       ],
     }),
-    standardConditions?.length && card({
-      title: `Standard licence conditions (${standardConditions.length})`,
-      rows: standardConditions.map(({ code, text }) => summaryListItem(code, text)),
-    }),
+    standardConditions?.length &&
+      card({
+        title: `Standard licence conditions (${standardConditions.length})`,
+        rows: standardConditions.map(({ code, text }) => summaryListItem(code, text)),
+      }),
     card({
       title: `Bespoke licence conditions (${bespokeConditions.length})`,
       rows: bespokeConditions.map(({ text }) => summaryListItem('Bespoke licence condition', text)),
