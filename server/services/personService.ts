@@ -6,6 +6,7 @@ import type {
   Cas1OASysGroupName,
   Cas1OASysMetadata,
   Cas1PersonalTimeline,
+  Licence,
   Person,
   PersonAcctAlert,
   PersonRisks,
@@ -80,5 +81,9 @@ export default class PersonService {
 
   async getTimeline(token: string, crn: string): Promise<Cas1PersonalTimeline> {
     return this.personClientFactory(token).timeline(crn)
+  }
+
+  async licenceDetails(token: string, crn: string): Promise<Licence> {
+    return this.personClientFactory(token).licenceDetails(crn)
   }
 }

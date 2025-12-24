@@ -15,9 +15,15 @@ import {
   adjudicationFactory,
   cas1OasysGroupFactory,
   cas1SpaceBookingFactory,
+  licenceFactory,
 } from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
 import { sentenceCase } from '../utils'
+import {
+  additionalConditionFactory,
+  bespokeConditionFactory,
+  standardConditionFactory,
+} from '../../testutils/factories/licenceConditions'
 
 jest.mock('nunjucks')
 
@@ -232,22 +238,59 @@ describe('sentence', () => {
 
   describe('licenceCards', () => {
     it('should render the licence cards', () => {
-      expect(licenseCards()).toEqual([
+      const standardCondition = standardConditionFactory.build()
+      const bespokeCondition = bespokeConditionFactory.build()
+      const additionalCondition = additionalConditionFactory.build()
+      const licence = licenceFactory.build({
+        conditions: {
+          AP: { standard: [standardCondition], bespoke: [bespokeCondition], additional: [additionalCondition] },
+          PSS: { standard: [], additional: [] },
+        },
+      })
+      expect(licenseCards(licence)).toEqual([
+        { html: 'rendered-output' },
         {
-          card: { title: { text: 'Licence conditions' } },
+          card: { title: { text: 'Licence overview' } },
           rows: [
-            { key: { text: 'Licence start date' }, value: { text: 'TBA' } },
-            { key: { text: 'Licence end date' }, value: { text: 'TBA' } },
-            { key: { text: 'Additional conditions' }, value: { text: 'TBA' } },
-            { key: { text: 'Licence documents' }, value: { text: 'TBA' } },
+            {
+              key: { text: 'Licence start date' },
+              value: { text: DateFormats.isoDateToUIDate(licence.licenceStartDate) },
+            },
+            {
+              key: { text: 'Licence approved date' },
+              value: { text: DateFormats.isoDateToUIDate(licence.approvedDateTime) },
+            },
+            { key: { text: 'Last updated' }, value: { text: DateFormats.isoDateToUIDate(licence.updatedDateTime) } },
+            { key: { text: 'Licence type' }, value: { text: licence.licenceType } },
+            { key: { text: 'Licence kind' }, value: { text: licence.kind } },
+            { key: { text: 'Status' }, value: { text: licence.statusCode } },
           ],
         },
         {
-          card: { title: { text: 'Licence conditions' } },
+          card: { title: { text: 'Standard licence conditions (1)' } },
           rows: [
-            { key: { text: 'EM licence conditions' }, value: { text: 'TBA' } },
-            { key: { text: 'Drug and alcohol monitoring' }, value: { text: 'TBA' } },
-            { key: { text: 'Exclusion zones' }, value: { text: 'TBA' } },
+            {
+              key: { text: standardCondition.code },
+              value: { text: standardCondition.text },
+            },
+          ],
+        },
+        {
+          card: { title: { text: 'Additional licence conditions (1)' } },
+          rows: [
+            {
+              key: { text: additionalCondition.category },
+              value: { text: additionalCondition.text },
+            },
+          ],
+        },
+        {
+          card: { title: { text: 'Bespoke licence conditions (1)' } },
+          rows: [
+            {
+              key: { text: 'Bespoke licence condition 1' },
+              value: { text: bespokeCondition.text },
+            },
           ],
         },
       ])
@@ -286,7 +329,7 @@ describe('sentence', () => {
           rows: [{ key: { text: 'Prison name' }, value: { text: 'TBA' } }],
         },
         {
-          card: { title: { text: 'Cell Sharing Risk Assessment (CRSA)' } },
+          card: { title: { text: 'Cell Sharing Risk Assessment (CSRA)' } },
           rows: [{ key: { text: 'Type' }, value: { text: 'TBA' } }],
         },
         {
