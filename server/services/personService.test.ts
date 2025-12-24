@@ -16,6 +16,7 @@ import {
   cas1OasysGroupFactory,
   cas1OASysMetadataFactory,
   risksFactory,
+  licenceFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/personClient.ts')
@@ -219,15 +220,26 @@ describe('PersonService', () => {
   describe('getPersonRisks', () => {
     it('returns the risk profile for a person', async () => {
       const personRisks = risksFactory.build()
-
       personClient.riskProfile.mockResolvedValue(personRisks)
 
       const result = await service.riskProfile(token, 'crn')
 
       expect(result).toEqual(personRisks)
-
       expect(personClientFactory).toHaveBeenCalledWith(token)
       expect(personClient.riskProfile).toHaveBeenCalledWith('crn')
+    })
+  })
+
+  describe('licenceDetails', () => {
+    it('returns the licence for a person', async () => {
+      const licence = licenceFactory.build()
+      personClient.licenceDetails.mockResolvedValue(licence)
+
+      const result = await service.licenceDetails(token, 'crn')
+
+      expect(result).toEqual(licence)
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.licenceDetails).toHaveBeenCalledWith('crn')
     })
   })
 

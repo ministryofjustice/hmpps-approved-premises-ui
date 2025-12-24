@@ -9,6 +9,7 @@ import type {
   Cas1OASysSupportingInformationQuestionMetaData,
   Cas1PersonalTimeline,
   Document,
+  Licence,
   Person,
   PersonAcctAlert,
   PersonRisks,
@@ -126,6 +127,19 @@ export default {
         status: 404,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: { status: 404 },
+      },
+    }),
+
+  stubLicence: (args: { person: Person; licence: Licence }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/cas1/people/${args.person.crn}/licence-details`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.licence,
       },
     }),
 
