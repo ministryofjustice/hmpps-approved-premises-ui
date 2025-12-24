@@ -2,7 +2,7 @@ import { createMock } from '@golevelup/ts-jest'
 import { FullPerson } from '@approved-premises/api'
 import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
 import { cas1SpaceBookingFactory, risksFactory } from '../../testutils/factories'
-import { personalDetailsTabController, personalSideNavigation } from './personal'
+import { personalDetailsTabController } from './personal'
 import { PersonService } from '../../services'
 import { DateFormats } from '../dateUtils'
 import { getTierOrBlank } from '../applications/helpers'
@@ -18,23 +18,6 @@ describe('Personal tab utils', () => {
   const restrict = (value: SummaryListItem['value'], restricted = false): SummaryListItem['value'] => {
     return restricted ? { text: 'Restricted' } : value
   }
-  describe('personalSideNavigation', () => {
-    it('should return the side navigation for the personal tab', () => {
-      const basePath = `/manage/resident/${crn}/placement/${placement.id}/personal/`
-      expect(personalSideNavigation('personalDetails', crn, placement.id)).toEqual([
-        {
-          active: true,
-          href: `${basePath}personalDetails`,
-          text: 'Personal details',
-        },
-        {
-          active: false,
-          href: `${basePath}contacts`,
-          text: 'Contacts',
-        },
-      ])
-    })
-  })
 
   describe('personalDetailsTabController', () => {
     const validateNumbersCard = (card: SummaryListWithCard, person: Partial<FullPerson>) => {

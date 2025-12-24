@@ -160,6 +160,10 @@ export default class Page {
     cy.get('.govuk-notification-banner').should('not.exist')
   }
 
+  shouldShowAlert(heading: string) {
+    cy.get('.moj-alert__heading').contains(heading)
+  }
+
   shouldShowTicketPanel(text: string, options: { exact: boolean } = { exact: true }): void {
     return this.elementShouldContainText('.moj-ticket-panel__content', text, options)
   }

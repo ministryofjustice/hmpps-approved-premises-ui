@@ -3,7 +3,10 @@ import type { NextFunction, Request, Response } from 'express'
 
 import { Cas1SpaceBooking, PersonRisks } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
-import { PersonService, PlacementService } from '../../services'
+import { placementSideNavigation } from '../../utils/resident/placementUtils'
+import { personalSideNavigation } from '../../utils/resident/personalUtils'
+import { sentenceSideNavigation } from '../../utils/resident/sentenceUtils'
+import { ApplicationService, PersonService, PlacementService } from '../../services'
 
 import paths from '../../paths/manage'
 
@@ -25,7 +28,9 @@ describe('residentProfileController', () => {
 
   const placementService = createMock<PlacementService>({})
   const personService = createMock<PersonService>({})
-  const residentProfileController = new ResidentProfileController(placementService, personService)
+  const applicationService = createMock<ApplicationService>({})
+
+  const residentProfileController = new ResidentProfileController(placementService, personService, applicationService)
 
   const setUp = () => {
     const placement = cas1SpaceBookingFactory.upcoming().build()
@@ -80,7 +85,7 @@ describe('residentProfileController', () => {
         'manage/resident/residentProfile',
         {
           ...renderParameters(placement, personRisks, 'personal'),
-          sideNavigation: personalTabUtils.personalSideNavigation('personalDetails', crn, placement.id),
+          sideNavigation: personalSideNavigation('personalDetails', crn, placement.id),
           ...tabData,
         },
       ])
@@ -101,7 +106,7 @@ describe('residentProfileController', () => {
           ...renderParameters(placement, personRisks, 'sentence'),
           subHeading: 'Offence and sentence',
           tabItems: residentTabItems(placement, 'sentence'),
-          sideNavigation: sentenceTabUtils.sentenceSideNavigation('offence', crn, placement.id),
+          sideNavigation: sentenceSideNavigation('offence', crn, placement.id),
           ...tabData,
         },
       ])
@@ -138,7 +143,7 @@ describe('residentProfileController', () => {
 
       expect(response.render).toHaveBeenCalledWith('manage/resident/residentProfile', {
         ...renderParameters(placement, personRisks, 'placement'),
-        sideNavigation: placementTabUtils.placementSideNavigation('placementDetails', crn, placement),
+        sideNavigation: placementSideNavigation('placementDetails', crn, placement),
         ...tabData,
       })
 

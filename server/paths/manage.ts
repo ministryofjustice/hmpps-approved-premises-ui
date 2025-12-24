@@ -120,7 +120,7 @@ const paths = {
     },
     tabHealth: residentPath.path('health'),
     tabPlacement: {
-      placementDetails: residentPath.path('placement'),
+      placementDetails: residentPath.path('placement').path('placement'),
       allApPlacements: residentPath.path('placement').path('allApPlacements'),
       application: residentPath.path('placement').path('application'),
     },
