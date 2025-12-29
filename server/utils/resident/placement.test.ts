@@ -1,8 +1,12 @@
 import { Cas1SpaceBooking } from '@approved-premises/api'
 import { createMock } from '@golevelup/ts-jest'
 import { ApplicationService } from 'server/services'
-import { placementApplicationTabController, placementTabController } from './placement'
-import { applicationFactory, cas1SpaceBookingFactory } from '../../testutils/factories'
+import { placementTabController, allApPlacementsTabController, placementApplicationTabController } from './placement'
+import {
+  cas1SpaceBookingFactory,
+  cas1SpaceBookingShortSummaryFactory,
+  applicationFactory,
+} from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import { characteristicsBulletList } from '../characteristicsUtils'
@@ -220,5 +224,39 @@ describe('tabController', () => {
         subHeading: 'Application',
       })
     })
+  })
+})
+
+describe('allApPlacementsTabController', () => {
+  it('should return a card list with all placements', () => {
+    const placements = [
+      cas1SpaceBookingShortSummaryFactory.current().build(),
+      cas1SpaceBookingShortSummaryFactory.departed().build(),
+    ]
+
+    const result = allApPlacementsTabController(placements, 'John Doe')
+
+    expect(result.subHeading).toBe('All AP placements')
+    expect(result.subDescription).toBe('View all AP placements for John Doe')
+    expect(result.cardList).toHaveLength(2)
+    expect(result.cardList[0].card.title.text).toBe(placements[0].premises.name)
+    expect(result.cardList[0].rows).toEqual(
+      expect.arrayContaining([
+        {
+          key: { text: 'Approved Premises' },
+          value: { text: placements[0].premises.name },
+        },
+        {
+          key: { text: 'Delius event number' },
+          value: { text: placements[0].deliusEventNumber },
+        },
+      ]),
+    )
+  })
+
+  it('should handle empty placements list', () => {
+    const result = allApPlacementsTabController([], 'John Doe')
+
+    expect(result.cardList).toHaveLength(0)
   })
 })

@@ -1,3 +1,4 @@
+import { FullPerson } from '@approved-premises/api'
 import { signIn } from '../../signIn'
 import {
   activeOffenceFactory,
@@ -6,6 +7,7 @@ import {
   cas1OasysGroupFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
+  cas1SpaceBookingShortSummaryFactory,
   csraSummaryFactory,
   licenceFactory,
   risksFactory,
@@ -162,6 +164,38 @@ context('ResidentProfile', () => {
       page.shouldShowOasysCards(['RM30', 'RM31', 'RM32', 'RM33'], oasysRiskManagementPlan, 'OASys risk management plan')
       page.shouldShowOasysCards(['2.4.1', '2.4.2'], oasysOffenceDetails, 'OASys')
       page.shouldShowOasysCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
+    })
+
+    it('should show the Placement->All AP placements tab', () => {
+      const { placement, personRisks } = setup()
+      const person = placement.person as FullPerson
+      const spaceBookings = [
+        cas1SpaceBookingShortSummaryFactory.upcoming().build(),
+        cas1SpaceBookingShortSummaryFactory.current().build(),
+        cas1SpaceBookingShortSummaryFactory.departed().build(),
+      ]
+
+      cy.task('stubPersonSpaceBookings', { person: placement.person, spaceBookings })
+
+      GIVEN('that I am signed in as a user with access resident profile')
+      signIn(['manage_resident'])
+
+      WHEN('I visit the resident profile page on the placement tab')
+      const page = ResidentProfilePage.visit(placement, personRisks)
+      page.clickLink('Placement')
+
+      AND('I click on the All AP placements side nav')
+      page.clickSideNav('All AP placements')
+
+      THEN('the All AP placements side nav should be active')
+      page.shouldHaveActiveSideNav('All AP placements')
+
+      AND('I should see the All AP placements heading and description')
+      cy.contains('h2', 'All AP placements').should('be.visible')
+      cy.contains(`View all AP placements for ${person.name}`).should('be.visible')
+
+      AND('I should see all the placement cards with their details')
+      page.shouldShowAllApPlacements(spaceBookings, person.name)
     })
 
     it('should render the page tab if there are no external data', () => {

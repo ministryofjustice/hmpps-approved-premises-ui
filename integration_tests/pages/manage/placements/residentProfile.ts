@@ -4,6 +4,7 @@ import {
   ApprovedPremisesApplication,
   Cas1OASysGroup,
   Cas1SpaceBooking,
+  Cas1SpaceBookingShortSummary,
   CsraSummary,
   FullPerson,
   Licence,
@@ -20,7 +21,7 @@ import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { licenseCards, offencesTabCards, prisonCards } from '../../../../server/utils/resident/sentenceUtils'
 import { getResidentStatus } from '../../../../server/utils/resident'
-import { placementDetailsCards } from '../../../../server/utils/resident/placementUtils'
+import { placementDetailsCards, allApPlacementsTabController } from '../../../../server/utils/resident/placement'
 import { personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
 import { AND, THEN, WHEN } from '../../../helpers'
 import { SubmittedDocumentRenderer } from '../../../../server/utils/forms/submittedDocumentRenderer'
@@ -154,6 +155,17 @@ export default class ResidentProfilePage extends Page {
         [{ text: 'Known adult' }, { text: mapText(risks.riskToKnownAdult) }],
         [{ text: 'Staff' }, { text: mapText(risks.riskToStaff) }],
       ])
+    })
+  }
+
+  shouldShowAllApPlacements(spaceBookings: Array<Cas1SpaceBookingShortSummary>, personName: string) {
+    const { subHeading, subDescription, cardList } = allApPlacementsTabController(spaceBookings, personName)
+
+    cy.contains('h2', subHeading).should('be.visible')
+    cy.contains(subDescription).should('be.visible')
+
+    cardList.forEach(card => {
+      this.shouldShowCard(card)
     })
   }
 

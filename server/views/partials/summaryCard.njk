@@ -28,14 +28,21 @@
         </a>
     {% endmacro -%}
 
-    <div class="govuk-summary-card {%- if params.classes %} {{ params.classes }}{% endif %}">
+    <div class="govuk-summary-card govuk-summary-card--with-status {%- if params.classes %} {{ params.classes }}{% endif %}">
         <div class="govuk-summary-card__title-wrapper">
-            {% if params.title %}
-                <h{{ headingLevel }}
-                        class="govuk-summary-card__title {%- if params.title.classes %} {{ params.title.classes }}{% endif %}">
-                    {{ params.title.html | safe | trim | indent(6) if params.title.html else params.title.text }}
-                </h{{ headingLevel }}>
-            {% endif %}
+            <div class="govuk-summary-card__title-container">
+                {% if params.title %}
+                    <h{{ headingLevel }}
+                            class="govuk-summary-card__title {%- if params.title.classes %} {{ params.title.classes }}{% endif %}">
+                        {{ params.title.html | safe | trim | indent(6) if params.title.html else params.title.text }}
+                    </h{{ headingLevel }}>
+                {% endif %}
+                {% if params.status %}
+                    <div class="govuk-summary-card__status govuk-!-margin-left-5">
+                        {{ params.status | safe }}
+                    </div>
+                {% endif %}
+            </div>
             {% if params.actions.items.length %}
                 {% if params.actions.items.length == 1 %}
                     <div class="govuk-summary-card__actions {%- if params.actions.classes %} {{ params.actions.classes }}{% endif %}">
