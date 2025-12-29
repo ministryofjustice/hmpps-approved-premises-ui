@@ -175,6 +175,7 @@ export default {
     },
     timeline: cas1Person.path('timeline'),
     riskProfile: cas1Person.path('risk-profile'),
+    spaceBookings: cas1Person.path('space-bookings'),
   },
   users: {
     index: cas1Users,
