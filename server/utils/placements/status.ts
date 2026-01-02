@@ -1,5 +1,10 @@
-import { Cas1SpaceBooking, Cas1SpaceBookingStatus, Cas1SpaceBookingSummary } from '@approved-premises/api'
-import { differenceInCalendarDays } from 'date-fns'
+import {
+  Cas1SpaceBooking,
+  Cas1SpaceBookingStatus,
+  Cas1SpaceBookingSummary,
+  Cas1SpaceBookingShortSummary,
+} from '@approved-premises/api'
+import { differenceInCalendarDays, parseISO } from 'date-fns'
 
 export const overallStatusTextMap: Record<Cas1SpaceBookingStatus, string> = {
   upcoming: 'Upcoming',
@@ -22,13 +27,15 @@ export const statusTextMap = {
 
 export type SpaceBookingStatus = keyof typeof statusTextMap
 
-export const detailedStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingStatus => {
+export const detailedStatus = (
+  placement: Cas1SpaceBookingSummary | Cas1SpaceBooking | Cas1SpaceBookingShortSummary,
+): SpaceBookingStatus => {
   const { status } = placement
 
   if (['notArrived', 'departed', 'cancelled'].includes(status)) return status
 
   if (status === 'arrived') {
-    const daysFromDeparture = differenceInCalendarDays(placement.expectedDepartureDate, new Date())
+    const daysFromDeparture = differenceInCalendarDays(parseISO(placement.expectedDepartureDate), new Date())
 
     if (daysFromDeparture < 0) return 'overdueDeparture'
     if (daysFromDeparture === 0) return 'departingToday'
@@ -37,7 +44,7 @@ export const detailedStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBoo
     return 'arrived'
   }
 
-  const daysFromArrival = differenceInCalendarDays(placement.expectedArrivalDate, new Date())
+  const daysFromArrival = differenceInCalendarDays(parseISO(placement.expectedArrivalDate), new Date())
 
   if (daysFromArrival < 0) return 'overdueArrival'
   if (daysFromArrival === 0) return 'arrivingToday'

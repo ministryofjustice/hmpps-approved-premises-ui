@@ -11,6 +11,8 @@ import cas1PremisesFactory from './cas1Premises'
 import { overallStatusTextMap, statusTextMap } from '../../utils/placements/status'
 import { apAreaFactory } from './referenceData'
 import cas1NewSpaceBookingCancellationFactory from './cas1NewSpaceBookingCancellation'
+import cas1SpaceBookingNonArrivalFactory from './cas1SpaceBookingNonArrival'
+import cas1SpaceBookingDepartureFactory from './cas1SpaceBookingDeparture'
 
 const arrivedStatuses = ['arrived', 'departingWithin2Weeks', 'departed', 'departingToday', 'overdueDeparture']
 
@@ -48,6 +50,9 @@ class Cas1SpaceBookingShortSummaryFactory extends Factory<Cas1SpaceBookingShortS
       actualArrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
       actualDepartureDate: DateFormats.dateObjToIsoDate(departureDate),
       isNonArrival: false,
+      departure: cas1SpaceBookingDepartureFactory.build({
+        moveOnCategory: undefined,
+      }),
       status: 'departed',
     })
   }
@@ -55,6 +60,7 @@ class Cas1SpaceBookingShortSummaryFactory extends Factory<Cas1SpaceBookingShortS
   nonArrival() {
     return this.upcoming().params({
       isNonArrival: true,
+      nonArrival: cas1SpaceBookingNonArrivalFactory.build(),
       status: 'notArrived',
     })
   }

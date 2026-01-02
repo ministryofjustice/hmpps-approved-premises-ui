@@ -4,6 +4,8 @@ import {
   Cas1SpaceBooking,
   Cas1SpaceBookingDates,
   Cas1SpaceBookingSummary,
+  Cas1SpaceCharacteristic,
+  Cas1SpaceBookingShortSummary,
 } from '@approved-premises/api'
 import { RadioItem, SummaryList, TabItem, TableCell, UserDetails } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
@@ -38,10 +40,24 @@ export const placementStatusCell = (placement: Cas1SpaceBookingSummary): TableCe
   return { html: statusElements.join('<br/>') }
 }
 
-export const canonicalDates = (placement: Cas1SpaceBooking | Cas1SpaceBookingSummary) => ({
+export const canonicalDates = (
+  placement: Cas1SpaceBooking | Cas1SpaceBookingSummary | Cas1SpaceBookingShortSummary,
+) => ({
   arrivalDate: placement.actualArrivalDate || placement.expectedArrivalDate,
   departureDate: placement.actualDepartureDate || placement.expectedDepartureDate,
 })
+
+export const sortSpaceBookingsByCanonicalArrivalDate = (
+  bookings: Array<Cas1SpaceBookingShortSummary>,
+): Array<Cas1SpaceBookingShortSummary> => {
+  return [...bookings].sort((a, b) => {
+    const { arrivalDate: dateA } = canonicalDates(a)
+    const { arrivalDate: dateB } = canonicalDates(b)
+    const dateObjA = DateFormats.isoToDateObj(dateA)
+    const dateObjB = DateFormats.isoToDateObj(dateB)
+    return dateObjB.getTime() - dateObjA.getTime()
+  })
+}
 
 export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
   const actionList = []
@@ -123,7 +139,7 @@ export const placementName = (placement: Cas1SpaceBookingSummary): string =>
   `${placement.premises.name} from ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate)}`
 
 export const placementStatusTag = (
-  placement: Cas1SpaceBookingSummary | Cas1SpaceBooking,
+  placement: Cas1SpaceBookingSummary | Cas1SpaceBooking | Cas1SpaceBookingShortSummary,
   options: StatusTagOptions = {},
 ): string =>
   new PlacementStatusTag(detailedStatus(placement), {
@@ -217,7 +233,9 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
   }
 }
 
-export const requirementsInformation = (placement: Cas1SpaceBooking): SummaryList => {
+export const requirementsInformation = (
+  placement: Cas1SpaceBooking | { characteristics: Array<Cas1SpaceCharacteristic> },
+): SummaryList => {
   const requirements = placement.characteristics
   const apType =
     apTypeCriteriaLabels[

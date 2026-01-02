@@ -4,6 +4,10 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "components/sortableTable/macro.njk" import sortableTable %}
 
+{% if subDescription %}
+    <p class="govuk-body">{{ subDescription }}</p>
+{% endif %}
+
 {% for card in cardList %}
     {% set html %}
         {% if card.rows %}
@@ -32,6 +36,7 @@
         {{ summaryCard({
             title: card.card.title,
             actions:card.card.actions,
+            status: card.card.status,
             html:html
         }) }}
     {% else %}
