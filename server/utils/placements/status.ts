@@ -35,7 +35,7 @@ export const detailedStatus = (
   if (['notArrived', 'departed', 'cancelled'].includes(status)) return status
 
   if (status === 'arrived') {
-    const daysFromDeparture = differenceInCalendarDays(parseISO(placement.expectedDepartureDate), new Date())
+    const daysFromDeparture = differenceInCalendarDays(placement.expectedDepartureDate, new Date())
 
     if (daysFromDeparture < 0) return 'overdueDeparture'
     if (daysFromDeparture === 0) return 'departingToday'
@@ -44,7 +44,7 @@ export const detailedStatus = (
     return 'arrived'
   }
 
-  const daysFromArrival = differenceInCalendarDays(parseISO(placement.expectedArrivalDate), new Date())
+  const daysFromArrival = differenceInCalendarDays(placement.expectedArrivalDate, new Date())
 
   if (daysFromArrival < 0) return 'overdueArrival'
   if (daysFromArrival === 0) return 'arrivingToday'
