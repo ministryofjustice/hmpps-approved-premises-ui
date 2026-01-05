@@ -5,6 +5,7 @@ import {
   cas1KeyworkerAllocationFactory,
   cas1PremisesFactory,
   cas1SpaceBookingFactory,
+  cas1SpaceBookingShortSummaryFactory,
   cas1SpaceBookingSummaryFactory,
   userDetailsFactory,
   userSummaryFactory,
@@ -23,6 +24,7 @@ import {
   placementSummary,
   renderKeyworkersRadioOptions,
   requirementsInformation,
+  sortSpaceBookingsByCanonicalArrivalDate,
   withdrawalMessage,
   withdrawalSummaryList,
   placementName,
@@ -645,6 +647,50 @@ describe('placementUtils', () => {
           ],
         })
       })
+    })
+  })
+
+  describe('sortSpaceBookingsByCanonicalArrivalDate', () => {
+    it('should sort bookings by canonical arrival date in descending order', () => {
+      const booking1 = cas1SpaceBookingShortSummaryFactory.build({
+        expectedArrivalDate: '2024-01-15',
+        actualArrivalDate: undefined,
+      })
+      const booking2 = cas1SpaceBookingShortSummaryFactory.build({
+        expectedArrivalDate: '2024-03-20',
+        actualArrivalDate: undefined,
+      })
+      const booking3 = cas1SpaceBookingShortSummaryFactory.build({
+        expectedArrivalDate: '2024-02-10',
+        actualArrivalDate: undefined,
+      })
+
+      const result = sortSpaceBookingsByCanonicalArrivalDate([booking1, booking2, booking3])
+
+      expect(result[0].id).toBe(booking2.id)
+      expect(result[1].id).toBe(booking3.id)
+      expect(result[2].id).toBe(booking1.id)
+    })
+
+    it('should use actualArrivalDate when available', () => {
+      const booking1 = cas1SpaceBookingShortSummaryFactory.build({
+        expectedArrivalDate: '2024-01-15',
+        actualArrivalDate: '2024-04-01',
+      })
+      const booking2 = cas1SpaceBookingShortSummaryFactory.build({
+        expectedArrivalDate: '2024-03-20',
+        actualArrivalDate: undefined,
+      })
+
+      const result = sortSpaceBookingsByCanonicalArrivalDate([booking1, booking2])
+
+      expect(result[0].id).toBe(booking1.id)
+      expect(result[1].id).toBe(booking2.id)
+    })
+
+    it('should return empty array when given empty array', () => {
+      const result = sortSpaceBookingsByCanonicalArrivalDate([])
+      expect(result).toEqual([])
     })
   })
 })

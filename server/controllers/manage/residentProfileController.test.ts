@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from 'express'
 
 import { Cas1SpaceBooking, PersonRisks } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
-import { placementSideNavigation } from '../../utils/resident/placementUtils'
+import { placementSideNavigation } from '../../utils/resident/placement'
 import { personalSideNavigation } from '../../utils/resident/personalUtils'
 import { sentenceSideNavigation } from '../../utils/resident/sentenceUtils'
 import { ApplicationService, PersonService, PlacementService } from '../../services'
