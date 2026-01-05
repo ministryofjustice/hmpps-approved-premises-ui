@@ -4,7 +4,7 @@ import {
   Cas1SpaceBookingSummary,
   Cas1SpaceBookingShortSummary,
 } from '@approved-premises/api'
-import { differenceInCalendarDays, parseISO } from 'date-fns'
+import { differenceInCalendarDays } from 'date-fns'
 
 export const overallStatusTextMap: Record<Cas1SpaceBookingStatus, string> = {
   upcoming: 'Upcoming',
