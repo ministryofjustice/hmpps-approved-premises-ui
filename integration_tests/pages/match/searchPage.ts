@@ -42,8 +42,7 @@ export default class SearchPage extends Page {
 
     spaceSearchResults.results.forEach(result => {
       cy.contains('h3', result.premises.name)
-        .parent()
-        .parent()
+        .closest('.govuk-summary-card')
         .within(() => {
           this.shouldExpandDetails('View AP criteria')
           const tableRows = [
