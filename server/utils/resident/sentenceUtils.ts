@@ -1,4 +1,12 @@
-import { ActiveOffence, Adjudication, Cas1OASysGroup, Licence } from '@approved-premises/api'
+import {
+  ActiveOffence,
+  Adjudication,
+  Cas1OASysGroup,
+  Licence,
+  CsraSummary,
+  Person,
+  FullPerson,
+} from '@approved-premises/api'
 import { SummaryListItem, SummaryListWithCard, TableRow } from '@approved-premises/ui'
 import { summaryListItem } from '../formUtils'
 import paths from '../../paths/manage'
@@ -163,32 +171,58 @@ export const licenseCards = (licence: Licence): Array<SummaryListWithCard> => {
   ].filter(Boolean)
 }
 
-export const adjudicationRows = (adjudications: Array<Adjudication>): Array<TableRow> => {
-  return adjudications.map(adjudication => {
+export const csraRows = (csraSummaries: Array<CsraSummary>): Array<TableRow> => {
+  return csraSummaries.map(csra => {
     return [
-      { text: DateFormats.isoDateToUIDate(adjudication.reportedAt) },
-      { text: adjudication.offenceDescription },
-      { text: sentenceCase(adjudication.finding) },
-      { text: 'TBA' },
-    ]
+      DateFormats.isoDateToUIDate(csra.assessmentDate, { format: 'short' }),
+      csra.assessmentCode,
+      csra.classificationCode,
+      csra.cellSharingAlertFlag ? 'True' : '',
+      csra.assessmentComment,
+    ].map(textCell)
   })
 }
 
-export const prisonCards = (adjudications: Array<Adjudication>): Array<SummaryListWithCard> => [
+export const adjudicationRows = (adjudications: Array<Adjudication>): Array<TableRow> => {
+  return adjudications.map(adjudication => {
+    return [
+      DateFormats.isoDateToUIDate(adjudication.reportedAt, { format: 'short' }),
+      adjudication.offenceDescription,
+      sentenceCase(adjudication.finding),
+    ].map(textCell)
+  })
+}
+
+export const prisonCards = (
+  adjudications: Array<Adjudication>,
+  csraSumaries: Array<CsraSummary>,
+  person: Person,
+): Array<SummaryListWithCard> => [
   card({
     title: 'Prison details',
-    rows: [summaryListItem('Prison name', 'TBA')],
+    rows: [
+      summaryListItem(
+        'Prison name',
+        person?.type === 'FullPerson' ? ((person as FullPerson).prisonName ?? '').trim() : 'Not available',
+      ),
+    ],
   }),
   card({
     title: 'Cell Sharing Risk Assessment (CSRA)',
-    rows: [summaryListItem('Type', 'TBA')],
+    table: csraSumaries?.length
+      ? {
+          head: ['Date assessed', 'Assessment code', 'Classification', 'Alert flag', 'Comment'].map(textCell),
+          rows: csraRows(csraSumaries),
+        }
+      : undefined,
+    html: csraSumaries?.length ? undefined : 'No assessments found',
   }),
   card(
     adjudications
       ? {
           title: 'Adjudications',
           table: {
-            head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }, { text: 'Sanction' }],
+            head: ['Date created', 'Description', 'Outcome'].map(textCell),
             rows: adjudicationRows(adjudications),
           },
         }

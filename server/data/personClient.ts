@@ -8,6 +8,7 @@ import type {
   Cas1OASysMetadata,
   Cas1PersonalTimeline,
   Licence,
+  CsraSummary,
   Person,
   PersonAcctAlert,
   PersonRisks,
@@ -103,15 +104,19 @@ export default class PersonClient {
     )
   }
 
+  async csraSummaries(crn: string): Promise<Array<CsraSummary>> {
+    return this.restClient.get<Array<CsraSummary>>({ path: paths.people.csraSummaries({ crn }) })
+  }
+
   async riskProfile(crn: string): Promise<PersonRisks> {
-    return (await this.restClient.get({ path: paths.people.riskProfile({ crn }) })) as Promise<PersonRisks>
+    return this.restClient.get<PersonRisks>({ path: paths.people.riskProfile({ crn }) })
   }
 
   async timeline(crn: string): Promise<Cas1PersonalTimeline> {
-    return (await this.restClient.get({ path: paths.people.timeline({ crn }) })) as Promise<Cas1PersonalTimeline>
+    return this.restClient.get<Cas1PersonalTimeline>({ path: paths.people.timeline({ crn }) })
   }
 
   async licenceDetails(crn: string): Promise<Licence> {
-    return (await this.restClient.get({ path: paths.people.licenceDetails({ crn }) })) as Promise<Licence>
+    return this.restClient.get<Licence>({ path: paths.people.licenceDetails({ crn }) })
   }
 }

@@ -171,6 +171,7 @@ export type { Category } from './models/Category';
 export type { Characteristic } from './models/Characteristic';
 export type { ClassesToInclude } from './models/ClassesToInclude';
 export type { Confirmation } from './models/Confirmation';
+export type { CsraSummary } from './models/CsraSummary';
 export type { DateChange } from './models/DateChange';
 export type { DatePeriod } from './models/DatePeriod';
 export type { Departure } from './models/Departure';

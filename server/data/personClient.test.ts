@@ -12,6 +12,7 @@ import {
   cas1OasysGroupFactory,
   cas1OASysMetadataFactory,
   licenceFactory,
+  csraSummaryFactory,
   personFactory,
   prisonCaseNotesFactory,
   risksFactory,
@@ -339,6 +340,31 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
       })
 
       await personClient.licenceDetails(crn)
+    })
+  })
+
+  describe('csraSummaries', () => {
+    it('calls the API with CRN and retrieves a list of CSRA summaries', async () => {
+      const crn = 'crn'
+      const csraSummaries = csraSummaryFactory.buildList(2)
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the CSRA summaries for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.csraSummaries({ crn }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: csraSummaries,
+        },
+      })
+
+      await personClient.csraSummaries(crn)
     })
   })
 

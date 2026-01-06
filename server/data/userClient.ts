@@ -59,10 +59,10 @@ export default class UserClient {
   }
 
   async getUserList(roles: Array<UserRole> = []): Promise<Array<UserSummary>> {
-    return (await this.restClient.get({
+    return this.restClient.get<Array<UserSummary>>({
       path: paths.users.summary({}),
       query: { roles: roles.join(',') },
-    })) as Promise<Array<UserSummary>>
+    })
   }
 
   async getUsers(

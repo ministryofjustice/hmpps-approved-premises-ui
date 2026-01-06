@@ -65,13 +65,13 @@ export default class TaskClient {
   }
 
   async allForUser(): Promise<Array<CategorisedTask>> {
-    return (await this.restClient.get({ path: paths.tasks.index.pattern })) as Promise<Array<CategorisedTask>>
+    return this.restClient.get<Array<CategorisedTask>>({ path: paths.tasks.index.pattern })
   }
 
   async find(applicationId: string, taskType: string): Promise<TaskWrapper> {
-    return (await this.restClient.get({
+    return this.restClient.get<TaskWrapper>({
       path: paths.tasks.show({ id: applicationId, taskType }),
-    })) as Promise<TaskWrapper>
+    })
   }
 
   async createAllocation(applicationId: string, userId: User['id'], taskType: Task['taskType']): Promise<Reallocation> {

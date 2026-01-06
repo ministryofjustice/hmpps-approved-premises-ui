@@ -176,6 +176,7 @@ export default {
     timeline: cas1Person.path('timeline'),
     riskProfile: cas1Person.path('risk-profile'),
     licenceDetails: cas1Person.path('licence-details'),
+    csraSummaries: cas1Person.path('csra-summaries'),
   },
   users: {
     index: cas1Users,
