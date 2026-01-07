@@ -50,9 +50,7 @@ class Cas1SpaceBookingShortSummaryFactory extends Factory<Cas1SpaceBookingShortS
       actualArrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
       actualDepartureDate: DateFormats.dateObjToIsoDate(departureDate),
       isNonArrival: false,
-      departure: cas1SpaceBookingDepartureFactory.build({
-        moveOnCategory: undefined,
-      }),
+      departure: cas1SpaceBookingDepartureFactory.build(),
       status: 'departed',
     })
   }

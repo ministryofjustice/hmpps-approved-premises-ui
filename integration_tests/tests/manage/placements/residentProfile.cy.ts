@@ -1,4 +1,3 @@
-import { FullPerson } from '@approved-premises/api'
 import { signIn } from '../../signIn'
 import {
   activeOffenceFactory,
@@ -168,7 +167,6 @@ context('ResidentProfile', () => {
 
     it('should show the Placement->All AP placements tab', () => {
       const { placement, personRisks } = setup()
-      const person = placement.person as FullPerson
       const spaceBookings = [
         cas1SpaceBookingShortSummaryFactory.upcoming().build(),
         cas1SpaceBookingShortSummaryFactory.current().build(),
@@ -190,12 +188,11 @@ context('ResidentProfile', () => {
       THEN('the All AP placements side nav should be active')
       page.shouldHaveActiveSideNav('All AP placements')
 
-      AND('I should see the All AP placements heading and description')
+      AND('I should see the All AP placements heading')
       cy.contains('h2', 'All AP placements').should('be.visible')
-      cy.contains(`View all AP placements for ${person.name}`).should('be.visible')
 
       AND('I should see all the placement cards with their details')
-      page.shouldShowAllApPlacements(spaceBookings, person.name)
+      page.shouldShowAllApPlacements(spaceBookings)
     })
 
     it('should render the page tab if there are no external data', () => {

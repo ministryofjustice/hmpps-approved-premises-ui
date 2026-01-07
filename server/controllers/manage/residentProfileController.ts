@@ -1,10 +1,10 @@
 import type { Request, RequestHandler, Response } from 'express'
 import { TabItem } from '@approved-premises/ui'
-import { Cas1SpaceBooking, FullPerson, PersonRisks } from '@approved-premises/api'
+import { Cas1SpaceBooking, PersonRisks } from '@approved-premises/api'
 import { ApplicationService, PersonService, PlacementService } from '../../services'
 import paths from '../../paths/manage'
 
-import { actions, sortSpaceBookingsByCanonicalArrivalDate } from '../../utils/placements'
+import { actions } from '../../utils/placements'
 import {
   ResidentProfileSubTab,
   ResidentProfileTab,
@@ -85,12 +85,7 @@ export default class ResidentProfileController {
           sideNavigation = placementSideNavigation(subTab, crn, placement)
           if (subTab === 'placementDetails') tabData = placementTabController(placement)
           if (subTab === 'application') tabData = await placementApplicationTabController(tabParameters)
-          if (subTab === 'allApPlacements') {
-            const allPlacements = await this.personService.getSpaceBookings(token, crn)
-            const sortedPlacements = sortSpaceBookingsByCanonicalArrivalDate(allPlacements)
-            const personName = (placement.person as FullPerson)?.name || ''
-            tabData = allApPlacementsTabController(sortedPlacements, personName)
-          }
+          if (subTab === 'allApPlacements') tabData = await allApPlacementsTabController(tabParameters)
           break
         case 'risk':
           tabData = await riskTabController(tabParameters)

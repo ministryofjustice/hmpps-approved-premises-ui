@@ -54,7 +54,6 @@ export type Accordion = {
 export type TabData = {
   cardList?: Array<SummaryListWithCard>
   subHeading?: string
-  subDescription?: string
   accordion?: Accordion
 }
 

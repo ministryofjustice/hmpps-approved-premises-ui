@@ -53,9 +53,7 @@ export const sortSpaceBookingsByCanonicalArrivalDate = (
   return [...bookings].sort((a, b) => {
     const { arrivalDate: dateA } = canonicalDates(a)
     const { arrivalDate: dateB } = canonicalDates(b)
-    const dateObjA = DateFormats.isoToDateObj(dateA)
-    const dateObjB = DateFormats.isoToDateObj(dateB)
-    return dateObjB.getTime() - dateObjA.getTime()
+    return dateA > dateB ? -1 : 1
   })
 }
 

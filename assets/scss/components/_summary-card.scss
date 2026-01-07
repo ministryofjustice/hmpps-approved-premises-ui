@@ -7,32 +7,3 @@
     padding: govuk-spacing(3) govuk-spacing(4);
   }
 }
-
-.govuk-summary-card--with-status {
-  .govuk-summary-card__title-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .govuk-summary-card__title-container {
-    display: inline-flex;
-    align-items: center;
-    flex-wrap: nowrap;
-  }
-
-  .govuk-summary-card__title {
-    margin: 0;
-    flex-shrink: 1;
-    min-width: 0;
-  }
-
-  .govuk-summary-card__status {
-    flex-shrink: 0;
-    white-space: nowrap;
-  }
-
-  .govuk-summary-card__actions {
-    margin-left: auto;
-  }
-}

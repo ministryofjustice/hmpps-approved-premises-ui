@@ -285,26 +285,26 @@ describe('PersonService', () => {
   })
 
   describe('getSpaceBookings', () => {
-    it('calls the client method and returns the result', async () => {
+    it.each([
+      {
+        includeCancelledArg: undefined,
+        expectedIncludeCancelled: true,
+        description: 'includes cancelled bookings by default',
+      },
+      {
+        includeCancelledArg: false,
+        expectedIncludeCancelled: false,
+        description: 'excludes cancelled bookings when specified',
+      },
+    ])('$description', async ({ includeCancelledArg, expectedIncludeCancelled }) => {
       const expected = cas1SpaceBookingShortSummaryFactory.buildList(2)
       const crn = 'crn'
-      when(personClient.spaceBookings).calledWith(crn, true).mockResolvedValue(expected)
+      when(personClient.spaceBookings).calledWith(crn, expectedIncludeCancelled).mockResolvedValue(expected)
 
-      const actual = await service.getSpaceBookings(token, crn)
+      const actual = await service.getSpaceBookings(token, crn, includeCancelledArg)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.spaceBookings).toHaveBeenCalledWith(crn, true)
-      expect(actual).toEqual(expected)
-    })
-
-    it('passes includeCancelled parameter to the client', async () => {
-      const expected = cas1SpaceBookingShortSummaryFactory.buildList(1)
-      const crn = 'crn'
-      when(personClient.spaceBookings).calledWith(crn, false).mockResolvedValue(expected)
-
-      const actual = await service.getSpaceBookings(token, crn, false)
-
-      expect(personClient.spaceBookings).toHaveBeenCalledWith(crn, false)
+      expect(personClient.spaceBookings).toHaveBeenCalledWith(crn, expectedIncludeCancelled)
       expect(actual).toEqual(expected)
     })
   })

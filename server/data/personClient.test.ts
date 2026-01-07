@@ -394,51 +394,34 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
   })
 
   describe('spaceBookings', () => {
-    it('should return space bookings for a person with includeCancelled=true', async () => {
-      const crn = 'crn'
+    it.each([
+      { includeCancelled: true, query: { includeCancelled: 'true' } },
+      { includeCancelled: false, query: null },
+    ])(
+      'should return space bookings for a person with includeCancelled=$includeCancelled',
+      async ({ includeCancelled, query }) => {
+        const crn = 'crn'
 
-      await provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to get space bookings for a person with includeCancelled=true',
-        withRequest: {
-          method: 'GET',
-          path: paths.people.spaceBookings({ crn }),
-          query: { includeCancelled: 'true' },
-          headers: {
-            authorization: `Bearer ${token}`,
+        await provider.addInteraction({
+          state: 'Server is healthy',
+          uponReceiving: `A request to get space bookings for a person with includeCancelled=${includeCancelled}`,
+          withRequest: {
+            method: 'GET',
+            path: paths.people.spaceBookings({ crn }),
+            ...(query && { query }),
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
           },
-        },
-        willRespondWith: {
-          status: 200,
-          body: [],
-        },
-      })
-
-      const result = await personClient.spaceBookings(crn, true)
-      expect(result).toEqual([])
-    })
-
-    it('should return space bookings for a person with includeCancelled=false', async () => {
-      const crn = 'crn'
-
-      await provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to get space bookings for a person with includeCancelled=false',
-        withRequest: {
-          method: 'GET',
-          path: paths.people.spaceBookings({ crn }),
-          headers: {
-            authorization: `Bearer ${token}`,
+          willRespondWith: {
+            status: 200,
+            body: [],
           },
-        },
-        willRespondWith: {
-          status: 200,
-          body: [],
-        },
-      })
+        })
 
-      const result = await personClient.spaceBookings(crn, false)
-      expect(result).toEqual([])
-    })
+        const result = await personClient.spaceBookings(crn, includeCancelled)
+        expect(result).toEqual([])
+      },
+    )
   })
 })
