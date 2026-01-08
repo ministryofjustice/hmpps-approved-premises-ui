@@ -73,42 +73,31 @@ export const placementCard = (placement: Cas1SpaceBooking | Cas1SpaceBookingShor
       html: `${placement.premises.name} ${placementStatusTag(placement, { classes: 'govuk-!-margin-left-1' })}`,
     },
   },
-  rows: getStatusSpecificFields(placement),
-})
-
-export const getStatusSpecificFields = (
-  placement: Cas1SpaceBooking | Cas1SpaceBookingShortSummary,
-): Array<SummaryListItem> => {
-  const { status } = placement
-  const showExpectedDates = status === 'upcoming' || status === 'notArrived' || status === 'cancelled'
-  const isDeparted = status === 'departed'
-
-  return [
+  rows: [
     summaryListItem('Approved Premises', placement.premises.name),
     summaryListItem('Date of booking', placement.createdAt, 'date'),
-    showExpectedDates ? summaryListItem('Expected arrival date', placement.expectedArrivalDate, 'date') : null,
-    status === 'arrived'
-      ? summaryListItemNoBlankRows('Actual arrival date', placement.actualArrivalDate, 'date')
-      : null,
-    isDeparted ? summaryListItemNoBlankRows('Arrival date', placement.actualArrivalDate, 'date') : null,
-    isDeparted ? summaryListItemNoBlankRows('Departure date', placement.actualDepartureDate, 'date') : null,
-    isDeparted ? summaryListItemNoBlankRows('Departure reason', placement.departure?.reason?.name) : null,
-    isDeparted ? summaryListItemNoBlankRows('Move on', placement.departure?.moveOnCategory?.name) : null,
-    isDeparted ? summaryListItemNoBlankRows('Notes', placement.departure?.notes) : null,
-    !isDeparted ? summaryListItem('Expected departure date', placement.expectedDepartureDate, 'date') : null,
-    status === 'notArrived'
-      ? summaryListItemNoBlankRows('Non-arrival reason', placement.nonArrival?.reason?.name)
-      : null,
-    status === 'cancelled'
-      ? summaryListItemNoBlankRows('Cancellation date', placement.cancellation?.occurredAt, 'date')
-      : null,
-    status === 'cancelled'
-      ? summaryListItemNoBlankRows('Cancellation reason notes', placement.cancellation?.reason_notes)
-      : null,
+    summaryListItemNoBlankRows(
+      'Expected arrival date',
+      placement.actualArrivalDate ? undefined : placement.expectedArrivalDate,
+      'date',
+    ),
+    summaryListItemNoBlankRows('Arrival date', placement.actualArrivalDate, 'date'),
+    summaryListItemNoBlankRows(
+      'Expected departure date',
+      placement.actualDepartureDate ? undefined : placement.expectedDepartureDate,
+      'date',
+    ),
+    summaryListItemNoBlankRows('Departure date', placement.actualDepartureDate, 'date'),
+    summaryListItemNoBlankRows('Departure reason', placement.departure?.reason?.name),
+    summaryListItemNoBlankRows('Move on', placement.departure?.moveOnCategory?.name),
+    summaryListItemNoBlankRows('Notes', placement.departure?.notes),
+    summaryListItemNoBlankRows('Non-arrival reason', placement.nonArrival?.reason?.name),
+    summaryListItemNoBlankRows('Cancellation date', placement.cancellation?.occurredAt, 'date'),
+    summaryListItemNoBlankRows('Cancellation reason notes', placement.cancellation?.reason_notes),
     ...requirementsInformation(placement).rows,
     summaryListItem('Delius event number', placement.deliusEventNumber),
-  ].filter(Boolean)
-}
+  ].filter(Boolean),
+})
 
 export const placementDetailsCards = (placement: Cas1SpaceBooking): Array<SummaryListWithCard> => {
   return [placementCard(placement)]
