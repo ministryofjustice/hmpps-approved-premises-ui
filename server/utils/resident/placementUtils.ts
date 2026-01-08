@@ -1,5 +1,5 @@
 import { ApprovedPremisesApplication, Cas1SpaceBooking, Cas1SpaceBookingShortSummary } from '@approved-premises/api'
-import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
+import { SummaryListWithCard } from '@approved-premises/ui'
 import { Accordion, alertBanner, card, renderCardList, renderPersonDetails, ResidentProfileSubTab } from './index'
 import { SubmittedDocumentRenderer } from '../forms/submittedDocumentRenderer'
 import { insetText } from './riskUtils'

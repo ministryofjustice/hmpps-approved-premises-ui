@@ -138,7 +138,7 @@ describe('tabController', () => {
             },
             rows: expectation.arrayContaining([
               {
-                key: { text: 'Actual arrival date' },
+                key: { text: 'Arrival date' },
                 value: {
                   text: placement.actualArrivalDate
                     ? DateFormats.isoDateToUIDate(placement.actualArrivalDate)
