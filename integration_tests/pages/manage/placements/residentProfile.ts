@@ -5,6 +5,7 @@ import {
   Cas1OASysGroup,
   Cas1SpaceBooking,
   FullPerson,
+  Licence,
   Person,
   PersonRisks,
   RoshRisks,
@@ -12,10 +13,11 @@ import {
 import { SummaryListWithCard, TextItem } from '@approved-premises/ui'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
+import * as residentUtils from '../../../../server/utils/resident'
 
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
-import { adjudicationRows, offencesTabCards } from '../../../../server/utils/resident/sentenceUtils'
+import { adjudicationRows, licenseCards, offencesTabCards } from '../../../../server/utils/resident/sentenceUtils'
 import { getResidentStatus } from '../../../../server/utils/resident'
 import { placementDetailsCards } from '../../../../server/utils/resident/placementUtils'
 import { personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
@@ -45,8 +47,8 @@ export default class ResidentProfilePage extends Page {
   }
 
   shouldShowCard(card: SummaryListWithCard, checkContents = true) {
-    const title = card.card.title.text
-    cy.get('.govuk-summary-card__title').contains(title).should('exist')
+    const title = card.card?.title?.text
+    if (title) cy.get('.govuk-summary-card__title').contains(title).should('exist')
     if (checkContents) {
       cy.get('.govuk-summary-card__title')
         .contains(title)
@@ -57,7 +59,7 @@ export default class ResidentProfilePage extends Page {
           }
           if (card.table) {
             this.shouldContainTableColumns(card.table.head.map(cell => (cell as TextItem).text))
-            this.shouldContainTableRows(card.table.rows)
+            this.shouldContainOrderedTableRows(card.table.rows)
           }
         })
     }
@@ -98,9 +100,18 @@ export default class ResidentProfilePage extends Page {
     this.shouldShowCard(cards[4])
   }
 
+  shouldShowLicenceInformation(licence: Licence) {
+    cy.stub(residentUtils, 'insetText')
+    const cardList = licenseCards(licence)
+    cy.get('.govuk-inset-text').should('contain.text', 'Imported from Create and vary a licence service.')
+    cardList.slice(1).forEach(card => {
+      this.shouldShowCard(card)
+    })
+  }
+
   shouldShowPrisonInformation(adjudications: Array<Adjudication>) {
     cy.get('.govuk-summary-card__title').contains('Prison details').should('exist')
-    cy.get('.govuk-summary-card__title').contains('Cell Sharing Risk Assessment (CRSA)').should('exist')
+    cy.get('.govuk-summary-card__title').contains('Cell Sharing Risk Assessment (CSRA)').should('exist')
     cy.get('.govuk-summary-card__title')
       .contains('Adjudications')
       .parents('.govuk-summary-card')

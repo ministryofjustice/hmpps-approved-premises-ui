@@ -1,8 +1,13 @@
 import { createMock } from '@golevelup/ts-jest'
-import { Adjudication } from '@approved-premises/api'
-import { licenseCards, offencesTabCards } from './sentenceUtils'
+import { Adjudication, Licence } from '@approved-premises/api'
+import { offencesTabCards } from './sentenceUtils'
 import { sentenceLicenceTabController, sentenceOffencesTabController, sentencePrisonTabController } from './sentence'
-import { activeOffenceFactory, adjudicationFactory, cas1OasysGroupFactory } from '../../testutils/factories'
+import {
+  activeOffenceFactory,
+  adjudicationFactory,
+  cas1OasysGroupFactory,
+  licenceFactory,
+} from '../../testutils/factories'
 import * as sentenceUtils from './sentenceUtils'
 import { PersonService } from '../../services'
 import { ErrorWithData } from '../errors'
@@ -23,15 +28,6 @@ describe('sentenceTabController', () => {
     ...activeOffenceFactory.buildList(5, { mainOffence: false }),
     activeOffenceFactory.build({ mainOffence: true }),
   ]
-
-  describe('sentenceLicenceTabController', () => {
-    it('should render the sentenceLicenceTab card list', async () => {
-      expect(await sentenceLicenceTabController()).toEqual({
-        subHeading: 'Licence',
-        cardList: licenseCards(),
-      })
-    })
-  })
 
   describe('sentenceOffencesTabController', () => {
     it('should render the sentenceOffencesTab card list', async () => {
@@ -89,6 +85,38 @@ describe('sentenceTabController', () => {
 
       expect(sentenceUtils.prisonCards).toHaveBeenCalledWith(undefined)
       expect(personService.getAdjudications).toHaveBeenCalledWith(token, crn)
+    })
+  })
+
+  describe('sentenceLicenceTabController', () => {
+    beforeEach(() => {
+      jest.spyOn(sentenceUtils, 'licenseCards').mockReturnValue([])
+    })
+
+    it('should render the licence side-tab', async () => {
+      const licence: Licence = licenceFactory.build()
+
+      personService.licenceDetails.mockResolvedValue(licence)
+
+      expect(await sentenceLicenceTabController({ personService, token, crn })).toEqual({
+        cardList: [],
+        subHeading: 'Licence',
+      })
+
+      expect(sentenceUtils.licenseCards).toHaveBeenCalledWith(licence)
+      expect(personService.licenceDetails).toHaveBeenCalledWith(token, crn)
+    })
+
+    it('should render the licence side-tab when external call returns 404', async () => {
+      personService.licenceDetails.mockImplementation(mockService404)
+
+      expect(await sentenceLicenceTabController({ personService, token, crn })).toEqual({
+        cardList: [],
+        subHeading: 'Licence',
+      })
+
+      expect(sentenceUtils.licenseCards).toHaveBeenCalledWith(undefined)
+      expect(personService.licenceDetails).toHaveBeenCalledWith(token, crn)
     })
   })
 })

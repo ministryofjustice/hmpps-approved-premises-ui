@@ -88,7 +88,7 @@ export default class ResidentProfileController {
         case 'sentence':
           sideNavigation = sentenceSideNavigation(subTab, crn, placementId)
           if (subTab === 'offence') tabData = await sentenceOffencesTabController(tabParameters)
-          if (subTab === 'licence') tabData = await sentenceLicenceTabController()
+          if (subTab === 'licence') tabData = await sentenceLicenceTabController(tabParameters)
           if (subTab === 'prison') tabData = await sentencePrisonTabController(tabParameters)
           break
         default:

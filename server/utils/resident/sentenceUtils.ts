@@ -1,4 +1,4 @@
-import { ActiveOffence, Adjudication, Cas1OASysGroup } from '@approved-premises/api'
+import { ActiveOffence, Adjudication, Cas1OASysGroup, Licence } from '@approved-premises/api'
 import { SummaryListItem, SummaryListWithCard, TableRow } from '@approved-premises/ui'
 import { summaryListItem } from '../formUtils'
 import paths from '../../paths/manage'
@@ -122,25 +122,46 @@ export const offencesTabCards = (
   card({ title: 'Sentence information', rows: sentenceSummaryList() }),
 ]
 
-export const licenseCards = (): Array<SummaryListWithCard> => [
-  card({
-    title: 'Licence conditions',
-    rows: [
-      summaryListItem('Licence start date', 'TBA'),
-      summaryListItem('Licence end date', 'TBA'),
-      summaryListItem('Additional conditions', 'TBA'),
-      summaryListItem('Licence documents', 'TBA'),
-    ],
-  }),
-  card({
-    title: 'Licence conditions',
-    rows: [
-      summaryListItem('EM licence conditions', 'TBA'),
-      summaryListItem('Drug and alcohol monitoring', 'TBA'),
-      summaryListItem('Exclusion zones', 'TBA'),
-    ],
-  }),
-]
+export const licenseCards = (licence: Licence): Array<SummaryListWithCard> => {
+  if (!licence) return [card({ html: insetText('No licence available') })]
+
+  const { standard: pssStandard, additional: pssAdditional } = licence.conditions?.PSS || {}
+
+  const { bespoke, standard, additional } = licence.conditions?.AP || {}
+
+  const allStandard = [...(pssStandard || []), ...(standard || [])]
+  const allAdditional = [...(pssAdditional || []), ...(additional || [])]
+
+  return [
+    card({ html: insetText('Imported from Create and vary a licence service.') }),
+    card({
+      title: 'Licence overview',
+      rows: [
+        summaryListItem('Licence start date', licence.licenceStartDate, 'date'),
+        summaryListItem('Licence approved date', licence.approvedDateTime, 'date'),
+        summaryListItem('Last updated', licence.updatedDateTime, 'date'),
+        summaryListItem('Licence type', licence.licenceType),
+        summaryListItem('Licence kind', licence.kind),
+        summaryListItem('Status', licence.statusCode),
+      ],
+    }),
+    allStandard?.length &&
+      card({
+        title: `Standard licence conditions (${allStandard.length})`,
+        rows: allStandard.map(({ code, text }) => summaryListItem(code, text)),
+      }),
+    allAdditional?.length &&
+      card({
+        title: `Additional licence conditions (${allAdditional.length})`,
+        rows: allAdditional.map(({ text, category }) => summaryListItem(category, text)),
+      }),
+    bespoke?.length &&
+      card({
+        title: `Bespoke licence conditions (${bespoke.length})`,
+        rows: bespoke.map(({ text }, index) => summaryListItem(`Bespoke licence condition ${index + 1}`, text)),
+      }),
+  ].filter(Boolean)
+}
 
 export const adjudicationRows = (adjudications: Array<Adjudication>): Array<TableRow> => {
   return adjudications.map(adjudication => {
@@ -159,7 +180,7 @@ export const prisonCards = (adjudications: Array<Adjudication>): Array<SummaryLi
     rows: [summaryListItem('Prison name', 'TBA')],
   }),
   card({
-    title: 'Cell Sharing Risk Assessment (CRSA)',
+    title: 'Cell Sharing Risk Assessment (CSRA)',
     rows: [summaryListItem('Type', 'TBA')],
   }),
   card(

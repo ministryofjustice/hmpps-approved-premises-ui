@@ -71,7 +71,6 @@ export default class Page {
 
   assertDefinition(term: string, value: string, valueType: 'text' | 'html' = 'text'): void {
     cy.get('dt').contains(term).parents('.govuk-summary-list__row').find('> dd.govuk-summary-list__value').as('dd')
-
     if (value) {
       if (valueType === 'html') {
         cy.get('@dd').then($dd => {
@@ -549,7 +548,25 @@ export default class Page {
     })
   }
 
+  shouldHaveRow(row: TableRow) {
+    row.forEach((column, i) => {
+      if ('text' in column) {
+        cy.get('td,th').eq(i).should('contain.text', column.text)
+      } else if ('html' in column) {
+        cy.get('td,th')
+          .eq(i)
+          .then($td => {
+            const { actual, expected } = parseHtml($td, column.html)
+            expect(actual).to.equal(expected)
+          })
+      }
+    })
+  }
+
   shouldContainTableRows(rows: Array<TableRow>): void {
+    // This test can handle sorted tables but will fail if there are any rows with duplicate first cell contents.
+    // For non-sortable tables, use shouldContainOrderedTableRows instead
+
     cy.get('tbody tr').should('have.length', rows.length)
 
     const textFromTableCell = (tableCell: TableCell): string => {
@@ -563,20 +580,17 @@ export default class Page {
       const firstTextContent = textFromTableCell(row.find(column => 'text' in column))
       cy.contains(firstTextContent)
         .parent()
-        .within(() => {
-          row.forEach((column, i) => {
-            if ('text' in column) {
-              cy.get('td,th').eq(i).should('contain.text', column.text)
-            } else if ('html' in column) {
-              cy.get('td,th')
-                .eq(i)
-                .then($td => {
-                  const { actual, expected } = parseHtml($td, column.html)
-                  expect(actual).to.equal(expected)
-                })
-            }
-          })
-        })
+        .within(() => this.shouldHaveRow(row))
+    })
+  }
+
+  shouldContainOrderedTableRows(rows: Array<TableRow>): void {
+    cy.get('tbody tr').should('have.length', rows.length)
+
+    rows.forEach((row, rowIndex) => {
+      cy.get('tbody tr')
+        .eq(rowIndex)
+        .within(() => this.shouldHaveRow(row))
     })
   }
 

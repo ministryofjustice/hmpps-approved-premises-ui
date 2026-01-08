@@ -7,6 +7,7 @@ import type {
   Cas1OASysGroupName,
   Cas1OASysMetadata,
   Cas1PersonalTimeline,
+  Licence,
   Person,
   PersonAcctAlert,
   PersonRisks,
@@ -103,10 +104,14 @@ export default class PersonClient {
   }
 
   async riskProfile(crn: string): Promise<PersonRisks> {
-    return this.restClient.get({ path: paths.people.riskProfile({ crn }) }) as Promise<PersonRisks>
+    return (await this.restClient.get({ path: paths.people.riskProfile({ crn }) })) as Promise<PersonRisks>
   }
 
   async timeline(crn: string): Promise<Cas1PersonalTimeline> {
     return (await this.restClient.get({ path: paths.people.timeline({ crn }) })) as Promise<Cas1PersonalTimeline>
+  }
+
+  async licenceDetails(crn: string): Promise<Licence> {
+    return (await this.restClient.get({ path: paths.people.licenceDetails({ crn }) })) as Promise<Licence>
   }
 }
