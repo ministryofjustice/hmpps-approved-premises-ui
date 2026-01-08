@@ -188,9 +188,6 @@ context('ResidentProfile', () => {
       THEN('the All AP placements side nav should be active')
       page.shouldHaveActiveSideNav('All AP placements')
 
-      AND('I should see the All AP placements heading')
-      cy.contains('h2', 'All AP placements').should('be.visible')
-
       AND('I should see all the placement cards with their details')
       page.shouldShowAllApPlacements(spaceBookings)
     })

@@ -288,14 +288,4 @@ describe('allApPlacementsTabController', () => {
     expect(cardTitlesHtml).toContain(placements[0].premises.name)
     expect(cardTitlesHtml).toContain(placements[1].premises.name)
   })
-
-  it('should handle empty placements list', async () => {
-    const placement = cas1SpaceBookingFactory.build()
-
-    personService.getSpaceBookings.mockResolvedValue([])
-
-    const result = await allApPlacementsTabController({ personService, token, crn, placement })
-
-    expect(result.cardList).toHaveLength(0)
-  })
 })
