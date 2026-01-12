@@ -126,6 +126,6 @@ export default class PersonClient {
     return (await this.restClient.get({
       path: paths.people.spaceBookings({ crn }),
       query,
-    })) as Promise<Array<Cas1SpaceBookingShortSummary>>
+    })) as Array<Cas1SpaceBookingShortSummary>
   }
 }

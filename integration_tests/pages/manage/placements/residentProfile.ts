@@ -49,8 +49,12 @@ export default class ResidentProfilePage extends Page {
   }
 
   shouldShowCard(card: SummaryListWithCard, checkContents = true) {
-    const { title: cardTitle } = card.card
-    const title = 'text' in cardTitle ? cardTitle.text : cardTitle.html?.split('<')[0].trim()
+    const cardTitle = card.card?.title
+    const title =
+      cardTitle &&
+      ('text' in cardTitle
+        ? cardTitle.text
+        : new DOMParser().parseFromString(cardTitle.html, 'text/html').body.textContent)
     if (title) cy.get('.govuk-summary-card__title').contains(title).should('exist')
     if (checkContents) {
       cy.get('.govuk-summary-card__title')
