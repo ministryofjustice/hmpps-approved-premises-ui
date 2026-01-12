@@ -4,6 +4,7 @@ import {
   ApprovedPremisesApplication,
   Cas1OASysGroup,
   Cas1SpaceBooking,
+  CsraSummary,
   FullPerson,
   Licence,
   Person,
@@ -17,7 +18,7 @@ import * as residentUtils from '../../../../server/utils/resident'
 
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
-import { adjudicationRows, licenseCards, offencesTabCards } from '../../../../server/utils/resident/sentenceUtils'
+import { licenseCards, offencesTabCards, prisonCards } from '../../../../server/utils/resident/sentenceUtils'
 import { getResidentStatus } from '../../../../server/utils/resident'
 import { placementDetailsCards } from '../../../../server/utils/resident/placementUtils'
 import { personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
@@ -109,23 +110,14 @@ export default class ResidentProfilePage extends Page {
     })
   }
 
-  shouldShowPrisonInformation(adjudications: Array<Adjudication>) {
-    cy.get('.govuk-summary-card__title').contains('Prison details').should('exist')
-    cy.get('.govuk-summary-card__title').contains('Cell Sharing Risk Assessment (CSRA)').should('exist')
-    cy.get('.govuk-summary-card__title')
-      .contains('Adjudications')
-      .parents('.govuk-summary-card')
-      .within(() => {
-        this.shouldContainTableColumns(['Date created', 'Description', 'Outcome', 'Sanction'])
-        this.shouldContainTableRows(adjudicationRows(adjudications))
-      })
+  shouldShowPrisonInformation(adjudications: Array<Adjudication>, csraSummaries: Array<CsraSummary>, person: Person) {
+    const cards = prisonCards(adjudications, csraSummaries, person)
+    cards.forEach(card => this.shouldShowCard(card))
   }
 
-  shouldShowPersonalInformation(person: Person, personRisks: PersonRisks, placement: Cas1SpaceBooking) {
-    const cards = personDetailsCardList(person as FullPerson, personRisks, placement)
-    cards.forEach(card => {
-      this.shouldShowCard(card)
-    })
+  shouldShowPersonalInformation(person: Person, personRisks: PersonRisks) {
+    const cards = personDetailsCardList(person as FullPerson, personRisks)
+    cards.forEach(card => this.shouldShowCard(card))
   }
 
   shouldShowOasysCards(numbers: Array<string>, group: Cas1OASysGroup, groupName: string) {

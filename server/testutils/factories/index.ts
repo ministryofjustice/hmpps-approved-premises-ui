@@ -100,6 +100,7 @@ import cas1PremisesNewLocalRestrictionFactory from './cas1PremisesNewLocalRestri
 import cas1RequestedPlacementPeriodFactory from './cas1RequestedPlacementPeriod'
 import cas1CurrentKeyworkerFactory from './cas1CurrentKeyworker'
 import licenceFactory from './licence'
+import csraSummaryFactory from './csraSummary'
 
 export {
   acctAlertFactory,
@@ -205,4 +206,5 @@ export {
   cas1PremisesNewLocalRestrictionFactory,
   cas1CurrentKeyworkerFactory,
   licenceFactory,
+  csraSummaryFactory,
 }

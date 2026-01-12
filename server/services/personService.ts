@@ -7,6 +7,7 @@ import type {
   Cas1OASysMetadata,
   Cas1PersonalTimeline,
   Licence,
+  CsraSummary,
   Person,
   PersonAcctAlert,
   PersonRisks,
@@ -73,6 +74,10 @@ export default class PersonService {
 
   async riskProfile(token: string, crn: string): Promise<PersonRisks> {
     return this.personClientFactory(token).riskProfile(crn)
+  }
+
+  async csraSummaries(token: string, crn: string): Promise<Array<CsraSummary>> {
+    return this.personClientFactory(token).csraSummaries(crn)
   }
 
   async getDocument(token: string, crn: string, documentId: string, response: Response): Promise<void> {

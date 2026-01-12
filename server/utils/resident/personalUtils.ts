@@ -1,9 +1,8 @@
-import { Cas1SpaceBooking, FullPerson, PersonRisks } from '@approved-premises/api'
+import { FullPerson, PersonRisks } from '@approved-premises/api'
 import { card, ResidentProfileSubTab } from './index'
 import paths from '../../paths/manage'
 import { RenderAs, summaryListItem } from '../formUtils'
 import { PersonStatusTag } from '../people/personStatusTag'
-import { linkTo } from '../utils'
 import { getTierOrBlank } from '../applications/helpers'
 
 export const personalSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
@@ -18,7 +17,7 @@ export const personalSideNavigation = (subTab: ResidentProfileSubTab, crn: strin
   ]
 }
 
-export const personDetailsCardList = (person: FullPerson, personRisks: PersonRisks, placement: Cas1SpaceBooking) => {
+export const personDetailsCardList = (person: FullPerson, personRisks: PersonRisks) => {
   const isNotRestricted = person.type === 'FullPerson'
 
   const restrictedRow = (label: string, value: string, renderAs?: RenderAs) => {
@@ -43,11 +42,6 @@ export const personDetailsCardList = (person: FullPerson, personRisks: PersonRis
         summaryListItem('Aliases', 'TBA'),
         restrictedRow('Date of birth', person.dateOfBirth, 'date'),
         summaryListItem('Status', new PersonStatusTag(person.status).html(), 'html'),
-        summaryListItem(
-          'Prison',
-          `<p>${isNotRestricted ? (person.prisonName ?? 'Not known') : 'Restricted'}</p>${linkTo(paths.resident.tabSentence.prison({ crn: person.crn, placementId: placement.id }), { text: 'View all prison information' })}`,
-          'html',
-        ),
         restrictedRow('Nationality', person.nationality),
         summaryListItem('Immigration status', 'TBA'),
         summaryListItem('Languages', 'TBA'),

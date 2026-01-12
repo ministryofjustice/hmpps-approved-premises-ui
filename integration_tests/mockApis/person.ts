@@ -8,6 +8,7 @@ import type {
   Cas1OASysGroup,
   Cas1OASysSupportingInformationQuestionMetaData,
   Cas1PersonalTimeline,
+  CsraSummary,
   Document,
   Licence,
   Person,
@@ -140,6 +141,19 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: args.licence,
+      },
+    }),
+
+  stubCsra: (args: { person: Person; csraSummaries: Array<CsraSummary> }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/cas1/people/${args.person.crn}/csra-summaries`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.csraSummaries,
       },
     }),
 

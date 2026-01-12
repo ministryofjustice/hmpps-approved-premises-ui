@@ -70,7 +70,13 @@ export default class RestClient {
     return this.config.timeout
   }
 
-  async get({ path = '', query = '', headers = {}, responseType = '', raw = false }: GetRequest): Promise<unknown> {
+  async get<T = unknown>({
+    path = '',
+    query = '',
+    headers = {},
+    responseType = '',
+    raw = false,
+  }: GetRequest): Promise<T> {
     logger.info(`Get using user credentials: calling ${this.name}: ${path} ${query}`)
     try {
       const result = await superagent
@@ -91,7 +97,7 @@ export default class RestClient {
         .set({ ...this.defaultHeaders, ...headers })
         .responseType(responseType)
         .timeout(this.timeoutConfig())
-      return raw ? result : result.body
+      return (raw ? result : result.body) as T
     } catch (error) {
       const sanitisedError = sanitiseError(error as UnsanitisedError)
       logger.warn({ ...sanitisedError, query }, `Error calling ${this.name}, path: '${path}', verb: 'GET'`)

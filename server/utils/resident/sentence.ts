@@ -1,4 +1,4 @@
-import { ActiveOffence, Adjudication, Cas1OASysGroup, Licence } from '@approved-premises/api'
+import { ActiveOffence, Adjudication, Cas1OASysGroup, Licence, CsraSummary, Person } from '@approved-premises/api'
 import { licenseCards, offencesTabCards, prisonCards } from './sentenceUtils'
 import { TabControllerParameters } from './TabControllerParameters'
 import { TabData } from '.'
@@ -31,6 +31,12 @@ export const sentencePrisonTabController = async ({
   token,
   crn,
 }: TabControllerParameters): Promise<TabData> => {
-  const [adjudications] = await settlePromises<[Array<Adjudication>]>([personService.getAdjudications(token, crn)])
-  return { subHeading: 'Prison', cardList: prisonCards(adjudications) }
+  const [adjudications, csraSummaries, person] = await settlePromises<
+    [Array<Adjudication>, Array<CsraSummary>, Person]
+  >([
+    personService.getAdjudications(token, crn),
+    personService.csraSummaries(token, crn),
+    personService.findByCrn(token, crn),
+  ])
+  return { subHeading: 'Prison', cardList: prisonCards(adjudications, csraSummaries, person) }
 }

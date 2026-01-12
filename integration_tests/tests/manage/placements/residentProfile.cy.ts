@@ -6,6 +6,7 @@ import {
   cas1OasysGroupFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
+  csraSummaryFactory,
   licenceFactory,
   risksFactory,
 } from '../../../../server/testutils/factories'
@@ -60,7 +61,7 @@ context('ResidentProfile', () => {
 
       THEN('the Personal tab should be selected')
       page.shouldHaveActiveTab('Personal details')
-      page.shouldShowPersonalInformation(placement.person, personRisks, placement)
+      page.shouldShowPersonalInformation(placement.person, personRisks)
     })
 
     it('should show the placement tab', () => {
@@ -102,12 +103,15 @@ context('ResidentProfile', () => {
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
       const adjudications = adjudicationFactory.buildList(5)
       const licence = licenceFactory.build()
+      const csraSummaries = csraSummaryFactory.buildList(2)
       const { placement, personRisks } = setup()
 
       cy.task('stubPersonOffences', { offences, person: placement.person })
       cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
       cy.task('stubAdjudications', { person: placement.person, adjudications })
       cy.task('stubLicence', { person: placement.person, licence })
+      cy.task('stubCsra', { person: placement.person, csraSummaries })
+      cy.task('stubFindPerson', { person: placement.person })
 
       const page = visitPage({ placement, personRisks }, 'Sentence')
 
@@ -126,7 +130,7 @@ context('ResidentProfile', () => {
       page.clickSideNav('Prison')
 
       THEN('I should see the prison cards')
-      page.shouldShowPrisonInformation(adjudications)
+      page.shouldShowPrisonInformation(adjudications, csraSummaries, placement.person)
     })
 
     it('should show the risk tab', () => {

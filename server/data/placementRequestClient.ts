@@ -71,10 +71,10 @@ export default class PlacementRequestClient {
     })
   }
 
-  async find(placementRequestId: string): Promise<Cas1PlacementRequestDetail> {
-    return (await this.restClient.get({
+  async find(placementRequestId: string) {
+    return this.restClient.get<Cas1PlacementRequestDetail>({
       path: paths.placementRequests.show({ placementRequestId }),
-    })) as Promise<Cas1PlacementRequestDetail>
+    })
   }
 
   async createBooking(

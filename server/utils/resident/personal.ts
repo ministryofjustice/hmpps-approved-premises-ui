@@ -8,12 +8,11 @@ export const personalDetailsTabController = async ({
   token,
   crn,
   personRisks,
-  placement,
 }: TabControllerParameters): Promise<TabData> => {
   const [person]: [Person] = await Promise.all([personService.findByCrn(token, crn)])
 
   return {
     subHeading: 'Personal details',
-    cardList: personDetailsCardList(person as FullPerson, personRisks, placement),
+    cardList: personDetailsCardList(person as FullPerson, personRisks),
   }
 }

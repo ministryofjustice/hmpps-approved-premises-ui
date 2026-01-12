@@ -7,10 +7,12 @@ import {
   adjudicationFactory,
   cas1OasysGroupFactory,
   licenceFactory,
+  csraSummaryFactory,
 } from '../../testutils/factories'
 import * as sentenceUtils from './sentenceUtils'
 import { PersonService } from '../../services'
 import { ErrorWithData } from '../errors'
+import { fullPersonFactory } from '../../testutils/factories/person'
 
 const personService = createMock<PersonService>({})
 
@@ -61,20 +63,29 @@ describe('sentenceTabController', () => {
   describe('sentencePrisonTabController', () => {
     it('should render the prison side-tab', async () => {
       const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
+      const csraSummaries = csraSummaryFactory.buildList(3)
+      const person = fullPersonFactory.build()
 
       personService.getAdjudications.mockResolvedValue(adjudications)
+      personService.csraSummaries.mockResolvedValue(csraSummaries)
+      personService.findByCrn.mockResolvedValue(person)
+
       jest.spyOn(sentenceUtils, 'prisonCards').mockReturnValue([])
 
       expect(await sentencePrisonTabController({ personService, token, crn })).toEqual({
         cardList: [],
         subHeading: 'Prison',
       })
-      expect(sentenceUtils.prisonCards).toHaveBeenCalledWith(adjudications)
+      expect(sentenceUtils.prisonCards).toHaveBeenCalledWith(adjudications, csraSummaries, person)
       expect(personService.getAdjudications).toHaveBeenCalledWith(token, crn)
+      expect(personService.csraSummaries).toHaveBeenCalledWith(token, crn)
+      expect(personService.findByCrn).toHaveBeenCalledWith(token, crn)
     })
 
-    it('should render the prison side-tab when external call returns 404', async () => {
+    it('should render the prison side-tab when adjudication call returns 404', async () => {
       personService.getAdjudications.mockImplementation(mockService404)
+      personService.csraSummaries.mockImplementation(mockService404)
+      personService.findByCrn.mockImplementation(mockService404)
 
       jest.spyOn(sentenceUtils, 'prisonCards').mockReturnValue([])
 
@@ -83,8 +94,9 @@ describe('sentenceTabController', () => {
         subHeading: 'Prison',
       })
 
-      expect(sentenceUtils.prisonCards).toHaveBeenCalledWith(undefined)
+      expect(sentenceUtils.prisonCards).toHaveBeenCalledWith(undefined, undefined, undefined)
       expect(personService.getAdjudications).toHaveBeenCalledWith(token, crn)
+      expect(personService.csraSummaries).toHaveBeenCalledWith(token, crn)
     })
   })
 

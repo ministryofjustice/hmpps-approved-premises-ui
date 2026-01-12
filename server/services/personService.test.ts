@@ -17,6 +17,7 @@ import {
   cas1OASysMetadataFactory,
   risksFactory,
   licenceFactory,
+  csraSummaryFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/personClient.ts')
@@ -240,6 +241,21 @@ describe('PersonService', () => {
       expect(result).toEqual(licence)
       expect(personClientFactory).toHaveBeenCalledWith(token)
       expect(personClient.licenceDetails).toHaveBeenCalledWith('crn')
+    })
+  })
+
+  describe('csraSummaries', () => {
+    it('returns the CSRA summary list for a person', async () => {
+      const csraSummaries = csraSummaryFactory.buildList(2)
+
+      personClient.csraSummaries.mockResolvedValue(csraSummaries)
+
+      const result = await service.csraSummaries(token, 'crn')
+
+      expect(result).toEqual(csraSummaries)
+
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.csraSummaries).toHaveBeenCalledWith('crn')
     })
   })
 

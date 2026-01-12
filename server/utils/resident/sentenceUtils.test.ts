@@ -1,5 +1,5 @@
 import { render } from 'nunjucks'
-import { Adjudication, Cas1OASysGroup } from '@approved-premises/api'
+import { Adjudication, Cas1OASysGroup, CsraSummary } from '@approved-premises/api'
 import { ResidentProfileSubTab } from './index'
 import {
   licenseCards,
@@ -8,6 +8,7 @@ import {
   sentenceSummaryList,
   additionalOffencesRows,
   offencesTabCards,
+  csraRows,
 } from './sentenceUtils'
 import * as sentenceFns from './sentenceUtils'
 import {
@@ -16,6 +17,7 @@ import {
   cas1OasysGroupFactory,
   cas1SpaceBookingFactory,
   licenceFactory,
+  csraSummaryFactory,
 } from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
 import { sentenceCase } from '../utils'
@@ -24,6 +26,7 @@ import {
   bespokeConditionFactory,
   standardConditionFactory,
 } from '../../testutils/factories/licenceConditions'
+import { fullPersonFactory } from '../../testutils/factories/person'
 
 jest.mock('nunjucks')
 
@@ -209,6 +212,20 @@ describe('sentence', () => {
     })
   })
 
+  describe('csraRows', () => {
+    const expectedSummary = (summary: CsraSummary) => [
+      { text: DateFormats.isoDateToUIDate(summary.assessmentDate, { format: 'short' }) },
+      { text: summary.assessmentCode },
+      { text: summary.classificationCode },
+      { text: summary.cellSharingAlertFlag ? 'True' : '' },
+      { text: summary.assessmentComment },
+    ]
+
+    const csraSummaries = csraSummaryFactory.buildList(2)
+
+    expect(csraRows(csraSummaries)).toEqual(csraSummaries.map(expectedSummary))
+  })
+
   describe('offencesTabCards', () => {
     it('should render the offence cards', () => {
       jest.spyOn(sentenceFns, 'offenceCards').mockReturnValue([])
@@ -298,44 +315,55 @@ describe('sentence', () => {
   })
 
   describe('prisonCards', () => {
-    it('should render the adjutcations table rows', () => {
+    it('should render the adjudications table rows', () => {
       const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
 
       expect(sentenceFns.adjudicationRows(adjudications)).toEqual([
         [
-          { text: DateFormats.isoDateToUIDate(adjudications[0].reportedAt) },
+          { text: DateFormats.isoDateToUIDate(adjudications[0].reportedAt, { format: 'short' }) },
           { text: adjudications[0].offenceDescription },
           { text: sentenceCase(adjudications[0].finding) },
-          { text: 'TBA' },
         ],
         [
-          { text: DateFormats.isoDateToUIDate(adjudications[1].reportedAt) },
+          { text: DateFormats.isoDateToUIDate(adjudications[1].reportedAt, { format: 'short' }) },
           { text: adjudications[1].offenceDescription },
           { text: sentenceCase(adjudications[1].finding) },
-          { text: 'TBA' },
         ],
       ])
     })
 
     it('should render the card list for the prison tab', () => {
       const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
-      jest.spyOn(sentenceFns, 'adjudicationRows').mockReturnValue([])
+      const csraSummaries = csraSummaryFactory.buildList(2)
+      const fullPerson = fullPersonFactory.build()
 
-      const result = sentenceFns.prisonCards(adjudications)
+      jest.spyOn(sentenceFns, 'adjudicationRows').mockReturnValue([])
+      jest.spyOn(sentenceFns, 'csraRows').mockReturnValue([])
+
+      const result = sentenceFns.prisonCards(adjudications, csraSummaries, fullPerson)
 
       expect(result).toEqual([
         {
           card: { title: { text: 'Prison details' } },
-          rows: [{ key: { text: 'Prison name' }, value: { text: 'TBA' } }],
+          rows: [{ key: { text: 'Prison name' }, value: { text: fullPerson.prisonName } }],
         },
         {
           card: { title: { text: 'Cell Sharing Risk Assessment (CSRA)' } },
-          rows: [{ key: { text: 'Type' }, value: { text: 'TBA' } }],
+          table: {
+            head: [
+              { text: 'Date assessed' },
+              { text: 'Assessment code' },
+              { text: 'Classification' },
+              { text: 'Alert flag' },
+              { text: 'Comment' },
+            ],
+            rows: [],
+          },
         },
         {
           card: { title: { text: 'Adjudications' } },
           table: {
-            head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }, { text: 'Sanction' }],
+            head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }],
             rows: [],
           },
         },

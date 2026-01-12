@@ -64,12 +64,6 @@ describe('Personal tab utils', () => {
             ),
           },
           { key: { text: 'Status' }, value: { html: new PersonStatusTag(person.status).html() } },
-          {
-            key: { text: 'Prison' },
-            value: {
-              html: `<p>${isRestricted ? 'Restricted' : person.prisonName}</p><a href="/manage/resident/${crn}/placement/${placement.id}/sentence/prison">View all prison information</a>`,
-            },
-          },
           { key: { text: 'Nationality' }, value: restrict({ text: person.nationality }, isRestricted) },
           { key: { text: 'Immigration status' }, value: { text: 'TBA' } },
           { key: { text: 'Languages' }, value: { text: 'TBA' } },

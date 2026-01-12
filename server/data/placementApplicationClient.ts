@@ -2,11 +2,11 @@ import {
   PlacementApplication,
   PlacementApplicationDecisionEnvelope,
   SubmitPlacementApplication,
+  WithdrawPlacementRequestReason,
 } from '@approved-premises/api'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
-import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 
 export default class PlacementApplicationClient {
   restClient: RestClient
@@ -16,9 +16,9 @@ export default class PlacementApplicationClient {
   }
 
   async find(id: string): Promise<PlacementApplication> {
-    return (await this.restClient.get({
+    return this.restClient.get<PlacementApplication>({
       path: paths.placementApplications.show({ id }),
-    })) as Promise<PlacementApplication>
+    })
   }
 
   async create(applicationId: string): Promise<PlacementApplication> {
