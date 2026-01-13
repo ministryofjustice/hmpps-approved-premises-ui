@@ -1,0 +1,7 @@
+<p class="govuk-body">The application was manually expired</p>
+{% if expiredReason %}
+    <dl>
+        <dt>Reason for expiry:</dt>
+        <dd class="govuk-summary-list__textblock">{{ expiredReason }}</dd>
+    </dl>
+{% endif %}
