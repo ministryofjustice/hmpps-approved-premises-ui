@@ -146,6 +146,9 @@ export const licenseCards = (licence: Licence): Array<SummaryListWithCard> => {
   if (!licence) return [card({ html: insetText('No licence available') })]
 
   const renderCardSet = (typeLabel: string, conditions: ApConditions) => {
+    // Conditions are grouped into AP and PSS conditions, each of those having standard, additional and ,for AP, bespoke types.
+    // This function renders cards of the three types for one group
+
     return [
       conditions.standard?.length &&
         card({
