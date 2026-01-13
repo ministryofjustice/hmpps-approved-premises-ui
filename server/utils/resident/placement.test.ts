@@ -1,8 +1,12 @@
 import { Cas1SpaceBooking } from '@approved-premises/api'
 import { createMock } from '@golevelup/ts-jest'
-import { ApplicationService } from 'server/services'
-import { placementApplicationTabController, placementTabController } from './placement'
-import { applicationFactory, cas1SpaceBookingFactory } from '../../testutils/factories'
+import { ApplicationService, PersonService } from 'server/services'
+import { placementTabController, allApPlacementsTabController, placementApplicationTabController } from './placement'
+import {
+  cas1SpaceBookingFactory,
+  cas1SpaceBookingShortSummaryFactory,
+  applicationFactory,
+} from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import { characteristicsBulletList } from '../characteristicsUtils'
@@ -11,6 +15,7 @@ import { placementStatusTag } from '../placements'
 import * as placementUtils from './placementUtils'
 
 const token = 'token'
+const crn = 'X123456'
 
 describe('tabController', () => {
   const allPlacementStatuses: Array<[string, Cas1SpaceBooking]> = [
@@ -24,25 +29,25 @@ describe('tabController', () => {
   ]
 
   it.each(allPlacementStatuses)(
-    'should return a details card contain the premises name, date allocated, status, and delius number for %s placements',
+    'should return a details card contain the premises name, date of booking, and delius number for %s placements',
     (_, placement) => {
       expect(placementTabController(placement)).toEqual({
         subHeading: `${placement.premises.name} AP placement`,
         cardList: [
           {
-            card: { title: { text: placement.premises.name } },
+            card: {
+              title: {
+                html: `${placement.premises.name} ${placementStatusTag(placement, { classes: 'govuk-!-margin-left-1' })}`,
+              },
+            },
             rows: expect.arrayContaining([
               {
                 key: { text: 'Approved Premises' },
                 value: { text: placement.premises.name },
               },
               {
-                key: { text: 'Date allocated' },
+                key: { text: 'Date of booking' },
                 value: { text: DateFormats.isoDateToUIDate(placement.createdAt) },
-              },
-              {
-                key: { text: 'Status' },
-                value: { html: placementStatusTag(placement) },
               },
               {
                 key: { text: 'Delius event number' },
@@ -62,7 +67,11 @@ describe('tabController', () => {
         subHeading: `${placement.premises.name} AP placement`,
         cardList: [
           {
-            card: { title: { text: placement.premises.name } },
+            card: {
+              title: {
+                html: `${placement.premises.name} ${placementStatusTag(placement, { classes: 'govuk-!-margin-left-1' })}`,
+              },
+            },
             rows: expect.arrayContaining([
               {
                 key: { text: 'AP type' },
@@ -94,7 +103,11 @@ describe('tabController', () => {
       subHeading: `${placement.premises.name} AP placement`,
       cardList: [
         {
-          card: { title: { text: placement.premises.name } },
+          card: {
+            title: {
+              html: `${placement.premises.name} ${placementStatusTag(placement, { classes: 'govuk-!-margin-left-1' })}`,
+            },
+          },
           rows: expectation.arrayContaining([
             {
               key: { text: 'Expected arrival date' },
@@ -110,28 +123,27 @@ describe('tabController', () => {
     ['upcoming', cas1SpaceBookingFactory.upcoming().build(), false],
     ['nonArrival', cas1SpaceBookingFactory.nonArrival().build(), false],
     ['current', cas1SpaceBookingFactory.current().build(), true],
-    ['departed', cas1SpaceBookingFactory.departed().build(), true],
   ])(
-    'should show actual arrival date and time for placements that have arrived - %s',
+    'should show actual arrival date for placements that have arrived (current status) - %s',
     (_, placement, shouldContain) => {
       const expectation = shouldContain ? expect : expect.not
       expect(placementTabController(placement)).toEqual({
         subHeading: `${placement.premises.name} AP placement`,
         cardList: [
           {
-            card: { title: { text: placement.premises.name } },
+            card: {
+              title: {
+                html: `${placement.premises.name} ${placementStatusTag(placement, { classes: 'govuk-!-margin-left-1' })}`,
+              },
+            },
             rows: expectation.arrayContaining([
               {
-                key: { text: 'Actual arrival date' },
+                key: { text: 'Arrival date' },
                 value: {
                   text: placement.actualArrivalDate
                     ? DateFormats.isoDateToUIDate(placement.actualArrivalDate)
                     : expect.any(String),
                 },
-              },
-              {
-                key: { text: 'Arrival time' },
-                value: { text: DateFormats.formatTime(placement.actualArrivalTime) },
               },
             ]),
           },
@@ -139,6 +151,30 @@ describe('tabController', () => {
       })
     },
   )
+
+  it('should show arrival date for departed placements', () => {
+    const placement = cas1SpaceBookingFactory.departed().build()
+    expect(placementTabController(placement)).toEqual({
+      subHeading: `${placement.premises.name} AP placement`,
+      cardList: [
+        {
+          card: {
+            title: {
+              html: `${placement.premises.name} ${placementStatusTag(placement, { classes: 'govuk-!-margin-left-1' })}`,
+            },
+          },
+          rows: expect.arrayContaining([
+            {
+              key: { text: 'Arrival date' },
+              value: {
+                text: DateFormats.isoDateToUIDate(placement.actualArrivalDate),
+              },
+            },
+          ]),
+        },
+      ],
+    })
+  })
 
   it.each([
     ['upcoming', cas1SpaceBookingFactory.upcoming().build(), true],
@@ -153,7 +189,11 @@ describe('tabController', () => {
         subHeading: `${placement.premises.name} AP placement`,
         cardList: [
           {
-            card: { title: { text: placement.premises.name } },
+            card: {
+              title: {
+                html: `${placement.premises.name} ${placementStatusTag(placement, { classes: 'govuk-!-margin-left-1' })}`,
+              },
+            },
             rows: expectation.arrayContaining([
               {
                 key: { text: 'Expected departure date' },
@@ -171,34 +211,31 @@ describe('tabController', () => {
     ['nonArrival', cas1SpaceBookingFactory.nonArrival().build(), false],
     ['current', cas1SpaceBookingFactory.current().build(), false],
     ['departed', cas1SpaceBookingFactory.departed().build(), true],
-  ])(
-    'should show actual departure date and time for placements that have departed - %s',
-    (_, placement, shouldContain) => {
-      const expectation = shouldContain ? expect : expect.not
-      expect(placementTabController(placement)).toEqual({
-        subHeading: `${placement.premises.name} AP placement`,
-        cardList: [
-          {
-            card: { title: { text: placement.premises.name } },
-            rows: expectation.arrayContaining([
-              {
-                key: { text: 'Actual departure date' },
-                value: {
-                  text: placement.actualDepartureDate
-                    ? DateFormats.isoDateToUIDate(placement.actualDepartureDate)
-                    : expect.any(String),
-                },
-              },
-              {
-                key: { text: 'Departure time' },
-                value: { text: DateFormats.formatTime(placement.actualDepartureTime) },
-              },
-            ]),
+  ])('should show departure date for placements that have departed - %s', (_, placement, shouldContain) => {
+    const expectation = shouldContain ? expect : expect.not
+    expect(placementTabController(placement)).toEqual({
+      subHeading: `${placement.premises.name} AP placement`,
+      cardList: [
+        {
+          card: {
+            title: {
+              html: `${placement.premises.name} ${placementStatusTag(placement, { classes: 'govuk-!-margin-left-1' })}`,
+            },
           },
-        ],
-      })
-    },
-  )
+          rows: expectation.arrayContaining([
+            {
+              key: { text: 'Departure date' },
+              value: {
+                text: placement.actualDepartureDate
+                  ? DateFormats.isoDateToUIDate(placement.actualDepartureDate)
+                  : expect.any(String),
+              },
+            },
+          ]),
+        },
+      ],
+    })
+  })
 
   describe('placementApplicationTabController', () => {
     it('should render the application document as an accordion', async () => {
@@ -220,5 +257,35 @@ describe('tabController', () => {
         subHeading: 'Application',
       })
     })
+  })
+})
+
+describe('allApPlacementsTabController', () => {
+  const personService = createMock<PersonService>({})
+
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
+
+  it('should return a card list with all placements sorted by arrival date', async () => {
+    const placements = [
+      cas1SpaceBookingShortSummaryFactory.current().build(),
+      cas1SpaceBookingShortSummaryFactory.departed().build(),
+    ]
+    const placement = cas1SpaceBookingFactory.build()
+
+    personService.getSpaceBookings.mockResolvedValue(placements)
+
+    const result = await allApPlacementsTabController({ personService, token, crn, placement })
+
+    expect(personService.getSpaceBookings).toHaveBeenCalledWith(token, crn)
+    expect(result.subHeading).toBe('All AP placements')
+    expect(result.cardList).toHaveLength(2)
+
+    const cardTitlesHtml = result.cardList
+      .map(card => ('html' in card.card.title ? card.card.title.html : ''))
+      .join(' ')
+    expect(cardTitlesHtml).toContain(placements[0].premises.name)
+    expect(cardTitlesHtml).toContain(placements[1].premises.name)
   })
 })

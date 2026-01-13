@@ -1,14 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 import { TabItem } from '@approved-premises/ui'
 import { Cas1SpaceBooking, PersonRisks } from '@approved-premises/api'
-import { personalSideNavigation } from '../../utils/resident/personalUtils'
-import { placementSideNavigation } from '../../utils/resident/placementUtils'
-import {
-  sentenceLicenceTabController,
-  sentenceOffencesTabController,
-  sentencePrisonTabController,
-} from '../../utils/resident/sentence'
-import { placementApplicationTabController, placementTabController } from '../../utils/resident/placement'
 import { ApplicationService, PersonService, PlacementService } from '../../services'
 import paths from '../../paths/manage'
 
@@ -22,10 +14,22 @@ import {
   TabData,
 } from '../../utils/resident'
 
+import {
+  sentenceLicenceTabController,
+  sentenceOffencesTabController,
+  sentencePrisonTabController,
+} from '../../utils/resident/sentence'
 import { sentenceSideNavigation } from '../../utils/resident/sentenceUtils'
 import { riskTabController } from '../../utils/resident/risk'
-import { settlePromises } from '../../utils/utils'
+import { personalSideNavigation } from '../../utils/resident/personalUtils'
 import { personalDetailsTabController } from '../../utils/resident/personal'
+import {
+  placementSideNavigation,
+  placementTabController,
+  placementApplicationTabController,
+  allApPlacementsTabController,
+} from '../../utils/resident/placement'
+import { settlePromises } from '../../utils/utils'
 
 export default class ResidentProfileController {
   constructor(
@@ -81,6 +85,7 @@ export default class ResidentProfileController {
           sideNavigation = placementSideNavigation(subTab, crn, placement)
           if (subTab === 'placementDetails') tabData = placementTabController(placement)
           if (subTab === 'application') tabData = await placementApplicationTabController(tabParameters)
+          if (subTab === 'allApPlacements') tabData = await allApPlacementsTabController(tabParameters)
           break
         case 'risk':
           tabData = await riskTabController(tabParameters)

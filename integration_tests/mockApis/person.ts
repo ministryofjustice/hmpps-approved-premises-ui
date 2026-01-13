@@ -8,6 +8,7 @@ import type {
   Cas1OASysGroup,
   Cas1OASysSupportingInformationQuestionMetaData,
   Cas1PersonalTimeline,
+  Cas1SpaceBookingShortSummary,
   CsraSummary,
   Document,
   Licence,
@@ -280,6 +281,19 @@ export default {
         base64Body: readFileSync(path.resolve(__dirname, '..', 'fixtures', 'document.pdf'), {
           encoding: 'base64',
         }),
+      },
+    }),
+
+  stubPersonSpaceBookings: (args: { person: Person; spaceBookings: Array<Cas1SpaceBookingShortSummary> }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPath: paths.people.spaceBookings({ crn: args.person.crn }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.spaceBookings,
       },
     }),
 }

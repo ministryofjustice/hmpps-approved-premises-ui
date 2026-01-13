@@ -185,7 +185,7 @@ export interface SummaryList {
 
 export type SummaryListWithCard = {
   card: {
-    title: { text: string; headingLevel?: string }
+    title: ({ text: string } | { html: string }) & { headingLevel?: string }
     actions?: SummaryListActions
     attributes?: HtmlAttributes
   }

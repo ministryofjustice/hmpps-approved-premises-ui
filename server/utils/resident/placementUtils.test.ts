@@ -1,6 +1,6 @@
 import { render } from 'nunjucks'
-import { applicationFactory } from '../../testutils/factories'
-import { applicationCardList, applicationDocumentAccordion } from './placementUtils'
+import { applicationFactory, cas1SpaceBookingShortSummaryFactory } from '../../testutils/factories'
+import { applicationCardList, applicationDocumentAccordion, placementCard } from './placementUtils'
 import { DateFormats } from '../dateUtils'
 
 jest.mock('nunjucks')
@@ -88,5 +88,69 @@ describe('application utils', () => {
         },
       ])
     })
+  })
+})
+
+describe('placementCard', () => {
+  const getFieldLabels = (card: ReturnType<typeof placementCard>) =>
+    card.rows.filter(Boolean).map(f => (f.key as { text: string }).text)
+
+  const commonFields = [
+    'Approved Premises',
+    'Date of booking',
+    'AP type',
+    'AP requirements',
+    'Room requirements',
+    'Delius event number',
+  ]
+
+  it('should show expected dates for upcoming placement', () => {
+    const placement = cas1SpaceBookingShortSummaryFactory.upcoming().build()
+    const fieldLabels = getFieldLabels(placementCard(placement))
+
+    expect(fieldLabels).toContain('Expected arrival date')
+    expect(fieldLabels).toContain('Expected departure date')
+    expect(fieldLabels).not.toContain('Arrival date')
+    expect(fieldLabels).not.toContain('Departure date')
+    commonFields.forEach(field => expect(fieldLabels).toContain(field))
+  })
+
+  it('should show arrival date when arrived', () => {
+    const placement = cas1SpaceBookingShortSummaryFactory.current().build()
+    const fieldLabels = getFieldLabels(placementCard(placement))
+
+    expect(fieldLabels).toContain('Arrival date')
+    expect(fieldLabels).toContain('Expected departure date')
+    expect(fieldLabels).not.toContain('Expected arrival date')
+    commonFields.forEach(field => expect(fieldLabels).toContain(field))
+  })
+
+  it('should show non-arrival reason for notArrived placement', () => {
+    const placement = cas1SpaceBookingShortSummaryFactory.nonArrival().build()
+    const fieldLabels = getFieldLabels(placementCard(placement))
+
+    expect(fieldLabels).toContain('Non-arrival reason')
+    commonFields.forEach(field => expect(fieldLabels).toContain(field))
+  })
+
+  it('should show departure details for departed placement', () => {
+    const placement = cas1SpaceBookingShortSummaryFactory.departed().build()
+    const fieldLabels = getFieldLabels(placementCard(placement))
+
+    expect(fieldLabels).toContain('Arrival date')
+    expect(fieldLabels).toContain('Departure date')
+    expect(fieldLabels).toContain('Departure reason')
+    expect(fieldLabels).toContain('Move on')
+    expect(fieldLabels).not.toContain('Expected arrival date')
+    expect(fieldLabels).not.toContain('Expected departure date')
+    commonFields.forEach(field => expect(fieldLabels).toContain(field))
+  })
+
+  it('should show cancellation details for cancelled placement', () => {
+    const placement = cas1SpaceBookingShortSummaryFactory.cancelled().build()
+    const fieldLabels = getFieldLabels(placementCard(placement))
+
+    expect(fieldLabels).toContain('Cancellation date')
+    commonFields.forEach(field => expect(fieldLabels).toContain(field))
   })
 })

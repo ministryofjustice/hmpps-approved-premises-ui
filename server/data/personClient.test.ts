@@ -392,4 +392,36 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
       await personClient.document(crn, documentId, response)
     })
   })
+
+  describe('spaceBookings', () => {
+    it.each([
+      { includeCancelled: true, query: { includeCancelled: 'true' } },
+      { includeCancelled: false, query: null },
+    ])(
+      'should return space bookings for a person with includeCancelled=$includeCancelled',
+      async ({ includeCancelled, query }) => {
+        const crn = 'crn'
+
+        await provider.addInteraction({
+          state: 'Server is healthy',
+          uponReceiving: `A request to get space bookings for a person with includeCancelled=${includeCancelled}`,
+          withRequest: {
+            method: 'GET',
+            path: paths.people.spaceBookings({ crn }),
+            ...(query && { query }),
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          },
+          willRespondWith: {
+            status: 200,
+            body: [],
+          },
+        })
+
+        const result = await personClient.spaceBookings(crn, includeCancelled)
+        expect(result).toEqual([])
+      },
+    )
+  })
 })

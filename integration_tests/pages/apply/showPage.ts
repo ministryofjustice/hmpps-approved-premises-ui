@@ -130,10 +130,11 @@ export default class ShowPage extends Page {
   ) {
     mapRequestsForPlacementToSummaryCards(requestsForPlacement, application, fromPartial(user)).forEach(
       requestForPlacementSummaryCard => {
+        const { title: cardTitle } = requestForPlacementSummaryCard.card
         cy.get(
           `[data-cy-placement-application-id="${requestForPlacementSummaryCard.card.attributes['data-cy-placement-application-id']}"]`,
         )
-          .should('contain', requestForPlacementSummaryCard.card.title.text)
+          .should('contain', 'text' in cardTitle ? cardTitle.text : cardTitle.html)
           .within(() => {
             this.shouldContainSummaryListItems(requestForPlacementSummaryCard.rows)
           })

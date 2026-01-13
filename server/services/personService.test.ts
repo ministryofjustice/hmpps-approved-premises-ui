@@ -10,6 +10,7 @@ import {
   acctAlertFactory,
   activeOffenceFactory,
   adjudicationFactory,
+  cas1SpaceBookingShortSummaryFactory,
   personFactory,
   personalTimelineFactory,
   prisonCaseNotesFactory,
@@ -279,6 +280,31 @@ describe('PersonService', () => {
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
       expect(personClient.timeline).toHaveBeenCalledWith('crn')
+      expect(actual).toEqual(expected)
+    })
+  })
+
+  describe('getSpaceBookings', () => {
+    it.each([
+      {
+        includeCancelledArg: undefined,
+        expectedIncludeCancelled: true,
+        description: 'includes cancelled bookings by default',
+      },
+      {
+        includeCancelledArg: false,
+        expectedIncludeCancelled: false,
+        description: 'excludes cancelled bookings when specified',
+      },
+    ])('$description', async ({ includeCancelledArg, expectedIncludeCancelled }) => {
+      const expected = cas1SpaceBookingShortSummaryFactory.buildList(2)
+      const crn = 'crn'
+      when(personClient.spaceBookings).calledWith(crn, expectedIncludeCancelled).mockResolvedValue(expected)
+
+      const actual = await service.getSpaceBookings(token, crn, includeCancelledArg)
+
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.spaceBookings).toHaveBeenCalledWith(crn, expectedIncludeCancelled)
       expect(actual).toEqual(expected)
     })
   })

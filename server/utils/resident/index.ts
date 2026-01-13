@@ -51,7 +51,11 @@ export type Accordion = {
   items: Array<AccordionSection>
 }
 
-export type TabData = { cardList?: Array<SummaryListWithCard>; subHeading?: string; accordion?: Accordion }
+export type TabData = {
+  cardList?: Array<SummaryListWithCard>
+  subHeading?: string
+  accordion?: Accordion
+}
 
 export const tabLabels: Record<
   ResidentProfileTab,

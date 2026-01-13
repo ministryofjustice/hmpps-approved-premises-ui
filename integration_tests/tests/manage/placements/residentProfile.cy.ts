@@ -6,6 +6,7 @@ import {
   cas1OasysGroupFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
+  cas1SpaceBookingShortSummaryFactory,
   csraSummaryFactory,
   licenceFactory,
   risksFactory,
@@ -73,6 +74,13 @@ context('ResidentProfile', () => {
       placement.applicationId = application.id
       cy.task('stubApplicationGet', { application })
 
+      const spaceBookings = [
+        cas1SpaceBookingShortSummaryFactory.upcoming().build(),
+        cas1SpaceBookingShortSummaryFactory.current().build(),
+        cas1SpaceBookingShortSummaryFactory.departed().build(),
+      ]
+      cy.task('stubPersonSpaceBookings', { person: placement.person, spaceBookings })
+
       GIVEN(' that I am signed in as a user with access resident profile')
       signIn(['manage_resident'])
 
@@ -96,6 +104,15 @@ context('ResidentProfile', () => {
       THEN('I should see the application details')
       page.shouldHaveActiveSideNav(`Application`)
       page.shouldShowApplication(application)
+
+      WHEN('I click on the All AP placements side nav')
+      page.clickSideNav('All AP placements')
+
+      THEN('the All AP placements side nav should be active')
+      page.shouldHaveActiveSideNav('All AP placements')
+
+      AND('I should see all the placement cards with their details')
+      page.shouldShowAllApPlacements(spaceBookings)
     })
 
     it('should show the sentence tab', () => {

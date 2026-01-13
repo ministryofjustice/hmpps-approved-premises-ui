@@ -8,6 +8,7 @@ import type {
   Cas1OASysMetadata,
   Cas1PersonalTimeline,
   Licence,
+  Cas1SpaceBookingShortSummary,
   CsraSummary,
   Person,
   PersonAcctAlert,
@@ -118,5 +119,13 @@ export default class PersonClient {
 
   async licenceDetails(crn: string): Promise<Licence> {
     return this.restClient.get<Licence>({ path: paths.people.licenceDetails({ crn }) })
+  }
+
+  async spaceBookings(crn: string, includeCancelled: boolean = true): Promise<Array<Cas1SpaceBookingShortSummary>> {
+    const query = includeCancelled ? { includeCancelled: 'true' } : {}
+    return (await this.restClient.get({
+      path: paths.people.spaceBookings({ crn }),
+      query,
+    })) as Array<Cas1SpaceBookingShortSummary>
   }
 }

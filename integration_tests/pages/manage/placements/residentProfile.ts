@@ -4,6 +4,7 @@ import {
   ApprovedPremisesApplication,
   Cas1OASysGroup,
   Cas1SpaceBooking,
+  Cas1SpaceBookingShortSummary,
   CsraSummary,
   FullPerson,
   Licence,
@@ -20,7 +21,7 @@ import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { licenseCards, offencesTabCards, prisonCards } from '../../../../server/utils/resident/sentenceUtils'
 import { getResidentStatus } from '../../../../server/utils/resident'
-import { placementDetailsCards } from '../../../../server/utils/resident/placementUtils'
+import { placementDetailsCards, allApPlacementsTabData } from '../../../../server/utils/resident/placementUtils'
 import { personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
 import { AND, THEN, WHEN } from '../../../helpers'
 import { SubmittedDocumentRenderer } from '../../../../server/utils/forms/submittedDocumentRenderer'
@@ -48,7 +49,12 @@ export default class ResidentProfilePage extends Page {
   }
 
   shouldShowCard(card: SummaryListWithCard, checkContents = true) {
-    const title = card.card?.title?.text
+    const cardTitle = card.card?.title
+    const title =
+      cardTitle &&
+      ('text' in cardTitle
+        ? cardTitle.text
+        : new DOMParser().parseFromString(cardTitle.html, 'text/html').body.textContent)
     if (title) cy.get('.govuk-summary-card__title').contains(title).should('exist')
     if (checkContents) {
       cy.get('.govuk-summary-card__title')
@@ -133,9 +139,11 @@ export default class ResidentProfilePage extends Page {
 
     expected.forEach(summaryListWithCard => {
       const { card, rows } = summaryListWithCard
+      const { title: cardTitle } = card
+      const title = 'text' in cardTitle ? cardTitle.text : cardTitle.html?.split('<')[0].trim()
 
       cy.get('.govuk-summary-card')
-        .contains('h2', card.title.text)
+        .contains('h2', title)
         .parents('.govuk-summary-card')
         .within(() => {
           this.shouldContainSummaryListItems(rows)
@@ -154,6 +162,16 @@ export default class ResidentProfilePage extends Page {
         [{ text: 'Known adult' }, { text: mapText(risks.riskToKnownAdult) }],
         [{ text: 'Staff' }, { text: mapText(risks.riskToStaff) }],
       ])
+    })
+  }
+
+  shouldShowAllApPlacements(spaceBookings: Array<Cas1SpaceBookingShortSummary>) {
+    const cardList = allApPlacementsTabData(spaceBookings)
+
+    cy.contains('h2', 'All AP placements').should('be.visible')
+
+    cardList.forEach(card => {
+      this.shouldShowCard(card)
     })
   }
 

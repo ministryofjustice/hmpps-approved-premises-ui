@@ -1,4 +1,9 @@
-import { Cas1SpaceBooking, Cas1SpaceBookingStatus, Cas1SpaceBookingSummary } from '@approved-premises/api'
+import {
+  Cas1SpaceBooking,
+  Cas1SpaceBookingStatus,
+  Cas1SpaceBookingSummary,
+  Cas1SpaceBookingShortSummary,
+} from '@approved-premises/api'
 import { differenceInCalendarDays } from 'date-fns'
 
 export const overallStatusTextMap: Record<Cas1SpaceBookingStatus, string> = {
@@ -22,7 +27,9 @@ export const statusTextMap = {
 
 export type SpaceBookingStatus = keyof typeof statusTextMap
 
-export const detailedStatus = (placement: Cas1SpaceBookingSummary | Cas1SpaceBooking): SpaceBookingStatus => {
+export const detailedStatus = (
+  placement: Cas1SpaceBookingSummary | Cas1SpaceBooking | Cas1SpaceBookingShortSummary,
+): SpaceBookingStatus => {
   const { status } = placement
 
   if (['notArrived', 'departed', 'cancelled'].includes(status)) return status
