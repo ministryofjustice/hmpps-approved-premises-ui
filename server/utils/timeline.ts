@@ -1,4 +1,5 @@
 import {
+  Cas1ApplicationExpiredManuallyPayload,
   Cas1BookingChangedContentPayload,
   Cas1BookingMadeContentPayload,
   Cas1PlacementChangeRequestCreatedPayload,
@@ -68,6 +69,13 @@ export const renderTimelineEventContent = (event: Cas1TimelineEvent): string => 
         return nunjucks.render(`${templatePath}/booking_changed_v2.njk`, context)
       }
       return nunjucks.render(`${templatePath}/booking_changed.njk`, context)
+    }
+
+    if (eventType === 'application_manually_expired') {
+      const { expiredReason } = event.payload as Cas1ApplicationExpiredManuallyPayload
+
+      const context = { expiredReason }
+      return nunjucks.render(`${templatePath}/application_expired.njk`, context)
     }
 
     if (eventType === 'placement_change_request_created') {

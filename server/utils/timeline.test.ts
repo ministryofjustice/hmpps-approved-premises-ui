@@ -1,4 +1,8 @@
-import { Cas1BookingMadeContentPayload, Cas1TimelineEventContentPayload } from '@approved-premises/api'
+import {
+  Cas1ApplicationExpiredManuallyPayload,
+  Cas1BookingMadeContentPayload,
+  Cas1TimelineEventContentPayload,
+} from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { cas1PremisesFactory, cas1TimelineEventFactory } from '../testutils/factories'
 import { cas1TimelineEventContentPayloadFactory } from '../testutils/factories/cas1Timeline'
@@ -34,6 +38,26 @@ describe('timeline utilities', () => {
         expect(renderTimelineEventContent(timelineEvent)).toEqual(
           `<p class="govuk-body">&lt;script src=&quot;bad.js&quot;/&gt; &amp; Nope</p>`,
         )
+      })
+    })
+
+    describe(`when the event type is 'application_manually_expired'`, () => {
+      it('renders the expiry reason text', () => {
+        const expiredReason = faker.lorem.sentences(2)
+        const timelineEvent = cas1TimelineEventFactory.build({
+          payload: cas1TimelineEventContentPayloadFactory.build({
+            type: 'application_manually_expired',
+            expiredReason,
+          } as Cas1ApplicationExpiredManuallyPayload),
+        })
+
+        const result = renderTimelineEventContent(timelineEvent)
+
+        expect(result).toMatchStringIgnoringWhitespace(`<p class="govuk-body">The application was manually expired</p>
+         <dl>
+             <dt>Reason for expiry:</dt>
+             <dd class="govuk-summary-list__textblock">${expiredReason}</dd>
+         </dl>`)
       })
     })
 
