@@ -25,9 +25,8 @@ export const sections = {
   },
   manage: {
     id: 'manage',
-    title: 'Manage an Approved Premises',
-    description:
-      'Manage arrivals, departures and out of service beds. View current and upcoming occupancy at an Approved Premises.',
+    title: 'Manage Approved Premises residents',
+    description: 'View AP occupancy and resident profiles, and manage arrivals, departures and out-of-service beds.',
     shortTitle: 'Manage',
     href: managePaths.premises.index({}),
   },
