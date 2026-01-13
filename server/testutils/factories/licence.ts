@@ -39,7 +39,7 @@ export default LicenceFactory.define(() => {
     crn: `C${faker.string.numeric({ length: 6, allowLeadingZeros: false })}`,
     id: faker.number.int({ min: 0, max: 100000 }),
     isInPssPeriod: faker.datatype.boolean(),
-    kind: faker.word.adjective(),
+    kind: faker.helpers.arrayElement(['PRRD', 'CRD', 'VARIATION']),
     licenceStartDate: DateFormats.dateObjToIsoDate(faker.date.recent({ days: 365 })),
     licenceType: faker.helpers.arrayElement(['AP', 'PSS', 'AP_PSS']) as LicenceType,
     policyVersion: faker.string.numeric({ length: 5 }),

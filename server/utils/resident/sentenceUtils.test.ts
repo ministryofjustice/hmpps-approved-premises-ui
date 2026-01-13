@@ -9,6 +9,8 @@ import {
   additionalOffencesRows,
   offencesTabCards,
   csraRows,
+  licenceKindMapping,
+  licenceTypeMapping,
 } from './sentenceUtils'
 import * as sentenceFns from './sentenceUtils'
 import {
@@ -278,22 +280,22 @@ describe('sentence', () => {
               value: { text: DateFormats.isoDateToUIDate(licence.approvedDateTime) },
             },
             { key: { text: 'Last updated' }, value: { text: DateFormats.isoDateToUIDate(licence.updatedDateTime) } },
-            { key: { text: 'Licence type' }, value: { text: licence.licenceType } },
-            { key: { text: 'Licence kind' }, value: { text: licence.kind } },
-            { key: { text: 'Status' }, value: { text: licence.statusCode } },
+            { key: { text: 'Licence type' }, value: { text: licenceTypeMapping[licence.licenceType] } },
+            { key: { text: 'Licence kind' }, value: { text: licenceKindMapping[licence.kind] } },
+            { key: { text: 'Status' }, value: { text: sentenceCase(licence.statusCode) } },
           ],
         },
         {
-          card: { title: { text: 'Standard licence conditions (1)' } },
+          card: { title: { text: 'AP standard licence conditions (1)' } },
           rows: [
             {
-              key: { text: standardCondition.code },
+              key: { text: 'Standard condition 1' },
               value: { text: standardCondition.text },
             },
           ],
         },
         {
-          card: { title: { text: 'Additional licence conditions (1)' } },
+          card: { title: { text: 'AP additional licence conditions (1)' } },
           rows: [
             {
               key: { text: additionalCondition.category },
@@ -302,10 +304,10 @@ describe('sentence', () => {
           ],
         },
         {
-          card: { title: { text: 'Bespoke licence conditions (1)' } },
+          card: { title: { text: 'AP bespoke licence conditions (1)' } },
           rows: [
             {
-              key: { text: 'Bespoke licence condition 1' },
+              key: { text: 'Bespoke condition 1' },
               value: { text: bespokeCondition.text },
             },
           ],
