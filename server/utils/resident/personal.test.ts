@@ -1,12 +1,10 @@
 import { createMock } from '@golevelup/ts-jest'
-import { FullPerson } from '@approved-premises/api'
-import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
 import { cas1SpaceBookingFactory, risksFactory } from '../../testutils/factories'
-import { personalDetailsTabController } from './personal'
+import { contactsTabController, personalDetailsTabController } from './personal'
 import { PersonService } from '../../services'
-import { DateFormats } from '../dateUtils'
-import { getTierOrBlank } from '../applications/helpers'
-import { PersonStatusTag } from '../people/personStatusTag'
+import * as personalUtils from './personalUtils'
+import * as utils from './index'
+import { card } from '.'
 
 const personService = createMock<PersonService>({})
 const token = 'token'
@@ -15,69 +13,12 @@ const personRisks = risksFactory.build()
 const { crn } = placement.person
 
 describe('Personal tab utils', () => {
-  const restrict = (value: SummaryListItem['value'], restricted = false): SummaryListItem['value'] => {
-    return restricted ? { text: 'Restricted' } : value
-  }
-
   describe('personalDetailsTabController', () => {
-    const validateNumbersCard = (card: SummaryListWithCard, person: Partial<FullPerson>) => {
-      const isRestricted = person.type !== 'FullPerson'
-
-      expect(card).toEqual({
-        card: { title: { text: 'Identity numbers' } },
-        rows: [
-          { key: { text: 'Nomis number' }, value: restrict({ text: person.nomsNumber }, isRestricted) },
-          { key: { text: 'PNC number' }, value: restrict({ text: person.pncNumber }, isRestricted) },
-        ],
-      })
-    }
-
-    const validateEqualityCard = (card: SummaryListWithCard, person: Partial<FullPerson>) => {
-      const isRestricted = person.type !== 'FullPerson'
-
-      expect(card).toEqual({
-        card: { title: { text: 'Equality and monitoring' } },
-        rows: [
-          { key: { text: 'Ethnicity' }, value: restrict({ text: person.ethnicity }, isRestricted) },
-          { key: { text: 'Religion or belief' }, value: restrict({ text: person.religionOrBelief }, isRestricted) },
-          { key: { text: 'Sex' }, value: restrict({ text: person.sex }, isRestricted) },
-          { key: { text: 'Gender identity' }, value: restrict({ text: person.genderIdentity }, isRestricted) },
-          { key: { text: 'Sexual orientation' }, value: { text: 'TBA' } },
-        ],
-      })
-    }
-
-    const validatePersonalCard = (card: SummaryListWithCard, person: Partial<FullPerson>) => {
-      const isRestricted = person.type !== 'FullPerson'
-      expect(card).toEqual({
-        card: { title: { text: 'Personal details' } },
-        rows: [
-          { key: { text: 'Name' }, value: restrict({ text: person.name }, isRestricted) },
-          { key: { text: 'Aliases' }, value: { text: 'TBA' } },
-          {
-            key: { text: 'Date of birth' },
-            value: restrict(
-              {
-                text: DateFormats.isoDateToUIDate(person.dateOfBirth),
-              },
-              isRestricted,
-            ),
-          },
-          { key: { text: 'Status' }, value: { html: new PersonStatusTag(person.status).html() } },
-          { key: { text: 'Nationality' }, value: restrict({ text: person.nationality }, isRestricted) },
-          { key: { text: 'Immigration status' }, value: { text: 'TBA' } },
-          { key: { text: 'Languages' }, value: { text: 'TBA' } },
-          { key: { text: 'Relationship status' }, value: { text: 'TBA' } },
-          { key: { text: 'Dependants' }, value: { text: 'TBA' } },
-          { key: { text: 'Disabilities' }, value: { text: 'TBA' } },
-          { key: { text: 'Tier' }, value: { html: getTierOrBlank(personRisks.tier?.value?.level) } },
-        ],
-      })
-    }
-
-    it('should render the personal details tab content for a full person', async () => {
+    it('should render the personal details tab content', async () => {
       personService.findByCrn.mockResolvedValue(placement.person)
-      const person = placement.person as FullPerson
+      const mockCardList = [card({ title: 'mock card' })]
+
+      jest.spyOn(personalUtils, 'personDetailsCardList').mockReturnValue(mockCardList)
 
       const result = await personalDetailsTabController({
         personService,
@@ -86,39 +27,21 @@ describe('Personal tab utils', () => {
         personRisks,
         placement,
       })
-      expect(result).toEqual(expect.objectContaining({ subHeading: 'Personal details' }))
 
-      expect(result.cardList[0]).toEqual({
-        card: { title: { text: 'Contact details' } },
-        rows: [
-          { key: { text: 'Phone number' }, value: { text: 'TBA' } },
-          { key: { text: 'Email address' }, value: { text: 'TBA' } },
-          { key: { text: 'Main address' }, value: { text: 'TBA' } },
-          { key: { text: 'Other addresses' }, value: { text: 'TBA' } },
-        ],
-      })
-
-      validatePersonalCard(result.cardList[1], person)
-      validateNumbersCard(result.cardList[2], person)
-      validateEqualityCard(result.cardList[3], person)
+      expect(result).toEqual({ cardList: mockCardList, subHeading: 'Personal details' })
+      expect(personService.findByCrn).toHaveBeenCalledWith(token, crn)
+      expect(personalUtils.personDetailsCardList).toHaveBeenCalledWith(placement.person, personRisks)
     })
+  })
 
-    it('should render the personal details for a restricted person', async () => {
-      personService.findByCrn.mockResolvedValue({ ...placement.person, type: 'RestrictedPerson' })
+  describe('contactsTabController', () => {
+    it('should render the contacts tab content', async () => {
+      jest.spyOn(utils, 'ndeliusDeeplink').mockReturnValue('NDelius deeplink')
 
-      const result = await personalDetailsTabController({
-        personService,
-        token,
-        crn,
-        personRisks,
-        placement,
+      expect(await contactsTabController({})).toEqual({
+        cardList: [{ card: { title: { text: 'Contact details' } }, html: 'NDelius deeplink' }],
+        subHeading: 'Contacts',
       })
-
-      const restrictedPerson = { ...placement.person, type: 'RestrictedPerson' } as FullPerson
-
-      validatePersonalCard(result.cardList[1], restrictedPerson)
-      validateNumbersCard(result.cardList[2], restrictedPerson)
-      validateEqualityCard(result.cardList[3], restrictedPerson)
     })
   })
 })

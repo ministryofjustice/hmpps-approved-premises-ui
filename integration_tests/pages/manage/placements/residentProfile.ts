@@ -25,6 +25,7 @@ import { placementDetailsCards, allApPlacementsTabData } from '../../../../serve
 import { personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
 import { AND, THEN, WHEN } from '../../../helpers'
 import { SubmittedDocumentRenderer } from '../../../../server/utils/forms/submittedDocumentRenderer'
+import { ndeliusRiskCard } from '../../../../server/utils/resident/riskUtils'
 
 export default class ResidentProfilePage extends Page {
   constructor(
@@ -149,6 +150,10 @@ export default class ResidentProfilePage extends Page {
           this.shouldContainSummaryListItems(rows)
         })
     })
+  }
+
+  shouldShowNDeliusRiskCard(placement: Cas1SpaceBooking, personRisks: PersonRisks) {
+    this.shouldShowCard(ndeliusRiskCard(placement.person.crn, personRisks))
   }
 
   shouldShowRoshWidget(risks: RoshRisks) {

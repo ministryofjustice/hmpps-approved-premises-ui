@@ -171,6 +171,9 @@ context('ResidentProfile', () => {
         `OASys last updated on ${DateFormats.isoDateToUIDate(oasysRoshSummary.assessmentMetadata.dateCompleted)}`,
       )
 
+      AND('The Ndelius risk card should be populated')
+      page.shouldShowNDeliusRiskCard(placement, personRisks)
+
       AND('The ROSH widget should be populated')
       page.shouldShowRoshWidget(personRisks.roshRisks.value)
 

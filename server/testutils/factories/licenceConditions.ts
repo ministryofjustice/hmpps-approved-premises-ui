@@ -9,8 +9,17 @@ import {
 import { faker } from '@faker-js/faker'
 import { Factory } from 'fishery'
 
+const categories = [
+  'Restriction of residency',
+  'Contact with a person',
+  'Programmes or activities',
+  'Disclosure of information',
+  'Curfew arrangement',
+  'Drug, alcohol and solvent abuse',
+]
+
 export const additionalConditionFactory = Factory.define<AdditionalCondition>(() => ({
-  category: `${faker.word.verb()} ${faker.word.conjunction()} ${faker.word.noun()}`,
+  category: faker.helpers.arrayElement(categories),
   code: `code:${faker.word.noun()}`,
   hasImageUpload: faker.datatype.boolean(),
   id: faker.number.int({ min: 0, max: 100000 }),
@@ -29,13 +38,13 @@ export const standardConditionFactory = Factory.define<StandardCondition>(() => 
 }))
 
 const apConditionsFactory = Factory.define<ApConditions>(() => ({
-  additional: additionalConditionFactory.buildList(faker.number.int({ min: 0, max: 4 })),
+  additional: additionalConditionFactory.buildList(faker.number.int({ min: 0, max: 10 })),
   bespoke: bespokeConditionFactory.buildList(faker.number.int({ min: 0, max: 4 })),
   standard: standardConditionFactory.buildList(faker.number.int({ min: 0, max: 4 })),
 }))
 
 const pssConditionsFactory = Factory.define<PssConditions>(() => ({
-  additional: additionalConditionFactory.buildList(faker.number.int({ min: 0, max: 4 })),
+  additional: additionalConditionFactory.buildList(faker.number.int({ min: 0, max: 10 })),
   standard: standardConditionFactory.buildList(faker.number.int({ min: 0, max: 4 })),
 }))
 

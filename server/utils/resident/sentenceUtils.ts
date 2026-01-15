@@ -7,14 +7,17 @@ import {
   Person,
   FullPerson,
   ApConditions,
+  AdditionalCondition,
+  StandardCondition,
+  BespokeCondition,
 } from '@approved-premises/api'
-import { SummaryListItem, SummaryListWithCard, TableRow } from '@approved-premises/ui'
-import { summaryListItem } from '../formUtils'
+import { SummaryListItem, SummaryListWithCard, Table, TableRow } from '@approved-premises/ui'
+import { bulletList, summaryListItem } from '../formUtils'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { card, detailsBody, insetText, ResidentProfileSubTab } from './index'
 import { sentenceCase } from '../utils'
-import { dateCell, textCell } from '../tableUtils'
+import { dateCell, htmlCell, textCell } from '../tableUtils'
 
 export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   const basePath = paths.resident.tabSentence
@@ -131,42 +134,38 @@ export const offencesTabCards = (
   card({ title: 'Sentence information', rows: sentenceSummaryList() }),
 ]
 
-export const licenceKindMapping: Record<string, string> = {
-  CRD: 'Conditional Release Date',
-  PRRD: 'Post Recall Release Date',
-  VARIATION: 'Variation',
-}
-export const licenceTypeMapping: Record<string, string> = {
-  AP: 'Approved Premises',
-  PSS: 'Post Sentence Supervision',
-  AP_PSS: 'Approved Premises and Post Sentence Supervision',
-}
-
 export const licenseCards = (licence: Licence): Array<SummaryListWithCard> => {
   if (!licence) return [card({ html: insetText('No licence available') })]
 
-  const renderCardSet = (typeLabel: string, conditions: ApConditions) => {
-    // Conditions are grouped into AP and PSS conditions, each of those having standard, additional and ,for AP, bespoke types.
-    // This function renders cards of the three types for one group
-
-    return [
-      conditions.standard?.length &&
-        card({
-          title: `${typeLabel} standard licence conditions (${conditions.standard.length})`,
-          rows: conditions.standard.map(({ text }, index) => summaryListItem(`Standard condition ${index + 1}`, text)),
-        }),
-      conditions.additional?.length &&
-        card({
-          title: `${typeLabel} additional licence conditions (${conditions.additional.length})`,
-          rows: conditions.additional.map(({ text, category }) => summaryListItem(category, text)),
-        }),
-      conditions.bespoke?.length &&
-        card({
-          title: `${typeLabel} bespoke licence conditions (${conditions.bespoke.length})`,
-          rows: conditions.bespoke.map(({ text }, index) => summaryListItem(`Bespoke condition ${index + 1}`, text)),
-        }),
-    ]
+  const coalesceAdditionalConditions = (conditions: Array<AdditionalCondition>) => {
+    const groups = conditions.reduce(
+      (out, { category, text }) => {
+        out[category] = [...(out[category] || []), text]
+        return out
+      },
+      {} as Record<string, Array<string>>,
+    )
+    return Object.entries(groups).map(([category, list]) => [
+      textCell('Additional'),
+      htmlCell(`<strong>${category}</strong><br>${list.length === 1 ? list[0] : bulletList(list)}`),
+    ])
   }
+
+  const cardTable = (conditions: ApConditions, conditionColumnName = 'Condition'): Table => {
+    const { standard = [], additional = [], bespoke = [] } = conditions
+    return {
+      head: [textCell('Type'), textCell(conditionColumnName)],
+      rows: [
+        ...standard.map((condition: StandardCondition) => [textCell('Standard'), textCell(condition.text)]),
+        ...coalesceAdditionalConditions(additional),
+        ...bespoke.map((condition: BespokeCondition) => [textCell('Bespoke'), textCell(condition.text)]),
+      ],
+    }
+  }
+
+  const {
+    conditions: { AP, PSS },
+  } = licence
 
   return [
     card({ html: insetText('Imported from Create and vary a licence service.') }),
@@ -176,13 +175,18 @@ export const licenseCards = (licence: Licence): Array<SummaryListWithCard> => {
         summaryListItem('Licence start date', licence.licenceStartDate, 'date'),
         summaryListItem('Licence approved date', licence.approvedDateTime, 'date'),
         summaryListItem('Last updated', licence.updatedDateTime, 'date'),
-        summaryListItem('Licence type', licenceTypeMapping[licence.licenceType] ?? licence.licenceType),
-        summaryListItem('Licence kind', licenceKindMapping[licence.kind] ?? licence.kind),
-        summaryListItem('Status', sentenceCase(licence.statusCode)),
       ],
     }),
-    ...renderCardSet('AP', licence.conditions?.AP),
-    ...renderCardSet('PSS', licence.conditions?.PSS as ApConditions),
+
+    card({
+      title: `Licence conditions`,
+      table: cardTable(AP),
+    }),
+    (PSS?.standard?.length || PSS?.additional?.length) &&
+      card({
+        title: `Post-sentence supervision requirements`,
+        table: cardTable(PSS as ApConditions, 'Requirement'),
+      }),
   ].filter(Boolean)
 }
 
