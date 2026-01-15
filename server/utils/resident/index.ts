@@ -37,7 +37,7 @@ export const csraClassificationMapping: Record<CsraClassification, string> = { S
 
 export type ResidentHeader = {
   name: string
-  photoUrl: string
+  photoUrl?: string
   badges: Array<string>
   attributes: Array<Array<{ title: string; description: string }>>
 }
@@ -137,7 +137,7 @@ export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: Pers
 
   return {
     name: person.name,
-    photoUrl: '/assets/images/resident-placeholder.png',
+    // photoUrl property will be disabled for now until we get a source
     badges,
     attributes: [
       [

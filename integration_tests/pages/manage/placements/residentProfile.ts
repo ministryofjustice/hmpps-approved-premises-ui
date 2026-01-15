@@ -84,7 +84,7 @@ export default class ResidentProfilePage extends Page {
     const status = getResidentStatus(this.placement)
     const duration = DateFormats.durationBetweenDates(expectedArrivalDate, expectedDepartureDate).ui
 
-    cy.get('.profile-banner').within(() => {
+    cy.get('.profile-banner, .profile-banner-noImage').within(() => {
       cy.get('h2').should('contain', person.name)
       this.shouldShowDescription('CRN', person.crn)
       this.shouldShowDescription('Approved Premises', premises.name)
