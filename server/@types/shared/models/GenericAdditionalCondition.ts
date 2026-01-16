@@ -2,4 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type LostBedStatus = 'active' | 'cancelled';
+import type { AdditionalCondition } from './AdditionalCondition';
+export type GenericAdditionalCondition = AdditionalCondition;
+
