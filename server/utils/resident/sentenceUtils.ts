@@ -11,11 +11,19 @@ import {
   StandardCondition,
   BespokeCondition,
 } from '@approved-premises/api'
+import { subYears } from 'date-fns'
 import { SummaryListItem, SummaryListWithCard, Table, TableRow } from '@approved-premises/ui'
 import { bulletList, summaryListItem } from '../formUtils'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
-import { card, detailsBody, insetText, ResidentProfileSubTab } from './index'
+import {
+  card,
+  CsraClassification,
+  csraClassificationMapping,
+  detailsBody,
+  insetText,
+  ResidentProfileSubTab,
+} from './index'
 import { sentenceCase } from '../utils'
 import { dateCell, htmlCell, textCell } from '../tableUtils'
 
@@ -191,12 +199,15 @@ export const licenseCards = (licence: Licence): Array<SummaryListWithCard> => {
 }
 
 export const csraRows = (csraSummaries: Array<CsraSummary>): Array<TableRow> => {
-  return csraSummaries.map(csra => {
+  const dateFrom = DateFormats.dateObjToIsoDate(subYears(new Date(), 3))
+  const sorted = csraSummaries.sort((s1, s2) => (s1.assessmentDate > s2.assessmentDate ? -1 : 1))
+  const recent = sorted.filter(({ assessmentDate }) => assessmentDate > dateFrom)
+
+  const toShow = recent.length ? recent : sorted.slice(0, 1)
+  return toShow.map(csra => {
     return [
       DateFormats.isoDateToUIDate(csra.assessmentDate, { format: 'short' }),
-      csra.assessmentCode,
-      csra.classificationCode,
-      csra.cellSharingAlertFlag ? 'True' : '',
+      csraClassificationMapping[csra.classificationCode as CsraClassification],
       csra.assessmentComment,
     ].map(textCell)
   })
@@ -230,7 +241,11 @@ export const prisonCards = (
     title: 'Cell Sharing Risk Assessment (CSRA)',
     table: csraSumaries?.length
       ? {
-          head: ['Date assessed', 'Assessment code', 'Classification', 'Alert flag', 'Comment'].map(textCell),
+          head: [
+            { text: 'Date assessed', classes: 'govuk-table__header--nowrap' },
+            textCell('Classification'),
+            textCell('Comment'),
+          ],
           rows: csraRows(csraSumaries),
         }
       : undefined,

@@ -27,6 +27,10 @@ export type ResidentProfileSubTab =
   | 'allApPlacements'
   | 'application'
 
+export type CsraClassification = 'STANDARD' | 'HI'
+
+export const csraClassificationMapping: Record<CsraClassification, string> = { STANDARD: 'Standard', HI: 'High' }
+
 export type ResidentHeader = {
   name: string
   photoUrl: string

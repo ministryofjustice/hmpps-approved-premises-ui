@@ -10,3 +10,7 @@
   margin-bottom: 5px;
   li:last-child {margin-bottom: 0}
 }
+
+.govuk-table__header--nowrap {
+  white-space: nowrap;
+}
