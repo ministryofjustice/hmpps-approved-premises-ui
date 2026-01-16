@@ -22,7 +22,7 @@ import { DateFormats } from '../../../../server/utils/dateUtils'
 import { licenseCards, offencesTabCards, prisonCards } from '../../../../server/utils/resident/sentenceUtils'
 import { getResidentStatus } from '../../../../server/utils/resident'
 import { placementDetailsCards, allApPlacementsTabData } from '../../../../server/utils/resident/placementUtils'
-import { personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
+import { contactsCardList, personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
 import { AND, THEN, WHEN } from '../../../helpers'
 import { SubmittedDocumentRenderer } from '../../../../server/utils/forms/submittedDocumentRenderer'
 import { ndeliusRiskCard } from '../../../../server/utils/resident/riskUtils'
@@ -124,6 +124,11 @@ export default class ResidentProfilePage extends Page {
 
   shouldShowPersonalInformation(person: Person, personRisks: PersonRisks) {
     const cards = personDetailsCardList(person as FullPerson, personRisks)
+    cards.forEach(card => this.shouldShowCard(card))
+  }
+
+  shouldShowContacts(person: Person) {
+    const cards = contactsCardList(person.crn)
     cards.forEach(card => this.shouldShowCard(card))
   }
 
