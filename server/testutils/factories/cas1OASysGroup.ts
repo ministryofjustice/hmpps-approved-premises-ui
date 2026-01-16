@@ -51,9 +51,14 @@ class Cas1OASysGroupFactory extends Factory<Cas1OASysGroup> {
   }
 
   riskToSelf() {
+    const answers = [
+      { label: 'Analysis of current or previous self-harm and/or suicide concerns', questionNumber: 'FA62' },
+      { label: 'Coping in custody / approved premises / hostel / secure hospital', questionNumber: 'FA63' },
+      { label: 'Analysis of vulnerabilities', questionNumber: 'FA64' },
+    ].map(params => riskToSelfFactory.build(params))
     return this.params({
       group: 'riskToSelf',
-      answers: riskToSelfFactory.buildList(5),
+      answers,
     })
   }
 
@@ -69,6 +74,7 @@ class Cas1OASysGroupFactory extends Factory<Cas1OASysGroup> {
         { label: 'Issues of emotional well-being contributing to risks of offending and harm', questionNumber: '10.9' },
         { label: 'Thinking / behavioural issues contributing to risks of offending and harm', questionNumber: '11.9' },
         { label: 'Issues about attitudes contributing to risks of offending and harm', questionNumber: '12.9' },
+        { label: 'General Health - Any physical or mental health conditions', questionNumber: '13.1' },
       ].map(params => ({ ...params, answer: faker.lorem.paragraph() })),
     })
   }

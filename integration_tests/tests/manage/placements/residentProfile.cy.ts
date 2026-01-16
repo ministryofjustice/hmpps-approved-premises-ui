@@ -1,5 +1,6 @@
 import { signIn } from '../../signIn'
 import {
+  acctAlertFactory,
   activeOffenceFactory,
   adjudicationFactory,
   applicationFactory,
@@ -71,6 +72,49 @@ context('ResidentProfile', () => {
       page.shouldShowContacts(placement.person)
     })
 
+    it('should show the health tab', () => {
+      const { placement, personRisks } = setup({})
+      const acctAlerts = acctAlertFactory.buildList(5)
+      const oasysSupportingInformation = cas1OasysGroupFactory.supportingInformation().build()
+      const riskToSelf = cas1OasysGroupFactory.riskToSelf().build()
+
+      cy.task('stubAcctAlerts', { person: placement.person, acctAlerts })
+      cy.task('stubOasysGroup', { person: placement.person, group: riskToSelf })
+      cy.task('stubOasysGroup', {
+        person: placement.person,
+        group: oasysSupportingInformation,
+        includeOptionalSections: [8, 9],
+      })
+      cy.task('stubOasysGroup', {
+        person: placement.person,
+        group: oasysSupportingInformation,
+        includeOptionalSections: [13],
+      })
+
+      const page = visitPage({ placement, personRisks })
+
+      WHEN('I click the Health tab')
+      page.clickTab('Health')
+
+      THEN('I should see the Health details section')
+      page.shouldHaveActiveTab('Health')
+      page.shouldHaveActiveSideNav(`Health and disability`)
+
+      WHEN('I select the Mental health subtab')
+      page.clickSideNav('Mental health')
+
+      THEN('I should see the Mental health cards')
+      page.shouldHaveActiveSideNav(`Mental health`)
+      page.shouldShowMentalHealthSection(acctAlerts, riskToSelf)
+
+      WHEN('I select the drug and alcohol subtab')
+      page.clickSideNav('Drug and alcohol use')
+
+      THEN('I should see the Drug and alcohol section')
+      page.shouldHaveActiveSideNav(`Drug and alcohol use`)
+      page.shouldShowOasysCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
+    })
+
     it('should show the placement tab', () => {
       const { placement, personRisks } = setup()
       const application = applicationFactory.completed('accepted').build({
@@ -92,7 +136,7 @@ context('ResidentProfile', () => {
 
       WHEN('I visit the resident profile page on the placement tab')
       const page = ResidentProfilePage.visit(placement, personRisks)
-      page.clickLink('Placement')
+      page.clickTab('Placement')
 
       THEN('I should see the person information in the header')
       page.checkHeader()
@@ -105,7 +149,7 @@ context('ResidentProfile', () => {
       page.shouldShowPlacementDetails()
 
       WHEN('I select the Application sidenav')
-      page.clickLink('Application')
+      page.clickSideNav('Application')
 
       THEN('I should see the application details')
       page.shouldHaveActiveSideNav(`Application`)
@@ -161,11 +205,10 @@ context('ResidentProfile', () => {
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
       const oasysRoshSummary = cas1OasysGroupFactory.roshSummary().build()
       const oasysRiskManagementPlan = cas1OasysGroupFactory.riskManagementPlan().build()
-      const oasysSupportingInformation = cas1OasysGroupFactory.supportingInformation().build()
+
       cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
       cy.task('stubOasysGroup', { person: placement.person, group: oasysRoshSummary })
       cy.task('stubOasysGroup', { person: placement.person, group: oasysRiskManagementPlan })
-      cy.task('stubOasysGroup', { person: placement.person, group: oasysSupportingInformation })
 
       const page = visitPage({ placement, personRisks }, 'Risk')
 
@@ -187,7 +230,6 @@ context('ResidentProfile', () => {
       page.shouldShowOasysCards(['R10.1', 'R10.2', 'SUM10'], oasysRoshSummary, 'ROSH summary')
       page.shouldShowOasysCards(['RM30', 'RM31', 'RM32', 'RM33'], oasysRiskManagementPlan, 'OASys risk management plan')
       page.shouldShowOasysCards(['2.4.1', '2.4.2'], oasysOffenceDetails, 'OASys')
-      page.shouldShowOasysCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
     })
 
     it('should render the page tab if there are no external data', () => {

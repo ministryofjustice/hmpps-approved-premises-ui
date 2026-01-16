@@ -52,7 +52,7 @@ describe('risk tab controller', () => {
       const result = await riskTabController({ personService, token, crn, personRisks })
 
       expect(result.subHeading).toEqual('Risk information')
-      expect(result.cardList).toHaveLength(14)
+      expect(result.cardList).toHaveLength(12)
       expect(result.cardList[0]).toEqual(ndeliusRiskCard(crn, personRisks))
       expect(result.cardList[1].html).toMatchStringIgnoringWhitespace('Nunjucks template partials/insetText.njk')
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
@@ -75,9 +75,6 @@ describe('risk tab controller', () => {
       )
       expect(result.cardList[8].html).toMatchStringIgnoringWhitespace(
         `${tableRow('2.4.1 OASys')}Nunjucks template partials/detailsBlock.njk`,
-      )
-      expect(result.cardList[13].html).toMatchStringIgnoringWhitespace(
-        `${tableRow('9.9 OASys supporting information')}Nunjucks template partials/detailsBlock.njk`,
       )
     })
 

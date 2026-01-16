@@ -142,7 +142,15 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })
-  get(paths.resident.tabHealth.pattern, residentProfileController.show('health'), {
+  get(paths.resident.tabHealth.healthDetails.pattern, residentProfileController.show('health', 'healthDetails'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_ap_resident_profile'],
+  })
+  get(paths.resident.tabHealth.mentalHealth.pattern, residentProfileController.show('health', 'mentalHealth'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_ap_resident_profile'],
+  })
+  get(paths.resident.tabHealth.drugsAndAlcohol.pattern, residentProfileController.show('health', 'drugAndAlcohol'), {
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })
@@ -174,7 +182,7 @@ export default function routes(controllers: Controllers, router: Router, service
       allowedPermissions: ['cas1_ap_resident_profile'],
     },
   )
-  get(paths.resident.tabRisk.pattern, residentProfileController.show('risk'), {
+  get(paths.resident.tabRisk.riskDetails.pattern, residentProfileController.show('risk', 'riskDetails'), {
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })
