@@ -30,6 +30,8 @@ import {
   allApPlacementsTabController,
 } from '../../utils/resident/placement'
 import { settlePromises } from '../../utils/utils'
+import { healthTabController, mentalHealthTabController } from '../../utils/resident/health'
+import { healthSideNavigation } from '../../utils/resident/healthUtils'
 
 export default class ResidentProfileController {
   constructor(
@@ -81,6 +83,11 @@ export default class ResidentProfileController {
           sideNavigation = personalSideNavigation(subTab, crn, placement.id)
           if (subTab === 'personalDetails') tabData = await personalDetailsTabController(tabParameters)
           if (subTab === 'contacts') tabData = await contactsTabController(tabParameters)
+          break
+        case 'health':
+          sideNavigation = healthSideNavigation(subTab, crn, placement.id)
+          if (subTab === 'healthDetails') tabData = await healthTabController()
+          if (subTab === 'mentalHealth') tabData = await mentalHealthTabController(tabParameters)
           break
         case 'placement':
           sideNavigation = placementSideNavigation(subTab, crn, placement)
