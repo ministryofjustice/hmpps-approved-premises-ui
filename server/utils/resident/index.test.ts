@@ -111,7 +111,6 @@ describe('residentsUtils', () => {
       const { arrivalDate, departureDate } = canonicalDates(placement)
       expect(getResidentHeader(placement, personRisks)).toEqual({
         name: person.name,
-        photoUrl: '/assets/images/resident-placeholder.png',
         badges: [
           '<span class="moj-badge badge--very-high">Very High RoSH</span>',
           '<span class="moj-badge badge--low">CAT 2 / LEVEL 1 MAPPA</span>',
