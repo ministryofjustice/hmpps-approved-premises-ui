@@ -118,7 +118,11 @@ const paths = {
       personalDetails: residentPath.path('personal').path('personalDetails'),
       contacts: residentPath.path('personal').path('contacts'),
     },
-    tabHealth: residentPath.path('health'),
+    tabHealth: {
+      healthDetails: residentPath.path('health').path('healthDetails'),
+      mentalHealth: residentPath.path('health').path('mentalHealth'),
+      drugsAndAlcohol: residentPath.path('health').path('drugsAndAlcohol'),
+    },
     tabPlacement: {
       placementDetails: residentPath.path('placement').path('placement'),
       allApPlacements: residentPath.path('placement').path('allApPlacements'),

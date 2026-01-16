@@ -1,6 +1,7 @@
 import { render } from 'nunjucks'
 import { Adjudication, Cas1OASysGroup, CsraSummary } from '@approved-premises/api'
-import { ResidentProfileSubTab } from './index'
+import { subYears } from 'date-fns'
+import { CsraClassification, csraClassificationMapping, ResidentProfileSubTab } from './index'
 import {
   licenseCards,
   offenceCards,
@@ -16,8 +17,8 @@ import {
   adjudicationFactory,
   cas1OasysGroupFactory,
   cas1SpaceBookingFactory,
-  licenceFactory,
   csraSummaryFactory,
+  licenceFactory,
 } from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
 import { sentenceCase } from '../utils'
@@ -216,15 +217,37 @@ describe('sentence', () => {
   describe('csraRows', () => {
     const expectedSummary = (summary: CsraSummary) => [
       { text: DateFormats.isoDateToUIDate(summary.assessmentDate, { format: 'short' }) },
-      { text: summary.assessmentCode },
-      { text: summary.classificationCode },
-      { text: summary.cellSharingAlertFlag ? 'True' : '' },
+      { text: csraClassificationMapping[summary.classificationCode as CsraClassification] },
       { text: summary.assessmentComment },
     ]
 
-    const csraSummaries = csraSummaryFactory.buildList(2)
+    const subtractYears = (csraSummaries: Array<CsraSummary>): Array<CsraSummary> =>
+      csraSummaries.map(summary => ({
+        ...summary,
+        assessmentDate: DateFormats.dateObjToIsoDate(subYears(summary.assessmentDate, 3)),
+      }))
 
-    expect(csraRows(csraSummaries)).toEqual(csraSummaries.map(expectedSummary))
+    const orderByDate = (a: CsraSummary, b: CsraSummary) => (a.assessmentDate > b.assessmentDate ? -1 : 1)
+
+    it('should render a csra row', () => {
+      const csraSummaries = csraSummaryFactory.buildList(2)
+      expect(csraRows(csraSummaries)).toEqual(csraSummaries.map(expectedSummary))
+    })
+
+    it('should chop off any assessments that are older than three years', () => {
+      const oldAssessments = subtractYears(csraSummaryFactory.buildList(3))
+      const newAssessments = csraSummaryFactory.buildList(5)
+      const rows = csraRows([...oldAssessments, ...newAssessments])
+      expect(rows).toHaveLength(5)
+      expect(rows).toEqual(newAssessments.sort(orderByDate).map(expectedSummary))
+    })
+
+    it('should render the most recent if all are older than three years', () => {
+      const oldAssessments = subtractYears(csraSummaryFactory.buildList(5))
+      const rows = csraRows(oldAssessments)
+      expect(rows).toHaveLength(1)
+      expect(rows[0]).toEqual(expectedSummary(oldAssessments.sort(orderByDate)[0]))
+    })
   })
 
   describe('offencesTabCards', () => {
@@ -351,10 +374,8 @@ describe('sentence', () => {
           card: { title: { text: 'Cell Sharing Risk Assessment (CSRA)' } },
           table: {
             head: [
-              { text: 'Date assessed' },
-              { text: 'Assessment code' },
+              { text: 'Date assessed', classes: 'govuk-table__header--nowrap' },
               { text: 'Classification' },
-              { text: 'Alert flag' },
               { text: 'Comment' },
             ],
             rows: [],

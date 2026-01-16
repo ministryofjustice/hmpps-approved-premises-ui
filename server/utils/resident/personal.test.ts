@@ -12,7 +12,7 @@ const placement = cas1SpaceBookingFactory.build()
 const personRisks = risksFactory.build()
 const { crn } = placement.person
 
-describe('Personal tab utils', () => {
+describe('Personal tab', () => {
   describe('personalDetailsTabController', () => {
     it('should render the personal details tab content', async () => {
       personService.findByCrn.mockResolvedValue(placement.person)
