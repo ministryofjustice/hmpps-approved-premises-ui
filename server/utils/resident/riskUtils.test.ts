@@ -1,7 +1,8 @@
 import { render } from 'nunjucks'
-import { cas1OasysGroupFactory } from '../../testutils/factories'
-import { roshWidget, summaryCards } from './riskUtils'
+import { cas1OasysGroupFactory, risksFactory } from '../../testutils/factories'
+import { ndeliusRiskCard, roshWidget, summaryCards } from './riskUtils'
 import { roshRisksFactory } from '../../testutils/factories/risks'
+import * as utils from './index'
 
 jest.mock('nunjucks')
 
@@ -40,6 +41,22 @@ describe('risk utils', () => {
           </tr>
         </tbody>
       </table>Nunjucks template partials/detailsBlock.njk`)
+      })
+    })
+  })
+
+  describe('NDelius risk card', () => {
+    it('Should render the risk card with ndelius link', () => {
+      const crn = 'crn'
+      const personRisks = risksFactory.build({ flags: { value: ['Risk flag text'] } })
+      const mockLink = 'ndelius link'
+
+      jest.spyOn(utils, 'ndeliusDeeplink').mockReturnValue(mockLink)
+
+      expect(ndeliusRiskCard(crn, personRisks)).toEqual({
+        card: { title: { text: 'NDelius risk flags' } },
+        html: mockLink,
+        table: { head: [{ text: 'Risk flag' }], rows: [[{ text: 'Risk flag text' }]] },
       })
     })
   })

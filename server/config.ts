@@ -53,6 +53,9 @@ export default {
     pocEnabled: getFlag('ENABLE_POC'),
     oneApplication: getFlag('ONE_APPLICATION'),
   },
+  paths: {
+    ndeliusDeeplink: get('NDELIUS_DEEPLINK', ''),
+  },
   environment: process.env.ENVIRONMENT || 'local',
   sentry: {
     dsn: get('SENTRY_DSN', null, requiredInProduction),

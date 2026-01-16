@@ -22,7 +22,7 @@ import {
 import { sentenceSideNavigation } from '../../utils/resident/sentenceUtils'
 import { riskTabController } from '../../utils/resident/risk'
 import { personalSideNavigation } from '../../utils/resident/personalUtils'
-import { personalDetailsTabController } from '../../utils/resident/personal'
+import { contactsTabController, personalDetailsTabController } from '../../utils/resident/personal'
 import {
   placementSideNavigation,
   placementTabController,
@@ -80,6 +80,7 @@ export default class ResidentProfileController {
         case 'personal':
           sideNavigation = personalSideNavigation(subTab, crn, placement.id)
           if (subTab === 'personalDetails') tabData = await personalDetailsTabController(tabParameters)
+          if (subTab === 'contacts') tabData = await contactsTabController(tabParameters)
           break
         case 'placement':
           sideNavigation = placementSideNavigation(subTab, crn, placement)

@@ -2,7 +2,7 @@ import { Cas1OASysGroup } from '@approved-premises/api'
 import { card, TabData } from './index'
 import { DateFormats } from '../dateUtils'
 import { TabControllerParameters } from './TabControllerParameters'
-import { insetText, riskOasysCards, roshWidget } from './riskUtils'
+import { insetText, ndeliusRiskCard, riskOasysCards, roshWidget } from './riskUtils'
 import { linkTo, settlePromises } from '../utils'
 import paths from '../../paths/manage'
 
@@ -23,8 +23,9 @@ export const riskTabController = async ({
   ])
 
   return {
-    subHeading: 'OASys risks',
+    subHeading: 'Risk information',
     cardList: [
+      ndeliusRiskCard(crn, personRisks),
       card({
         html: insetText(
           roshSummary?.assessmentMetadata?.hasApplicableAssessment

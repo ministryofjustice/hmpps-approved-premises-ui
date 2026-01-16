@@ -9,8 +9,6 @@ import {
   additionalOffencesRows,
   offencesTabCards,
   csraRows,
-  licenceKindMapping,
-  licenceTypeMapping,
 } from './sentenceUtils'
 import * as sentenceFns from './sentenceUtils'
 import {
@@ -29,6 +27,7 @@ import {
   standardConditionFactory,
 } from '../../testutils/factories/licenceConditions'
 import { fullPersonFactory } from '../../testutils/factories/person'
+import { bulletList } from '../formUtils'
 
 jest.mock('nunjucks')
 
@@ -260,12 +259,15 @@ describe('sentence', () => {
       const standardCondition = standardConditionFactory.build()
       const bespokeCondition = bespokeConditionFactory.build()
       const additionalCondition = additionalConditionFactory.build()
+      const pssAdditionalConditions = additionalConditionFactory.buildList(2, { category: 'Category' })
+
       const licence = licenceFactory.build({
         conditions: {
           AP: { standard: [standardCondition], bespoke: [bespokeCondition], additional: [additionalCondition] },
-          PSS: { standard: [], additional: [] },
+          PSS: { standard: [], additional: pssAdditionalConditions },
         },
       })
+
       expect(licenseCards(licence)).toEqual([
         { html: 'rendered-output' },
         {
@@ -280,37 +282,33 @@ describe('sentence', () => {
               value: { text: DateFormats.isoDateToUIDate(licence.approvedDateTime) },
             },
             { key: { text: 'Last updated' }, value: { text: DateFormats.isoDateToUIDate(licence.updatedDateTime) } },
-            { key: { text: 'Licence type' }, value: { text: licenceTypeMapping[licence.licenceType] } },
-            { key: { text: 'Licence kind' }, value: { text: licenceKindMapping[licence.kind] } },
-            { key: { text: 'Status' }, value: { text: sentenceCase(licence.statusCode) } },
           ],
         },
         {
-          card: { title: { text: 'AP standard licence conditions (1)' } },
-          rows: [
-            {
-              key: { text: 'Standard condition 1' },
-              value: { text: standardCondition.text },
-            },
-          ],
+          card: { title: { text: 'Licence conditions' } },
+          table: {
+            head: [{ text: 'Type' }, { text: 'Condition' }],
+            rows: [
+              [{ text: 'Standard' }, { text: standardCondition.text }],
+              [
+                { text: 'Additional' },
+                { html: `<strong>${additionalCondition.category}</strong><br>${additionalCondition.text}` },
+              ],
+              [{ text: 'Bespoke' }, { text: bespokeCondition.text }],
+            ],
+          },
         },
         {
-          card: { title: { text: 'AP additional licence conditions (1)' } },
-          rows: [
-            {
-              key: { text: additionalCondition.category },
-              value: { text: additionalCondition.text },
-            },
-          ],
-        },
-        {
-          card: { title: { text: 'AP bespoke licence conditions (1)' } },
-          rows: [
-            {
-              key: { text: 'Bespoke condition 1' },
-              value: { text: bespokeCondition.text },
-            },
-          ],
+          card: { title: { text: 'Post-sentence supervision requirements' } },
+          table: {
+            head: [{ text: 'Type' }, { text: 'Requirement' }],
+            rows: [
+              [
+                { text: 'Additional' },
+                { html: `<strong>Category</strong><br>${bulletList(pssAdditionalConditions.map(({ text }) => text))}` },
+              ],
+            ],
+          },
         },
       ])
     })

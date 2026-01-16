@@ -22,9 +22,10 @@ import { DateFormats } from '../../../../server/utils/dateUtils'
 import { licenseCards, offencesTabCards, prisonCards } from '../../../../server/utils/resident/sentenceUtils'
 import { getResidentStatus } from '../../../../server/utils/resident'
 import { placementDetailsCards, allApPlacementsTabData } from '../../../../server/utils/resident/placementUtils'
-import { personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
+import { contactsCardList, personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
 import { AND, THEN, WHEN } from '../../../helpers'
 import { SubmittedDocumentRenderer } from '../../../../server/utils/forms/submittedDocumentRenderer'
+import { ndeliusRiskCard } from '../../../../server/utils/resident/riskUtils'
 
 export default class ResidentProfilePage extends Page {
   constructor(
@@ -126,6 +127,11 @@ export default class ResidentProfilePage extends Page {
     cards.forEach(card => this.shouldShowCard(card))
   }
 
+  shouldShowContacts(person: Person) {
+    const cards = contactsCardList(person.crn)
+    cards.forEach(card => this.shouldShowCard(card))
+  }
+
   shouldShowOasysCards(numbers: Array<string>, group: Cas1OASysGroup, groupName: string) {
     numbers.forEach(questionNumber => {
       const blockTitle = `${questionNumber} ${groupName}`
@@ -149,6 +155,10 @@ export default class ResidentProfilePage extends Page {
           this.shouldContainSummaryListItems(rows)
         })
     })
+  }
+
+  shouldShowNDeliusRiskCard(placement: Cas1SpaceBooking, personRisks: PersonRisks) {
+    this.shouldShowCard(ndeliusRiskCard(placement.person.crn, personRisks))
   }
 
   shouldShowRoshWidget(risks: RoshRisks) {

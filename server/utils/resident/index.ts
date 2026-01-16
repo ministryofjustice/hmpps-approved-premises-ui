@@ -11,7 +11,8 @@ import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { detailedStatus, statusTextMap } from '../placements/status'
 import { canonicalDates } from '../placements'
-import { objectClean } from '../utils'
+import { linkTo, objectClean } from '../utils'
+import config from '../../config'
 
 export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'enforcement'
 export type ResidentProfileSubTab =
@@ -202,4 +203,27 @@ export const renderPersonDetails = (application: ApprovedPremisesApplication): s
 type AlertVariant = 'information' | 'success' | 'warning' | 'error'
 export const alertBanner = (parameters: { variant: AlertVariant; title: string; html?: string }) => {
   return nunjucks.render(`manage/resident/partials/alert.njk`, parameters)
+}
+
+type NdeliusComponent =
+  | 'CaseSummary'
+  | 'PersonalContacts'
+  | 'PersonalCircumstances'
+  | 'AddressandAccommodation'
+  | 'EqualityMonitoring'
+  | 'RegisterSummary'
+
+export const ndeliusDeeplink = (args: {
+  component: NdeliusComponent
+  crn: string
+  text: string
+  attributes?: Record<string, string>
+  hiddenText?: string
+  hiddenPrefix?: string
+  openInNewTab?: boolean
+}): string => {
+  const basePath = config.paths.ndeliusDeeplink
+  return basePath
+    ? linkTo(basePath, { openInNewTab: true, ...args, query: { component: args.component as string, CRN: args.crn } })
+    : ''
 }

@@ -63,6 +63,12 @@ context('ResidentProfile', () => {
       THEN('the Personal tab should be selected')
       page.shouldHaveActiveTab('Personal details')
       page.shouldShowPersonalInformation(placement.person, personRisks)
+
+      WHEN('I click the contacts subtab')
+      page.clickSideNav('Contacts')
+
+      THEN('I should see the contacts section')
+      page.shouldShowContacts(placement.person)
     })
 
     it('should show the placement tab', () => {
@@ -170,6 +176,9 @@ context('ResidentProfile', () => {
       page.shouldShowInsetText(
         `OASys last updated on ${DateFormats.isoDateToUIDate(oasysRoshSummary.assessmentMetadata.dateCompleted)}`,
       )
+
+      AND('The Ndelius risk card should be populated')
+      page.shouldShowNDeliusRiskCard(placement, personRisks)
 
       AND('The ROSH widget should be populated')
       page.shouldShowRoshWidget(personRisks.roshRisks.value)

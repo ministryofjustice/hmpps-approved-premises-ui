@@ -1,7 +1,7 @@
 import { FullPerson, Person } from '@approved-premises/api'
 import { TabControllerParameters } from './TabControllerParameters'
 import { TabData } from '.'
-import { personDetailsCardList } from './personalUtils'
+import { contactsCardList, personDetailsCardList } from './personalUtils'
 
 export const personalDetailsTabController = async ({
   personService,
@@ -14,5 +14,12 @@ export const personalDetailsTabController = async ({
   return {
     subHeading: 'Personal details',
     cardList: personDetailsCardList(person as FullPerson, personRisks),
+  }
+}
+
+export const contactsTabController = async ({ crn }: TabControllerParameters): Promise<TabData> => {
+  return {
+    subHeading: 'Contacts',
+    cardList: contactsCardList(crn),
   }
 }

@@ -1,7 +1,8 @@
-import { Cas1OASysGroup, OASysQuestion, RoshRisks } from '@approved-premises/api'
+import { Cas1OASysGroup, OASysQuestion, PersonRisks, RoshRisks } from '@approved-premises/api'
 import { SummaryListWithCard } from '@approved-premises/ui'
 import nunjucks from 'nunjucks'
-import { card, detailsBody } from './index'
+import { card, detailsBody, ndeliusDeeplink } from './index'
+import { textCell } from '../tableUtils'
 
 export const tableRow = (content: string) =>
   `<table class="govuk-table">
@@ -38,6 +39,13 @@ export const summaryCards = (
 export const roshWidget = (params: RoshRisks) => {
   return card({ html: nunjucks.render(`components/riskWidgets/rosh-widget/template.njk`, { params }) })
 }
+
+export const ndeliusRiskCard = (crn: string, personRisks: PersonRisks) =>
+  card({
+    title: 'NDelius risk flags',
+    html: ndeliusDeeplink({ crn, text: 'View risk flags in NDelius', component: 'RegisterSummary' }),
+    table: { head: [textCell('Risk flag')], rows: personRisks.flags.value.map(risk => [textCell(risk)]) },
+  })
 
 export const insetText = (html: string): string => {
   return nunjucks.render(`partials/insetText.njk`, { html })
