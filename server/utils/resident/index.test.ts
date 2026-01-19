@@ -3,7 +3,7 @@ import { render } from 'nunjucks'
 import { FullPerson, RiskEnvelopeStatus } from '@approved-premises/api'
 import { card, detailsBody, getResidentHeader, residentTabItems } from './index'
 import { cas1SpaceBookingFactory, risksFactory } from '../../testutils/factories'
-import { canonicalDates } from '../placements'
+import { canonicalDates, placementStatusTag } from '../placements'
 import { DateFormats } from '../dateUtils'
 import { detailedStatus, statusTextMap } from '../placements/status'
 
@@ -111,10 +111,12 @@ describe('residentsUtils', () => {
       const { arrivalDate, departureDate } = canonicalDates(placement)
       expect(getResidentHeader(placement, personRisks)).toEqual({
         name: person.name,
+        photoUrl: undefined,
+        statusBadge: placementStatusTag(placement),
         badges: [
-          '<span class="moj-badge badge--very-high">Very High RoSH</span>',
-          '<span class="moj-badge badge--low">CAT 2 / LEVEL 1 MAPPA</span>',
-          ...personRisks.flags.value.map(label => `<span class="moj-badge badge--low">${label}</span>`),
+          '<span class="moj-badge moj-badge--black">Very High RoSH</span>',
+          '<span class="moj-badge moj-badge--black">CAT 2 / LEVEL 1 MAPPA</span>',
+          ...personRisks.flags.value.map(label => `<span class="moj-badge moj-badge--black">${label}</span>`),
         ],
 
         attributes: [
@@ -142,7 +144,8 @@ describe('residentsUtils', () => {
       })
       expect(getResidentHeader(placement, personRisks)).toEqual(
         expect.objectContaining({
-          badges: ['<span class="moj-badge badge--low">Unknown RoSH</span>'],
+          statusBadge: placementStatusTag(placement),
+          badges: ['<span class="moj-badge moj-badge--black">Unknown RoSH</span>'],
         }),
       )
     })

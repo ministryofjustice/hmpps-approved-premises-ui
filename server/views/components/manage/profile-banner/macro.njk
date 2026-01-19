@@ -1,45 +1,52 @@
 {%- from "moj/components/button-menu/macro.njk" import mojButtonMenu -%}
 
 {% macro profileBanner(resident, actions) %}
-    {% set hasPhoto = resident.photoUrl %}
 
-    <div class="{{ 'profile-banner' if hasPhoto else 'profile-banner-noImage' }} govuk-!-margin-bottom-2">
-        {% if hasPhoto %}
-            <div class="one-eighth">
-                <img class="residents-profile-pic" alt="Photo of {{ resident.name }}" src="{{ resident.photoUrl }}">
-            </div>
-        {% endif %}
-        <div class="six-eighths">
-            <h2 class="govuk-heading-l govuk-!-margin-bottom-2">{{ resident.name }}</h2>
-
-            {% for row in resident.attributes %}
-                <div>
-                    {% for attribute in row %}
-                        <dl class="residents-definition-list">
-                            <dt>{{ attribute.title }}</dt>
-                            <dd>{{ attribute.description }}</dd>
-                        </dl>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-
-            <div class="residents-badge-container govuk-!-padding-bottom-2">
-                {% for badge in resident.badges %}
-                    {{ badge | safe }}
-                {% endfor %}
-            </div>
-        </div>
-        {% if actions %}
-            <div class="one-eighth resident-actions govuk-!-padding-top-2">
+<div class="{{ 'profile-banner' }} govuk-!-margin-bottom-2">
+    {% if resident.photoUrl %}
+    <div class="profile-banner__photo">
+        <img class="residents-profile-pic" alt="Photo of {{ resident.name }}" src="{{ resident.photoUrl }}">
+    </div>
+    {% endif %}
+    <div class="profile-banner__content">
+        <div class="profile-banner__header">
+            <h2 class="govuk-heading-l govuk-!-margin-bottom-2">
+                {{ resident.name }}
+                {% if resident.statusBadge %}
+                    {{ resident.statusBadge | safe }}
+                {% endif %}
+            </h2>
+            {% if actions %}
+            <div class="resident-actions">
                 {{ mojButtonMenu({
                     "button": {
                         "text": "Actions"
                     },
                     "alignMenu": "left",
                     "items": actions
-                }) }}
+                    })
+                }}
             </div>
-        {% endif %}
+            {% endif %}
+        </div>
+
+        {% for row in resident.attributes %}
+        <div>
+            {% for attribute in row %}
+            <dl class="residents-definition-list">
+                <dt>{{ attribute.title }}</dt>
+                <dd>{{ attribute.description }}</dd>
+            </dl>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <div class="residents-badge-container govuk-!-padding-bottom-2">
+            {% for badge in resident.badges %}
+            {{ badge | safe }}
+            {% endfor %}
+        </div>
     </div>
+</div>
 
 {% endmacro %}
