@@ -199,9 +199,10 @@ export const licenseCards = (licence: Licence): Array<SummaryListWithCard> => {
 }
 
 export const csraRows = (csraSummaries: Array<CsraSummary>): Array<TableRow> => {
-  const dateFrom = DateFormats.dateObjToIsoDate(subYears(new Date(), 3))
+  const showCsraFromDate = DateFormats.dateObjToIsoDate(subYears(new Date(), 3))
+
   const sorted = csraSummaries.sort((s1, s2) => (s1.assessmentDate > s2.assessmentDate ? -1 : 1))
-  const recent = sorted.filter(({ assessmentDate }) => assessmentDate > dateFrom)
+  const recent = sorted.filter(({ assessmentDate }) => assessmentDate > showCsraFromDate)
 
   const toShow = recent.length ? recent : sorted.slice(0, 1)
   return toShow.map(csra => {
