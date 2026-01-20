@@ -133,11 +133,18 @@ export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: Pers
     badges,
     attributes: [
       [
-        { title: 'CRN', description: person.crn },
-        { title: 'Approved Premises', description: placement.premises.name },
-        { title: 'Key worker', description: placement.keyWorkerAllocation?.name ?? 'Not assigned' },
-      ],
-      [
+        {
+          title: 'CRN',
+          description: person.crn,
+        },
+        {
+          title: 'Approved Premises',
+          description: placement.premises.name,
+        },
+        {
+          title: 'Key worker',
+          description: placement.keyWorkerAllocation?.name ?? 'Not assigned',
+        },
         {
           title: 'Arrival',
           description: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
@@ -146,7 +153,6 @@ export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: Pers
           title: 'Departure',
           description: DateFormats.isoDateToUIDate(departureDate, { format: 'short' }),
         },
-        { title: 'Status', description: getResidentStatus(placement) },
         {
           title: 'Length of stay',
           description: DateFormats.durationBetweenDates(arrivalDate, departureDate).ui,

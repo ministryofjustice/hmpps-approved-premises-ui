@@ -5,7 +5,6 @@ import { card, detailsBody, getResidentHeader, residentTabItems } from './index'
 import { cas1SpaceBookingFactory, risksFactory } from '../../testutils/factories'
 import { canonicalDates, placementStatusTag } from '../placements'
 import { DateFormats } from '../dateUtils'
-import { detailedStatus, statusTextMap } from '../placements/status'
 
 jest.mock('nunjucks')
 
@@ -124,11 +123,8 @@ describe('residentsUtils', () => {
             { title: 'CRN', description: person.crn },
             { title: 'Approved Premises', description: placement.premises.name },
             { title: 'Key worker', description: placement.keyWorkerAllocation.name },
-          ],
-          [
             { title: 'Arrival', description: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) },
             { title: 'Departure', description: DateFormats.isoDateToUIDate(departureDate, { format: 'short' }) },
-            { title: 'Status', description: statusTextMap[detailedStatus(placement)] },
             { title: 'Length of stay', description: '18 weeks 4 days' },
           ],
         ],

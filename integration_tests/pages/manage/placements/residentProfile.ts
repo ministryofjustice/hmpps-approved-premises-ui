@@ -21,7 +21,6 @@ import * as residentUtils from '../../../../server/utils/resident'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { licenseCards, offencesTabCards, prisonCards } from '../../../../server/utils/resident/sentenceUtils'
-import { getResidentStatus } from '../../../../server/utils/resident'
 import { placementDetailsCards, allApPlacementsTabData } from '../../../../server/utils/resident/placementUtils'
 import { contactsCardList, personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
 import { AND, THEN, WHEN } from '../../../helpers'
@@ -82,7 +81,6 @@ export default class ResidentProfilePage extends Page {
 
     const arrivalDate = DateFormats.isoDateToUIDate(expectedArrivalDate, { format: 'short' })
     const departureDate = DateFormats.isoDateToUIDate(expectedDepartureDate, { format: 'short' })
-    const status = getResidentStatus(this.placement)
     const duration = DateFormats.durationBetweenDates(expectedArrivalDate, expectedDepartureDate).ui
     const statusKey = detailedStatus(this.placement)
 
@@ -94,7 +92,6 @@ export default class ResidentProfilePage extends Page {
       this.shouldShowDescription('Key worker', keyWorkerAllocation.name)
       this.shouldShowDescription('Arrival', arrivalDate)
       this.shouldShowDescription('Departure', departureDate)
-      this.shouldShowDescription('Status', status)
       this.shouldShowDescription('Length of stay', duration)
       this.shouldShowBadge(`${this.personRisks.roshRisks.value.overallRisk} RoSH`)
       this.personRisks.flags.value.forEach((flag: string) => {
