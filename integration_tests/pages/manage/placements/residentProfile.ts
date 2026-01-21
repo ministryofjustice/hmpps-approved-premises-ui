@@ -77,7 +77,7 @@ export default class ResidentProfilePage extends Page {
 
   checkHeader() {
     const person = this.placement.person as FullPerson
-    const { premises, keyWorkerAllocation, expectedArrivalDate, expectedDepartureDate } = this.placement
+    const { premises, expectedArrivalDate, expectedDepartureDate } = this.placement
 
     const arrivalDate = DateFormats.isoDateToUIDate(expectedArrivalDate, { format: 'short' })
     const departureDate = DateFormats.isoDateToUIDate(expectedDepartureDate, { format: 'short' })
@@ -88,8 +88,7 @@ export default class ResidentProfilePage extends Page {
       cy.get('h2').should('contain', person.name)
       cy.get(`[data-cy-status="${statusKey}"]`).should('exist')
       this.shouldShowDescription('CRN', person.crn)
-      this.shouldShowDescription('Approved Premises', premises.name)
-      this.shouldShowDescription('Key worker', keyWorkerAllocation.name)
+      this.shouldShowDescription('AP', premises.name)
       this.shouldShowDescription('Arrival', arrivalDate)
       this.shouldShowDescription('Departure', departureDate)
       this.shouldShowDescription('Length of stay', duration)
