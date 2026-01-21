@@ -16,16 +16,20 @@ import config from '../../config'
 
 export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'enforcement'
 export type ResidentProfileSubTab =
+  | 'personalDetails'
+  | 'healthDetails'
+  | 'mentalHealth'
+  | 'drugAndAlcohol'
+  | 'placementDetails'
+  | 'allApPlacements'
+  | 'application'
+  | 'riskDetails'
   | 'offence'
   | 'licence'
   | 'orders'
   | 'parole'
   | 'prison'
-  | 'personalDetails'
   | 'contacts'
-  | 'placementDetails'
-  | 'allApPlacements'
-  | 'application'
 
 export type CsraClassification = 'STANDARD' | 'HI'
 
@@ -82,11 +86,11 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
       case 'personal':
         return pathRoot.tabPersonal.personalDetails(pathParams)
       case 'health':
-        return pathRoot.tabHealth(pathParams)
+        return pathRoot.tabHealth.healthDetails(pathParams)
       case 'placement':
         return pathRoot.tabPlacement.placementDetails(pathParams)
       case 'risk':
-        return pathRoot.tabRisk(pathParams)
+        return pathRoot.tabRisk.riskDetails(pathParams)
       case 'sentence':
         return pathRoot.tabSentence.offence(pathParams)
       case 'enforcement':

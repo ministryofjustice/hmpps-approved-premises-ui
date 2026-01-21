@@ -1,0 +1,61 @@
+import { Cas1OASysGroup, PersonAcctAlert } from '@approved-premises/api'
+import { card, insetText, ResidentProfileSubTab } from '.'
+import paths from '../../paths/manage'
+import { dateCell, textCell } from '../tableUtils'
+import { summaryCards } from './riskUtils'
+
+export const healthSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
+  const basePath = paths.resident.tabHealth
+  return [
+    {
+      text: 'Health and disability',
+      href: basePath.healthDetails({ crn, placementId }),
+      active: subTab === 'healthDetails',
+    },
+    {
+      text: 'Mental health',
+      href: basePath.mentalHealth({ crn, placementId }),
+      active: subTab === 'mentalHealth',
+    },
+    {
+      text: 'Drug and alcohol use',
+      href: basePath.drugsAndAlcohol({ crn, placementId }),
+      active: subTab === 'drugAndAlcohol',
+    },
+  ]
+}
+
+export const healthDetailsCards = (supportingInformation: Cas1OASysGroup) => [
+  card({ html: insetText('Imported from OASys') }),
+  ...summaryCards(['13.1'], supportingInformation, 'OASys supporting information'),
+]
+
+export const mentalHealthCards = (personAcctAlerts: Array<PersonAcctAlert>, riskToSelf: Cas1OASysGroup) => [
+  card({ html: insetText('Imported from DPS, NDelius and OASys') }),
+  ...summaryCards(['FA62', 'FA63', 'FA64', 'R8.1.1', 'R8.2.1', 'R8.3.1'], riskToSelf, 'OASys risk to self'),
+  card({
+    title: 'ACCT alerts',
+    table: personAcctAlerts?.length && {
+      head: [
+        textCell('Date created'),
+        textCell('Description'),
+        textCell('Expiry date'),
+        textCell('Alert type'),
+        textCell('Comment'),
+      ],
+      rows: personAcctAlerts.map((acctAlert: PersonAcctAlert) => [
+        dateCell(acctAlert.dateCreated),
+        textCell(acctAlert.description),
+        dateCell(acctAlert.dateExpires),
+        textCell(acctAlert.alertTypeDescription),
+        textCell(acctAlert.comment),
+      ]),
+    },
+    html: !personAcctAlerts?.length ? 'No ACCT alerts found' : undefined,
+  }),
+]
+
+export const drugAndAlcoholCards = (supportingInformation: Cas1OASysGroup) => [
+  card({ html: insetText('Imported from OASys') }),
+  ...summaryCards(['8.9', '9.9'], supportingInformation, 'OASys supporting information'),
+]

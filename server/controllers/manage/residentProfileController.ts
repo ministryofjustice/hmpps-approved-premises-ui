@@ -30,6 +30,13 @@ import {
   allApPlacementsTabController,
 } from '../../utils/resident/placement'
 import { settlePromises } from '../../utils/utils'
+import {
+  drugAndAlcoholTabController,
+  healthTabController,
+  mentalHealthTabController,
+} from '../../utils/resident/health'
+import { healthSideNavigation } from '../../utils/resident/healthUtils'
+import { riskSideNavigation } from '../../utils/resident/riskUtils'
 
 export default class ResidentProfileController {
   constructor(
@@ -82,6 +89,12 @@ export default class ResidentProfileController {
           if (subTab === 'personalDetails') tabData = await personalDetailsTabController(tabParameters)
           if (subTab === 'contacts') tabData = await contactsTabController(tabParameters)
           break
+        case 'health':
+          sideNavigation = healthSideNavigation(subTab, crn, placement.id)
+          if (subTab === 'healthDetails') tabData = await healthTabController(tabParameters)
+          if (subTab === 'mentalHealth') tabData = await mentalHealthTabController(tabParameters)
+          if (subTab === 'drugAndAlcohol') tabData = await drugAndAlcoholTabController(tabParameters)
+          break
         case 'placement':
           sideNavigation = placementSideNavigation(subTab, crn, placement)
           if (subTab === 'placementDetails') tabData = placementTabController(placement)
@@ -89,6 +102,7 @@ export default class ResidentProfileController {
           if (subTab === 'allApPlacements') tabData = await allApPlacementsTabController(tabParameters)
           break
         case 'risk':
+          sideNavigation = riskSideNavigation(subTab, crn, placement.id)
           tabData = await riskTabController(tabParameters)
           break
         case 'sentence':

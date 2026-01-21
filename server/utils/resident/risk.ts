@@ -13,13 +13,12 @@ export const riskTabController = async ({
   personRisks,
   placement,
 }: TabControllerParameters): Promise<TabData> => {
-  const [roshSummary, riskManagementPlan, offenceDetails, supportingInformation] = await settlePromises<
+  const [roshSummary, riskManagementPlan, offenceDetails] = await settlePromises<
     [Cas1OASysGroup, Cas1OASysGroup, Cas1OASysGroup, Cas1OASysGroup]
   >([
     personService.getOasysAnswers(token, crn, 'roshSummary'),
     personService.getOasysAnswers(token, crn, 'riskManagementPlan'),
     personService.getOasysAnswers(token, crn, 'offenceDetails'),
-    personService.getOasysAnswers(token, crn, 'supportingInformation'),
   ])
 
   return {
@@ -34,7 +33,7 @@ export const riskTabController = async ({
         ),
       }),
       roshWidget(personRisks.roshRisks?.status?.toLowerCase() === 'retrieved' && personRisks.roshRisks.value),
-      ...riskOasysCards(roshSummary, riskManagementPlan, offenceDetails, supportingInformation),
+      ...riskOasysCards(roshSummary, riskManagementPlan, offenceDetails),
     ],
   }
 }

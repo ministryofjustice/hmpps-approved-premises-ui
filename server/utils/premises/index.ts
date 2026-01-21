@@ -16,7 +16,7 @@ import { createQueryString, linkTo } from '../utils'
 import { sortHeader } from '../sortHeader'
 import { displayName } from '../personUtils'
 import { canonicalDates, placementStatusCell } from '../placements'
-import { htmlCell, textCell } from '../tableUtils'
+import { dateCell, htmlCell, textCell } from '../tableUtils'
 
 export { premisesActions } from './premisesActions'
 
@@ -212,7 +212,7 @@ export const placementTableRows = (
 export const localRestrictionsTableRows = (premises: Cas1Premises): Array<TableRow> =>
   premises.localRestrictions.map(restriction => [
     textCell(restriction.description),
-    textCell(DateFormats.isoDateToUIDate(restriction.createdAt, { format: 'short' })),
+    dateCell(restriction.createdAt),
     htmlCell(
       linkTo(
         managePaths.premises.localRestrictions.remove({

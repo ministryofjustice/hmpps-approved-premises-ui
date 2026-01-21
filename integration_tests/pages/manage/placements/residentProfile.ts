@@ -9,6 +9,7 @@ import {
   FullPerson,
   Licence,
   Person,
+  PersonAcctAlert,
   PersonRisks,
   RoshRisks,
 } from '@approved-premises/api'
@@ -26,6 +27,7 @@ import { contactsCardList, personDetailsCardList } from '../../../../server/util
 import { AND, THEN, WHEN } from '../../../helpers'
 import { SubmittedDocumentRenderer } from '../../../../server/utils/forms/submittedDocumentRenderer'
 import { ndeliusRiskCard } from '../../../../server/utils/resident/riskUtils'
+import { mentalHealthCards } from '../../../../server/utils/resident/healthUtils'
 
 export default class ResidentProfilePage extends Page {
   constructor(
@@ -95,6 +97,18 @@ export default class ResidentProfilePage extends Page {
       this.personRisks.flags.value.forEach((flag: string) => {
         this.shouldShowBadge(flag)
       })
+    })
+  }
+
+  shouldShowMentalHealthSection(acctAlerts: Array<PersonAcctAlert>, riskToSelf: Cas1OASysGroup) {
+    cy.stub(residentUtils, 'insetText')
+    cy.stub(residentUtils, 'detailsBody')
+
+    cy.get('.govuk-inset-text').should('contain.text', 'Imported from DPS, NDelius and OASys')
+
+    const cards = mentalHealthCards(acctAlerts, riskToSelf).slice(1)
+    cards.forEach(card => {
+      this.shouldShowCard(card)
     })
   }
 

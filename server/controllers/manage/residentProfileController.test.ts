@@ -18,6 +18,7 @@ import * as sentenceTabUtils from '../../utils/resident/sentence'
 import * as personalTabUtils from '../../utils/resident/personal'
 import * as placementTabUtils from '../../utils/resident/placement'
 import { ErrorWithData } from '../../utils/errors'
+import { riskSideNavigation } from '../../utils/resident/riskUtils'
 
 describe('residentProfileController', () => {
   const token = 'TEST_TOKEN'
@@ -121,11 +122,12 @@ describe('residentProfileController', () => {
 
       const tabController = jest.spyOn(riskTabUtils, 'riskTabController').mockResolvedValue(tabData)
 
-      await residentProfileController.show('risk')(request, response, next)
+      await residentProfileController.show('risk', 'riskDetails')(request, response, next)
 
       expect(response.render.mock.calls[0]).toEqual([
         'manage/resident/residentProfile',
         {
+          sideNavigation: riskSideNavigation('riskDetails', crn, placement.id),
           ...renderParameters(placement, personRisks, 'risk'),
           ...tabData,
         },
