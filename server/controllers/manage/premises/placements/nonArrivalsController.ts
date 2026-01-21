@@ -5,6 +5,7 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 import managePaths from '../../../../paths/manage'
 import { ValidationError } from '../../../../utils/errors'
 import { NON_ARRIVAL_REASON_OTHER_ID, placementKeyDetails, processReferenceData } from '../../../../utils/placements'
+import { returnPath } from '../../../../utils/resident'
 
 export default class NonArrivalsController {
   constructor(
@@ -23,6 +24,7 @@ export default class NonArrivalsController {
         { id: NON_ARRIVAL_REASON_OTHER_ID, name: 'Other - provide reasons' },
       )
       return res.render('manage/premises/placements/non-arrival', {
+        backlink: returnPath(req, placement),
         contextKeyDetails: placementKeyDetails(placement),
         nonArrivalReasons,
         placement,
@@ -57,6 +59,8 @@ export default class NonArrivalsController {
           throw new ValidationError(errors)
         }
 
+        const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
+
         const nonArrival: Cas1NonArrival = {
           reason,
           notes,
@@ -65,7 +69,7 @@ export default class NonArrivalsController {
         await this.placementService.recordNonArrival(req.user.token, premisesId, placementId, nonArrival)
 
         req.flash('success', 'You have recorded this person as not arrived')
-        return res.redirect(managePaths.premises.placements.show({ premisesId, placementId }))
+        return res.redirect(returnPath(req, placement))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

@@ -2,7 +2,7 @@ import type { Request, RequestHandler, Response } from 'express'
 
 import { Cas1CruManagementArea, Cas1SpaceBookingSummarySortField, SortDirection } from '@approved-premises/api'
 import { SelectOption } from '@approved-premises/ui'
-import { CruManagementAreaService, PremisesService, SessionService } from '../../../services'
+import { CruManagementAreaService, PremisesService } from '../../../services'
 import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import {
@@ -16,6 +16,7 @@ import {
   placementTableHeader,
 } from '../../../utils/premises'
 import { hasPermission } from '../../../utils/users'
+import { getPageBackLink } from '../../../utils/backlinks'
 
 type TabSettings = {
   pageSize: number
@@ -41,7 +42,6 @@ export default class PremisesController {
   constructor(
     private readonly premisesService: PremisesService,
     private readonly cruManagementAreaService: CruManagementAreaService,
-    private readonly sessionService: SessionService,
   ) {}
 
   show(): RequestHandler {
@@ -88,9 +88,7 @@ export default class PremisesController {
         }))
 
       return res.render('manage/premises/show', {
-        backlink: this.sessionService.getPageBackLink(managePaths.premises.show.pattern, req, [
-          managePaths.premises.index.pattern,
-        ]),
+        backlink: getPageBackLink(managePaths.premises.show.pattern, req, [managePaths.premises.index.pattern]),
         menuActions: premisesActions(res.locals.user, premises),
         premises,
         summaryList: summaryListForPremises(premises),

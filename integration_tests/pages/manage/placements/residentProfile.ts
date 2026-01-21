@@ -239,4 +239,11 @@ export default class ResidentProfilePage extends Page {
         })
     })
   }
+
+  shouldHaveCorrectReturnPath(placement: Cas1SpaceBooking) {
+    this.shouldHaveBackLink(
+      paths.resident.tabPlacement.placementDetails({ crn: placement.person.crn, placementId: placement.id }),
+    )
+    this.clickBack()
+  }
 }

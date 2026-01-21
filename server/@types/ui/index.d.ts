@@ -34,6 +34,8 @@ import {
   TransferReason,
   UserQualification,
 } from '@approved-premises/api'
+import type { Request } from 'express'
+import { Session } from 'express-session'
 import { ApTypeCriteria } from '../../utils/placementCriteriaUtils'
 import { roomCharacteristicMap } from '../../utils/characteristicsUtils'
 import { spaceSearchCriteriaApLevelLabels } from '../../utils/match/spaceSearchLabels'
@@ -577,4 +579,8 @@ export type DateRange = {
   from: string
   to?: string
   duration: number
+}
+
+export type RequestWithSession = Request & {
+  session: Session & { pageReferers?: Record<string, string>; user?: UserDetails }
 }

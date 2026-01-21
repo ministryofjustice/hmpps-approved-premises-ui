@@ -5,13 +5,24 @@ import {
   PersonRisks,
   RiskEnvelopeStatus,
 } from '@approved-premises/api'
-import { HtmlItem, SummaryListItem, SummaryListWithCard, TabItem, Table, TextItem } from '@approved-premises/ui'
+import {
+  HtmlItem,
+  RequestWithSession,
+  SummaryListItem,
+  SummaryListWithCard,
+  TabItem,
+  Table,
+  TextItem,
+} from '@approved-premises/ui'
 import nunjucks from 'nunjucks'
-import paths from '../../paths/manage'
+import type { Request } from 'express'
 import { DateFormats } from '../dateUtils'
 import { canonicalDates, placementStatusTag } from '../placements'
 import { linkTo, objectClean } from '../utils'
 import config from '../../config'
+import { hasPermission } from '../users'
+import managePaths from '../../paths/manage'
+import { getPageBackLink } from '../backlinks'
 
 export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'enforcement'
 export type ResidentProfileSubTab =
@@ -80,7 +91,7 @@ export const tabLabels: Record<
 
 export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: ResidentProfileTab): Array<TabItem> => {
   const getSelfLink = (tab: ResidentProfileTab): string => {
-    const pathRoot = paths.resident
+    const pathRoot = managePaths.resident
     const pathParams = { placementId: placement.id, crn: placement.person.crn }
     switch (tab) {
       case 'personal':
@@ -223,4 +234,17 @@ export const ndeliusDeeplink = (args: {
   return basePath
     ? linkTo(basePath, { openInNewTab: true, ...args, query: { component: args.component as string, CRN: args.crn } })
     : ''
+}
+
+export const returnPath = (req: Request, placement: Cas1SpaceBooking) => {
+  const defaultPath = hasPermission((req as RequestWithSession).session.user, ['cas1_ap_resident_profile'])
+    ? managePaths.resident.show({ crn: placement.person.crn, placementId: placement.id })
+    : managePaths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })
+
+  return getPageBackLink(
+    `${managePaths.premises.placements.show.pattern}:action`,
+    req as RequestWithSession,
+    [managePaths.premises.placements.show.pattern, `${managePaths.resident.show.pattern}{/*tab}`],
+    defaultPath,
+  )
 }

@@ -3,7 +3,7 @@ import type { Cas1SpaceBookingSummary } from '@approved-premises/api'
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { CruManagementAreaService, PremisesService, SessionService } from '../../../services'
+import { CruManagementAreaService, PremisesService } from '../../../services'
 import PremisesController from './premisesController'
 
 import {
@@ -26,6 +26,7 @@ import {
   summaryListForPremises,
 } from '../../../utils/premises'
 import { roleToPermissions } from '../../../utils/users/roles'
+import * as backlinkUtils from '../../../utils/backlinks'
 
 describe('PremisesController', () => {
   const token = 'SOME_TOKEN'
@@ -42,8 +43,7 @@ describe('PremisesController', () => {
 
   const premisesService = createMock<PremisesService>({})
   const cruManagementAreaService = createMock<CruManagementAreaService>({})
-  const sessionService = createMock<SessionService>({})
-  const premisesController = new PremisesController(premisesService, cruManagementAreaService, sessionService)
+  const premisesController = new PremisesController(premisesService, cruManagementAreaService)
 
   const premisesSummary = cas1PremisesFactory.build()
   const premisesId = premisesSummary.id
@@ -53,7 +53,7 @@ describe('PremisesController', () => {
     request = createMock<Request>({ user: { token }, params: { premisesId } })
     response = createMock<Response>({ locals: { user } })
     jest.useFakeTimers()
-    sessionService.getPageBackLink.mockReturnValue(referrer)
+    jest.spyOn(backlinkUtils, 'getPageBackLink').mockReturnValue(referrer)
   })
 
   describe('show', () => {

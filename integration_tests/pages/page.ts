@@ -320,6 +320,10 @@ export default class Page {
     })
   }
 
+  shouldHaveBackLink(link: string): void {
+    cy.get('.govuk-back-link').invoke('attr', 'href').should('contain', link)
+  }
+
   shouldShowMappa = (): void => {
     cy.get('h3').contains('MAPPA')
     cy.get('h3').contains('CAT 2 / LEVEL 1')

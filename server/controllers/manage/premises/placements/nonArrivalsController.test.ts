@@ -11,6 +11,7 @@ import managePaths from '../../../../paths/manage'
 import PlacementService from '../../../../services/placementService'
 import { ValidationError } from '../../../../utils/errors'
 import { NON_ARRIVAL_REASON_OTHER_ID, placementKeyDetails } from '../../../../utils/placements'
+import * as residentUtils from '../../../../utils/resident'
 
 describe('nonArrivalsController', () => {
   const token = 'SAMPLE_TOKEN'
@@ -26,7 +27,6 @@ describe('nonArrivalsController', () => {
   const nonArrivalsController = new NonArrivalsController(premisesService, placementService)
 
   const placement = cas1SpaceBookingFactory.upcoming().build()
-  const uiPlacementPagePath = managePaths.premises.placements.show({ premisesId, placementId: placement.id })
   const uiNonArrivalsPagePath = managePaths.premises.placements.nonArrival({ premisesId, placementId: placement.id })
 
   beforeEach(() => {
@@ -37,6 +37,7 @@ describe('nonArrivalsController', () => {
 
     jest.spyOn(validationUtils, 'fetchErrorsAndUserInput')
     jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue(undefined)
+    jest.spyOn(residentUtils, 'returnPath').mockReturnValue('return path')
   })
 
   describe('new', () => {
@@ -52,6 +53,7 @@ describe('nonArrivalsController', () => {
 
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/non-arrival', {
+        backlink: 'return path',
         nonArrivalReasons,
         contextKeyDetails: placementKeyDetails(placement),
         placement,
@@ -72,7 +74,7 @@ describe('nonArrivalsController', () => {
 
       expect(placementService.recordNonArrival).toHaveBeenCalledWith(token, premisesId, placement.id, request.body)
       expect(request.flash).toHaveBeenCalledWith('success', 'You have recorded this person as not arrived')
-      expect(response.redirect).toHaveBeenCalledWith(uiPlacementPagePath)
+      expect(response.redirect).toHaveBeenCalledWith('return path')
     })
 
     it('returns error if page submitted without reason selected', async () => {

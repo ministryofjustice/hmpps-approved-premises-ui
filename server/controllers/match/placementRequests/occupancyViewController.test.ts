@@ -6,7 +6,7 @@ import { addDays } from 'date-fns'
 import { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { SpaceSearchFormData } from '@approved-premises/ui'
-import { PlacementRequestService, PlacementService, PremisesService, SessionService } from '../../../services'
+import { PlacementRequestService, PlacementService, PremisesService } from '../../../services'
 import {
   cas1PlacementRequestDetailFactory,
   cas1PremiseCapacityFactory,
@@ -49,6 +49,7 @@ import { placementKeyDetails } from '../../../utils/placements'
 import cas1RequestedPlacementPeriodFactory from '../../../testutils/factories/cas1RequestedPlacementPeriod'
 import { newPlacementSummaryList } from '../../../utils/match/newPlacement'
 import * as placementsUtils from '../../../utils/placementRequests/placements'
+import * as backlinkUtils from '../../../utils/backlinks'
 
 describe('OccupancyViewController', () => {
   const token = 'SOME_TOKEN'
@@ -58,7 +59,6 @@ describe('OccupancyViewController', () => {
 
   const placementRequestService = createMock<PlacementRequestService>({})
   const premisesService = createMock<PremisesService>({})
-  const sessionService = createMock<SessionService>()
   const placementService = createMock<PlacementService>({})
 
   let occupancyViewController: OccupancyViewController
@@ -84,12 +84,7 @@ describe('OccupancyViewController', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    occupancyViewController = new OccupancyViewController(
-      placementRequestService,
-      premisesService,
-      sessionService,
-      placementService,
-    )
+    occupancyViewController = new OccupancyViewController(placementRequestService, premisesService, placementService)
     request = createMock<Request>({
       params,
       user: { token },
@@ -110,7 +105,7 @@ describe('OccupancyViewController', () => {
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     premisesService.find.mockResolvedValue(premises)
     premisesService.getCapacity.mockResolvedValue(premiseCapacity)
-    sessionService.getPageBackLink.mockReturnValue('/backlink')
+    jest.spyOn(backlinkUtils, 'getPageBackLink').mockReturnValue('/backlink')
 
     jest.spyOn(occupancyViewController.formData, 'get')
     jest.spyOn(occupancyViewController.formData, 'update')

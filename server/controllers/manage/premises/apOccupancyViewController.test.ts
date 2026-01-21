@@ -12,6 +12,7 @@ import {
   cas1PremisesDaySummaryFactory,
   cas1PremisesFactory,
 } from '../../../testutils/factories'
+import * as backlinkUtils from '../../../utils/backlinks'
 
 import paths from '../../../paths/manage'
 import {
@@ -45,7 +46,7 @@ describe('AP occupancyViewController', () => {
     jest.resetAllMocks()
     request = createMock<Request>({ user: { token }, params: { premisesId }, flash: jest.fn() })
     response = createMock<Response>({ locals: { user: { permissions: ['cas1_space_booking_list'] } } })
-    sessionService.getPageBackLink.mockReturnValue('back-link')
+    jest.spyOn(backlinkUtils, 'getPageBackLink').mockReturnValue('back-link')
     jest.useFakeTimers()
     jest.setSystemTime(new Date('2024-01-01'))
   })
