@@ -9,7 +9,6 @@ import { HtmlItem, SummaryListItem, SummaryListWithCard, TabItem, Table, TextIte
 import nunjucks from 'nunjucks'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
-import { detailedStatus, statusTextMap } from '../placements/status'
 import { canonicalDates, placementStatusTag } from '../placements'
 import { linkTo, objectClean } from '../utils'
 import config from '../../config'
@@ -164,10 +163,6 @@ export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: Pers
 
 function getBadge(text: string): string {
   return `<span class="moj-badge moj-badge--black">${text}</span>`
-}
-
-export const getResidentStatus = (placement: Cas1SpaceBooking): string => {
-  return statusTextMap[detailedStatus(placement)]
 }
 
 export const card = ({
