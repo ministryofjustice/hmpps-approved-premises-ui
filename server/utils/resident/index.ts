@@ -128,7 +128,7 @@ export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: Pers
   return {
     name: person.name,
     photoUrl: undefined,
-    statusBadge: placementStatusTag(placement),
+    statusBadge: placementStatusTag(placement, { classes: 'govuk-!-margin-top-2 govuk-!-margin-left-2' }),
     badges,
     attributes: [
       [
@@ -137,12 +137,8 @@ export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: Pers
           description: person.crn,
         },
         {
-          title: 'Approved Premises',
+          title: 'AP',
           description: placement.premises.name,
-        },
-        {
-          title: 'Key worker',
-          description: placement.keyWorkerAllocation?.name ?? 'Not assigned',
         },
         {
           title: 'Arrival',

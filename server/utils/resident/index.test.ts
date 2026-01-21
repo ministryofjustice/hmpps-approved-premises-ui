@@ -111,7 +111,7 @@ describe('residentsUtils', () => {
       expect(getResidentHeader(placement, personRisks)).toEqual({
         name: person.name,
         photoUrl: undefined,
-        statusBadge: placementStatusTag(placement),
+        statusBadge: placementStatusTag(placement, { classes: 'govuk-!-margin-top-2 govuk-!-margin-left-2' }),
         badges: [
           '<span class="moj-badge moj-badge--black">Very High RoSH</span>',
           '<span class="moj-badge moj-badge--black">CAT 2 / LEVEL 1 MAPPA</span>',
@@ -121,8 +121,7 @@ describe('residentsUtils', () => {
         attributes: [
           [
             { title: 'CRN', description: person.crn },
-            { title: 'Approved Premises', description: placement.premises.name },
-            { title: 'Key worker', description: placement.keyWorkerAllocation.name },
+            { title: 'AP', description: placement.premises.name },
             { title: 'Arrival', description: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) },
             { title: 'Departure', description: DateFormats.isoDateToUIDate(departureDate, { format: 'short' }) },
             { title: 'Length of stay', description: '18 weeks 4 days' },
@@ -140,7 +139,7 @@ describe('residentsUtils', () => {
       })
       expect(getResidentHeader(placement, personRisks)).toEqual(
         expect.objectContaining({
-          statusBadge: placementStatusTag(placement),
+          statusBadge: placementStatusTag(placement, { classes: 'govuk-!-margin-top-2 govuk-!-margin-left-2' }),
           badges: ['<span class="moj-badge moj-badge--black">Unknown RoSH</span>'],
         }),
       )
