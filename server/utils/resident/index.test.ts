@@ -3,9 +3,8 @@ import { render } from 'nunjucks'
 import { FullPerson, RiskEnvelopeStatus } from '@approved-premises/api'
 import { card, detailsBody, getResidentHeader, residentTabItems } from './index'
 import { cas1SpaceBookingFactory, risksFactory } from '../../testutils/factories'
-import { canonicalDates } from '../placements'
+import { canonicalDates, placementStatusTag } from '../placements'
 import { DateFormats } from '../dateUtils'
-import { detailedStatus, statusTextMap } from '../placements/status'
 
 jest.mock('nunjucks')
 
@@ -111,23 +110,20 @@ describe('residentsUtils', () => {
       const { arrivalDate, departureDate } = canonicalDates(placement)
       expect(getResidentHeader(placement, personRisks)).toEqual({
         name: person.name,
-        photoUrl: '/assets/images/resident-placeholder.png',
+        photoUrl: undefined,
+        statusBadge: placementStatusTag(placement, { classes: 'govuk-!-margin-top-2 govuk-!-margin-left-2' }),
         badges: [
-          '<span class="moj-badge badge--very-high">Very High RoSH</span>',
-          '<span class="moj-badge badge--low">CAT 2 / LEVEL 1 MAPPA</span>',
-          ...personRisks.flags.value.map(label => `<span class="moj-badge badge--low">${label}</span>`),
+          '<span class="moj-badge moj-badge--black">Very High RoSH</span>',
+          '<span class="moj-badge moj-badge--black">CAT 2 / LEVEL 1 MAPPA</span>',
+          ...personRisks.flags.value.map(label => `<span class="moj-badge moj-badge--black">${label}</span>`),
         ],
 
         attributes: [
           [
             { title: 'CRN', description: person.crn },
-            { title: 'Approved Premises', description: placement.premises.name },
-            { title: 'Key worker', description: placement.keyWorkerAllocation.name },
-          ],
-          [
+            { title: 'AP', description: placement.premises.name },
             { title: 'Arrival', description: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) },
             { title: 'Departure', description: DateFormats.isoDateToUIDate(departureDate, { format: 'short' }) },
-            { title: 'Status', description: statusTextMap[detailedStatus(placement)] },
             { title: 'Length of stay', description: '18 weeks 4 days' },
           ],
         ],
@@ -143,7 +139,8 @@ describe('residentsUtils', () => {
       })
       expect(getResidentHeader(placement, personRisks)).toEqual(
         expect.objectContaining({
-          badges: ['<span class="moj-badge badge--low">Unknown RoSH</span>'],
+          statusBadge: placementStatusTag(placement, { classes: 'govuk-!-margin-top-2 govuk-!-margin-left-2' }),
+          badges: ['<span class="moj-badge moj-badge--black">Unknown RoSH</span>'],
         }),
       )
     })

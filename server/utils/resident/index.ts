@@ -9,8 +9,7 @@ import { HtmlItem, SummaryListItem, SummaryListWithCard, TabItem, Table, TextIte
 import nunjucks from 'nunjucks'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
-import { detailedStatus, statusTextMap } from '../placements/status'
-import { canonicalDates } from '../placements'
+import { canonicalDates, placementStatusTag } from '../placements'
 import { linkTo, objectClean } from '../utils'
 import config from '../../config'
 
@@ -37,7 +36,8 @@ export const csraClassificationMapping: Record<CsraClassification, string> = { S
 
 export type ResidentHeader = {
   name: string
-  photoUrl: string
+  photoUrl?: string
+  statusBadge?: string
   badges: Array<string>
   attributes: Array<Array<{ title: string; description: string }>>
 }
@@ -106,13 +106,6 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
   }))
 }
 
-const badgeColours: Record<string, string> = {
-  'Very High': 'badge--very-high',
-  High: 'badge--high',
-  Medium: 'badge--medium',
-  Low: 'badge--low',
-}
-
 const isRetrieved = (status: RiskEnvelopeStatus) => status.toLowerCase() === 'retrieved'
 
 export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: PersonRisks): ResidentHeader {
@@ -127,25 +120,26 @@ export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: Pers
   const roshRisk = roshValue?.overallRisk
 
   const badges: Array<string> = [
-    getBadge(
-      `${isRetrieved(roshStatus) && roshRisk ? roshRisk : 'Unknown'} RoSH`,
-      isRetrieved(roshStatus) && badgeColours[roshRisk],
-    ),
-    isRetrieved(mappaStatus) && getBadge(`${mappaValue?.level} MAPPA`, ''),
-    ...(isRetrieved(flagsStatus) && flags ? flags.map(flag => getBadge(flag, '')) : []),
+    getBadge(`${isRetrieved(roshStatus) && roshRisk ? roshRisk : 'Unknown'} RoSH`),
+    isRetrieved(mappaStatus) && getBadge(`${mappaValue?.level} MAPPA`),
+    ...(isRetrieved(flagsStatus) && flags ? flags.map(flag => getBadge(flag)) : []),
   ].filter(Boolean)
 
   return {
     name: person.name,
-    photoUrl: '/assets/images/resident-placeholder.png',
+    photoUrl: undefined,
+    statusBadge: placementStatusTag(placement, { classes: 'govuk-!-margin-top-2 govuk-!-margin-left-2' }),
     badges,
     attributes: [
       [
-        { title: 'CRN', description: person.crn },
-        { title: 'Approved Premises', description: placement.premises.name },
-        { title: 'Key worker', description: placement.keyWorkerAllocation?.name ?? 'Not assigned' },
-      ],
-      [
+        {
+          title: 'CRN',
+          description: person.crn,
+        },
+        {
+          title: 'AP',
+          description: placement.premises.name,
+        },
         {
           title: 'Arrival',
           description: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
@@ -154,7 +148,6 @@ export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: Pers
           title: 'Departure',
           description: DateFormats.isoDateToUIDate(departureDate, { format: 'short' }),
         },
-        { title: 'Status', description: getResidentStatus(placement) },
         {
           title: 'Length of stay',
           description: DateFormats.durationBetweenDates(arrivalDate, departureDate).ui,
@@ -164,12 +157,8 @@ export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: Pers
   }
 }
 
-function getBadge(text: string, classString: string): string {
-  return `<span class="moj-badge ${classString || 'badge--low'}">${text}</span>`
-}
-
-export const getResidentStatus = (placement: Cas1SpaceBooking): string => {
-  return statusTextMap[detailedStatus(placement)]
+function getBadge(text: string): string {
+  return `<span class="moj-badge moj-badge--black">${text}</span>`
 }
 
 export const card = ({

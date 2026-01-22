@@ -21,11 +21,11 @@ import * as residentUtils from '../../../../server/utils/resident'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { licenseCards, offencesTabCards, prisonCards } from '../../../../server/utils/resident/sentenceUtils'
-import { getResidentStatus } from '../../../../server/utils/resident'
 import { placementDetailsCards, allApPlacementsTabData } from '../../../../server/utils/resident/placementUtils'
 import { contactsCardList, personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
 import { AND, THEN, WHEN } from '../../../helpers'
 import { SubmittedDocumentRenderer } from '../../../../server/utils/forms/submittedDocumentRenderer'
+import { detailedStatus } from '../../../../server/utils/placements/status'
 import { ndeliusRiskCard } from '../../../../server/utils/resident/riskUtils'
 import { mentalHealthCards } from '../../../../server/utils/resident/healthUtils'
 
@@ -77,21 +77,20 @@ export default class ResidentProfilePage extends Page {
 
   checkHeader() {
     const person = this.placement.person as FullPerson
-    const { premises, keyWorkerAllocation, expectedArrivalDate, expectedDepartureDate } = this.placement
+    const { premises, expectedArrivalDate, expectedDepartureDate } = this.placement
 
     const arrivalDate = DateFormats.isoDateToUIDate(expectedArrivalDate, { format: 'short' })
     const departureDate = DateFormats.isoDateToUIDate(expectedDepartureDate, { format: 'short' })
-    const status = getResidentStatus(this.placement)
     const duration = DateFormats.durationBetweenDates(expectedArrivalDate, expectedDepartureDate).ui
+    const statusKey = detailedStatus(this.placement)
 
     cy.get('.profile-banner').within(() => {
       cy.get('h2').should('contain', person.name)
+      cy.get(`[data-cy-status="${statusKey}"]`).should('exist')
       this.shouldShowDescription('CRN', person.crn)
-      this.shouldShowDescription('Approved Premises', premises.name)
-      this.shouldShowDescription('Key worker', keyWorkerAllocation.name)
+      this.shouldShowDescription('AP', premises.name)
       this.shouldShowDescription('Arrival', arrivalDate)
       this.shouldShowDescription('Departure', departureDate)
-      this.shouldShowDescription('Status', status)
       this.shouldShowDescription('Length of stay', duration)
       this.shouldShowBadge(`${this.personRisks.roshRisks.value.overallRisk} RoSH`)
       this.personRisks.flags.value.forEach((flag: string) => {
