@@ -270,5 +270,14 @@ context('ResidentProfile', () => {
       WHEN('I visit the resident profile page')
       ResidentProfilePage.visitUnauthorised(placement)
     })
+
+    it("should show an error if the CRN in the URL doesn't match the CRN on the placement's user", () => {
+      const { placement } = setup()
+      GIVEN(' that I am signed in as a user with access to the resident profile')
+      signIn(['manage_resident'])
+      WHEN('I visit the resident profile page with mismatched CRNs')
+      THEN('I should see an error')
+      ResidentProfilePage.visitCrnMismatch('X123456', placement)
+    })
   })
 })
