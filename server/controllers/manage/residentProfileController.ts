@@ -37,6 +37,7 @@ import {
 } from '../../utils/resident/health'
 import { healthSideNavigation } from '../../utils/resident/healthUtils'
 import { riskSideNavigation } from '../../utils/resident/riskUtils'
+import { CrnMismatchError } from '../../utils/errors'
 
 export default class ResidentProfileController {
   constructor(
@@ -66,6 +67,10 @@ export default class ResidentProfileController {
         [this.placementService.getPlacement(token, placementId), this.personService.riskProfile(token, crn)],
         [undefined, defaultRisks],
       )
+
+      if (placement.person.crn !== crn) {
+        throw new CrnMismatchError()
+      }
 
       const tabItems = residentTabItems(placement, activeTab)
 

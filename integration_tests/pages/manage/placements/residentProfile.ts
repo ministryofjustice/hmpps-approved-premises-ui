@@ -51,6 +51,14 @@ export default class ResidentProfilePage extends Page {
     return new ResidentProfilePage(undefined, undefined, `Authorisation Error`)
   }
 
+  static visitCrnMismatch(urlCrn: string, placement: Cas1SpaceBooking): void {
+    cy.visit(paths.resident.tabPersonal.personalDetails({ crn: urlCrn, placementId: placement.id }), {
+      failOnStatusCode: false,
+    })
+
+    cy.get('h1').contains("The CRN in the URL doesn't match the CRN in the placement")
+  }
+
   shouldShowCard(card: SummaryListWithCard, checkContents = true) {
     const cardTitle = card.card?.title
     const title =

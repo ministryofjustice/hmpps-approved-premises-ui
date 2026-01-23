@@ -11,13 +11,13 @@ import { ApplicationService, PersonService, PlacementService } from '../../servi
 import paths from '../../paths/manage'
 
 import ResidentProfileController from './residentProfileController'
-import { cas1SpaceBookingFactory, risksFactory } from '../../testutils/factories'
+import { cas1SpaceBookingFactory, personFactory, risksFactory } from '../../testutils/factories'
 import { TabData, card, getResidentHeader, ResidentProfileTab, residentTabItems, tabLabels } from '../../utils/resident'
 import * as riskTabUtils from '../../utils/resident/risk'
 import * as sentenceTabUtils from '../../utils/resident/sentence'
 import * as personalTabUtils from '../../utils/resident/personal'
 import * as placementTabUtils from '../../utils/resident/placement'
-import { ErrorWithData } from '../../utils/errors'
+import { CrnMismatchError, ErrorWithData } from '../../utils/errors'
 import { riskSideNavigation } from '../../utils/resident/riskUtils'
 
 describe('residentProfileController', () => {
@@ -34,7 +34,7 @@ describe('residentProfileController', () => {
   const residentProfileController = new ResidentProfileController(placementService, personService, applicationService)
 
   const setUp = () => {
-    const placement = cas1SpaceBookingFactory.upcoming().build()
+    const placement = cas1SpaceBookingFactory.upcoming().build({ person: personFactory.build({ crn }) })
     const personRisks = risksFactory.build()
 
     placementService.getPlacement.mockResolvedValue(placement)
@@ -229,6 +229,14 @@ describe('residentProfileController', () => {
           resident: getResidentHeader(placement, errorPersonRisks),
         }),
       )
+    })
+
+    it("should throw an error if the CRN in the path doesn't match the CRN in the placement", async () => {
+      const { request, response } = setUp()
+      request.params.crn = 'differentCrn'
+
+      const handler = residentProfileController.show()
+      await expect(handler(request, response, next)).rejects.toThrow(CrnMismatchError)
     })
   })
 })

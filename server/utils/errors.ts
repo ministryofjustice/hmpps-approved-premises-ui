@@ -44,3 +44,11 @@ export class RestrictedPersonError extends Error {
     this.type = 'RESTRICTED_PERSON'
   }
 }
+
+export class CrnMismatchError extends Error {
+  type: 'CRN_MISMATCH'
+
+  constructor() {
+    super(`The CRN in the URL doesn't match the CRN in the placement`)
+  }
+}
