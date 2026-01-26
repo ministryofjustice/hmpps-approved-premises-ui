@@ -32,7 +32,7 @@ describe('risk utils', () => {
         expect(result[index].card).toEqual({ title: { text: answer.label } })
 
         expect(result[index].html).toMatchStringIgnoringWhitespace(`
-      <table class="govuk-table">
+      <table class="govuk-table text-table">
         <tbody class="govuk-table__body">
           <tr class="govuk-table__row">
             <td class="govuk-table__cell">

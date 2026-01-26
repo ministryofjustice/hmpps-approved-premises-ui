@@ -16,7 +16,7 @@ export const riskSideNavigation = (subTab: ResidentProfileSubTab, crn: string, p
 }
 
 export const tableRow = (content: string) =>
-  `<table class="govuk-table">
+  `<table class="govuk-table text-table">
   <tbody class="govuk-table__body">
   <tr class="govuk-table__row">
   <td class="govuk-table__cell">

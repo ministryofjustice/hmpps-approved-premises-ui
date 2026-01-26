@@ -6,6 +6,10 @@
 
 {% for card in cardList %}
     {% set html %}
+        {% if card.topHtml %}
+            {{ card.topHtml | safe }}
+        {% endif %}
+
         {% if card.rows %}
             {{ govukSummaryList({
                 rows: card.rows

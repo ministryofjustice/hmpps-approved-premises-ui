@@ -6,9 +6,14 @@
   }
 }
 
-.govuk-table__cell ul.govuk-list--spaced {
+.govuk-table__cell {
+  ul.govuk-list--spaced {
   margin-bottom: 5px;
   li:last-child {margin-bottom: 0}
+}
+  .govuk-table__cell--nowrap {
+    white-space: nowrap;
+  }
 }
 
 .govuk-table__header--nowrap {

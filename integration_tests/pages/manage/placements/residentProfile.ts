@@ -76,8 +76,10 @@ export default class ResidentProfilePage extends Page {
             this.shouldContainSummaryListItems(card.rows)
           }
           if (card.table) {
-            this.shouldContainTableColumns(card.table.head.map(cell => (cell as TextItem).text))
-            this.shouldContainOrderedTableRows(card.table.rows)
+            cy.get('table:not(.text-table)').within(() => {
+              this.shouldContainTableColumns(card.table.head.map(cell => (cell as TextItem).text))
+              this.shouldContainOrderedTableRows(card.table.rows)
+            })
           }
         })
     }

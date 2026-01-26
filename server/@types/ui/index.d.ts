@@ -196,6 +196,7 @@ export type SummaryListWithCard = {
   rows?: Array<SummaryListItem>
   table?: Table
   html?: string
+  topHtml?: string
 }
 
 export interface SummaryListActionItem {

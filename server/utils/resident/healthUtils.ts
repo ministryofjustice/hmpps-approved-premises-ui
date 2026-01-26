@@ -1,8 +1,8 @@
 import { Cas1OASysGroup, PersonAcctAlert } from '@approved-premises/api'
 import { card, insetText, ResidentProfileSubTab } from '.'
 import paths from '../../paths/manage'
-import { dateCell, textCell } from '../tableUtils'
-import { summaryCards } from './riskUtils'
+import { dateCellNoWrap, textCell } from '../tableUtils'
+import { summaryCards, tableRow } from './riskUtils'
 
 export const healthSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   const basePath = paths.resident.tabHealth
@@ -35,20 +35,13 @@ export const mentalHealthCards = (personAcctAlerts: Array<PersonAcctAlert>, risk
   ...summaryCards(['FA62', 'FA63', 'FA64', 'R8.1.1', 'R8.2.1', 'R8.3.1'], riskToSelf, 'OASys risk to self'),
   card({
     title: 'ACCT alerts',
+    topHtml: tableRow('Imported from DPS'),
     table: personAcctAlerts?.length && {
-      head: [
-        textCell('Date created'),
-        textCell('Description'),
-        textCell('Expiry date'),
-        textCell('Alert type'),
-        textCell('Comment'),
-      ],
+      head: [textCell('Date created'), textCell('Description'), textCell('Expiry date')],
       rows: personAcctAlerts.map((acctAlert: PersonAcctAlert) => [
-        dateCell(acctAlert.dateCreated),
+        dateCellNoWrap(acctAlert.dateCreated),
         textCell(acctAlert.description),
-        dateCell(acctAlert.dateExpires),
-        textCell(acctAlert.alertTypeDescription),
-        textCell(acctAlert.comment),
+        dateCellNoWrap(acctAlert.dateExpires),
       ]),
     },
     html: !personAcctAlerts?.length ? 'No ACCT alerts found' : undefined,

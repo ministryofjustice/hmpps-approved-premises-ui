@@ -12,6 +12,12 @@ export const htmlCell = (html: string): TableCell => ({ html })
 
 export const dateCell = (date: string): TableCell => textCell(DateFormats.isoDateToUIDate(date, { format: 'short' }))
 
+export const textCellNoWrap = (text: string): TableCell =>
+  htmlCell(`<span class="govuk-table__cell--nowrap">${text}</span>`)
+
+export const dateCellNoWrap = (date: string): TableCell =>
+  textCellNoWrap(DateFormats.isoDateToUIDate(date, { format: 'short' }))
+
 export const dateCellSortable = (date: string): TableCell => ({
   text: date ? DateFormats.isoDateToUIDate(date, { format: 'short' }) : '',
   attributes: { 'data-sort-value': date },

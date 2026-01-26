@@ -1,7 +1,16 @@
 import { when } from 'jest-when'
 import { assessmentSummaryFactory, taskFactory } from '../testutils/factories'
 import { displayName, tierBadge } from './personUtils'
-import { crnCell, dateCell, daysUntilDueCell, emailCell, nameCellLink, tierCell } from './tableUtils'
+import {
+  crnCell,
+  dateCell,
+  dateCellNoWrap,
+  daysUntilDueCell,
+  emailCell,
+  nameCellLink,
+  textCellNoWrap,
+  tierCell,
+} from './tableUtils'
 import { DateFormats } from './dateUtils'
 import { fullPersonFactory } from '../testutils/factories/person'
 
@@ -9,6 +18,20 @@ describe('tableUtils', () => {
   describe('dateCell', () => {
     it('returns a cell with a date in the short format from an ISO date', () => {
       expect(dateCell('2022-01-01')).toEqual({ text: '1 Jan 2022' })
+    })
+  })
+
+  describe('noWrapCell', () => {
+    it('returns text wrapped in a noWrap span', () => {
+      expect(textCellNoWrap('text')).toEqual({ html: '<span class="govuk-table__cell--nowrap">text</span>' })
+    })
+  })
+
+  describe('dateCellNowrap', () => {
+    it('returns a cell with a date in the short format from an ISO date wrapped in a non-break span', () => {
+      expect(dateCellNoWrap('2022-01-01')).toEqual({
+        html: '<span class="govuk-table__cell--nowrap">1 Jan 2022</span>',
+      })
     })
   })
 
