@@ -112,7 +112,7 @@ export const additionalOffencesRows = (offences: Array<ActiveOffence>, mainOffen
         offence !== mainOffence && [
           textCell(mainCategoryDescription),
           textCell(subCategoryDescription),
-          dateCell(offence.offenceDate),
+          offence.offenceDate ? dateCell(offence.offenceDate) : textCell(''),
         ]
       )
     })
