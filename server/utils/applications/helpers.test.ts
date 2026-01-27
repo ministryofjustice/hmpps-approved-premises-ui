@@ -4,12 +4,13 @@ import {
   restrictedPersonFactory,
   tierEnvelopeFactory,
 } from '../../testutils/factories'
-import { createNameAnchorElement, getTierOrBlank, htmlValue, personKeyDetails, textValue } from './helpers'
+import { createNameAnchorElement, getTierOrBlank, personKeyDetails } from './helpers'
 import paths from '../../paths/apply'
 import * as personUtils from '../personUtils'
 import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
 import { displayName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
+import { htmlCell, textCell } from '../tableUtils'
 
 describe('helpers', () => {
   beforeEach(() => {
@@ -24,7 +25,7 @@ describe('helpers', () => {
         const applicationSummary = cas1ApplicationSummaryFactory.build()
 
         expect(createNameAnchorElement(person, applicationSummary)).toEqual(
-          htmlValue(
+          htmlCell(
             `<a href=${paths.applications.show({ id: applicationSummary.id })} data-cy-id="${applicationSummary.id}">${displayName(
               person,
             )}</a>`,
@@ -37,13 +38,13 @@ describe('helpers', () => {
 
         it('returns name copy only when an application is in progress and linkInProgressApplications is false', () => {
           expect(createNameAnchorElement(person, applicationSummary, { linkInProgressApplications: false })).toEqual(
-            textValue(displayName(person)),
+            textCell(displayName(person)),
           )
         })
 
         it('returns a link to the application by default when the application is in progress', () => {
           expect(createNameAnchorElement(person, applicationSummary)).toEqual(
-            htmlValue(
+            htmlCell(
               `<a href=${paths.applications.show({ id: applicationSummary.id })} data-cy-id="${applicationSummary.id}">${displayName(
                 person,
               )}</a>`,
@@ -58,12 +59,12 @@ describe('helpers', () => {
       const applicationSummary = cas1ApplicationSummaryFactory.build()
 
       it('returns "Limited Access Offender" with no link', () => {
-        expect(createNameAnchorElement(person, applicationSummary)).toEqual(textValue(`Limited Access Offender`))
+        expect(createNameAnchorElement(person, applicationSummary)).toEqual(textCell(`Limited Access Offender`))
       })
 
       it('returns "LAO: crn" with no link when crn is requested', () => {
         expect(createNameAnchorElement(person, applicationSummary, { showCrn: true })).toEqual(
-          textValue(`LAO: ${person.crn}`),
+          textCell(`LAO: ${person.crn}`),
         )
       })
     })
@@ -73,26 +74,26 @@ describe('helpers', () => {
       const applicationSummary = cas1ApplicationSummaryFactory.build()
 
       it('returns "Unknown person" with no link', () => {
-        expect(createNameAnchorElement(person, applicationSummary)).toEqual(textValue(`Unknown person`))
+        expect(createNameAnchorElement(person, applicationSummary)).toEqual(textCell(`Unknown person`))
       })
 
       it('returns "Unknown: crn" with no link when crn is requested', () => {
         expect(createNameAnchorElement(person, applicationSummary, { showCrn: true })).toEqual(
-          textValue(`Unknown: ${person.crn}`),
+          textCell(`Unknown: ${person.crn}`),
         )
       })
     })
   })
 
-  describe('textValue', () => {
+  describe('textCell', () => {
     it('should return a text value for nunjucks helpers', () => {
-      expect(textValue('foo')).toEqual({ text: 'foo' })
+      expect(textCell('foo')).toEqual({ text: 'foo' })
     })
   })
 
-  describe('htmlValue', () => {
+  describe('htmlCell', () => {
     it('should return a htmls value for nunjucks helpers', () => {
-      expect(htmlValue('foo')).toEqual({ html: 'foo' })
+      expect(htmlCell('foo')).toEqual({ html: 'foo' })
     })
   })
 

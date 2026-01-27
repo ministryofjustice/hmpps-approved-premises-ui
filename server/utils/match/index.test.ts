@@ -33,11 +33,11 @@ import {
   startDateObjFromParams,
 } from '.'
 import { apTypeLongLabels } from '../apTypeLabels'
-import { textValue } from '../applications/helpers'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { displayName } from '../personUtils'
 import { characteristicsBulletList } from '../characteristicsUtils'
 import { spaceSearchResultsCharacteristicsLabels } from './spaceSearchLabels'
+import { textCell } from '../tableUtils'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
@@ -394,16 +394,16 @@ describe('matchUtils', () => {
         },
         items: [
           {
-            key: textValue('CRN'),
-            value: textValue(placementRequest.person.crn),
+            key: textCell('CRN'),
+            value: textCell(placementRequest.person.crn),
           },
           {
-            key: textValue('Tier'),
-            value: textValue(placementRequest?.risks?.tier?.value?.level || 'Not available'),
+            key: textCell('Tier'),
+            value: textCell(placementRequest?.risks?.tier?.value?.level || 'Not available'),
           },
           {
-            key: textValue('Date of birth'),
-            value: textValue(
+            key: textCell('Date of birth'),
+            value: textCell(
               DateFormats.isoDateToUIDate((placementRequest.person as FullPerson).dateOfBirth, { format: 'short' }),
             ),
           },

@@ -23,13 +23,13 @@ import { isBefore, subDays } from 'date-fns'
 import paths from '../paths/manage'
 import { linkTo } from './utils'
 import { DateFormats, isoDateIsValid } from './dateUtils'
-import { textValue } from './applications/helpers'
 import { sortHeader } from './sortHeader'
 import { hasPermission } from './users'
 import { SanitisedError } from '../sanitisedError'
 import { summaryListItem, summaryListItemNoBlankRows } from './formUtils'
 import { isValidCrn } from './crn'
 import { ValidationError } from './errors'
+import { textCell } from './tableUtils'
 
 export const premisesIndexTabs = (premisesId: string, temporality: 'current' | 'future' | 'past') => [
   {
@@ -73,14 +73,14 @@ export const allOutOfServiceBedsTableHeaders = (
 
 export const allOutOfServiceBedsTableRows = (beds: Array<OutOfServiceBed>) =>
   beds.map(bed => [
-    textValue(bed.premises.name),
-    textValue(bed.room.name),
-    textValue(bed.bed.name),
-    textValue(DateFormats.isoDateToUIDate(bed.startDate, { format: 'short' })),
-    textValue(DateFormats.isoDateToUIDate(bed.endDate, { format: 'short' })),
-    textValue(bed.reason.name),
+    textCell(bed.premises.name),
+    textCell(bed.room.name),
+    textCell(bed.bed.name),
+    textCell(DateFormats.isoDateToUIDate(bed.startDate, { format: 'short' })),
+    textCell(DateFormats.isoDateToUIDate(bed.endDate, { format: 'short' })),
+    textCell(bed.reason.name),
     referenceNumberCell(bed.referenceNumber),
-    textValue(bed.daysLostCount.toString()),
+    textCell(bed.daysLostCount.toString()),
     actionCell(bed, bed.premises.id),
   ])
 
@@ -96,11 +96,11 @@ export const outOfServiceBedTableHeaders = () => [
 
 export const outOfServiceBedTableRows = (beds: Array<OutOfServiceBed>, premisesId: string) =>
   beds.map(bed => [
-    textValue(bed.bed.name),
-    textValue(bed.room.name),
-    textValue(DateFormats.isoDateToUIDate(bed.startDate, { format: 'short' })),
-    textValue(DateFormats.isoDateToUIDate(bed.endDate, { format: 'short' })),
-    textValue(bed.reason.name),
+    textCell(bed.bed.name),
+    textCell(bed.room.name),
+    textCell(DateFormats.isoDateToUIDate(bed.startDate, { format: 'short' })),
+    textCell(DateFormats.isoDateToUIDate(bed.endDate, { format: 'short' })),
+    textCell(bed.reason.name),
     referenceNumberCell(bed.referenceNumber),
     actionCell(bed, premisesId),
   ])

@@ -3,7 +3,8 @@ import { SelectOption, TableCell, TableRow } from '../../@types/ui'
 import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
 import { allReleaseTypes } from './releaseTypeUtils'
-import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
+import { createNameAnchorElement, getTierOrBlank } from './helpers'
+import { htmlCell, textCell } from '../tableUtils'
 
 export const pendingPlacementRequestTableHeader = (
   sortBy: ApplicationSortField,
@@ -23,9 +24,9 @@ export const pendingPlacementRequestTableHeader = (
 export const pendingPlacementRequestTableRows = (applications: Array<Cas1ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => [
     createNameAnchorElement(application.person, application, { showCrn: true }),
-    htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
-    textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
-    textValue(application.releaseType ? allReleaseTypes[application.releaseType] : ''),
+    htmlCell(getTierOrBlank(application.risks?.tier?.value?.level)),
+    textCell(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
+    textCell(application.releaseType ? allReleaseTypes[application.releaseType] : ''),
   ])
 }
 

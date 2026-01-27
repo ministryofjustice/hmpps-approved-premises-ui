@@ -7,7 +7,6 @@ import {
   PlacementRequestService,
   PlacementService,
   PremisesService,
-  SessionService,
 } from '../../services'
 
 import { DateFormats } from '../../utils/dateUtils'
@@ -19,6 +18,7 @@ import peoplePaths from '../../paths/people'
 import adminPaths from '../../paths/admin'
 import { matchingInformationSummaryRows } from '../../utils/placementRequests/matchingInformationSummaryList'
 import { adminSummary } from '../../utils/placementRequests'
+import { getPageBackLink } from '../../utils/backlinks'
 
 export default class PlacementController {
   constructor(
@@ -27,7 +27,6 @@ export default class PlacementController {
     private readonly placementRequestService: PlacementRequestService,
     private readonly placementService: PlacementService,
     private readonly premisesService: PremisesService,
-    private readonly sessionService: SessionService,
   ) {}
 
   show(activeTab: PlacementTab = 'placement'): RequestHandler {
@@ -38,7 +37,7 @@ export default class PlacementController {
       const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
       const isOfflineApplication = !placement.assessmentId
       const tabItems = placementTabItems(placement, activeTab, isOfflineApplication)
-      const backLink = this.sessionService.getPageBackLink(paths.premises.placements.show.pattern, req, [
+      const backLink = getPageBackLink(paths.premises.placements.show.pattern, req, [
         paths.premises.show.pattern,
         paths.premises.occupancy.day.pattern,
         applicationPaths.applications.show.pattern,

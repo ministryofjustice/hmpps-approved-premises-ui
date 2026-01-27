@@ -38,6 +38,7 @@ import {
 import { healthSideNavigation } from '../../utils/resident/healthUtils'
 import { riskSideNavigation } from '../../utils/resident/riskUtils'
 import { CrnMismatchError } from '../../utils/errors'
+import { getPageBackLink } from '../../utils/backlinks'
 
 export default class ResidentProfileController {
   constructor(
@@ -119,12 +120,19 @@ export default class ResidentProfileController {
         default:
       }
 
+      const backLink = getPageBackLink(
+        paths.resident.show.pattern,
+        req,
+        [paths.premises.show.pattern, paths.premises.occupancy.day.pattern],
+        paths.premises.show({ premisesId: placement.premises.id }),
+      )
+
       return res.render(`manage/resident/residentProfile`, {
         crn,
         placement,
         pageHeading,
         user,
-        backLink: paths.premises.show({ premisesId: placement.premises.id }),
+        backLink,
         tabItems,
         resident: getResidentHeader(placement, personRisks),
         actions: placementActions ? placementActions[0].items : [],

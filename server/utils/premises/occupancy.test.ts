@@ -5,6 +5,8 @@ import {
   type Cas1SpaceBookingCharacteristic,
   Cas1SpaceBookingSummary,
 } from '@approved-premises/api'
+import { createMock } from '@golevelup/ts-jest'
+import type { Request } from 'express'
 import {
   cas1OutOfServiceBedSummaryFactory,
   cas1PremiseCapacityFactory,
@@ -22,6 +24,7 @@ import {
   generateDaySummaryText,
   occupancyCalendar,
   outOfServiceBedTableRows,
+  placementColumnMap,
   placementTableRows,
   tableCaptions,
   tableHeader,
@@ -34,6 +37,7 @@ import config from '../../config'
 import { roomCharacteristicMap } from '../characteristicsUtils'
 import { sortHeader } from '../sortHeader'
 import { canonicalDates } from '../placements'
+import * as premisesUtils from './index'
 
 describe('apOccupancy utils', () => {
   describe('dayStatusFromDayCapacity', () => {
@@ -134,14 +138,13 @@ describe('apOccupancy utils', () => {
               .available()
               .build({ characteristic: characteristic as Cas1SpaceBookingCharacteristic }),
       )
-      const capacityForDay = overbook
+      return overbook
         ? cas1PremiseCapacityForDayFactory.overbooked().build({
             characteristicAvailability,
           })
         : cas1PremiseCapacityForDayFactory.available().build({
             characteristicAvailability,
           })
-      return capacityForDay
     }
 
     it('should generate the text for an premises day with an overbooking on a single characteristic', () => {
@@ -302,11 +305,20 @@ describe('apOccupancy utils', () => {
       )
     }
     it('should generate a list of placement table rows', () => {
+      jest.spyOn(premisesUtils, 'mapPlacementTableRows')
+      const request = createMock<Request>()
+
       const placements = cas1SpaceBookingSummaryFactory.buildList(5, {
         characteristics: ['isArsonSuitable'],
       })
-      const rows = placementTableRows('premises-Id', placements)
+      const rows = placementTableRows('premises-Id', placements, request)
       placements.forEach((placement, index) => checkRow(placement, rows[index]))
+      expect(premisesUtils.mapPlacementTableRows).toHaveBeenCalledWith(
+        placementColumnMap,
+        'premises-Id',
+        placements,
+        request,
+      )
     })
   })
 

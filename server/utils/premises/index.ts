@@ -8,15 +8,25 @@ import type {
   NamedId,
   SortDirection,
 } from '@approved-premises/api'
-import { SelectGroup, SelectOption, SummaryList, TabItem, TableCell, TableRow } from '@approved-premises/ui'
-import { DateFormats } from '../dateUtils'
-import { getTierOrBlank, htmlValue, textValue } from '../applications/helpers'
+import {
+  RequestWithSession,
+  SelectGroup,
+  SelectOption,
+  SummaryList,
+  TabItem,
+  TableCell,
+  TableRow,
+} from '@approved-premises/ui'
+import { Request } from 'express'
+import { getTierOrBlank } from '../applications/helpers'
 import managePaths from '../../paths/manage'
 import { createQueryString, linkTo } from '../utils'
 import { sortHeader } from '../sortHeader'
 import { displayName } from '../personUtils'
 import { canonicalDates, placementStatusCell } from '../placements'
 import { dateCell, htmlCell, textCell } from '../tableUtils'
+import { getRoomCharacteristicLabel } from '../characteristicsUtils'
+import { hasPermission } from '../users'
 
 export { premisesActions } from './premisesActions'
 
@@ -24,26 +34,26 @@ export const summaryListForPremises = (premises: Cas1Premises): SummaryList => {
   return {
     rows: [
       {
-        key: textValue('Code'),
-        value: textValue(premises.apCode),
+        key: textCell('Code'),
+        value: textCell(premises.apCode),
       },
       {
-        key: textValue('Postcode'),
-        value: textValue(premises.postcode),
+        key: textCell('Postcode'),
+        value: textCell(premises.postcode),
       },
       {
-        key: textValue('Number of Beds'),
-        value: textValue(premises.bedCount.toString()),
+        key: textCell('Number of Beds'),
+        value: textCell(premises.bedCount.toString()),
       },
       premises.supportsSpaceBookings
         ? {
-            key: textValue('Available Beds'),
-            value: textValue(premises.availableBeds.toString()),
+            key: textCell('Available Beds'),
+            value: textCell(premises.availableBeds.toString()),
           }
         : null,
       {
-        key: textValue('Out of Service Beds'),
-        value: textValue(premises.outOfServiceBeds.toString()),
+        key: textCell('Out of Service Beds'),
+        value: textCell(premises.outOfServiceBeds.toString()),
       },
     ].filter(Boolean),
   }
@@ -87,12 +97,8 @@ export const cas1PremisesSummaryRadioOptions = (
   })
 
 export const premisesTableHead: TableRow = [
-  {
-    text: 'Name',
-  },
-  {
-    text: 'Code',
-  },
+  textCell('Name'),
+  textCell('Code'),
   {
     text: 'Number of beds',
     format: 'numeric',
@@ -104,9 +110,9 @@ export const premisesTableRows = (premisesSummaries: Array<Cas1PremisesBasicSumm
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((p: Cas1PremisesBasicSummary) => {
       return [
-        htmlValue(linkTo(managePaths.premises.show({ premisesId: p.id }), { text: p.name })),
-        textValue(p.apCode),
-        { ...textValue(p.bedCount.toString()), format: 'numeric' },
+        htmlCell(linkTo(managePaths.premises.show({ premisesId: p.id }), { text: p.name })),
+        textCell(p.apCode),
+        { ...textCell(p.bedCount.toString()), format: 'numeric' },
       ]
     })
 
@@ -148,7 +154,7 @@ export const keyworkersToSelectOptions = (
     })),
 ]
 
-type ColumnField = Cas1SpaceBookingSummarySortField | 'status'
+type ColumnField = Cas1SpaceBookingSummarySortField | 'status' | 'spaceType'
 
 type ColumnDefinition = {
   title: string
@@ -178,7 +184,7 @@ export const placementTableHeader = (
   hrefPrefix: string,
 ): Array<TableCell> => {
   return columnMap[activeTab].map(({ title, fieldName, sortable }: ColumnDefinition) =>
-    sortable ? sortHeader<ColumnField>(title, fieldName, sortBy, sortDirection, hrefPrefix) : textValue(title),
+    sortable ? sortHeader<ColumnField>(title, fieldName, sortBy, sortDirection, hrefPrefix) : textCell(title),
   )
 }
 
@@ -186,27 +192,46 @@ export const placementTableRows = (
   activeTab: PremisesTab,
   premisesId: string,
   placements: Array<Cas1SpaceBookingSummary>,
-  residentLink = false,
+  request?: Request,
+): Array<TableRow> => {
+  return mapPlacementTableRows(columnMap[activeTab], premisesId, placements, request)
+}
+
+export const mapPlacementTableRows = (
+  fields: Array<ColumnDefinition>,
+  premisesId: string,
+  placements: Array<Cas1SpaceBookingSummary>,
+  request: RequestWithSession,
 ): Array<TableRow> =>
   placements.map(placement => {
-    const { id, person, tier, keyWorkerAllocation } = placement
+    const { id, person, tier, keyWorkerAllocation, characteristics } = placement
     const { arrivalDate, departureDate } = canonicalDates(placement)
-    const link = residentLink
-      ? managePaths.resident.tabPersonal.personalDetails({ crn: person.crn, placementId: id })
-      : managePaths.premises.placements.show({
-          premisesId,
-          placementId: id,
-        })
+    const residentPermission =
+      request?.session?.user && hasPermission(request.session.user, ['cas1_ap_resident_profile'])
+    const link =
+      residentPermission && person?.personType === 'FullPersonSummary'
+        ? managePaths.resident.tabPersonal.personalDetails({ crn: person.crn, placementId: id })
+        : managePaths.premises.placements.show({
+            premisesId,
+            placementId: id,
+          })
     const fieldValues: Record<ColumnField, TableCell> = {
-      personName: htmlValue(`<a href="${link}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`),
-      tier: htmlValue(getTierOrBlank(tier)),
-      canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })),
-      canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(departureDate, { format: 'short' })),
-      keyWorkerName: textValue(keyWorkerAllocation?.name || 'Not assigned'),
+      personName: htmlCell(`<a href="${link}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`),
+      tier: htmlCell(getTierOrBlank(tier)),
+      canonicalArrivalDate: dateCell(arrivalDate),
+      canonicalDepartureDate: dateCell(departureDate),
+      keyWorkerName: textCell(keyWorkerAllocation?.name || 'Not assigned'),
       status: placementStatusCell(placement),
+      spaceType: htmlCell(
+        `<ul class="govuk-list govuk-list--compact">${characteristics
+          .map(characteristic => getRoomCharacteristicLabel(characteristic))
+          .filter(Boolean)
+          .map((item: string) => `<li>${item}</li>`)
+          .join('')}</ul>`,
+      ),
     }
 
-    return columnMap[activeTab].map(({ fieldName }: ColumnDefinition) => fieldValues[fieldName])
+    return fields.map(({ fieldName }: ColumnDefinition) => fieldValues[fieldName])
   })
 
 export const localRestrictionsTableRows = (premises: Cas1Premises): Array<TableRow> =>

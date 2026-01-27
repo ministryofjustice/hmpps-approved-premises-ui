@@ -8,16 +8,16 @@ import {
   SortDirection,
 } from '@approved-premises/api'
 import { SelectOption, SummaryListItem, TableCell, TableRow } from '@approved-premises/ui'
+import { Request } from 'express'
 import { DateFormats } from '../dateUtils'
-import { getTierOrBlank, htmlValue, textValue } from '../applications/helpers'
 import managePaths from '../../paths/manage'
 import { summaryListItem } from '../formUtils'
 import { sortHeader } from '../sortHeader'
-import { displayName } from '../personUtils'
 import { joinWithCommas, pluralize } from '../utils'
 import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { getRoomCharacteristicLabel, roomCharacteristicMap } from '../characteristicsUtils'
-import { canonicalDates } from '../placements'
+import { mapPlacementTableRows } from './index'
+import { htmlCell, textCell } from '../tableUtils'
 
 type CalendarDayStatus = 'available' | 'full' | 'overbooked'
 
@@ -196,8 +196,8 @@ export const tableCaptions = (
       }
 }
 
-const itemListHtml = (items: Array<string>): { html: string } =>
-  htmlValue(`<ul class="govuk-list govuk-list--compact">
+const itemListHtml = (items: Array<string>): TableCell =>
+  htmlCell(`<ul class="govuk-list govuk-list--compact">
     ${items.map((item: string) => `<li>${item}</li>`).join('')}
   </ul>
 `)
@@ -235,30 +235,17 @@ export const tableHeader = <T extends string>(
   hrefPrefix?: string,
 ): Array<TableCell> => {
   return columnMap.map(({ title, fieldName, sortable }: ColumnDefinition<T>) =>
-    sortable ? sortHeader<T>(title, fieldName, sortBy, sortDirection, hrefPrefix) : textValue(title),
+    sortable ? sortHeader<T>(title, fieldName, sortBy, sortDirection, hrefPrefix) : textCell(title),
   )
 }
 
-export const placementTableRows = (premisesId: string, placements: Array<Cas1SpaceBookingSummary>): Array<TableRow> =>
-  placements.map(placement => {
-    const { id, person, tier, characteristics } = placement
-    const { arrivalDate, departureDate } = canonicalDates(placement)
-    const fieldValues: Record<PlacementColumnField, TableCell> = {
-      personName: htmlValue(
-        `<a href="${managePaths.premises.placements.show({
-          premisesId,
-          placementId: id,
-        })}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`,
-      ),
-      tier: htmlValue(getTierOrBlank(tier)),
-      canonicalArrivalDate: textValue(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })),
-      canonicalDepartureDate: textValue(DateFormats.isoDateToUIDate(departureDate, { format: 'short' })),
-      spaceType: itemListHtml(
-        characteristics.map(characteristic => getRoomCharacteristicLabel(characteristic)).filter(Boolean),
-      ),
-    }
-    return placementColumnMap.map(({ fieldName }: ColumnDefinition<PlacementColumnField>) => fieldValues[fieldName])
-  })
+export const placementTableRows = (
+  premisesId: string,
+  placements: Array<Cas1SpaceBookingSummary>,
+  request?: Request,
+): Array<TableRow> => {
+  return mapPlacementTableRows(placementColumnMap, premisesId, placements, request)
+}
 
 export const outOfServiceBedTableRows = (
   premisesId: string,
@@ -266,7 +253,7 @@ export const outOfServiceBedTableRows = (
 ): Array<TableRow> => {
   return outOfServiceBeds.map(({ id, bedId, startDate, endDate, characteristics, reason, roomName }) => {
     const fieldValues: Partial<Record<OutOfServiceBedColumnField, TableCell>> = {
-      id: htmlValue(
+      id: htmlCell(
         `<a href="${managePaths.outOfServiceBeds.show({
           premisesId,
           id,
@@ -277,9 +264,9 @@ export const outOfServiceBedTableRows = (
       characteristics: itemListHtml(
         characteristics.map(characteristic => getRoomCharacteristicLabel(characteristic)).filter(Boolean),
       ),
-      startDate: textValue(DateFormats.isoDateToUIDate(startDate, { format: 'short' })),
-      endDate: textValue(DateFormats.isoDateToUIDate(endDate, { format: 'short' })),
-      reason: textValue(reason.name),
+      startDate: textCell(DateFormats.isoDateToUIDate(startDate, { format: 'short' })),
+      endDate: textCell(DateFormats.isoDateToUIDate(endDate, { format: 'short' })),
+      reason: textCell(reason.name),
     }
     return outOfServiceBedColumnMap.map(
       ({ fieldName }: ColumnDefinition<OutOfServiceBedColumnField>) => fieldValues[fieldName],

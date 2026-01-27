@@ -28,7 +28,6 @@ export const controllers = (services: Services) => {
     services.outOfServiceBedService,
     services.premisesService,
     services.apAreaService,
-    services.sessionService,
   )
   const updateOutOfServiceBedsController = new UpdateOutOfServiceBedsController(services.outOfServiceBedService)
   const outOfServiceBedCancellationController = new OutOfServiceBedCancellationController(
@@ -42,7 +41,6 @@ export const controllers = (services: Services) => {
     services.placementRequestService,
     services.placementService,
     services.premisesService,
-    services.sessionService,
   )
   const arrivalsController = new ArrivalsController(services.premisesService, services.placementService)
   const nonArrivalsController = new NonArrivalsController(services.premisesService, services.placementService)
@@ -52,7 +50,7 @@ export const controllers = (services: Services) => {
     services.userService,
   )
   const departuresController = new DeparturesController(services.premisesService, services.placementService)
-  const apOccupancyViewController = new ApOccupancyViewController(services.premisesService, services.sessionService)
+  const apOccupancyViewController = new ApOccupancyViewController(services.premisesService)
   const changesController = new ChangesController(services.placementService, services.premisesService)
   const transfersController = new TransfersController(services.placementService, services.premisesService)
   const plannedTransferController = new PlannedTransferController(

@@ -318,7 +318,7 @@ export default class {
         nextDayLink: getDayLink(daySummary.nextDate),
         ...tableCaptions(daySummary, [], true),
         placementTableHeader: tableHeader<PlacementColumnField>(placementColumnMap, sortBy, sortDirection, hrefPrefix),
-        placementTableRows: placementTableRows(premisesId, daySummary.spaceBookingSummaries),
+        placementTableRows: placementTableRows(premisesId, daySummary.spaceBookingSummaries, req),
         outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
         outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, daySummary.outOfServiceBeds),
       })

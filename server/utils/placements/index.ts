@@ -9,7 +9,7 @@ import {
 } from '@approved-premises/api'
 import { RadioItem, SummaryList, TabItem, TableCell, UserDetails } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
-import { htmlValue, personKeyDetails, textValue } from '../applications/helpers'
+import { personKeyDetails } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
 import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
@@ -24,6 +24,7 @@ import { characteristicsBulletList, roomCharacteristicMap } from '../characteris
 import { StatusTagOptions } from '../statusTag'
 import { PlacementStatusTag } from './statusTag'
 import { detailedStatus, statusTextMap } from './status'
+import { htmlCell, textCell } from '../tableUtils'
 
 const changeRequestStatuses: Record<Cas1ChangeRequestType, string> = {
   placementAppeal: 'Appeal requested',
@@ -266,8 +267,8 @@ const listOtherBookings = (placement: Cas1SpaceBooking): string =>
 export const otherBookings = (placement: Cas1SpaceBooking): SummaryList => ({
   rows: [
     {
-      key: textValue('Other placement bookings at this premises'),
-      value: htmlValue(`<ul class="govuk-list">${listOtherBookings(placement)}</ul>`),
+      key: textCell('Other placement bookings at this premises'),
+      value: htmlCell(`<ul class="govuk-list">${listOtherBookings(placement)}</ul>`),
     },
   ],
 })

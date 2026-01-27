@@ -24,7 +24,7 @@ import {
 } from '../../../testutils/factories'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { createQueryString } from '../../../utils/utils'
-import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../../services'
+import { ApAreaService, OutOfServiceBedService, PremisesService } from '../../../services'
 import { characteristicsBulletList, roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 import {
   CreateOutOfServiceBedBody,
@@ -38,6 +38,7 @@ import {
 import { ValidationError } from '../../../utils/errors'
 import { summaryListItem } from '../../../utils/formUtils'
 import { DateFormats } from '../../../utils/dateUtils'
+import * as backLinks from '../../../utils/backlinks'
 
 jest.mock('../../../utils/getPaginationDetails')
 
@@ -53,14 +54,11 @@ describe('OutOfServiceBedsController', () => {
   const outOfServiceBedService = createMock<OutOfServiceBedService>({})
   const premisesService = createMock<PremisesService>({})
   const apAreaService = createMock<ApAreaService>({})
-  const sessionService = createMock<SessionService>()
-  sessionService.getPageBackLink.mockReturnValue('back/link')
 
   const outOfServiceBedController = new OutOfServiceBedsController(
     outOfServiceBedService,
     premisesService,
     apAreaService,
-    sessionService,
   )
   let premisesId = 'premisesId'
   const outOfServiceBed = outOfServiceBedFactory.build()
@@ -78,7 +76,8 @@ describe('OutOfServiceBedsController', () => {
       },
     })
 
-    sessionService.getPageBackLink.mockReturnValue(backLink)
+    jest.spyOn(backLinks, 'getPageBackLink').mockReturnValue(backLink)
+
     outOfServiceBedService.getOutOfServiceBedReasons.mockResolvedValue(
       outOfServiceBedReasonsJson as Array<Cas1OutOfServiceBedReason>,
     )
@@ -249,7 +248,7 @@ describe('OutOfServiceBedsController', () => {
         actions: outOfServiceBedActions(request.session.user, premisesId, bed.id, outOfServiceBed.id),
         tabs: outOfServiceBedTabs(premisesId, bed.id, outOfServiceBed.id, activeTab),
       })
-      expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
+      expect(backLinks.getPageBackLink).toHaveBeenCalledWith(
         '/manage/premises/:premisesId/beds/:bedId/out-of-service-beds/:id/:tab',
         req,
         [
@@ -306,7 +305,7 @@ describe('OutOfServiceBedsController', () => {
         premisesId,
         perPage: 50,
       })
-      expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
+      expect(backLinks.getPageBackLink).toHaveBeenCalledWith(
         '/manage/premises/:premisesId/out-of-service-beds/:temporality',
         req,
         ['/manage/premises/:premisesId/beds', '/manage/premises/:premisesId'],

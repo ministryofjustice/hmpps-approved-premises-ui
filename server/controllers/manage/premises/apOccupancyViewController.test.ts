@@ -2,7 +2,7 @@ import type { Cas1Premises, Cas1PremisesDaySummary } from '@approved-premises/ap
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { PremisesService, SessionService } from 'server/services'
+import { PremisesService } from 'server/services'
 import { ParsedQs } from 'qs'
 import ApOccupancyViewController from './apOccupancyViewController'
 
@@ -22,9 +22,9 @@ import {
   outOfServiceBedColumnMap,
   outOfServiceBedTableRows,
   placementColumnMap,
-  placementTableRows,
   tableHeader,
 } from '../../../utils/premises/occupancy'
+import * as occupancyUtils from '../../../utils/premises/occupancy'
 import { DateFormats } from '../../../utils/dateUtils'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
@@ -38,15 +38,15 @@ describe('AP occupancyViewController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const premisesService = createMock<PremisesService>({})
-  const sessionService = createMock<SessionService>({})
 
-  const occupancyViewController = new ApOccupancyViewController(premisesService, sessionService)
+  const occupancyViewController = new ApOccupancyViewController(premisesService)
 
   beforeEach(() => {
     jest.resetAllMocks()
     request = createMock<Request>({ user: { token }, params: { premisesId }, flash: jest.fn() })
     response = createMock<Response>({ locals: { user: { permissions: ['cas1_space_booking_list'] } } })
     jest.spyOn(backlinkUtils, 'getPageBackLink').mockReturnValue('back-link')
+    jest.spyOn(occupancyUtils, 'placementTableRows').mockReturnValue([])
     jest.useFakeTimers()
     jest.setSystemTime(new Date('2024-01-01'))
   })
@@ -151,6 +151,7 @@ describe('AP occupancyViewController', () => {
       request.query = queryParameters
       const requestHandler = occupancyViewController.dayView()
       await requestHandler(request, response, next)
+
       return {
         premisesSummary,
         premisesDaySummary,
@@ -177,12 +178,18 @@ describe('AP occupancyViewController', () => {
           'asc',
           '/manage/premises/some-uuid/occupancy/day/2025-01-01',
         ),
-        placementTableRows: placementTableRows(premisesId, premisesDaySummary.spaceBookingSummaries),
+        placementTableRows: [],
         outOfServiceBedCaption: 'Out of service beds on Wed 1 Jan 2025',
         outOfServiceBedTableHeader: tableHeader(outOfServiceBedColumnMap, 'personName', 'asc', ''),
         outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, premisesDaySummary.outOfServiceBeds),
         criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, []),
       })
+
+      expect(occupancyUtils.placementTableRows).toHaveBeenCalledWith(
+        premisesId,
+        premisesDaySummary.spaceBookingSummaries,
+        request,
+      )
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getDaySummary).toHaveBeenCalledWith({
         token,
@@ -229,6 +236,11 @@ describe('AP occupancyViewController', () => {
         bookingsSortDirection: 'desc',
         bookingsCriteriaFilter: ['hasEnSuite'],
       })
+      expect(backlinkUtils.getPageBackLink).toHaveBeenCalledWith(
+        '/manage/premises/:premisesId/placements/:placementId',
+        {},
+        ['/manage/premises/:premisesId/occupancy'],
+      )
     })
   })
 })
