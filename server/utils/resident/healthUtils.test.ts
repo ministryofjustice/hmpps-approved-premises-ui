@@ -65,7 +65,9 @@ describe('healthUtils', () => {
       const result = mentalHealthCards(acctAlerts, riskToSelf)
 
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
-      expect(render).toHaveBeenCalledWith('partials/insetText.njk', { html: 'Imported from DPS, NDelius and OASys' })
+      expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
+        html: 'Imported from Digital Prison Service and OASys',
+      })
 
       expect(result[1].html).toMatchStringIgnoringWhitespace(
         `${tableRow('FA62 OASys risk to self')}Nunjucks template partials/detailsBlock.njk`,
@@ -79,21 +81,18 @@ describe('healthUtils', () => {
       expect(result[4]).toEqual({
         card: { title: { text: 'ACCT alerts' } },
         table: {
-          head: [
-            { text: 'Date created' },
-            { text: 'Description' },
-            { text: 'Expiry date' },
-            { text: 'Alert type' },
-            { text: 'Comment' },
-          ],
+          head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Expiry date' }],
           rows: acctAlerts.map((acctAlert: PersonAcctAlert) => [
-            { text: DateFormats.isoDateToUIDate(acctAlert.dateCreated, { format: 'short' }) },
+            {
+              html: `<span class="govuk-table__cell--nowrap">${DateFormats.isoDateToUIDate(acctAlert.dateCreated, { format: 'short' })}</span>`,
+            },
             { text: acctAlert.description },
-            { text: DateFormats.isoDateToUIDate(acctAlert.dateExpires, { format: 'short' }) },
-            { text: acctAlert.alertTypeDescription },
-            { text: acctAlert.comment },
+            {
+              html: `<span class="govuk-table__cell--nowrap">${DateFormats.isoDateToUIDate(acctAlert.dateExpires, { format: 'short' })}</span>`,
+            },
           ]),
         },
+        topHtml: tableRow('Imported from Digital Prison Service'),
       })
     })
   })

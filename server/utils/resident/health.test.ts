@@ -5,6 +5,7 @@ import { drugAndAlcoholTabController, healthTabController, mentalHealthTabContro
 import { PersonService } from '../../services'
 import { acctAlertFactory, cas1OasysGroupFactory } from '../../testutils/factories'
 import { healthDetailsCards } from './healthUtils'
+import { ErrorWithData } from '../errors'
 
 const mockCardList = [card({ title: 'mock card' })]
 const personService = createMock<PersonService>({})
@@ -16,7 +17,7 @@ const supportingInformation = cas1OasysGroupFactory.supportingInformation().buil
 const riskToSelf = cas1OasysGroupFactory.riskToSelf().build()
 
 describe('Health tab', () => {
-  beforeEach(() => {
+  afterEach(() => {
     jest.resetAllMocks()
   })
 
@@ -34,11 +35,13 @@ describe('Health tab', () => {
   })
 
   describe('mentalHealthTabController', () => {
-    it('should get acctAlerts and then render the cards', async () => {
+    beforeEach(() => {
       jest.spyOn(healthUtils, 'mentalHealthCards').mockReturnValue(mockCardList)
       personService.getAcctAlerts.mockResolvedValue(acctAlerts)
       personService.getOasysAnswers.mockResolvedValue(riskToSelf)
+    })
 
+    it('should get acctAlerts and then render the cards', async () => {
       const result = await mentalHealthTabController({ personService, token, crn })
 
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Mental health' })
@@ -46,6 +49,28 @@ describe('Health tab', () => {
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'riskToSelf')
 
       expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(acctAlerts, riskToSelf)
+    })
+
+    it('should render the page if the oasys response fails', async () => {
+      personService.getOasysAnswers.mockImplementation(async () => {
+        throw new ErrorWithData({ status: 404 })
+      })
+
+      const result = await mentalHealthTabController({ personService, token, crn })
+
+      expect(result).toEqual({ cardList: mockCardList, subHeading: 'Mental health' })
+      expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(acctAlerts, undefined)
+    })
+
+    it('should render the page if the acct alert response fails', async () => {
+      personService.getAcctAlerts.mockImplementation(async () => {
+        throw new ErrorWithData({ status: 404 })
+      })
+
+      const result = await mentalHealthTabController({ personService, token, crn })
+
+      expect(result).toEqual({ cardList: mockCardList, subHeading: 'Mental health' })
+      expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(undefined, riskToSelf)
     })
   })
 

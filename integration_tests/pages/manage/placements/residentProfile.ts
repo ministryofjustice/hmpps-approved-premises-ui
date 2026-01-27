@@ -76,8 +76,10 @@ export default class ResidentProfilePage extends Page {
             this.shouldContainSummaryListItems(card.rows)
           }
           if (card.table) {
-            this.shouldContainTableColumns(card.table.head.map(cell => (cell as TextItem).text))
-            this.shouldContainOrderedTableRows(card.table.rows)
+            cy.get('table:not(.text-table)').within(() => {
+              this.shouldContainTableColumns(card.table.head.map(cell => (cell as TextItem).text))
+              this.shouldContainOrderedTableRows(card.table.rows)
+            })
           }
         })
     }
@@ -111,7 +113,7 @@ export default class ResidentProfilePage extends Page {
     cy.stub(residentUtils, 'insetText')
     cy.stub(residentUtils, 'detailsBody')
 
-    cy.get('.govuk-inset-text').should('contain.text', 'Imported from DPS, NDelius and OASys')
+    cy.get('.govuk-inset-text').should('contain.text', 'Imported from Digital Prison Service and OASys')
 
     const cards = mentalHealthCards(acctAlerts, riskToSelf).slice(1)
     cards.forEach(card => {

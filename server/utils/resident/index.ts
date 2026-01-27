@@ -177,11 +177,13 @@ export const card = ({
   rows,
   table,
   html,
+  topHtml,
 }: {
   title?: string
   rows?: Array<SummaryListItem>
   table?: Table
   html?: string
+  topHtml?: string
 }) =>
   objectClean<SummaryListWithCard>({
     card: title && {
@@ -190,6 +192,7 @@ export const card = ({
     table,
     rows,
     html,
+    topHtml,
   })
 
 export const detailsBody = (summaryText: string, text: string) => {
