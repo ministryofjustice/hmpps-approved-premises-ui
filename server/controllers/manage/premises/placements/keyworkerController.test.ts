@@ -18,6 +18,7 @@ import { placementKeyDetails, renderKeyworkersRadioOptions } from '../../../../u
 import { generateErrorMessages, generateErrorSummary } from '../../../../utils/validation'
 import { keyworkersTableHead, keyworkersTableRows } from '../../../../utils/placements/keyworkers'
 import { pagination } from '../../../../utils/pagination'
+import * as residentUtils from '../../../../utils/resident'
 
 describe('keyworkerController', () => {
   const token = 'SOME_TOKEN'
@@ -34,7 +35,6 @@ describe('keyworkerController', () => {
 
   const premisesId = 'premises-id'
   const placement = cas1SpaceBookingFactory.build({ keyWorkerAllocation: undefined })
-  const uiPlacementPagePath = paths.premises.placements.show({ premisesId, placementId: placement.id })
   const assignKeyworkerPath = paths.premises.placements.keyworker.new({ premisesId, placementId: placement.id })
   const currentKeyworkers = cas1CurrentKeyworkerFactory.buildList(5)
   const errorsAndUserInput = createMock<ErrorsAndUserInput>()
@@ -49,12 +49,14 @@ describe('keyworkerController', () => {
 
     jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue(errorsAndUserInput)
     jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue()
+
+    jest.spyOn(residentUtils, 'returnPath').mockReturnValue('return path')
   })
 
   describe('new', () => {
     const defaultRenderParams = {
       contextKeyDetails: placementKeyDetails(placement),
-      backlink: paths.premises.placements.show({ premisesId, placementId: placement.id }),
+      backlink: 'return path',
       currentKeyworkerName: 'Not assigned',
       keyworkersOptions: renderKeyworkersRadioOptions(currentKeyworkers, placement),
       errors: errorsAndUserInput.errors,
@@ -86,7 +88,6 @@ describe('keyworkerController', () => {
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/assignKeyworker/new', {
         ...defaultRenderParams,
         contextKeyDetails: placementKeyDetails(placementWithKeyworker),
-        backlink: paths.premises.placements.show({ premisesId, placementId: placementWithKeyworker.id }),
         currentKeyworkerName: assignedKeyworker.name,
       })
     })
@@ -202,7 +203,7 @@ describe('keyworkerController', () => {
         heading: 'Keyworker assigned',
         body: `You have assigned ${selectedKeyworkerUser.name} to ${placement.person.crn}`,
       })
-      expect(response.redirect).toHaveBeenCalledWith(uiPlacementPagePath)
+      expect(response.redirect).toHaveBeenCalledWith('return path')
     })
 
     it('returns an error if the page is submitted without a keyworker selected', async () => {

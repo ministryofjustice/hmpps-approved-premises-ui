@@ -1,7 +1,8 @@
 import { Request, Response, TypedRequestHandler } from 'express'
 import type { KeyDetailsArgs, ObjectWithDateParts } from '@approved-premises/ui'
 import type { Cas1SpaceBookingCharacteristic } from '@approved-premises/api'
-import { PlacementRequestService, PlacementService, PremisesService, SessionService } from '../../../services'
+import { getPageBackLink } from '../../../utils/backlinks'
+import { PlacementRequestService, PlacementService, PremisesService } from '../../../services'
 import { occupancySummary, placementDates, validateSpaceBooking } from '../../../utils/match'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { type Calendar, occupancyCalendar } from '../../../utils/match/occupancyCalendar'
@@ -68,7 +69,6 @@ export default class {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly premisesService: PremisesService,
-    private readonly sessionService: SessionService,
     private readonly placementService: PlacementService,
   ) {
     this.formData = new MultiPageFormManager('spaceSearch')
@@ -244,16 +244,12 @@ export default class {
       const { placementRequestId, premisesId, placementId, date } = req.params
       const { criteria = [] } = req.query
 
-      const backLink = this.sessionService.getPageBackLink(
-        paths.v2Match.placementRequests.search.dayOccupancy.pattern,
-        req,
-        [
-          paths.v2Match.placementRequests.search.occupancy.pattern,
-          managePaths.premises.placements.changes.new.pattern,
-          adminPaths.admin.nationalOccupancy.weekView.pattern,
-          adminPaths.admin.nationalOccupancy.premisesView.pattern,
-        ],
-      )
+      const backLink = getPageBackLink(paths.v2Match.placementRequests.search.dayOccupancy.pattern, req, [
+        paths.v2Match.placementRequests.search.occupancy.pattern,
+        managePaths.premises.placements.changes.new.pattern,
+        adminPaths.admin.nationalOccupancy.weekView.pattern,
+        adminPaths.admin.nationalOccupancy.premisesView.pattern,
+      ])
 
       const filteredCriteria = filterRoomLevelCriteria(makeArrayOfType(criteria))
 

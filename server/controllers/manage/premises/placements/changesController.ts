@@ -1,7 +1,8 @@
 import { type Request, RequestHandler, type Response } from 'express'
-import { Cas1SpaceBookingCharacteristic, Cas1UpdateSpaceBooking } from '@approved-premises/api'
+import { Cas1SpaceBooking, Cas1SpaceBookingCharacteristic, Cas1UpdateSpaceBooking } from '@approved-premises/api'
 import { ObjectWithDateParts } from '@approved-premises/ui'
-import { PlacementService, PremisesService, SessionService } from '../../../../services'
+import { getPageBackLink } from '../../../../utils/backlinks'
+import { PlacementService, PremisesService } from '../../../../services'
 import {
   catchValidationErrorOrPropogate,
   errorMessage,
@@ -71,8 +72,27 @@ export default class ChangesController {
   constructor(
     private readonly placementService: PlacementService,
     private readonly premisesService: PremisesService,
-    private readonly sessionService: SessionService,
   ) {}
+
+  private returnPath(req: Request, placement: Cas1SpaceBooking) {
+    const defaultPath = placement.placementRequestId
+      ? adminPaths.admin.placementRequests.show({ placementRequestId: placement.placementRequestId })
+      : managePaths.premises.placements.show({
+          premisesId: placement.premises.id,
+          placementId: placement.id,
+        })
+    return getPageBackLink(
+      managePaths.premises.placements.changes.new.pattern,
+      req,
+      [
+        `${managePaths.resident.show.pattern}{/*tab}`,
+        managePaths.premises.placements.show.pattern,
+        adminPaths.admin.placementRequests.show.pattern,
+        adminPaths.admin.placementRequests.selectPlacement.pattern,
+      ],
+      defaultPath,
+    )
+  }
 
   new(): RequestHandler {
     return async (req: ViewRequest, res: Response) => {
@@ -130,11 +150,7 @@ export default class ChangesController {
       }
 
       return res.render('manage/premises/placements/changes/new', {
-        backlink: this.sessionService.getPageBackLink(managePaths.premises.placements.changes.new.pattern, req, [
-          managePaths.premises.placements.show.pattern,
-          adminPaths.admin.placementRequests.show.pattern,
-          adminPaths.admin.placementRequests.selectPlacement.pattern,
-        ]),
+        backlink: this.returnPath(req, placement),
         contextKeyDetails: placementKeyDetails(placement),
         pageHeading,
         placement,
@@ -248,14 +264,7 @@ export default class ChangesController {
 
         req.flash('success', 'Booking changed successfully')
 
-        const redirectUrl = placement.placementRequestId
-          ? adminPaths.admin.placementRequests.show({ placementRequestId: placement.placementRequestId })
-          : managePaths.premises.placements.show({
-              premisesId,
-              placementId,
-            })
-
-        return res.redirect(redirectUrl)
+        return res.redirect(this.returnPath(req, placement))
       } catch (error) {
         const redirectUrl = `${managePaths.premises.placements.changes.confirm({
           premisesId,

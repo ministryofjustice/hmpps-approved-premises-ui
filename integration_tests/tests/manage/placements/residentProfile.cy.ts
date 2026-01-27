@@ -29,6 +29,7 @@ context('ResidentProfile', () => {
       const personRisks = risksFactory.build({ roshRisks: { status: 'retrieved' }, flags: { status: 'retrieved' } })
       GIVEN('there is an existing placement and the person has a risk profile')
       cy.task('stubSpaceBookingGetWithoutPremises', placement)
+      cy.task('stubSpaceBookingShow', placement)
       cy.task('stubRiskProfile', { person: placement.person, personRisks })
       cy.task('stubFindPerson', { person: placement.person })
       return {
@@ -39,7 +40,7 @@ context('ResidentProfile', () => {
 
     const visitPage = ({ placement, personRisks }, tab?: string): ResidentProfilePage => {
       GIVEN(' that I am signed in as a user with access resident profile')
-      signIn(['manage_resident'])
+      signIn(['manage_resident', 'future_manager'])
 
       WHEN('I visit the resident profile page')
       const page = ResidentProfilePage.visit(placement, personRisks)
@@ -278,6 +279,13 @@ context('ResidentProfile', () => {
       WHEN('I visit the resident profile page with mismatched CRNs')
       THEN('I should see an error')
       ResidentProfilePage.visitCrnMismatch('X123456', placement)
+    })
+
+    it('should allow the user to access actions and return to the profile page on hitting back', () => {
+      const { placement, personRisks } = setup()
+      const page = visitPage({ placement, personRisks }, 'Placement')
+      page.clickAction('Record arrival')
+      page.shouldHaveCorrectReturnPath(placement)
     })
   })
 })

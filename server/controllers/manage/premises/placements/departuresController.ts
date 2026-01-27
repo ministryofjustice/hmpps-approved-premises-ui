@@ -24,12 +24,9 @@ import {
 } from '../../../../utils/placements'
 import MultiPageFormManager from '../../../../utils/multiPageFormManager'
 import { hasPermission } from '../../../../utils/users'
+import { returnPath } from '../../../../utils/resident'
 
-const {
-  premises: {
-    placements: { show: placementPath, departure: departurePaths },
-  },
-} = paths
+const departurePaths = paths.premises.placements.departure
 
 type DepartureFormErrors = {
   [K in keyof DepartureFormData]?: string
@@ -77,8 +74,6 @@ export default class DeparturesController {
     return async (req: Request, res: Response) => {
       const {
         token,
-        premisesId,
-        placementId,
         placement,
         departureFormSessionData,
         errorsAndUserInput: { userInput, ...errorsData },
@@ -89,7 +84,7 @@ export default class DeparturesController {
       )
 
       return res.render('manage/premises/placements/departure/new', {
-        backlink: placementPath({ premisesId, placementId }),
+        backlink: returnPath(req, placement),
         contextKeyDetails: placementKeyDetails(placement),
         placement,
         departureReasons,
@@ -350,7 +345,7 @@ export default class DeparturesController {
 
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { premisesId, placementId } = req.params
+      const { premisesId, placementId, placement } = await this.getFormPageData(req)
 
       const departureData = this.formData.get(placementId, req.session)
       let { notes } = req.body
@@ -382,7 +377,7 @@ export default class DeparturesController {
         await this.formData.remove(placementId, req.session)
         req.flash('success', 'You have recorded this person as departed')
 
-        return res.redirect(placementPath({ premisesId, placementId }))
+        return res.redirect(returnPath(req, placement))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

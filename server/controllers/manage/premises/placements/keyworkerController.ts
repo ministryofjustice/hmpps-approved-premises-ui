@@ -13,6 +13,7 @@ import { placementKeyDetails, renderKeyworkersRadioOptions } from '../../../../u
 import { keyworkersTableHead, keyworkersTableRows } from '../../../../utils/placements/keyworkers'
 import { Pagination, pagination as buildPagination } from '../../../../utils/pagination'
 import { createQueryString } from '../../../../utils/utils'
+import { returnPath } from '../../../../utils/resident'
 
 export default class KeyworkerController {
   constructor(
@@ -38,7 +39,7 @@ export default class KeyworkerController {
 
       return res.render('manage/premises/placements/assignKeyworker/new', {
         contextKeyDetails: placementKeyDetails(placement),
-        backlink: managePaths.premises.placements.show({ premisesId, placementId }),
+        backlink: returnPath(req, placement),
         currentKeyworkerName: placement.keyWorkerAllocation?.name || 'Not assigned',
         keyworkersOptions: renderKeyworkersRadioOptions(currentKeyworkers, placement),
         errors,
@@ -127,7 +128,8 @@ export default class KeyworkerController {
           heading: 'Keyworker assigned',
           body: `You have assigned ${placement.keyWorkerAllocation.name} to ${placement.person.crn}`,
         })
-        return res.redirect(managePaths.premises.placements.show({ premisesId, placementId }))
+
+        return res.redirect(returnPath(req, placement))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

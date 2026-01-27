@@ -1,10 +1,14 @@
 import { SummaryListItem } from '@approved-premises/ui'
 import { render } from 'nunjucks'
 import { FullPerson, RiskEnvelopeStatus } from '@approved-premises/api'
-import { card, detailsBody, getResidentHeader, residentTabItems } from './index'
+import { createMock, DeepMocked } from '@golevelup/ts-jest'
+import { Request } from 'express'
+import { card, detailsBody, getResidentHeader, residentTabItems, returnPath } from './index'
 import { cas1SpaceBookingFactory, risksFactory } from '../../testutils/factories'
 import { canonicalDates, placementStatusTag } from '../placements'
 import { DateFormats } from '../dateUtils'
+
+import * as backlinkUtils from '../backlinks'
 
 jest.mock('nunjucks')
 
@@ -143,6 +147,46 @@ describe('residentsUtils', () => {
           badges: ['<span class="moj-badge moj-badge--black">Unknown RoSH</span>'],
         }),
       )
+    })
+  })
+
+  describe('Link management', () => {
+    const pagePattern = 'page-Pattern'
+
+    const mockRequest = (
+      referer: string,
+      lastStoredReferer: string,
+      permissions?: Array<string>,
+    ): DeepMocked<Request> =>
+      createMock<Request>({
+        headers: { referer },
+        session: {
+          pageReferers: {
+            [pagePattern]: lastStoredReferer,
+          },
+          user: { permissions: permissions || [] },
+        },
+      })
+
+    const matchingReferer = 'http://domain/pattern1/112233445566'
+
+    describe('returnPath', () => {
+      it('should get the session backlink with the correct parameters', () => {
+        const placement = cas1SpaceBookingFactory.build()
+        const request = mockRequest(matchingReferer, undefined)
+        jest.spyOn(backlinkUtils, 'getPageBackLink').mockReturnValue('backlink')
+
+        expect(returnPath(request, placement)).toEqual('backlink')
+        expect(backlinkUtils.getPageBackLink).toHaveBeenCalledWith(
+          '/manage/premises/:premisesId/placements/:placementId:action',
+          {},
+          [
+            '/manage/premises/:premisesId/placements/:placementId',
+            '/manage/resident/:crn/placement/:placementId{/*tab}',
+          ],
+          `/manage/premises/${placement.premises.id}/placements/${placement.id}`,
+        )
+      })
     })
   })
 })

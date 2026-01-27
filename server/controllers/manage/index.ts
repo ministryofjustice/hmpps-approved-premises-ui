@@ -22,11 +22,7 @@ import LocalRestrictionsController from './premises/localRestrictionsController'
 import ResidentProfileController from './residentProfileController'
 
 export const controllers = (services: Services) => {
-  const premisesController = new PremisesController(
-    services.premisesService,
-    services.cruManagementAreaService,
-    services.sessionService,
-  )
+  const premisesController = new PremisesController(services.premisesService, services.cruManagementAreaService)
   const bedsController = new BedsController(services.premisesService)
   const outOfServiceBedsController = new OutOfServiceBedsController(
     services.outOfServiceBedService,
@@ -57,11 +53,7 @@ export const controllers = (services: Services) => {
   )
   const departuresController = new DeparturesController(services.premisesService, services.placementService)
   const apOccupancyViewController = new ApOccupancyViewController(services.premisesService, services.sessionService)
-  const changesController = new ChangesController(
-    services.placementService,
-    services.premisesService,
-    services.sessionService,
-  )
+  const changesController = new ChangesController(services.placementService, services.premisesService)
   const transfersController = new TransfersController(services.placementService, services.premisesService)
   const plannedTransferController = new PlannedTransferController(
     services.placementService,

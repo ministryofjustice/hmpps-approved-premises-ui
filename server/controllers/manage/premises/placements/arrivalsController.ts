@@ -1,6 +1,7 @@
 import { type Request, RequestHandler, type Response } from 'express'
 import { Cas1NewArrival } from '@approved-premises/api'
 import { addDays, isPast, isToday } from 'date-fns'
+import { returnPath } from '../../../../utils/resident'
 import { PremisesService } from '../../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../utils/validation'
 import PlacementService from '../../../../services/placementService'
@@ -28,6 +29,7 @@ export default class ArrivalsController {
       const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
 
       return res.render('manage/premises/placements/arrival', {
+        backlink: returnPath(req, placement),
         contextKeyDetails: placementKeyDetails(placement),
         placement,
         errors,
@@ -81,6 +83,7 @@ export default class ArrivalsController {
         if (Object.keys(errors).length) {
           throw new ValidationError(errors)
         }
+        const placement = await this.premisesService.getPlacement({ token: req.user.token, premisesId, placementId })
 
         const placementArrival: Cas1NewArrival = {
           arrivalTime: timeAddLeadingZero(arrivalTime),
@@ -90,7 +93,7 @@ export default class ArrivalsController {
         await this.placementService.createArrival(req.user.token, premisesId, placementId, placementArrival)
 
         req.flash('success', 'You have recorded this person as arrived')
-        return res.redirect(paths.premises.placements.show({ premisesId, placementId }))
+        return res.redirect(returnPath(req, placement))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

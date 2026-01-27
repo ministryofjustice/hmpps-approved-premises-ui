@@ -35,7 +35,6 @@ export const controllers = (services: Services) => {
   const occupancyViewController = new OccupancyViewController(
     placementRequestService,
     premisesService,
-    sessionService,
     placementService,
   )
   const newPlacementController = new NewPlacementController(placementRequestService)

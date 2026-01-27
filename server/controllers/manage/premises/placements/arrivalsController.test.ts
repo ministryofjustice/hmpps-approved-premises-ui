@@ -12,6 +12,7 @@ import PlacementService from '../../../../services/placementService'
 import { ValidationError } from '../../../../utils/errors'
 import { DateFormats, timeAddLeadingZero } from '../../../../utils/dateUtils'
 import { placementKeyDetails } from '../../../../utils/placements'
+import * as residentUtils from '../../../../utils/resident'
 
 describe('ArrivalsController', () => {
   const token = 'SOME_TOKEN'
@@ -39,6 +40,7 @@ describe('ArrivalsController', () => {
 
     jest.spyOn(validationUtils, 'fetchErrorsAndUserInput')
     jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue(undefined)
+    jest.spyOn(residentUtils, 'returnPath').mockReturnValue('return path')
   })
 
   describe('new', () => {
@@ -53,6 +55,7 @@ describe('ArrivalsController', () => {
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/arrival', {
         placement,
+        backlink: 'return path',
         contextKeyDetails: placementKeyDetails(placement),
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
@@ -107,9 +110,7 @@ describe('ArrivalsController', () => {
         arrivalTime: timeAddLeadingZero(time),
       })
       expect(request.flash).toHaveBeenCalledWith('success', 'You have recorded this person as arrived')
-      expect(response.redirect).toHaveBeenCalledWith(
-        paths.premises.placements.show({ premisesId, placementId: placement.id }),
-      )
+      expect(response.redirect).toHaveBeenCalledWith('return path')
     })
 
     describe('when submitting', () => {

@@ -2,7 +2,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 import { Cas1SpaceBookingCharacteristic, Cas1UpdateSpaceBooking } from '@approved-premises/api'
 import { addDays } from 'date-fns'
-import { PlacementService, PremisesService, SessionService } from '../../../../services'
+import { PlacementService, PremisesService } from '../../../../services'
 import {
   cas1PremiseCapacityFactory,
   cas1PremisesFactory,
@@ -12,7 +12,6 @@ import ChangesController from './changesController'
 import { occupancySummary, spaceBookingConfirmationSummaryListRows } from '../../../../utils/match'
 import { occupancyCalendar } from '../../../../utils/match/occupancyCalendar'
 import managePaths from '../../../../paths/manage'
-import adminPaths from '../../../../paths/admin'
 import { placementKeyDetails, placementOverviewSummary } from '../../../../utils/placements'
 import { filterRoomLevelCriteria } from '../../../../utils/match/spaceSearch'
 import { createQueryString, makeArrayOfType } from '../../../../utils/utils'
@@ -20,6 +19,7 @@ import { durationSelectOptions } from '../../../../utils/match/occupancy'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { DateFormats } from '../../../../utils/dateUtils'
 import * as validationUtils from '../../../../utils/validation'
+import * as backlinkUtils from '../../../../utils/backlinks'
 import { ValidationError } from '../../../../utils/errors'
 import { roomCharacteristicMap, roomCharacteristicsInlineList } from '../../../../utils/characteristicsUtils'
 
@@ -33,8 +33,7 @@ describe('changesController', () => {
 
   const placementService = createMock<PlacementService>()
   const premisesService = createMock<PremisesService>()
-  const sessionService = createMock<SessionService>()
-  const changesController = new ChangesController(placementService, premisesService, sessionService)
+  const changesController = new ChangesController(placementService, premisesService)
 
   const premises = cas1PremisesFactory.build()
   const placement = cas1SpaceBookingFactory
@@ -55,7 +54,7 @@ describe('changesController', () => {
     placementService.getPlacement.mockResolvedValue(placement)
     premisesService.find.mockResolvedValue(premises)
     premisesService.getCapacity.mockResolvedValue(capacity)
-    sessionService.getPageBackLink.mockReturnValue('/backlink')
+    jest.spyOn(backlinkUtils, 'getPageBackLink').mockReturnValue('/backlink')
     request = createMock<Request>({
       user: { token },
       params,
@@ -78,14 +77,16 @@ describe('changesController', () => {
       )}`
       const expectedDuration = 31
 
-      expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
+      expect(backlinkUtils.getPageBackLink).toHaveBeenCalledWith(
         '/manage/premises/:premisesId/placements/:placementId/changes/new',
         request,
         [
+          '/manage/resident/:crn/placement/:placementId{/*tab}',
           '/manage/premises/:premisesId/placements/:placementId',
           '/admin/placement-requests/:placementRequestId',
           '/admin/placement-requests/:placementRequestId/select-placement',
         ],
+        `/admin/placement-requests/${placement.placementRequestId}`,
       )
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
       expect(premisesService.getCapacity).toHaveBeenCalledWith(token, premises.id, {
@@ -389,9 +390,6 @@ describe('changesController', () => {
         departureDate: '2025-07-05',
         characteristics: ['isSuitedForSexOffenders', 'isStepFreeDesignated'],
       }
-      const expectedRedirectUrl = adminPaths.admin.placementRequests.show({
-        placementRequestId: placement.placementRequestId,
-      })
 
       expect(placementService.updatePlacement).toHaveBeenCalledWith(
         token,
@@ -401,7 +399,7 @@ describe('changesController', () => {
       )
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, params.placementId)
       expect(mockFlash).toHaveBeenCalledWith('success', 'Booking changed successfully')
-      expect(response.redirect).toHaveBeenCalledWith(expectedRedirectUrl)
+      expect(response.redirect).toHaveBeenCalledWith('/backlink')
     })
 
     it('redirects the user to the placement for an offline placement', async () => {
@@ -410,13 +408,8 @@ describe('changesController', () => {
 
       await changesController.create()({ ...request, body }, response, next)
 
-      const expectedRedirectUrl = managePaths.premises.placements.show({
-        premisesId: premises.id,
-        placementId: placement.id,
-      })
-
       expect(mockFlash).toHaveBeenCalledWith('success', 'Booking changed successfully')
-      expect(response.redirect).toHaveBeenCalledWith(expectedRedirectUrl)
+      expect(response.redirect).toHaveBeenCalledWith('/backlink')
     })
 
     it('updates the placement with empty criteria', async () => {
