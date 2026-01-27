@@ -113,7 +113,7 @@ export default class ResidentProfilePage extends Page {
     cy.stub(residentUtils, 'insetText')
     cy.stub(residentUtils, 'detailsBody')
 
-    cy.get('.govuk-inset-text').should('contain.text', 'Imported from DPS, NDelius and OASys')
+    cy.get('.govuk-inset-text').should('contain.text', 'Imported from Digital Prison Service and OASys')
 
     const cards = mentalHealthCards(acctAlerts, riskToSelf).slice(1)
     cards.forEach(card => {

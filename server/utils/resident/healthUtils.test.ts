@@ -65,7 +65,9 @@ describe('healthUtils', () => {
       const result = mentalHealthCards(acctAlerts, riskToSelf)
 
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
-      expect(render).toHaveBeenCalledWith('partials/insetText.njk', { html: 'Imported from DPS, NDelius and OASys' })
+      expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
+        html: 'Imported from Digital Prison Service and OASys',
+      })
 
       expect(result[1].html).toMatchStringIgnoringWhitespace(
         `${tableRow('FA62 OASys risk to self')}Nunjucks template partials/detailsBlock.njk`,
@@ -90,7 +92,7 @@ describe('healthUtils', () => {
             },
           ]),
         },
-        topHtml: tableRow('Imported from DPS'),
+        topHtml: tableRow('Imported from Digital Prison Service'),
       })
     })
   })
