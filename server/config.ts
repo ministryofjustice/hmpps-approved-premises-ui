@@ -49,6 +49,7 @@ export default {
   staticResourceCacheDuration: 20,
   flags: {
     maintenanceMode: getFlag('IN_MAINTENANCE_MODE'),
+    plannedMaintenance: getFlag('PLANNED_MAINTENANCE_BANNER'),
     oasysDisabled: getFlag('OASYS_DISABLED'),
     pocEnabled: getFlag('ENABLE_POC'),
     oneApplication: getFlag('ONE_APPLICATION'),

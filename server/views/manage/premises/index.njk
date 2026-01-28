@@ -9,6 +9,8 @@
 
 {% block content %}
 
+    {% include 'partials/plannedMaintenanceBanner.njk' %}
+
     <h1 class="govuk-heading-l">List of Approved Premises</h1>
 
     {% call filterWrapper('Filter') %}
