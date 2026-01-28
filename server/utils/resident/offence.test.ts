@@ -1,7 +1,7 @@
 import { createMock } from '@golevelup/ts-jest'
 import { Adjudication, Licence } from '@approved-premises/api'
-import { offencesTabCards } from './sentenceUtils'
-import { sentenceLicenceTabController, sentenceOffencesTabController, sentencePrisonTabController } from './sentence'
+import { offencesTabCards } from './offenceUtils'
+import { offenceLicenceTabController, offenceOffencesTabController, offencePrisonTabController } from './offence'
 import {
   activeOffenceFactory,
   adjudicationFactory,
@@ -9,7 +9,7 @@ import {
   licenceFactory,
   csraSummaryFactory,
 } from '../../testutils/factories'
-import * as sentenceUtils from './sentenceUtils'
+import * as offenceUtils from './offenceUtils'
 import { PersonService } from '../../services'
 import { ErrorWithData } from '../errors'
 import { fullPersonFactory } from '../../testutils/factories/person'
@@ -31,14 +31,14 @@ describe('sentenceTabController', () => {
     activeOffenceFactory.build({ mainOffence: true }),
   ]
 
-  describe('sentenceOffencesTabController', () => {
-    it('should render the sentenceOffencesTab card list', async () => {
+  describe('offenceOffencesTabController', () => {
+    it('should render the offenceOffencesTab card list', async () => {
       const offenceDetails = cas1OasysGroupFactory.offenceDetails().build()
       personService.getOasysAnswers.mockResolvedValue(offenceDetails)
       personService.getOffences.mockResolvedValue(offences)
 
-      expect(await sentenceOffencesTabController({ personService, token, crn })).toEqual({
-        subHeading: 'Offence and sentence',
+      expect(await offenceOffencesTabController({ personService, token, crn })).toEqual({
+        subHeading: 'Offence',
         cardList: offencesTabCards(offences, offenceDetails),
       })
 
@@ -46,12 +46,12 @@ describe('sentenceTabController', () => {
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'offenceDetails')
     })
 
-    it('should render the sentenceOffencesTab card list if there is no oasys record and no offences', async () => {
+    it('should render the offenceOffencesTab card list if there is no oasys record and no offences', async () => {
       personService.getOasysAnswers.mockImplementation(mockService404)
       personService.getOffences.mockImplementation(mockService404)
 
-      expect(await sentenceOffencesTabController({ personService, token, crn })).toEqual({
-        subHeading: 'Offence and sentence',
+      expect(await offenceOffencesTabController({ personService, token, crn })).toEqual({
+        subHeading: 'Offence',
         cardList: offencesTabCards(undefined, undefined),
       })
 
@@ -60,7 +60,7 @@ describe('sentenceTabController', () => {
     })
   })
 
-  describe('sentencePrisonTabController', () => {
+  describe('offencePrisonTabController', () => {
     it('should render the prison side-tab', async () => {
       const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
       const csraSummaries = csraSummaryFactory.buildList(3)
@@ -70,13 +70,13 @@ describe('sentenceTabController', () => {
       personService.csraSummaries.mockResolvedValue(csraSummaries)
       personService.findByCrn.mockResolvedValue(person)
 
-      jest.spyOn(sentenceUtils, 'prisonCards').mockReturnValue([])
+      jest.spyOn(offenceUtils, 'prisonCards').mockReturnValue([])
 
-      expect(await sentencePrisonTabController({ personService, token, crn })).toEqual({
+      expect(await offencePrisonTabController({ personService, token, crn })).toEqual({
         cardList: [],
         subHeading: 'Prison',
       })
-      expect(sentenceUtils.prisonCards).toHaveBeenCalledWith(adjudications, csraSummaries, person)
+      expect(offenceUtils.prisonCards).toHaveBeenCalledWith(adjudications, csraSummaries, person)
       expect(personService.getAdjudications).toHaveBeenCalledWith(token, crn)
       expect(personService.csraSummaries).toHaveBeenCalledWith(token, crn)
       expect(personService.findByCrn).toHaveBeenCalledWith(token, crn)
@@ -87,22 +87,22 @@ describe('sentenceTabController', () => {
       personService.csraSummaries.mockImplementation(mockService404)
       personService.findByCrn.mockImplementation(mockService404)
 
-      jest.spyOn(sentenceUtils, 'prisonCards').mockReturnValue([])
+      jest.spyOn(offenceUtils, 'prisonCards').mockReturnValue([])
 
-      expect(await sentencePrisonTabController({ personService, token, crn })).toEqual({
+      expect(await offencePrisonTabController({ personService, token, crn })).toEqual({
         cardList: [],
         subHeading: 'Prison',
       })
 
-      expect(sentenceUtils.prisonCards).toHaveBeenCalledWith(undefined, undefined, undefined)
+      expect(offenceUtils.prisonCards).toHaveBeenCalledWith(undefined, undefined, undefined)
       expect(personService.getAdjudications).toHaveBeenCalledWith(token, crn)
       expect(personService.csraSummaries).toHaveBeenCalledWith(token, crn)
     })
   })
 
-  describe('sentenceLicenceTabController', () => {
+  describe('offenceLicenceTabController', () => {
     beforeEach(() => {
-      jest.spyOn(sentenceUtils, 'licenseCards').mockReturnValue([])
+      jest.spyOn(offenceUtils, 'licenseCards').mockReturnValue([])
     })
 
     it('should render the licence side-tab', async () => {
@@ -110,24 +110,24 @@ describe('sentenceTabController', () => {
 
       personService.licenceDetails.mockResolvedValue(licence)
 
-      expect(await sentenceLicenceTabController({ personService, token, crn })).toEqual({
+      expect(await offenceLicenceTabController({ personService, token, crn })).toEqual({
         cardList: [],
         subHeading: 'Licence',
       })
 
-      expect(sentenceUtils.licenseCards).toHaveBeenCalledWith(licence)
+      expect(offenceUtils.licenseCards).toHaveBeenCalledWith(licence)
       expect(personService.licenceDetails).toHaveBeenCalledWith(token, crn)
     })
 
     it('should render the licence side-tab when external call returns 404', async () => {
       personService.licenceDetails.mockImplementation(mockService404)
 
-      expect(await sentenceLicenceTabController({ personService, token, crn })).toEqual({
+      expect(await offenceLicenceTabController({ personService, token, crn })).toEqual({
         cardList: [],
         subHeading: 'Licence',
       })
 
-      expect(sentenceUtils.licenseCards).toHaveBeenCalledWith(undefined)
+      expect(offenceUtils.licenseCards).toHaveBeenCalledWith(undefined)
       expect(personService.licenceDetails).toHaveBeenCalledWith(token, crn)
     })
   })

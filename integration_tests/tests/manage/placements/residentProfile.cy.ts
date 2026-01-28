@@ -166,7 +166,7 @@ context('ResidentProfile', () => {
       page.shouldShowAllApPlacements(spaceBookings)
     })
 
-    it('should show the sentence tab', () => {
+    it('should show the offence tab', () => {
       const offences = activeOffenceFactory.buildList(3)
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
       const adjudications = adjudicationFactory.buildList(5)
@@ -181,10 +181,10 @@ context('ResidentProfile', () => {
       cy.task('stubCsra', { person: placement.person, csraSummaries })
       cy.task('stubFindPerson', { person: placement.person })
 
-      const page = visitPage({ placement, personRisks }, 'Sentence')
+      const page = visitPage({ placement, personRisks }, 'Offence')
 
-      AND('the Sentence tab should be selected')
-      page.shouldHaveActiveTab('Sentence')
+      AND('the Offence tab should be selected')
+      page.shouldHaveActiveTab('Offence')
       AND('the Offences information should be shown')
       page.shouldShowOffencesInformation(offences, oasysOffenceDetails)
 
@@ -250,10 +250,10 @@ context('ResidentProfile', () => {
       page.shouldHaveActiveTab('Risk')
       cy.contains('No OASys risk assessment for person added')
 
-      WHEN('I select the sentence tab')
-      page.clickTab('Sentence')
-      THEN('The Sentence tab should be selected')
-      page.shouldHaveActiveTab('Sentence')
+      WHEN('I select the offence tab')
+      page.clickTab('Offence')
+      THEN('The Offence tab should be selected')
+      page.shouldHaveActiveTab('Offence')
       cy.contains('No offences found')
       cy.contains('OASys question 2.1 not available')
 

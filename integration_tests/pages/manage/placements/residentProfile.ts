@@ -20,7 +20,7 @@ import * as residentUtils from '../../../../server/utils/resident'
 
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
-import { licenseCards, offencesTabCards, prisonCards } from '../../../../server/utils/resident/sentenceUtils'
+import { licenseCards, offencesTabCards, prisonCards } from '../../../../server/utils/resident/offenceUtils'
 import { placementDetailsCards, allApPlacementsTabData } from '../../../../server/utils/resident/placementUtils'
 import { contactsCardList, personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
 import { AND, THEN, WHEN } from '../../../helpers'
@@ -128,7 +128,6 @@ export default class ResidentProfilePage extends Page {
     this.shouldShowCard(cards[1])
     this.shouldShowCard(cards[2], false)
     this.shouldShowCard(cards[3], false)
-    this.shouldShowCard(cards[4])
   }
 
   shouldShowLicenceInformation(licence: Licence) {

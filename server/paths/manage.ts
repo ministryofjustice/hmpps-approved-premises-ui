@@ -131,12 +131,12 @@ const paths = {
     tabRisk: {
       riskDetails: residentPath.path('risk').path('riskDetails'),
     },
-    tabSentence: {
-      offence: residentPath.path('sentence').path('offence'),
-      licence: residentPath.path('sentence').path('licence'),
-      orders: residentPath.path('sentence').path('orders'),
-      parole: residentPath.path('sentence').path('parole'),
-      prison: residentPath.path('sentence').path('prison'),
+    tabOffence: {
+      offence: residentPath.path('offence').path('offence'),
+      licence: residentPath.path('offence').path('licence'),
+      orders: residentPath.path('offence').path('orders'),
+      parole: residentPath.path('offence').path('parole'),
+      prison: residentPath.path('offence').path('prison'),
     },
     tabEnforcement: residentPath.path('enforcement'),
   },

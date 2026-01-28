@@ -27,12 +27,12 @@ import {
 import { sentenceCase } from '../utils'
 import { dateCell, htmlCell, textCell } from '../tableUtils'
 
-export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
-  const basePath = paths.resident.tabSentence
+export const offenceSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
+  const basePath = paths.resident.tabOffence
   return [
     {
-      text: 'Offence and sentence',
-      href: paths.resident.tabSentence.offence({ crn, placementId }),
+      text: 'Offence',
+      href: paths.resident.tabOffence.offence({ crn, placementId }),
       active: subTab === 'offence',
     },
     { text: 'Licence', href: basePath.licence({ crn, placementId }), active: subTab === 'licence' },
@@ -123,24 +123,10 @@ export const oasysOffenceCards = (oasysAnswers: Cas1OASysGroup): Array<SummaryLi
   card({ title: 'Previous behaviours', rows: [oasysAnswer(oasysAnswers, '2.12', 'Previous behaviours')] }),
 ]
 
-export const sentenceSummaryList = () => {
-  return [
-    summaryListItem('Sentence type', 'TBA'),
-    summaryListItem('Sentence length', 'TBA'),
-    summaryListItem('Sentence start date', 'TBA'),
-    summaryListItem('Sentence end date', 'TBA'),
-    summaryListItem('NDelius Event number', 'TBA'),
-  ]
-}
-
 export const offencesTabCards = (
   offences: Array<ActiveOffence>,
   oasysAnswers: Cas1OASysGroup,
-): Array<SummaryListWithCard> => [
-  ...offenceCards(offences),
-  ...oasysOffenceCards(oasysAnswers),
-  card({ title: 'Sentence information', rows: sentenceSummaryList() }),
-]
+): Array<SummaryListWithCard> => [...offenceCards(offences), ...oasysOffenceCards(oasysAnswers)]
 
 export const licenseCards = (licence: Licence): Array<SummaryListWithCard> => {
   if (!licence) return [card({ html: insetText('No licence available') })]

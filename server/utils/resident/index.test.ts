@@ -45,8 +45,8 @@ describe('residentsUtils', () => {
         },
         {
           active: false,
-          href: `${baseUrl}sentence/offence`,
-          text: 'Sentence',
+          href: `${baseUrl}offence/offence`,
+          text: 'Offence',
         },
         {
           active: false,

@@ -5,7 +5,7 @@ import { Cas1SpaceBooking, PersonRisks } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { placementSideNavigation } from '../../utils/resident/placement'
 import { personalSideNavigation } from '../../utils/resident/personalUtils'
-import { sentenceSideNavigation } from '../../utils/resident/sentenceUtils'
+import { offenceSideNavigation } from '../../utils/resident/offenceUtils'
 import { ApplicationService, PersonService, PlacementService } from '../../services'
 
 import paths from '../../paths/manage'
@@ -14,7 +14,7 @@ import ResidentProfileController from './residentProfileController'
 import { cas1SpaceBookingFactory, personFactory, risksFactory } from '../../testutils/factories'
 import { TabData, card, getResidentHeader, ResidentProfileTab, residentTabItems, tabLabels } from '../../utils/resident'
 import * as riskTabUtils from '../../utils/resident/risk'
-import * as sentenceTabUtils from '../../utils/resident/sentence'
+import * as offenceTabUtils from '../../utils/resident/offence'
 import * as personalTabUtils from '../../utils/resident/personal'
 import * as placementTabUtils from '../../utils/resident/placement'
 import { CrnMismatchError, ErrorWithData } from '../../utils/errors'
@@ -97,7 +97,7 @@ describe('residentProfileController', () => {
     it('should render the Sentence -> Offence tab', async () => {
       const { request, response, placement, personRisks } = setUp()
 
-      const tabController = jest.spyOn(sentenceTabUtils, 'sentenceOffencesTabController').mockResolvedValue(tabData)
+      const tabController = jest.spyOn(offenceTabUtils, 'offenceOffencesTabController').mockResolvedValue(tabData)
 
       await residentProfileController.show('sentence', 'offence')(request, response, next)
 
@@ -105,9 +105,9 @@ describe('residentProfileController', () => {
         'manage/resident/residentProfile',
         {
           ...renderParameters(placement, personRisks, 'sentence'),
-          subHeading: 'Offence and sentence',
+          subHeading: 'Offence',
           tabItems: residentTabItems(placement, 'sentence'),
-          sideNavigation: sentenceSideNavigation('offence', crn, placement.id),
+          sideNavigation: offenceSideNavigation('offence', crn, placement.id),
           ...tabData,
         },
       ])

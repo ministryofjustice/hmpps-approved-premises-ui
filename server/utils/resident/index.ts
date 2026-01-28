@@ -85,7 +85,7 @@ export const tabLabels: Record<
   health: { label: 'Health' },
   placement: { label: 'Placement' },
   risk: { label: 'Risk' },
-  sentence: { label: 'Sentence' },
+  sentence: { label: 'Offence' },
   enforcement: { label: 'Enforcement' },
 }
 
@@ -103,7 +103,7 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
       case 'risk':
         return pathRoot.tabRisk.riskDetails(pathParams)
       case 'sentence':
-        return pathRoot.tabSentence.offence(pathParams)
+        return pathRoot.tabOffence.offence(pathParams)
       case 'enforcement':
         return pathRoot.tabEnforcement(pathParams)
       default:
