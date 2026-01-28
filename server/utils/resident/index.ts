@@ -103,7 +103,7 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
       case 'risk':
         return pathRoot.tabRisk.riskDetails(pathParams)
       case 'sentence':
-        return pathRoot.tabOffence.offence(pathParams)
+        return pathRoot.tabSentence.offence(pathParams)
       case 'enforcement':
         return pathRoot.tabEnforcement(pathParams)
       default:

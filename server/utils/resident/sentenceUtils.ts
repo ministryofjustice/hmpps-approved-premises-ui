@@ -27,12 +27,12 @@ import {
 import { sentenceCase } from '../utils'
 import { dateCell, htmlCell, textCell } from '../tableUtils'
 
-export const offenceSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
-  const basePath = paths.resident.tabOffence
+export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
+  const basePath = paths.resident.tabSentence
   return [
     {
       text: 'Offence',
-      href: paths.resident.tabOffence.offence({ crn, placementId }),
+      href: paths.resident.tabSentence.offence({ crn, placementId }),
       active: subTab === 'offence',
     },
     { text: 'Licence', href: basePath.licence({ crn, placementId }), active: subTab === 'licence' },

@@ -186,23 +186,23 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })
-  get(paths.resident.tabOffence.offence.pattern, residentProfileController.show('sentence', 'offence'), {
+  get(paths.resident.tabSentence.offence.pattern, residentProfileController.show('sentence', 'offence'), {
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })
-  get(paths.resident.tabOffence.licence.pattern, residentProfileController.show('sentence', 'licence'), {
+  get(paths.resident.tabSentence.licence.pattern, residentProfileController.show('sentence', 'licence'), {
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })
-  get(paths.resident.tabOffence.orders.pattern, residentProfileController.show('sentence', 'orders'), {
+  get(paths.resident.tabSentence.orders.pattern, residentProfileController.show('sentence', 'orders'), {
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })
-  get(paths.resident.tabOffence.parole.pattern, residentProfileController.show('sentence', 'parole'), {
+  get(paths.resident.tabSentence.parole.pattern, residentProfileController.show('sentence', 'parole'), {
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })
-  get(paths.resident.tabOffence.prison.pattern, residentProfileController.show('sentence', 'prison'), {
+  get(paths.resident.tabSentence.prison.pattern, residentProfileController.show('sentence', 'prison'), {
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })

@@ -15,11 +15,11 @@ import {
 } from '../../utils/resident'
 
 import {
-  offenceLicenceTabController,
-  offenceOffencesTabController,
-  offencePrisonTabController,
-} from '../../utils/resident/offence'
-import { offenceSideNavigation } from '../../utils/resident/offenceUtils'
+  sentenceLicenceTabController,
+  sentenceOffencesTabController,
+  sentencePrisonTabController,
+} from '../../utils/resident/sentence'
+import { sentenceSideNavigation } from '../../utils/resident/sentenceUtils'
 import { riskTabController } from '../../utils/resident/risk'
 import { personalSideNavigation } from '../../utils/resident/personalUtils'
 import { contactsTabController, personalDetailsTabController } from '../../utils/resident/personal'
@@ -112,10 +112,10 @@ export default class ResidentProfileController {
           tabData = await riskTabController(tabParameters)
           break
         case 'sentence':
-          sideNavigation = offenceSideNavigation(subTab, crn, placementId)
-          if (subTab === 'offence') tabData = await offenceOffencesTabController(tabParameters)
-          if (subTab === 'licence') tabData = await offenceLicenceTabController(tabParameters)
-          if (subTab === 'prison') tabData = await offencePrisonTabController(tabParameters)
+          sideNavigation = sentenceSideNavigation(subTab, crn, placementId)
+          if (subTab === 'offence') tabData = await sentenceOffencesTabController(tabParameters)
+          if (subTab === 'licence') tabData = await sentenceLicenceTabController(tabParameters)
+          if (subTab === 'prison') tabData = await sentencePrisonTabController(tabParameters)
           break
         default:
       }

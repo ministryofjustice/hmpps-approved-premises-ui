@@ -5,12 +5,12 @@ import { CsraClassification, csraClassificationMapping, ResidentProfileSubTab } 
 import {
   licenseCards,
   offenceCards,
-  offenceSideNavigation,
+  sentenceSideNavigation,
   additionalOffencesRows,
   offencesTabCards,
   csraRows,
-} from './offenceUtils'
-import * as offenceFns from './offenceUtils'
+} from './sentenceUtils'
+import * as sentenceFns from './sentenceUtils'
 import {
   activeOffenceFactory,
   adjudicationFactory,
@@ -51,13 +51,13 @@ describe('sentence', () => {
     ;(render as jest.Mock).mockReturnValue('rendered-output')
   })
 
-  describe('offenceSideNavigation', () => {
-    it('Builds the side navigation for the offence tab', () => {
+  describe('sentenceSideNavigation', () => {
+    it('Builds the side navigation for the sentence tab', () => {
       const subTab: ResidentProfileSubTab = 'offence'
       const placement = cas1SpaceBookingFactory.build()
-      const basePath: string = `/manage/resident/${crn}/placement/${placement.id}/offence/`
+      const basePath: string = `/manage/resident/${crn}/placement/${placement.id}/sentence/`
 
-      expect(offenceSideNavigation(subTab, crn, placement.id)).toEqual([
+      expect(sentenceSideNavigation(subTab, crn, placement.id)).toEqual([
         {
           active: true,
           href: `${basePath}offence`,
@@ -147,7 +147,7 @@ describe('sentence', () => {
 
   describe('oasysOffenceCards', () => {
     it('renders the oasys offences cards when there is a valid assessment', () => {
-      expect(offenceFns.oasysOffenceCards(oasysAnswers)).toEqual([
+      expect(sentenceFns.oasysOffenceCards(oasysAnswers)).toEqual([
         {
           card: { title: { text: 'Offence analysis' } },
           rows: [
@@ -239,19 +239,19 @@ describe('sentence', () => {
 
   describe('offencesTabCards', () => {
     it('should render the offence cards', () => {
-      jest.spyOn(offenceFns, 'offenceCards').mockReturnValue([])
-      jest.spyOn(offenceFns, 'oasysOffenceCards').mockReturnValue([])
+      jest.spyOn(sentenceFns, 'offenceCards').mockReturnValue([])
+      jest.spyOn(sentenceFns, 'oasysOffenceCards').mockReturnValue([])
 
       expect(offencesTabCards(offences, oasysAnswers)).toEqual([])
-      expect(offenceFns.offenceCards).toHaveBeenCalledWith(offences)
-      expect(offenceFns.oasysOffenceCards).toHaveBeenCalledWith(oasysAnswers)
+      expect(sentenceFns.offenceCards).toHaveBeenCalledWith(offences)
+      expect(sentenceFns.oasysOffenceCards).toHaveBeenCalledWith(oasysAnswers)
     })
   })
 
-  describe('offenceSideNavigation', () => {
+  describe('sentenceSideNavigation', () => {
     it('should render the side navigation', () => {
-      const baseUrl = '/manage/resident/crn/placement/placementId/offence/'
-      expect(offenceSideNavigation('licence', 'crn', 'placementId')).toEqual([
+      const baseUrl = '/manage/resident/crn/placement/placementId/sentence/'
+      expect(sentenceSideNavigation('licence', 'crn', 'placementId')).toEqual([
         { active: false, href: `${baseUrl}offence`, text: 'Offence' },
         { active: true, href: `${baseUrl}licence`, text: 'Licence' },
         { active: false, href: `${baseUrl}orders`, text: 'Orders' },
@@ -325,7 +325,7 @@ describe('sentence', () => {
     it('should render the adjudications table rows', () => {
       const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
 
-      expect(offenceFns.adjudicationRows(adjudications)).toEqual([
+      expect(sentenceFns.adjudicationRows(adjudications)).toEqual([
         [
           { text: DateFormats.isoDateToUIDate(adjudications[0].reportedAt, { format: 'short' }) },
           { text: adjudications[0].offenceDescription },
@@ -344,10 +344,10 @@ describe('sentence', () => {
       const csraSummaries = csraSummaryFactory.buildList(2)
       const fullPerson = fullPersonFactory.build()
 
-      jest.spyOn(offenceFns, 'adjudicationRows').mockReturnValue([])
-      jest.spyOn(offenceFns, 'csraRows').mockReturnValue([])
+      jest.spyOn(sentenceFns, 'adjudicationRows').mockReturnValue([])
+      jest.spyOn(sentenceFns, 'csraRows').mockReturnValue([])
 
-      const result = offenceFns.prisonCards(adjudications, csraSummaries, fullPerson)
+      const result = sentenceFns.prisonCards(adjudications, csraSummaries, fullPerson)
 
       expect(result).toEqual([
         {
@@ -373,7 +373,7 @@ describe('sentence', () => {
           },
         },
       ])
-      expect(offenceFns.adjudicationRows).toHaveBeenCalledWith(adjudications)
+      expect(sentenceFns.adjudicationRows).toHaveBeenCalledWith(adjudications)
     })
   })
 })

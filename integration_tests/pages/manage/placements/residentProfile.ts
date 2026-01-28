@@ -20,7 +20,7 @@ import * as residentUtils from '../../../../server/utils/resident'
 
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
-import { licenseCards, offencesTabCards, prisonCards } from '../../../../server/utils/resident/offenceUtils'
+import { licenseCards, offencesTabCards, prisonCards } from '../../../../server/utils/resident/sentenceUtils'
 import { placementDetailsCards, allApPlacementsTabData } from '../../../../server/utils/resident/placementUtils'
 import { contactsCardList, personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
 import { AND, THEN, WHEN } from '../../../helpers'
