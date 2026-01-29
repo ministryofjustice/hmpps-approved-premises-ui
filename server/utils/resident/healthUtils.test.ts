@@ -3,7 +3,7 @@ import { render } from 'nunjucks'
 import { acctAlertFactory, cas1OasysGroupFactory, cas1SpaceBookingFactory } from '../../testutils/factories'
 import { drugAndAlcoholCards, healthDetailsCards, healthSideNavigation, mentalHealthCards } from './healthUtils'
 import { DateFormats } from '../dateUtils'
-import { tableRow } from './riskUtils'
+import { oasysMetadataRow, tableRow } from './riskUtils'
 
 jest.mock('nunjucks')
 
@@ -52,7 +52,7 @@ describe('healthUtils', () => {
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', { html: 'Imported from OASys' })
 
       expect(result[1].html).toMatchStringIgnoringWhitespace(
-        `${tableRow('13.1 OASys supporting information')}Nunjucks template partials/detailsBlock.njk`,
+        `${oasysMetadataRow('13.1', 'OASys supporting information', supportingInformation)}Nunjucks template partials/detailsBlock.njk`,
       )
     })
   })
@@ -70,13 +70,13 @@ describe('healthUtils', () => {
       })
 
       expect(result[1].html).toMatchStringIgnoringWhitespace(
-        `${tableRow('FA62 OASys risk to self')}Nunjucks template partials/detailsBlock.njk`,
+        `${oasysMetadataRow('FA62', 'OASys risk to self', riskToSelf)}Nunjucks template partials/detailsBlock.njk`,
       )
       expect(result[2].html).toMatchStringIgnoringWhitespace(
-        `${tableRow('FA63 OASys risk to self')}Nunjucks template partials/detailsBlock.njk`,
+        `${oasysMetadataRow('FA63', 'OASys risk to self', riskToSelf)}Nunjucks template partials/detailsBlock.njk`,
       )
       expect(result[3].html).toMatchStringIgnoringWhitespace(
-        `${tableRow('FA64 OASys risk to self')}Nunjucks template partials/detailsBlock.njk`,
+        `${oasysMetadataRow('FA64', 'OASys risk to self', riskToSelf)}Nunjucks template partials/detailsBlock.njk`,
       )
       expect(result[4]).toEqual({
         card: { title: { text: 'ACCT alerts' } },
@@ -106,10 +106,10 @@ describe('healthUtils', () => {
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', { html: 'Imported from OASys' })
 
       expect(result[1].html).toMatchStringIgnoringWhitespace(
-        `${tableRow('8.9 OASys supporting information')}Nunjucks template partials/detailsBlock.njk`,
+        `${oasysMetadataRow('8.9', 'OASys supporting information', supportingInformation)}Nunjucks template partials/detailsBlock.njk`,
       )
       expect(result[2].html).toMatchStringIgnoringWhitespace(
-        `${tableRow('9.9 OASys supporting information')}Nunjucks template partials/detailsBlock.njk`,
+        `${oasysMetadataRow('9.9', 'OASys supporting information', supportingInformation)}Nunjucks template partials/detailsBlock.njk`,
       )
 
       supportingInformation.answers.forEach(answer => {

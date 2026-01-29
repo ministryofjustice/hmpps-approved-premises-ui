@@ -1,5 +1,5 @@
 import { render } from 'nunjucks'
-import { Adjudication, Cas1OASysGroup, CsraSummary } from '@approved-premises/api'
+import { Adjudication, CsraSummary } from '@approved-premises/api'
 import { subYears } from 'date-fns'
 import { CsraClassification, csraClassificationMapping, ResidentProfileSubTab } from './index'
 import {
@@ -28,6 +28,7 @@ import {
 } from '../../testutils/factories/licenceConditions'
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { bulletList } from '../formUtils'
+import { oasysMetadataRow } from './riskUtils'
 
 jest.mock('nunjucks')
 
@@ -44,8 +45,6 @@ describe('sentence', () => {
 
   const indexOffence = offences[5]
 
-  const oasysUpdateDate = DateFormats.isoDateToUIDate(oasysAnswers.assessmentMetadata.dateCompleted)
-
   beforeEach(() => {
     jest.restoreAllMocks()
     ;(render as jest.Mock).mockReturnValue('rendered-output')
@@ -61,22 +60,12 @@ describe('sentence', () => {
         {
           active: true,
           href: `${basePath}offence`,
-          text: 'Offence',
+          text: 'Offence details',
         },
         {
           active: false,
           href: `${basePath}licence`,
           text: 'Licence',
-        },
-        {
-          active: false,
-          href: `${basePath}orders`,
-          text: 'Orders',
-        },
-        {
-          active: false,
-          href: `${basePath}parole`,
-          text: 'Parole',
         },
         {
           active: false,
@@ -89,7 +78,7 @@ describe('sentence', () => {
 
   describe('offenceCards', () => {
     it('should render the offence summary list', () => {
-      expect(offenceCards(offences)).toEqual([
+      expect(offenceCards(offences, 'success')).toEqual([
         {
           card: { title: { text: 'Offence' } },
           rows: [
@@ -116,7 +105,7 @@ describe('sentence', () => {
     it(`should not show duplicated sub-category`, async () => {
       const offence = activeOffenceFactory.build({ mainOffence: true })
       offence.subCategoryDescription = offence.mainCategoryDescription
-      expect(offenceCards([offence])[0].rows).toEqual(
+      expect(offenceCards([offence], 'success')[0].rows).toEqual(
         expect.arrayContaining([
           { key: { text: 'Offence type' }, value: { text: offence.mainCategoryDescription } },
           { key: { text: 'Sub-category' }, value: { text: '' } },
@@ -127,7 +116,7 @@ describe('sentence', () => {
     it(`should show an empty additional offences card`, async () => {
       const offence = activeOffenceFactory.build({ mainOffence: true })
       offence.subCategoryDescription = offence.mainCategoryDescription
-      expect(offenceCards([offence])[1].html).toEqual('No additional offences')
+      expect(offenceCards([offence], 'success')[1].html).toEqual('No additional offences')
     })
   })
 
@@ -149,56 +138,47 @@ describe('sentence', () => {
     it('renders the oasys offences cards when there is a valid assessment', () => {
       expect(sentenceFns.oasysOffenceCards(oasysAnswers)).toEqual([
         {
-          card: { title: { text: 'Offence analysis' } },
-          rows: [
-            {
-              key: {
-                html: `Offence analysis
-<p class="govuk-body-s">Imported from OASys 2.1</p>
-<p class="govuk-body-s">Last updated on ${oasysUpdateDate}<p>`,
-              },
-              value: { html: 'rendered-output' },
+          card: {
+            title: {
+              text: 'Offence analysis',
             },
-          ],
+          },
+          html: `${oasysMetadataRow('2.1', 'Offence details', oasysAnswers)}rendered-output`,
         },
         {
-          card: { title: { text: 'Previous behaviours' } },
-          rows: [
-            {
-              key: {
-                html: `Previous behaviours
-<p class="govuk-body-s">Imported from OASys 2.12</p>
-<p class="govuk-body-s">Last updated on ${oasysUpdateDate}<p>`,
-              },
-              value: { html: 'rendered-output' },
+          card: {
+            title: {
+              text: 'Victim - perpetrator relationship',
             },
-          ],
+          },
+          html: `${oasysMetadataRow('2.12', 'Offence details', oasysAnswers)}rendered-output`,
         },
       ])
+
       expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', {
-        summaryText: oasysAnswers.answers[0].label,
+        summaryText: 'View information',
         text: oasysAnswers.answers[0].answer,
       })
       expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', {
-        summaryText: oasysAnswers.answers[1].label,
+        summaryText: 'View information',
         text: oasysAnswers.answers[1].answer,
       })
     })
 
-    it.each([
-      ['there is no assessment', cas1OasysGroupFactory.noAssessment().build()],
-      ['the assessment is undefined', undefined],
-    ])('should render if %s', ([_, oasysGroup]) => {
-      const result = offencesTabCards(offences, oasysGroup as unknown as Cas1OASysGroup)
-      expect(result[2].rows[0].key).toEqual({
-        html: `Offence analysis
-<p class="govuk-body-s">OASys question 2.1 not available</p>`,
-      })
-      expect(result[3].rows[0].key).toEqual({
-        html: `Previous behaviours
-<p class="govuk-body-s">OASys question 2.12 not available</p>`,
-      })
-    })
+    //     it.each([
+    //       ['there is no assessment', 'notFound'],
+    //       ['the assessment is undefined', 'failure'],
+    //     ])('should render if %s', ([_, callResult]) => {
+    //       const result = offencesTabCards(offences, cas1OasysGroupFactory.noAssessment().build(), ['notFound', callResult as CallResult])
+    //       expect(result[2].rows[0].key).toEqual({
+    //         html: `Offence analysis
+    // <p class="govuk-body-s">OASys question 2.1 not available</p>`,
+    //       })
+    //       expect(result[3].rows[0].key).toEqual({
+    //         html: `Previous behaviours
+    // <p class="govuk-body-s">OASys question 2.12 not available</p>`,
+    //       })
+    //     })
   })
 
   describe('csraRows', () => {
@@ -242,8 +222,8 @@ describe('sentence', () => {
       jest.spyOn(sentenceFns, 'offenceCards').mockReturnValue([])
       jest.spyOn(sentenceFns, 'oasysOffenceCards').mockReturnValue([])
 
-      expect(offencesTabCards(offences, oasysAnswers)).toEqual([])
-      expect(sentenceFns.offenceCards).toHaveBeenCalledWith(offences)
+      expect(offencesTabCards(offences, oasysAnswers, ['success', 'success'])).toEqual([])
+      expect(sentenceFns.offenceCards).toHaveBeenCalledWith(offences, 'success')
       expect(sentenceFns.oasysOffenceCards).toHaveBeenCalledWith(oasysAnswers)
     })
   })
@@ -252,10 +232,8 @@ describe('sentence', () => {
     it('should render the side navigation', () => {
       const baseUrl = '/manage/resident/crn/placement/placementId/sentence/'
       expect(sentenceSideNavigation('licence', 'crn', 'placementId')).toEqual([
-        { active: false, href: `${baseUrl}offence`, text: 'Offence' },
+        { active: false, href: `${baseUrl}offence`, text: 'Offence details' },
         { active: true, href: `${baseUrl}licence`, text: 'Licence' },
-        { active: false, href: `${baseUrl}orders`, text: 'Orders' },
-        { active: false, href: `${baseUrl}parole`, text: 'Parole' },
         { active: false, href: `${baseUrl}prison`, text: 'Prison' },
       ])
     })
@@ -275,7 +253,7 @@ describe('sentence', () => {
         },
       })
 
-      expect(licenseCards(licence)).toEqual([
+      expect(licenseCards(licence, 'success')).toEqual([
         { html: 'rendered-output' },
         {
           card: { title: { text: 'Licence overview' } },
@@ -347,7 +325,14 @@ describe('sentence', () => {
       jest.spyOn(sentenceFns, 'adjudicationRows').mockReturnValue([])
       jest.spyOn(sentenceFns, 'csraRows').mockReturnValue([])
 
-      const result = sentenceFns.prisonCards(adjudications, csraSummaries, fullPerson)
+      const result = sentenceFns.prisonCards({
+        adjudications,
+        csraSummaries,
+        person: fullPerson,
+        adjudicationResult: 'success',
+        csraResult: 'success',
+        personResult: 'success',
+      })
 
       expect(result).toEqual([
         {

@@ -234,11 +234,12 @@ context('ResidentProfile', () => {
       page.shouldShowOasysCards(['2.4.1', '2.4.2'], oasysOffenceDetails, 'OASys')
     })
 
-    it('should render the page tab if there are no external data', () => {
+    it('should render the tabs if there are no external data', () => {
       const { placement, personRisks } = setup()
       cy.task('stubOasysGroup404', { person: placement.person })
       cy.task('stubAdjudications404', { person: placement.person })
       cy.task('stubPersonOffences404', { person: placement.person })
+      cy.task('stubCsra404', { person: placement.person })
 
       const page = visitPage({ placement, personRisks })
 
@@ -255,14 +256,13 @@ context('ResidentProfile', () => {
       page.clickTab('Offence')
       THEN('The Offence tab should be selected')
       page.shouldHaveActiveTab('Offence')
-      cy.contains('No offences found')
-      cy.contains('OASys question 2.1 not available')
+      cy.contains('No offence information found in NDelius')
 
       WHEN('I select the prison side-tab')
       page.clickSideNav('Prison')
       page.shouldHaveActiveSideNav('Prison')
 
-      cy.contains('No adjudications found')
+      cy.contains('No adjudication information found in Digital Prison Service')
     })
 
     it('should not allow access to the page if user lacks permission', () => {

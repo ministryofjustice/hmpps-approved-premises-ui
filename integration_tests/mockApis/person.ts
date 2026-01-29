@@ -158,6 +158,19 @@ export default {
       },
     }),
 
+  stubCsra404: (args: { person: Person }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/cas1/people/${args.person.crn}/csra-summaries`,
+      },
+      response: {
+        status: 404,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { status: 404 },
+      },
+    }),
+
   stubAdjudications: (args: { person: Person; adjudications: Array<Adjudication> }) =>
     stubFor({
       request: {

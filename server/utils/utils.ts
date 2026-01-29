@@ -137,7 +137,6 @@ export const linkTo = (
  * Returns a value from an object when given a path, the path can be in dot notation or array notation
  * @param object object to find property in
  * @param path path to property
- * @param defaultValue value to return if property is not found
  * @returns the property value or the default value
  */
 export const resolvePath = (object: Record<string, unknown>, path: string) =>
@@ -259,11 +258,27 @@ export const objectClean = <T>(object: Record<string, unknown>): T => {
  */
 
 export const settlePromises = async <T>(promises: Array<Promise<unknown>>, defaults?: Array<unknown>): Promise<T> => {
+  const { value } = await settlePromisesWithMeta<T>(promises, defaults)
+  return value
+}
+
+export type CallResult = 'success' | 'failure' | 'notFound'
+
+export const settlePromisesWithMeta = async <T>(
+  promises: Array<Promise<unknown>>,
+  defaults?: Array<unknown>,
+): Promise<{ meta: Array<CallResult>; value: T }> => {
   const results = await Promise.allSettled(promises)
-  return results.map((result, index) => {
+  const meta: Array<CallResult> = []
+  const value = results.map((result, index) => {
+    const statusCode: number =
+      (result as PromiseRejectedResult).reason?.status || (result as PromiseRejectedResult).reason?.data?.status
+    const failType = statusCode === 404 ? 'notFound' : 'failure'
+    meta.push(result.status === 'fulfilled' ? 'success' : failType)
     if (result.status === 'fulfilled') {
       return result.value
     }
     return defaults ? defaults[index] : undefined
-  }) as T
+  })
+  return { value: value as T, meta }
 }

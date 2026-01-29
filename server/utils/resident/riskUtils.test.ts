@@ -3,6 +3,7 @@ import { cas1OasysGroupFactory, risksFactory } from '../../testutils/factories'
 import { ndeliusRiskCard, roshWidget, summaryCards } from './riskUtils'
 import { roshRisksFactory } from '../../testutils/factories/risks'
 import * as utils from './index'
+import { DateFormats } from '../dateUtils'
 
 jest.mock('nunjucks')
 
@@ -36,7 +37,10 @@ describe('risk utils', () => {
         <tbody class="govuk-table__body">
           <tr class="govuk-table__row">
             <td class="govuk-table__cell">
-              ${answer.questionNumber} group name
+              <p class="govuk-!-margin-bottom-2">${answer.questionNumber} group name</p>
+              <p class="govuk-body-m govuk-hint">
+                Last updated: ${DateFormats.isoDateToUIDate(group.assessmentMetadata.dateCompleted)}
+              </p>
             </td>
           </tr>
         </tbody>

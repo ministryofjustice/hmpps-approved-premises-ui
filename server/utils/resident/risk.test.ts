@@ -5,7 +5,7 @@ import { cas1OasysGroupFactory, cas1SpaceBookingFactory, risksFactory } from '..
 import { riskTabController } from './risk'
 import { PersonService } from '../../services'
 import { DateFormats } from '../dateUtils'
-import { ndeliusRiskCard, tableRow } from './riskUtils'
+import { ndeliusRiskCard, oasysMetadataRow } from './riskUtils'
 import { ErrorWithData } from '../errors'
 import { TabData } from '.'
 
@@ -67,14 +67,14 @@ describe('risk tab controller', () => {
       })
 
       expect(result.cardList[3].html).toMatchStringIgnoringWhitespace(
-        `${tableRow('R10.1 ROSH summary')}Nunjucks template partials/detailsBlock.njk`,
+        `${oasysMetadataRow('R10.1', 'ROSH summary', roshSummary)}Nunjucks template partials/detailsBlock.njk`,
       )
 
       expect(result.cardList[7].html).toMatchStringIgnoringWhitespace(
-        `${tableRow('RM32 OASys risk management plan')}Nunjucks template partials/detailsBlock.njk`,
+        `${oasysMetadataRow('RM32', 'OASys risk management plan', riskManagementPlan)}Nunjucks template partials/detailsBlock.njk`,
       )
       expect(result.cardList[8].html).toMatchStringIgnoringWhitespace(
-        `${tableRow('2.4.1 OASys')}Nunjucks template partials/detailsBlock.njk`,
+        `${oasysMetadataRow('2.4.1', 'OASys offence details', offenceDetails)}Nunjucks template partials/detailsBlock.njk`,
       )
     })
 
