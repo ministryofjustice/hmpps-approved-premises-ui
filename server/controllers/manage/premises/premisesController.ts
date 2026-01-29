@@ -15,7 +15,6 @@ import {
   placementTableRows,
   placementTableHeader,
 } from '../../../utils/premises'
-import { hasPermission } from '../../../utils/users'
 import { getPageBackLink } from '../../../utils/backlinks'
 
 type TabSettings = {
@@ -107,12 +106,7 @@ export default class PremisesController {
           sortDirection || tabSettings[activeTab].sortDirection,
           hrefPrefix,
         ),
-        placementTableRows: placementTableRows(
-          activeTab,
-          premises.id,
-          paginatedPlacements?.data || [],
-          hasPermission(req.session.user, ['cas1_ap_resident_profile']),
-        ),
+        placementTableRows: placementTableRows(activeTab, premises.id, paginatedPlacements?.data || [], req),
       })
     }
   }

@@ -15,12 +15,12 @@ import type {
   PlacementRequestService,
   PlacementService,
   PremisesService,
-  SessionService,
 } from '../../services'
 import PlacementController from './placementController'
 import { mapApplicationTimelineEventsForUi } from '../../utils/applications/utils'
 import { adminSummary } from '../../utils/placementRequests'
 import { matchingInformationSummaryRows } from '../../utils/placementRequests/matchingInformationSummaryList'
+import * as backLinks from '../../utils/backlinks'
 
 describe('placementController', () => {
   const token = 'TEST_TOKEN'
@@ -31,14 +31,12 @@ describe('placementController', () => {
   const assessmentService = createMock<AssessmentService>({})
   const placementRequestService = createMock<PlacementRequestService>({})
   const premisesService = createMock<PremisesService>({})
-  const sessionService = createMock<SessionService>({})
   const placementController = new PlacementController(
     applicationService,
     assessmentService,
     placementRequestService,
     placementService,
     premisesService,
-    sessionService,
   )
 
   const premisesId = 'premises-id'
@@ -68,7 +66,7 @@ describe('placementController', () => {
     placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
     premisesService.getPlacement.mockResolvedValue(placement)
     placementService.getTimeline.mockResolvedValue(timeLine)
-    sessionService.getPageBackLink.mockReturnValue(referrer)
+    jest.spyOn(backLinks, 'getPageBackLink').mockReturnValue(referrer)
 
     const response: DeepMocked<Response> = createMock<Response>({ locals: { user } })
     const request: DeepMocked<Request> = createMock<Request>({
@@ -99,7 +97,7 @@ describe('placementController', () => {
       expect(assessmentService.findAssessment).not.toHaveBeenCalled()
       expect(placementRequestService.getPlacementRequest).not.toHaveBeenCalled()
       expect(placementService.getTimeline).not.toHaveBeenCalled()
-      expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
+      expect(backLinks.getPageBackLink).toHaveBeenCalledWith(
         '/manage/premises/:premisesId/placements/:placementId',
         {},
         [

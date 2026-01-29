@@ -136,6 +136,11 @@ export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: Pers
     ...(isRetrieved(flagsStatus) && flags ? flags.map(flag => getBadge(flag)) : []),
   ].filter(Boolean)
 
+  const attribute = (title: string, description: string): { title: string; description: string } => ({
+    title,
+    description,
+  })
+
   return {
     name: person.name,
     photoUrl: undefined,
@@ -143,26 +148,11 @@ export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: Pers
     badges,
     attributes: [
       [
-        {
-          title: 'CRN',
-          description: person.crn,
-        },
-        {
-          title: 'AP',
-          description: placement.premises.name,
-        },
-        {
-          title: 'Arrival',
-          description: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
-        },
-        {
-          title: 'Departure',
-          description: DateFormats.isoDateToUIDate(departureDate, { format: 'short' }),
-        },
-        {
-          title: 'Length of stay',
-          description: DateFormats.durationBetweenDates(arrivalDate, departureDate).ui,
-        },
+        attribute('CRN', person.crn),
+        attribute('AP', placement.premises.name),
+        attribute('Arrival', DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })),
+        attribute('Departure', DateFormats.isoDateToUIDate(departureDate, { format: 'short' })),
+        attribute('Length of stay', DateFormats.durationBetweenDates(arrivalDate, departureDate).ui),
       ],
     ],
   }

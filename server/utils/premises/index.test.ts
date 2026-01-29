@@ -1,6 +1,8 @@
-import { Cas1SpaceBookingResidency } from '@approved-premises/api'
+import { Cas1SpaceBookingResidency, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import { TextItem } from '@approved-premises/ui'
 import { addDays } from 'date-fns'
+import { createMock } from '@golevelup/ts-jest'
+import type { Request } from 'express'
 import {
   cas1CurrentKeyworkerFactory,
   cas1PremisesBasicSummaryFactory,
@@ -21,12 +23,13 @@ import {
   summaryListForPremises,
 } from '.'
 import { canonicalDates, placementStatusCell } from '../placements'
-import { textValue } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
 import { displayName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
+import { textCell } from '../tableUtils'
+import { restrictedPersonSummaryFactory } from '../../testutils/factories/person'
 
 describe('premisesUtils', () => {
   describe('premisesActions', () => {
@@ -48,24 +51,24 @@ describe('premisesUtils', () => {
       expect(summaryListForPremises(premises)).toEqual({
         rows: [
           {
-            key: textValue('Code'),
-            value: textValue('123'),
+            key: textCell('Code'),
+            value: textCell('123'),
           },
           {
-            key: textValue('Postcode'),
-            value: textValue('SW1A 1AA'),
+            key: textCell('Postcode'),
+            value: textCell('SW1A 1AA'),
           },
           {
-            key: textValue('Number of Beds'),
-            value: textValue('20'),
+            key: textCell('Number of Beds'),
+            value: textCell('20'),
           },
           {
-            key: textValue('Available Beds'),
-            value: textValue('12'),
+            key: textCell('Available Beds'),
+            value: textCell('12'),
           },
           {
-            key: textValue('Out of Service Beds'),
-            value: textValue('3'),
+            key: textCell('Out of Service Beds'),
+            value: textCell('3'),
           },
         ],
       })
@@ -288,22 +291,25 @@ describe('premisesUtils', () => {
   })
 
   describe('placementTableRows', () => {
+    const placements = [
+      ...cas1SpaceBookingSummaryFactory.buildList(3, { tier: 'A' }),
+      cas1SpaceBookingSummaryFactory.build({ tier: 'A' }),
+      cas1SpaceBookingSummaryFactory.build({ tier: 'A', keyWorkerAllocation: undefined }),
+    ]
+
+    const legacyLink = (placement: Cas1SpaceBookingSummary) =>
+      `<a href="/manage/premises/Test_Premises_Id/placements/${placement.id}" data-cy-id="${placement.id}">${displayName(placement.person)}, ${placement.person.crn}</a>`
+
     it.each(['upcoming', 'current', 'historic'])(
       'should return the rows of the placement summary table for the "%s" tab',
       (activeTab: Cas1SpaceBookingResidency) => {
-        const placements = [
-          ...cas1SpaceBookingSummaryFactory.buildList(3, { tier: 'A' }),
-          cas1SpaceBookingSummaryFactory.build({ tier: 'A' }),
-          cas1SpaceBookingSummaryFactory.build({ tier: 'A', keyWorkerAllocation: undefined }),
-        ]
-
         const tableRows = placementTableRows(activeTab, 'Test_Premises_Id', placements)
         const expectedRows = placements.map(placement => {
           const statusColumn = placementStatusCell(placement)
           const { arrivalDate, departureDate } = canonicalDates(placement)
           const baseColumns = [
             {
-              html: `<a href="/manage/premises/Test_Premises_Id/placements/${placement.id}" data-cy-id="${placement.id}">${displayName(placement.person)}, ${placement.person.crn}</a>`,
+              html: legacyLink(placement),
             },
             { html: `<span class="moj-badge moj-badge--red">${placement.tier}</span>` },
             { text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) },
@@ -316,6 +322,26 @@ describe('premisesUtils', () => {
         expect(tableRows).toEqual(expectedRows)
       },
     )
+
+    it('returns resident profile links if the user has the resident profile permission', () => {
+      const request = createMock<Request>({ session: { user: { permissions: ['cas1_ap_resident_profile'] } } })
+      const tableRows = placementTableRows('upcoming', 'Test_Premises_Id', placements, request)
+      expect(tableRows[0][0]).toEqual({
+        html: `<a href="/manage/resident/${placements[0].person.crn}/placement/${placements[0].id}/personal/personalDetails" data-cy-id="${placements[0].id}">${displayName(placements[0].person)}, ${placements[0].person.crn}</a>`,
+      })
+    })
+
+    it('returns placement view page links if the user has the resident profile permission but the person is LAO restricted', () => {
+      const request = createMock<Request>({ session: { user: { permissions: ['cas1_ap_resident_profile'] } } })
+      const placement = cas1SpaceBookingSummaryFactory.build({
+        tier: 'A',
+        person: restrictedPersonSummaryFactory.build(),
+      })
+      const tableRows = placementTableRows('upcoming', 'Test_Premises_Id', [placement], request)
+      expect(tableRows[0][0]).toEqual({
+        html: legacyLink(placement),
+      })
+    })
   })
 
   describe('placementStatusHtml', () => {

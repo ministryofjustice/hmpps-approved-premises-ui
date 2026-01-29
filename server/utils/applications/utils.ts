@@ -43,10 +43,11 @@ import getAssessmentSections from '../assessments/getSections'
 import { RestrictedPersonError } from '../errors'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
-import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
+import { createNameAnchorElement, getTierOrBlank } from './helpers'
 import { APPLICATION_SUITABLE, ApplicationStatusTag, applicationSuitableStatuses } from './statusTag'
 import { renderTimelineEventContent } from '../timeline'
 import { summaryListItem } from '../formUtils'
+import { htmlCell, textCell } from '../tableUtils'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
@@ -64,18 +65,18 @@ const applicationTableRows = (applications: Array<Cas1ApplicationSummary>): Arra
       ...createNameAnchorElement(application.person, application),
       attributes: { 'data-sort-value': displayName(application.person) },
     },
-    textValue(application.person.crn),
-    htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
+    textCell(application.person.crn),
+    htmlCell(getTierOrBlank(application.risks?.tier?.value?.level)),
     {
-      ...textValue(getArrivalDateorNA(application.arrivalDate)),
+      ...textCell(getArrivalDateorNA(application.arrivalDate)),
       attributes: { 'data-sort-value': application.arrivalDate || '' },
     },
     {
-      ...textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
+      ...textCell(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
       attributes: { 'data-sort-value': application.createdAt },
     },
-    htmlValue(new ApplicationStatusTag(application.status).html()),
-    htmlValue(actionsLink(application)),
+    htmlCell(new ApplicationStatusTag(application.status).html()),
+    htmlCell(actionsLink(application)),
   ])
 }
 
@@ -133,12 +134,12 @@ const dashboardTableRows = (
   return applications.map(
     (application): TableRow => [
       createNameAnchorElement(application.person, application, { linkInProgressApplications }),
-      textValue(application.person.crn),
-      htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
-      textValue(getArrivalDateorNA(application.arrivalDate)),
-      textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
-      htmlValue(new ApplicationStatusTag(application.status).html()),
-      htmlValue(actionsLink(application)),
+      textCell(application.person.crn),
+      htmlCell(getTierOrBlank(application.risks?.tier?.value?.level)),
+      textCell(getArrivalDateorNA(application.arrivalDate)),
+      textCell(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
+      htmlCell(new ApplicationStatusTag(application.status).html()),
+      htmlCell(actionsLink(application)),
     ],
   )
 }

@@ -3,6 +3,7 @@ import { Cas1Application, Cas1ApplicationSummary, Person } from '../../@types/sh
 import { displayName, isFullPerson, tierBadge } from '../personUtils'
 import paths from '../../paths/apply'
 import { DateFormats } from '../dateUtils'
+import { htmlCell, textCell } from '../tableUtils'
 
 export const createNameAnchorElement = (
   person: Person,
@@ -18,28 +19,24 @@ export const createNameAnchorElement = (
   const name = displayName(person, { showCrn })
 
   if (!linkInProgressApplications && applicationSummary.status === 'started') {
-    return textValue(name)
+    return textCell(name)
   }
 
   return isFullPerson(person)
-    ? htmlValue(
+    ? htmlCell(
         `<a href=${paths.applications.show({ id: applicationSummary.id })} data-cy-id="${applicationSummary.id}">${
           name
         }</a>`,
       )
-    : textValue(name)
+    : textCell(name)
 }
-
-export const textValue = (value: string) => ({ text: value })
-
-export const htmlValue = (value: string) => ({ html: value })
 
 export const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(tier) : '')
 
 export const personKeyDetails = (person: Person, tier?: string): KeyDetailsArgs => ({
   header: { value: displayName(person), key: '', showKey: false },
   items: [
-    { key: textValue('CRN'), value: textValue(person.crn) },
+    { key: textCell('CRN'), value: textCell(person.crn) },
     { key: { text: 'Tier' }, value: { text: tier || 'Not available' } },
     isFullPerson(person)
       ? {

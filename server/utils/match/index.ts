@@ -15,12 +15,12 @@ import { KeyDetailsArgs, ObjectWithDateParts, SummaryListItem } from '@approved-
 import { DateFormats } from '../dateUtils'
 import { apTypeLongLabels } from '../apTypeLabels'
 import { summaryListItem } from '../formUtils'
-import { textValue } from '../applications/helpers'
 import { displayName, isFullPerson } from '../personUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import paths from '../../paths/apply'
 import { characteristicsBulletList } from '../characteristicsUtils'
 import { spaceSearchResultsCharacteristicsLabels } from './spaceSearchLabels'
+import { textCell } from '../tableUtils'
 
 export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
@@ -169,16 +169,16 @@ export const keyDetails = (placementRequest: Cas1PlacementRequestDetail): KeyDet
     },
     items: [
       {
-        key: textValue('CRN'),
-        value: textValue(person.crn),
+        key: textCell('CRN'),
+        value: textCell(person.crn),
       },
       {
-        key: textValue('Tier'),
-        value: textValue(placementRequest?.risks?.tier?.value?.level || 'Not available'),
+        key: textCell('Tier'),
+        value: textCell(placementRequest?.risks?.tier?.value?.level || 'Not available'),
       },
       {
-        key: textValue('Date of birth'),
-        value: textValue(DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' })),
+        key: textCell('Date of birth'),
+        value: textCell(DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' })),
       },
     ],
   }

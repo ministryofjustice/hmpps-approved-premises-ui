@@ -6,7 +6,8 @@ import {
   Cas1PremisesDaySummary,
   Cas1SpaceBookingCharacteristic,
 } from '@approved-premises/api'
-import { PremisesService, SessionService } from '../../../services'
+import { getPageBackLink } from '../../../utils/backlinks'
+import { PremisesService } from '../../../services'
 
 import paths from '../../../paths/manage'
 import {
@@ -36,10 +37,7 @@ import config from '../../../config'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 
 export default class ApOccupancyViewController {
-  constructor(
-    private readonly premisesService: PremisesService,
-    private readonly sessionService: SessionService,
-  ) {}
+  constructor(private readonly premisesService: PremisesService) {}
 
   view(): RequestHandler {
     return async (req: Request, res: Response) => {
@@ -137,16 +135,15 @@ export default class ApOccupancyViewController {
       return res.render('manage/premises/occupancy/dayView', {
         premises,
         pageHeading: DateFormats.isoDateToUIDate(daySummary.forDate),
-        backLink: this.sessionService.getPageBackLink(paths.premises.placements.show.pattern, req, [
-          paths.premises.occupancy.view.pattern,
-        ]),
+        backLink: getPageBackLink(paths.premises.placements.show.pattern, req, [paths.premises.occupancy.view.pattern]),
         previousDayLink: getDayLink(daySummary.previousDate),
         nextDayLink: getDayLink(daySummary.nextDate),
         daySummaryRows: daySummaryRows(dayCapacity, null, config.flags.pocEnabled ? 'singleRow' : 'none'),
         daySummaryText: generateDaySummaryText(dayCapacity),
         ...tableCaptions(daySummary, characteristicsArray, config.flags.pocEnabled),
         placementTableHeader: tableHeader<PlacementColumnField>(placementColumnMap, sortBy, sortDirection, hrefPrefix),
-        placementTableRows: placementTableRows(premisesId, daySummary.spaceBookingSummaries),
+        placementTableRows: placementTableRows(premisesId, daySummary.spaceBookingSummaries, req),
+
         outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
         outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, daySummary.outOfServiceBeds),
         criteriaOptions: config.flags.pocEnabled

@@ -1,6 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { Cas1OutOfServiceBedSortField as OutOfServiceBedSortField, Temporality } from '@approved-premises/api'
+import { getPageBackLink } from '../../../utils/backlinks'
 import {
   catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
@@ -9,7 +10,7 @@ import {
 import paths from '../../../paths/manage'
 import { SanitisedError } from '../../../sanitisedError'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
-import { ApAreaService, OutOfServiceBedService, PremisesService, SessionService } from '../../../services'
+import { ApAreaService, OutOfServiceBedService, PremisesService } from '../../../services'
 import {
   CreateOutOfServiceBedBody,
   outOfServiceBedActions,
@@ -49,7 +50,6 @@ export default class OutOfServiceBedsController {
     private readonly outOfServiceBedService: OutOfServiceBedService,
     private readonly premisesService: PremisesService,
     private readonly apAreaService: ApAreaService,
-    private readonly sessionService: SessionService,
   ) {}
 
   new(): RequestHandler {
@@ -138,7 +138,7 @@ export default class OutOfServiceBedsController {
         }),
         this.premisesService.find(req.user.token, premisesId),
       ])
-      const backLink = this.sessionService.getPageBackLink(paths.outOfServiceBeds.premisesIndex.pattern, req, [
+      const backLink = getPageBackLink(paths.outOfServiceBeds.premisesIndex.pattern, req, [
         paths.premises.beds.index.pattern,
         paths.premises.show.pattern,
       ])
@@ -232,7 +232,7 @@ export default class OutOfServiceBedsController {
   show(): RequestHandler {
     return async (req: ShowRequest, res: Response) => {
       const { premisesId, bedId, id, tab = 'details' } = req.params
-      const backLink = this.sessionService.getPageBackLink(paths.outOfServiceBeds.show.pattern, req, [
+      const backLink = getPageBackLink(paths.outOfServiceBeds.show.pattern, req, [
         paths.outOfServiceBeds.premisesIndex.pattern,
         paths.outOfServiceBeds.index.pattern,
         paths.premises.occupancy.day.pattern,
