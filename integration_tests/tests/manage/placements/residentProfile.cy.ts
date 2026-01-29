@@ -10,12 +10,13 @@ import {
   cas1SpaceBookingShortSummaryFactory,
   csraSummaryFactory,
   licenceFactory,
+  personFactory,
   risksFactory,
 } from '../../../../server/testutils/factories'
 import ResidentProfilePage from '../../../pages/manage/placements/residentProfile'
 import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
 import { DateFormats } from '../../../../server/utils/dateUtils'
-import { fullPersonFactory } from '../../../../server/testutils/factories/person'
+import { fullPersonFactory, restrictedPersonFactory } from '../../../../server/testutils/factories/person'
 import applicationDocument from '../../../fixtures/applicationDocument.json'
 
 context('ResidentProfile', () => {
@@ -283,9 +284,31 @@ context('ResidentProfile', () => {
 
     it('should allow the user to access actions and return to the profile page on hitting back', () => {
       const { placement, personRisks } = setup()
+      WHEN('I visit the resident profile page')
       const page = visitPage({ placement, personRisks }, 'Placement')
+      WHEN('I navigate to record an arrival')
       page.clickAction('Record arrival')
+      THEN('The backlink should return me to the resident profile')
       page.shouldHaveCorrectReturnPath(placement)
+    })
+
+    it('should show LAO prefixed offender where the user is whitelisted', () => {
+      const person = personFactory.build({ isRestricted: true })
+      const { placement, personRisks } = setup({ person })
+      WHEN('I visit the resident profile page for an LAO person that I am whitelisted for')
+      visitPage({ placement, personRisks })
+      THEN('I should see a prefix before the name')
+      cy.get('h2').contains(`LAO: ${person.name}`)
+    })
+
+    it('should error if the person is blacklisted', () => {
+      const person = restrictedPersonFactory.build()
+      const { placement } = setup({ person })
+      GIVEN(' that I am signed in as a user with access to the resident profile')
+      signIn(['manage_resident'])
+      WHEN('I visit the resident profile page for an LAO person that I am not whitelisted for')
+      THEN('I should see an error')
+      ResidentProfilePage.visitRestrictedPerson(placement)
     })
   })
 })

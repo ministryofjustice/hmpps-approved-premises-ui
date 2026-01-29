@@ -37,7 +37,7 @@ import {
 } from '../../utils/resident/health'
 import { healthSideNavigation } from '../../utils/resident/healthUtils'
 import { riskSideNavigation } from '../../utils/resident/riskUtils'
-import { CrnMismatchError } from '../../utils/errors'
+import { CrnMismatchError, RestrictedPersonError } from '../../utils/errors'
 import { getPageBackLink } from '../../utils/backlinks'
 
 export default class ResidentProfileController {
@@ -69,9 +69,9 @@ export default class ResidentProfileController {
         [undefined, defaultRisks],
       )
 
-      if (placement.person.crn !== crn) {
-        throw new CrnMismatchError()
-      }
+      if (placement.person.crn !== crn) throw new CrnMismatchError()
+
+      if (placement.person.type !== 'FullPerson') throw new RestrictedPersonError(placement.person.crn)
 
       const tabItems = residentTabItems(placement, activeTab)
 

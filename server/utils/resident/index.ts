@@ -1,10 +1,4 @@
-import {
-  ApprovedPremisesApplication,
-  Cas1SpaceBooking,
-  FullPerson,
-  PersonRisks,
-  RiskEnvelopeStatus,
-} from '@approved-premises/api'
+import { ApprovedPremisesApplication, Cas1SpaceBooking, PersonRisks, RiskEnvelopeStatus } from '@approved-premises/api'
 import {
   HtmlItem,
   RequestWithSession,
@@ -23,6 +17,7 @@ import config from '../../config'
 import { hasPermission } from '../users'
 import managePaths from '../../paths/manage'
 import { getPageBackLink } from '../backlinks'
+import { displayName } from '../personUtils'
 
 export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'enforcement'
 export type ResidentProfileSubTab =
@@ -120,7 +115,6 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
 const isRetrieved = (status: RiskEnvelopeStatus) => status.toLowerCase() === 'retrieved'
 
 export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: PersonRisks): ResidentHeader {
-  const person = placement.person as FullPerson
   const { arrivalDate, departureDate } = canonicalDates(placement)
 
   const {
@@ -142,13 +136,13 @@ export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: Pers
   })
 
   return {
-    name: person.name,
+    name: displayName(placement.person),
     photoUrl: undefined,
-    statusBadge: placementStatusTag(placement, { classes: 'govuk-!-margin-top-2 govuk-!-margin-left-2' }),
+    statusBadge: placementStatusTag(placement),
     badges,
     attributes: [
       [
-        attribute('CRN', person.crn),
+        attribute('CRN', placement.person.crn),
         attribute('AP', placement.premises.name),
         attribute('Arrival', DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })),
         attribute('Departure', DateFormats.isoDateToUIDate(departureDate, { format: 'short' })),

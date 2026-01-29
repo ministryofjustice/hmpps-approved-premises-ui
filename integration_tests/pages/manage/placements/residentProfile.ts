@@ -59,6 +59,13 @@ export default class ResidentProfilePage extends Page {
     cy.get('h1').contains("The CRN in the URL doesn't match the CRN in the placement")
   }
 
+  static visitRestrictedPerson(placement: Cas1SpaceBooking) {
+    cy.visit(paths.resident.tabPersonal.personalDetails({ crn: placement.person.crn, placementId: placement.id }), {
+      failOnStatusCode: false,
+    })
+    cy.get('h1').should('contain.text', `CRN: ${placement.person.crn} is restricted`)
+  }
+
   shouldShowCard(card: SummaryListWithCard, checkContents = true) {
     const cardTitle = card.card?.title
     const title =
