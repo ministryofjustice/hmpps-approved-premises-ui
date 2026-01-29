@@ -38,8 +38,8 @@ describe('sentenceTabController', () => {
       personService.getOffences.mockResolvedValue(offences)
 
       expect(await sentenceOffencesTabController({ personService, token, crn })).toEqual({
-        subHeading: 'Offence',
-        cardList: offencesTabCards(offences, offenceDetails),
+        subHeading: 'Offence details',
+        cardList: offencesTabCards(offences, offenceDetails, ['success', 'success']),
       })
 
       expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
@@ -51,8 +51,8 @@ describe('sentenceTabController', () => {
       personService.getOffences.mockImplementation(mockService404)
 
       expect(await sentenceOffencesTabController({ personService, token, crn })).toEqual({
-        subHeading: 'Offence',
-        cardList: offencesTabCards(undefined, undefined),
+        subHeading: 'Offence details',
+        cardList: offencesTabCards(undefined, undefined, ['notFound', 'failure']),
       })
 
       expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
@@ -76,7 +76,14 @@ describe('sentenceTabController', () => {
         cardList: [],
         subHeading: 'Prison',
       })
-      expect(sentenceUtils.prisonCards).toHaveBeenCalledWith(adjudications, csraSummaries, person)
+      expect(sentenceUtils.prisonCards).toHaveBeenCalledWith({
+        adjudications,
+        csraSummaries,
+        person,
+        adjudicationResult: 'success',
+        csraResult: 'success',
+        personResult: 'success',
+      })
       expect(personService.getAdjudications).toHaveBeenCalledWith(token, crn)
       expect(personService.csraSummaries).toHaveBeenCalledWith(token, crn)
       expect(personService.findByCrn).toHaveBeenCalledWith(token, crn)
@@ -94,7 +101,14 @@ describe('sentenceTabController', () => {
         subHeading: 'Prison',
       })
 
-      expect(sentenceUtils.prisonCards).toHaveBeenCalledWith(undefined, undefined, undefined)
+      expect(sentenceUtils.prisonCards).toHaveBeenCalledWith({
+        adjudications: undefined,
+        csraSummaries: undefined,
+        person: undefined,
+        adjudicationResult: 'notFound',
+        csraResult: 'notFound',
+        personResult: 'notFound',
+      })
       expect(personService.getAdjudications).toHaveBeenCalledWith(token, crn)
       expect(personService.csraSummaries).toHaveBeenCalledWith(token, crn)
     })
@@ -115,7 +129,7 @@ describe('sentenceTabController', () => {
         subHeading: 'Licence',
       })
 
-      expect(sentenceUtils.licenseCards).toHaveBeenCalledWith(licence)
+      expect(sentenceUtils.licenseCards).toHaveBeenCalledWith(licence, 'success')
       expect(personService.licenceDetails).toHaveBeenCalledWith(token, crn)
     })
 
@@ -127,7 +141,7 @@ describe('sentenceTabController', () => {
         subHeading: 'Licence',
       })
 
-      expect(sentenceUtils.licenseCards).toHaveBeenCalledWith(undefined)
+      expect(sentenceUtils.licenseCards).toHaveBeenCalledWith(undefined, 'notFound')
       expect(personService.licenceDetails).toHaveBeenCalledWith(token, crn)
     })
   })

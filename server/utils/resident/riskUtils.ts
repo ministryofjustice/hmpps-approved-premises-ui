@@ -4,6 +4,7 @@ import nunjucks from 'nunjucks'
 import { card, detailsBody, ndeliusDeeplink, ResidentProfileSubTab } from './index'
 import { textCell } from '../tableUtils'
 import paths from '../../paths/manage'
+import { DateFormats } from '../dateUtils'
 
 export const riskSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   return [
@@ -26,12 +27,19 @@ export const tableRow = (content: string) =>
   </tbody>
   </table>`
 
+export const oasysMetadataRow = (qNumber: string, blockName: string, block: Cas1OASysGroup) => {
+  const lastUpdated = block.assessmentMetadata?.dateCompleted
+    ? `<p class="govuk-body-m govuk-hint">Last updated: ${DateFormats.isoDateToUIDate(block.assessmentMetadata.dateCompleted)}</p>`
+    : ''
+  return `${tableRow(`<p class="govuk-!-margin-bottom-2">${qNumber} ${blockName}</p>${lastUpdated}`)}`
+}
+
 export const summaryCards = (
   questionNumbers: Array<string>,
   block: Cas1OASysGroup,
   blockName: string,
-): Array<SummaryListWithCard> => {
-  return questionNumbers
+): Array<SummaryListWithCard> =>
+  questionNumbers
     .map(qNumber => {
       const question: OASysQuestion = block?.answers
         ? block.answers.find(({ questionNumber }) => questionNumber === qNumber)
@@ -40,12 +48,11 @@ export const summaryCards = (
         question &&
         card({
           title: question.label,
-          html: `${tableRow(`${qNumber} ${blockName}`)}${detailsBody('View information', question.answer)}`,
+          html: `${oasysMetadataRow(qNumber, blockName, block)}${question.answer ? detailsBody('View information', question.answer) : '<p class="govuk-hint">Not entered in OAsys</p>'}`,
         })
       )
     })
     .filter(Boolean)
-}
 
 export const roshWidget = (params: RoshRisks) => {
   return card({ html: nunjucks.render(`components/riskWidgets/rosh-widget/template.njk`, { params }) })
@@ -70,7 +77,7 @@ export const riskOasysCards = (
   return [
     ...summaryCards(['R10.1', 'R10.2'], roshSummary, 'ROSH summary'),
     ...summaryCards(['RM30', 'RM31', 'RM32'], riskManagement, 'OASys risk management plan'),
-    ...summaryCards(['2.4.1', '2.4.2'], offenceDetails, 'OASys'),
+    ...summaryCards(['2.4.1', '2.4.2'], offenceDetails, 'OASys offence details'),
     ...summaryCards(['RM33'], riskManagement, 'OASys risk management plan'),
     ...summaryCards(['SUM10'], roshSummary, 'ROSH summary'),
   ]

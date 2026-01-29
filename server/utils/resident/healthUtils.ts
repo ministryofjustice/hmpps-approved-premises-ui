@@ -44,7 +44,7 @@ export const mentalHealthCards = (personAcctAlerts: Array<PersonAcctAlert>, risk
         dateCellNoWrap(acctAlert.dateExpires),
       ]),
     },
-    html: !personAcctAlerts?.length ? 'No ACCT alerts found' : undefined,
+    html: !personAcctAlerts?.length ? '<p>No ACCT alerts found</p>' : undefined,
   }),
 ]
 
