@@ -9,82 +9,84 @@
 {% extends "../partials/layout.njk" %}
 
 {% block pageTitle %}
- Approved Premises - Task list
+    Approved Premises - Task list
 {% endblock %}
 
 {% block content %}
-  <div class="govuk-grid-row">
-    <div class="govuk-width-container">
-      <h1 class="govuk-heading-xl">
-        Apply for an Approved Premises (AP) placement
-      </h1>
 
-      {{ showErrorSummary(errorSummary) }}
+    {% include 'partials/plannedMaintenanceBanner.njk' %}
 
-      <h2 class="govuk-heading-s govuk-!-margin-bottom-2" data-cy-status>Application {{ taskList.status }}</h2>
-      <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ taskList.completeSectionCount }} of {{ (taskList.sections | length) }} sections.</p>
-    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-width-container">
+            <h1 class="govuk-heading-xl">
+                Apply for an Approved Premises (AP) placement
+            </h1>
 
-    <div class="govuk-grid-column-two-thirds">
-      <form action="{{ paths.applications.submission({id: application.id}) }}" method="post">
+            {{ showErrorSummary(errorSummary) }}
 
-        <ol class="app-task-list">
-          {% set applicationOrAssessment = application %}
-          {% include '../partials/taskListItems.njk' %}
+            <h2 class="govuk-heading-s govuk-!-margin-bottom-2" data-cy-status>Application {{ taskList.status }}</h2>
+            <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ taskList.completeSectionCount }}
+                of {{ (taskList.sections | length) }} sections.</p>
+        </div>
 
-          {% if taskList.status === 'complete' %}
+        <div class="govuk-grid-column-two-thirds">
+            <form action="{{ paths.applications.submission({id: application.id}) }}" method="post">
 
-            <li>
-              <h2 class="app-task-list__section">
+                <ol class="app-task-list">
+                    {% set applicationOrAssessment = application %}
+                    {% include '../partials/taskListItems.njk' %}
+
+                    {% if taskList.status === 'complete' %}
+
+                        <li>
+                            <h2 class="app-task-list__section">
                 <span class="app-task-list__section-number">
                   {{ (taskList.sections | length) + 1 }}.
             </span>
-            Submit your application
-          </h2>
+                                Submit your application
+                            </h2>
 
-              {{ govukCheckboxes({
-            idPrefix: "confirmation",
-            name: "confirmation",
-            errorMessage: errors.confirmation,
-            items: [
-              {
-                value: "submit",
-                text: "I confirm the information provided is complete, accurate and up to date."
-              }
-            ]
-          }) }}
-            </li>
+                            {{ govukCheckboxes({
+                                idPrefix: "confirmation",
+                                name: "confirmation",
+                                errorMessage: errors.confirmation,
+                                items: [
+                                    {
+                                        value: "submit",
+                                        text: "I confirm the information provided is complete, accurate and up to date."
+                                    }
+                                ]
+                            }) }}
+                        </li>
 
-          {% endif %}
-        </ol>
+                    {% endif %}
+                </ol>
 
-        {% if taskList.status === 'complete' %}
-          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                {% if taskList.status === 'complete' %}
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-          {{
-            govukButton({
-              text: "Submit application",
-              preventDoubleClick: true
-            })
-          }}
+                    {{ govukButton({
+                        text: "Submit application",
+                        preventDoubleClick: true
+                    }) }}
+                {% endif %}
+            </form>
+
+            {{ govukButton({
+                text: "Save and come back later",
+                classes: "govuk-button--secondary",
+                href: paths.applications.index(),
+                preventDoubleClick: true
+            }) }}
+
+        </div>
+
+        {% if not oasysDisabled %}
+            <div class="govuk-grid-column-one-third">
+                {{ widgets(application.risks | mapApiPersonRisksForUi) }}
+            </div>
         {% endif %}
-      </form>
-
-      {{ govukButton({
-        text: "Save and come back later",
-        classes: "govuk-button--secondary",
-        href: paths.applications.index(),
-        preventDoubleClick: true
-      }) }}
 
     </div>
-
-    {% if not oasysDisabled %}
-      <div class="govuk-grid-column-one-third">
-        {{ widgets(application.risks | mapApiPersonRisksForUi) }}
-      </div>
-    {% endif %}
-
-  </div>
 
 {% endblock %}
