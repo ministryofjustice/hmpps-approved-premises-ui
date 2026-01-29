@@ -46,7 +46,7 @@ describe('residentsUtils', () => {
         {
           active: false,
           href: `${baseUrl}sentence/offence`,
-          text: 'Sentence',
+          text: 'Offence',
         },
         {
           active: false,

@@ -14,7 +14,7 @@ export const sentenceOffencesTabController = async ({
     personService.getOasysAnswers(token, crn, 'offenceDetails'),
   ])
 
-  return { subHeading: 'Offence and sentence', cardList: offencesTabCards(offences, offenceAnswers) }
+  return { subHeading: 'Offence', cardList: offencesTabCards(offences, offenceAnswers) }
 }
 
 export const sentenceLicenceTabController = async ({

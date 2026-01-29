@@ -38,7 +38,7 @@ describe('sentenceTabController', () => {
       personService.getOffences.mockResolvedValue(offences)
 
       expect(await sentenceOffencesTabController({ personService, token, crn })).toEqual({
-        subHeading: 'Offence and sentence',
+        subHeading: 'Offence',
         cardList: offencesTabCards(offences, offenceDetails),
       })
 
@@ -51,7 +51,7 @@ describe('sentenceTabController', () => {
       personService.getOffences.mockImplementation(mockService404)
 
       expect(await sentenceOffencesTabController({ personService, token, crn })).toEqual({
-        subHeading: 'Offence and sentence',
+        subHeading: 'Offence',
         cardList: offencesTabCards(undefined, undefined),
       })
 

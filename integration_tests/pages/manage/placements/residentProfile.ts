@@ -135,7 +135,6 @@ export default class ResidentProfilePage extends Page {
     this.shouldShowCard(cards[1])
     this.shouldShowCard(cards[2], false)
     this.shouldShowCard(cards[3], false)
-    this.shouldShowCard(cards[4])
   }
 
   shouldShowLicenceInformation(licence: Licence) {
