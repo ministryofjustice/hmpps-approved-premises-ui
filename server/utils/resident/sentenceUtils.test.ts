@@ -6,7 +6,6 @@ import {
   licenseCards,
   offenceCards,
   sentenceSideNavigation,
-  sentenceSummaryList,
   additionalOffencesRows,
   offencesTabCards,
   csraRows,
@@ -62,7 +61,7 @@ describe('sentence', () => {
         {
           active: true,
           href: `${basePath}offence`,
-          text: 'Offence and sentence',
+          text: 'Offence',
         },
         {
           active: false,
@@ -202,18 +201,6 @@ describe('sentence', () => {
     })
   })
 
-  describe('sentenceSummaryList', () => {
-    it('should render the sentence summary list', () => {
-      expect(sentenceSummaryList()).toEqual([
-        { key: { text: 'Sentence type' }, value: { text: 'TBA' } },
-        { key: { text: 'Sentence length' }, value: { text: 'TBA' } },
-        { key: { text: 'Sentence start date' }, value: { text: 'TBA' } },
-        { key: { text: 'Sentence end date' }, value: { text: 'TBA' } },
-        { key: { text: 'NDelius Event number' }, value: { text: 'TBA' } },
-      ])
-    })
-  })
-
   describe('csraRows', () => {
     const expectedSummary = (summary: CsraSummary) => [
       { text: DateFormats.isoDateToUIDate(summary.assessmentDate, { format: 'short' }) },
@@ -253,12 +240,9 @@ describe('sentence', () => {
   describe('offencesTabCards', () => {
     it('should render the offence cards', () => {
       jest.spyOn(sentenceFns, 'offenceCards').mockReturnValue([])
-      jest.spyOn(sentenceFns, 'sentenceSummaryList').mockReturnValue([])
       jest.spyOn(sentenceFns, 'oasysOffenceCards').mockReturnValue([])
 
-      expect(offencesTabCards(offences, oasysAnswers)).toEqual([
-        { card: { title: { text: 'Sentence information' } }, rows: [] },
-      ])
+      expect(offencesTabCards(offences, oasysAnswers)).toEqual([])
       expect(sentenceFns.offenceCards).toHaveBeenCalledWith(offences)
       expect(sentenceFns.oasysOffenceCards).toHaveBeenCalledWith(oasysAnswers)
     })
@@ -268,7 +252,7 @@ describe('sentence', () => {
     it('should render the side navigation', () => {
       const baseUrl = '/manage/resident/crn/placement/placementId/sentence/'
       expect(sentenceSideNavigation('licence', 'crn', 'placementId')).toEqual([
-        { active: false, href: `${baseUrl}offence`, text: 'Offence and sentence' },
+        { active: false, href: `${baseUrl}offence`, text: 'Offence' },
         { active: true, href: `${baseUrl}licence`, text: 'Licence' },
         { active: false, href: `${baseUrl}orders`, text: 'Orders' },
         { active: false, href: `${baseUrl}parole`, text: 'Parole' },

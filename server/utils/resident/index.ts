@@ -85,7 +85,7 @@ export const tabLabels: Record<
   health: { label: 'Health' },
   placement: { label: 'Placement' },
   risk: { label: 'Risk' },
-  sentence: { label: 'Sentence' },
+  sentence: { label: 'Offence' },
   enforcement: { label: 'Enforcement' },
 }
 

@@ -31,7 +31,7 @@ export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: strin
   const basePath = paths.resident.tabSentence
   return [
     {
-      text: 'Offence and sentence',
+      text: 'Offence',
       href: paths.resident.tabSentence.offence({ crn, placementId }),
       active: subTab === 'offence',
     },
@@ -123,24 +123,10 @@ export const oasysOffenceCards = (oasysAnswers: Cas1OASysGroup): Array<SummaryLi
   card({ title: 'Previous behaviours', rows: [oasysAnswer(oasysAnswers, '2.12', 'Previous behaviours')] }),
 ]
 
-export const sentenceSummaryList = () => {
-  return [
-    summaryListItem('Sentence type', 'TBA'),
-    summaryListItem('Sentence length', 'TBA'),
-    summaryListItem('Sentence start date', 'TBA'),
-    summaryListItem('Sentence end date', 'TBA'),
-    summaryListItem('NDelius Event number', 'TBA'),
-  ]
-}
-
 export const offencesTabCards = (
   offences: Array<ActiveOffence>,
   oasysAnswers: Cas1OASysGroup,
-): Array<SummaryListWithCard> => [
-  ...offenceCards(offences),
-  ...oasysOffenceCards(oasysAnswers),
-  card({ title: 'Sentence information', rows: sentenceSummaryList() }),
-]
+): Array<SummaryListWithCard> => [...offenceCards(offences), ...oasysOffenceCards(oasysAnswers)]
 
 export const licenseCards = (licence: Licence): Array<SummaryListWithCard> => {
   if (!licence) return [card({ html: insetText('No licence available') })]

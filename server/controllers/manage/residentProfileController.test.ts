@@ -105,7 +105,7 @@ describe('residentProfileController', () => {
         'manage/resident/residentProfile',
         {
           ...renderParameters(placement, personRisks, 'sentence'),
-          subHeading: 'Offence and sentence',
+          subHeading: 'Offence',
           tabItems: residentTabItems(placement, 'sentence'),
           sideNavigation: sentenceSideNavigation('offence', crn, placement.id),
           ...tabData,
