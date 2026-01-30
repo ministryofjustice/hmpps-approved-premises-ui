@@ -1,7 +1,7 @@
 import { FullPerson, PersonRisks } from '@approved-premises/api'
-import { card, ndeliusDeeplink, ResidentProfileSubTab } from './index'
+import { card, ndeliusDeeplink, ResidentProfileSubTab, summaryItemNd } from './index'
 import paths from '../../paths/manage'
-import { RenderAs, summaryListItem } from '../formUtils'
+import { summaryListItem } from '../formUtils'
 import { PersonStatusTag } from '../people/personStatusTag'
 import { getTierOrBlank } from '../applications/helpers'
 
@@ -18,13 +18,6 @@ export const personalSideNavigation = (subTab: ResidentProfileSubTab, crn: strin
 }
 
 export const personDetailsCardList = (person: FullPerson, personRisks: PersonRisks) => {
-  const isNotRestricted = person.type === 'FullPerson'
-
-  const restrictedRow = (label: string, value: string, renderAs?: RenderAs) => {
-    if (isNotRestricted) return summaryListItem(label, value, renderAs)
-    return summaryListItem(label, 'Restricted')
-  }
-
   const linkToAddresses: string = ndeliusDeeplink({
     crn: person.crn,
     text: 'NDelius address details',
@@ -54,28 +47,28 @@ export const personDetailsCardList = (person: FullPerson, personRisks: PersonRis
     card({
       title: 'Personal details',
       rows: [
-        restrictedRow('Name', person.name),
+        summaryItemNd('Name', person.name),
         summaryListItem('Aliases', linkToPersonalDetails, 'html'),
-        restrictedRow('Date of birth', person.dateOfBirth, 'date'),
-        summaryListItem('Status', new PersonStatusTag(person.status).html(), 'html'),
-        restrictedRow('Nationality', person.nationality),
+        summaryItemNd('Date of birth', person.dateOfBirth, 'date'),
+        summaryItemNd('Status', person.status && new PersonStatusTag(person.status).html(), 'html'),
+        summaryItemNd('Nationality', person.nationality),
         summaryListItem('Immigration status', linkToEquality, 'html'),
         summaryListItem('Languages', linkToEquality, 'html'),
         summaryListItem('Relationship status', linkToEquality, 'html'),
-        summaryListItem('Tier', getTierOrBlank(personRisks.tier?.value?.level), 'html'),
+        summaryItemNd('Tier', getTierOrBlank(personRisks.tier?.value?.level), 'html'),
       ],
     }),
     card({
       title: 'Identity numbers',
-      rows: [restrictedRow('Nomis number', person.nomsNumber), restrictedRow('PNC number', person.pncNumber)],
+      rows: [summaryItemNd('Nomis number', person.nomsNumber), summaryItemNd('PNC number', person.pncNumber)],
     }),
     card({
       title: 'Equality and monitoring',
       rows: [
-        restrictedRow('Ethnicity', person.ethnicity),
-        restrictedRow('Religion or belief', person.religionOrBelief),
-        restrictedRow('Sex', person.sex),
-        restrictedRow('Gender identity', person.genderIdentity),
+        summaryItemNd('Ethnicity', person.ethnicity),
+        summaryItemNd('Religion or belief', person.religionOrBelief),
+        summaryItemNd('Sex', person.sex),
+        summaryItemNd('Gender identity', person.genderIdentity),
         summaryListItem('Sexual orientation', linkToEquality, 'html'),
       ],
     }),

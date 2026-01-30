@@ -12,12 +12,13 @@ import nunjucks from 'nunjucks'
 import type { Request } from 'express'
 import { DateFormats } from '../dateUtils'
 import { canonicalDates, placementStatusTag } from '../placements'
-import { linkTo, objectClean } from '../utils'
+import { CallResult, linkTo, objectClean } from '../utils'
 import config from '../../config'
 import { hasPermission } from '../users'
 import managePaths from '../../paths/manage'
 import { getPageBackLink } from '../backlinks'
 import { displayName } from '../personUtils'
+import { RenderAs, summaryListItem } from '../formUtils'
 
 export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'enforcement'
 export type ResidentProfileSubTab =
@@ -234,4 +235,27 @@ export const returnPath = (req: Request, placement: Cas1SpaceBooking) => {
     [managePaths.premises.placements.show.pattern, `${managePaths.resident.show.pattern}{/*tab}`],
     defaultPath,
   )
+}
+
+export const summaryItemNd = (label: string, value: string, renderAs = undefined as RenderAs) => {
+  return value ? summaryListItem(label, value, renderAs) : summaryListItem(label, 'Not entered in NDelius', renderAs)
+}
+
+export const loadingErrorMessage = ({
+  result,
+  item,
+  source,
+}: {
+  result: CallResult
+  item: string
+  source: string
+}): string => {
+  switch (result) {
+    case 'success':
+      return undefined
+    case 'notFound':
+      return `No ${item} information found in ${source}`
+    default:
+      return `We cannot load ${item} information right now because ${source} is not available.<br>Try again later`
+  }
 }
