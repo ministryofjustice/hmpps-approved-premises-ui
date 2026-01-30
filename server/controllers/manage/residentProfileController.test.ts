@@ -1,7 +1,7 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 
-import { Cas1SpaceBooking, PersonRisks } from '@approved-premises/api'
+import { Cas1SpaceBooking, Person, PersonRisks } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { placementSideNavigation } from '../../utils/resident/placement'
 import { personalSideNavigation } from '../../utils/resident/personalUtils'
@@ -11,13 +11,18 @@ import { ApplicationService, PersonService, PlacementService } from '../../servi
 import paths from '../../paths/manage'
 
 import ResidentProfileController from './residentProfileController'
-import { cas1SpaceBookingFactory, personFactory, risksFactory } from '../../testutils/factories'
+import {
+  cas1SpaceBookingFactory,
+  personFactory,
+  restrictedPersonFactory,
+  risksFactory,
+} from '../../testutils/factories'
 import { TabData, card, getResidentHeader, ResidentProfileTab, residentTabItems, tabLabels } from '../../utils/resident'
 import * as riskTabUtils from '../../utils/resident/risk'
 import * as sentenceTabUtils from '../../utils/resident/sentence'
 import * as personalTabUtils from '../../utils/resident/personal'
 import * as placementTabUtils from '../../utils/resident/placement'
-import { CrnMismatchError, ErrorWithData } from '../../utils/errors'
+import { CrnMismatchError, ErrorWithData, RestrictedPersonError } from '../../utils/errors'
 import { riskSideNavigation } from '../../utils/resident/riskUtils'
 
 describe('residentProfileController', () => {
@@ -33,8 +38,8 @@ describe('residentProfileController', () => {
 
   const residentProfileController = new ResidentProfileController(placementService, personService, applicationService)
 
-  const setUp = () => {
-    const placement = cas1SpaceBookingFactory.upcoming().build({ person: personFactory.build({ crn }) })
+  const setUp = ({ person = personFactory.build({ crn }) }: { person?: Person } = {}) => {
+    const placement = cas1SpaceBookingFactory.upcoming().build({ person })
     const personRisks = risksFactory.build()
 
     placementService.getPlacement.mockResolvedValue(placement)
@@ -237,6 +242,12 @@ describe('residentProfileController', () => {
 
       const handler = residentProfileController.show()
       await expect(handler(request, response, next)).rejects.toThrow(CrnMismatchError)
+    })
+
+    it('should throw an error if the person is restricted', async () => {
+      const { request, response } = setUp({ person: restrictedPersonFactory.build({ crn }) })
+      const handler = residentProfileController.show()
+      await expect(handler(request, response, next)).rejects.toThrow(RestrictedPersonError)
     })
   })
 })
