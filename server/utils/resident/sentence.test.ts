@@ -39,7 +39,12 @@ describe('sentenceTabController', () => {
 
       expect(await sentenceOffencesTabController({ personService, token, crn })).toEqual({
         subHeading: 'Offence details',
-        cardList: offencesTabCards(offences, offenceDetails, ['success', 'success']),
+        cardList: offencesTabCards({
+          offences,
+          oasysAnswers: offenceDetails,
+          offencesOutcome: 'success',
+          oasysOutcome: 'success',
+        }),
       })
 
       expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
@@ -52,7 +57,12 @@ describe('sentenceTabController', () => {
 
       expect(await sentenceOffencesTabController({ personService, token, crn })).toEqual({
         subHeading: 'Offence details',
-        cardList: offencesTabCards(undefined, undefined, ['notFound', 'failure']),
+        cardList: offencesTabCards({
+          offences: undefined,
+          oasysAnswers: undefined,
+          offencesOutcome: 'notFound',
+          oasysOutcome: 'notFound',
+        }),
       })
 
       expect(personService.getOffences).toHaveBeenCalledWith(token, crn)

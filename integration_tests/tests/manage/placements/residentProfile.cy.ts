@@ -167,7 +167,7 @@ context('ResidentProfile', () => {
       page.shouldShowAllApPlacements(spaceBookings)
     })
 
-    it('should show the offence tab', () => {
+    it('should show the sentence tab', () => {
       const offences = activeOffenceFactory.buildList(3)
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
       const adjudications = adjudicationFactory.buildList(5)
@@ -184,9 +184,9 @@ context('ResidentProfile', () => {
 
       const page = visitPage({ placement, personRisks }, 'Offence')
 
-      AND('the Offence tab should be selected')
+      AND('the Sentence tab should be selected')
       page.shouldHaveActiveTab('Offence')
-      AND('the Offences information should be shown')
+      AND('the Offence details information should be shown')
       page.shouldShowOffencesInformation(offences, oasysOffenceDetails)
 
       WHEN('I select the licence side-nav')
@@ -252,9 +252,9 @@ context('ResidentProfile', () => {
       page.shouldHaveActiveTab('Risk')
       cy.contains('No OASys risk assessment for person added')
 
-      WHEN('I select the offence tab')
+      WHEN('I select the sentence tab')
       page.clickTab('Offence')
-      THEN('The Offence tab should be selected')
+      THEN('The Sentence tab should be selected')
       page.shouldHaveActiveTab('Offence')
       cy.contains('No offence information found in NDelius')
 

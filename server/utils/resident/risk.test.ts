@@ -7,7 +7,6 @@ import { PersonService } from '../../services'
 import { DateFormats } from '../dateUtils'
 import { ndeliusRiskCard, oasysMetadataRow } from './riskUtils'
 import { ErrorWithData } from '../errors'
-import { TabData } from '.'
 
 const personService = createMock<PersonService>({})
 
@@ -81,29 +80,19 @@ describe('risk tab controller', () => {
     describe('OASys information not available', () => {
       const placement = cas1SpaceBookingFactory.build()
 
-      const testNoResult = (result: TabData) => {
-        expect(result.subHeading).toEqual('Risk information')
-        expect(result.cardList).toHaveLength(3)
-        expect(result.cardList[1].html).toMatchStringIgnoringWhitespace('Nunjucks template partials/insetText.njk')
-        expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
-          html: `<p class="govuk-!-margin-bottom-2">No OASys risk assessment for person added</p><p>Go to the <a href="/manage/resident/crn/placement/${placement.id}/placement/application">application</a> to view risk information for this person.</p>`,
-        })
-
-        expect(result.cardList[2].html).toMatchStringIgnoringWhitespace(
-          'Nunjucks template components/riskWidgets/rosh-widget/template.njk',
-        )
-        expect(render).toHaveBeenCalledWith('components/riskWidgets/rosh-widget/template.njk', {
-          params: personRisks.roshRisks.value,
-        })
-      }
-
       it('should render the page if no OASys record is returned', async () => {
         personService.getOasysAnswers.mockImplementation(async () => {
           throw new ErrorWithData({ status: 404 })
         })
 
         const result = await riskTabController({ personService, token, crn, personRisks, placement })
-        testNoResult(result)
+        expect(result.subHeading).toEqual('Risk information')
+
+        expect(result.cardList).toHaveLength(12)
+        expect(result.cardList[1].html).toMatchStringIgnoringWhitespace('Nunjucks template partials/insetText.njk')
+        expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
+          html: `<p class="govuk-!-margin-bottom-2">No OASys risk assessment for person added</p><p>Go to the <a href="/manage/resident/crn/placement/${placement.id}/placement/application">application</a> to view risk information for this person.</p>`,
+        })
       })
 
       it('should render the page if the OASys record has no assessment', async () => {
@@ -114,7 +103,13 @@ describe('risk tab controller', () => {
         })
 
         const result = await riskTabController({ personService, token, crn, personRisks, placement })
-        testNoResult(result)
+        expect(result.cardList).toHaveLength(3)
+        expect(result.cardList[2].html).toMatchStringIgnoringWhitespace(
+          'Nunjucks template components/riskWidgets/rosh-widget/template.njk',
+        )
+        expect(render).toHaveBeenCalledWith('components/riskWidgets/rosh-widget/template.njk', {
+          params: personRisks.roshRisks.value,
+        })
       })
     })
   })

@@ -18,7 +18,7 @@ export const sentenceOffencesTabController = async ({
   ])
   return {
     subHeading: 'Offence details',
-    cardList: offencesTabCards(offences, offenceAnswers, [offencesOutcome, oasysOutcome]),
+    cardList: offencesTabCards({ offences, oasysAnswers: offenceAnswers, offencesOutcome, oasysOutcome }),
   }
 }
 

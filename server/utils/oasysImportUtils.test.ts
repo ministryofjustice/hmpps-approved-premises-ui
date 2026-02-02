@@ -171,7 +171,7 @@ describe('OASysImportUtils', () => {
 
   describe('textareas', () => {
     it('it returns reoffending needs as textareas', () => {
-      const roshSummaries = roshSummaryFactory.buildList(2)
+      const roshSummaries = oasysQuestionFactory.buildList(2)
       const sectionName = 'roshAnswers'
       const result = textareas(roshSummaries, sectionName)
 

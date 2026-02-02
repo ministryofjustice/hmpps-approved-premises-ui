@@ -136,22 +136,22 @@ describe('sentence', () => {
 
   describe('oasysOffenceCards', () => {
     it('renders the oasys offences cards when there is a valid assessment', () => {
-      expect(sentenceFns.oasysOffenceCards(oasysAnswers)).toEqual([
+      expect(sentenceFns.oasysOffenceCards(oasysAnswers, 'success')).toEqual([
         {
           card: {
             title: {
               text: 'Offence analysis',
             },
           },
-          html: `${oasysMetadataRow('2.1', 'Offence details', oasysAnswers)}rendered-output`,
+          html: `${oasysMetadataRow('2.1', 'OASys offence details', oasysAnswers)}rendered-output`,
         },
         {
           card: {
             title: {
-              text: 'Victim - perpetrator relationship',
+              text: 'Pattern of offending',
             },
           },
-          html: `${oasysMetadataRow('2.12', 'Offence details', oasysAnswers)}rendered-output`,
+          html: `${oasysMetadataRow('2.12', 'OASys offence details', oasysAnswers)}rendered-output`,
         },
       ])
 
@@ -164,21 +164,6 @@ describe('sentence', () => {
         text: oasysAnswers.answers[1].answer,
       })
     })
-
-    //     it.each([
-    //       ['there is no assessment', 'notFound'],
-    //       ['the assessment is undefined', 'failure'],
-    //     ])('should render if %s', ([_, callResult]) => {
-    //       const result = offencesTabCards(offences, cas1OasysGroupFactory.noAssessment().build(), ['notFound', callResult as CallResult])
-    //       expect(result[2].rows[0].key).toEqual({
-    //         html: `Offence analysis
-    // <p class="govuk-body-s">OASys question 2.1 not available</p>`,
-    //       })
-    //       expect(result[3].rows[0].key).toEqual({
-    //         html: `Previous behaviours
-    // <p class="govuk-body-s">OASys question 2.12 not available</p>`,
-    //       })
-    //     })
   })
 
   describe('csraRows', () => {
@@ -222,9 +207,11 @@ describe('sentence', () => {
       jest.spyOn(sentenceFns, 'offenceCards').mockReturnValue([])
       jest.spyOn(sentenceFns, 'oasysOffenceCards').mockReturnValue([])
 
-      expect(offencesTabCards(offences, oasysAnswers, ['success', 'success'])).toEqual([])
+      expect(offencesTabCards({ offences, oasysAnswers, offencesOutcome: 'success', oasysOutcome: 'success' })).toEqual(
+        [],
+      )
       expect(sentenceFns.offenceCards).toHaveBeenCalledWith(offences, 'success')
-      expect(sentenceFns.oasysOffenceCards).toHaveBeenCalledWith(oasysAnswers)
+      expect(sentenceFns.oasysOffenceCards).toHaveBeenCalledWith(oasysAnswers, 'success')
     })
   })
 

@@ -129,7 +129,12 @@ export default class ResidentProfilePage extends Page {
   shouldShowOffencesInformation(offences: Array<ActiveOffence>, oasysOffenceDetails: Cas1OASysGroup) {
     cy.stub(residentUtils, 'detailsBody')
     cy.get('.govuk-summary-card__title').contains('Offence').should('exist')
-    const cards = offencesTabCards(offences, oasysOffenceDetails, ['success', 'success'])
+    const cards = offencesTabCards({
+      offences,
+      oasysAnswers: oasysOffenceDetails,
+      offencesOutcome: 'success',
+      oasysOutcome: 'success',
+    })
     this.shouldShowCard(cards[0])
     this.shouldShowCard(cards[1])
     this.shouldShowCard(cards[2])

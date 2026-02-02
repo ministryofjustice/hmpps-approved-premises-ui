@@ -92,15 +92,24 @@ export const additionalOffencesRows = (offences: Array<ActiveOffence>, mainOffen
     })
     .filter(Boolean)
 
-export const oasysOffenceCards = (oasysAnswers: Cas1OASysGroup): Array<SummaryListWithCard> => [
-  ...summaryCards(['2.1', '2.12'], oasysAnswers, 'Offence details'),
+export const oasysOffenceCards = (oasysAnswers: Cas1OASysGroup, callResult: ApiOutcome): Array<SummaryListWithCard> => [
+  ...summaryCards(['2.1', '2.12'], oasysAnswers, callResult),
 ]
 
-export const offencesTabCards = (
-  offences: Array<ActiveOffence>,
-  oasysAnswers: Cas1OASysGroup,
-  [offencesResult]: Array<ApiOutcome>,
-): Array<SummaryListWithCard> => [...offenceCards(offences, offencesResult), ...oasysOffenceCards(oasysAnswers)]
+export const offencesTabCards = ({
+  offences,
+  oasysAnswers,
+  offencesOutcome,
+  oasysOutcome,
+}: {
+  offences: Array<ActiveOffence>
+  oasysAnswers: Cas1OASysGroup
+  offencesOutcome: ApiOutcome
+  oasysOutcome: ApiOutcome
+}): Array<SummaryListWithCard> => [
+  ...offenceCards(offences, offencesOutcome),
+  ...oasysOffenceCards(oasysAnswers, oasysOutcome),
+]
 
 export const licenseCards = (licence: Licence, licenceResult: ApiOutcome): Array<SummaryListWithCard> => {
   const errorMessage = loadingErrorMessage({

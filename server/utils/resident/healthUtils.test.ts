@@ -78,7 +78,8 @@ describe('healthUtils', () => {
       expect(result[3].html).toMatchStringIgnoringWhitespace(
         `${oasysMetadataRow('FA64', 'OASys risk to self', riskToSelf)}Nunjucks template partials/detailsBlock.njk`,
       )
-      expect(result[4]).toEqual({
+
+      expect(result[7]).toEqual({
         card: { title: { text: 'ACCT alerts' } },
         table: {
           head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Expiry date' }],
