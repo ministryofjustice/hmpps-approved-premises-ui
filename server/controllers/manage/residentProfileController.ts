@@ -1,7 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 import { TabItem } from '@approved-premises/ui'
 import { Cas1SpaceBooking, PersonRisks } from '@approved-premises/api'
-import { ApplicationService, PersonService, PlacementService } from '../../services'
+import { ApplicationService, AssessmentService, PersonService, PlacementService } from '../../services'
 import paths from '../../paths/manage'
 
 import { actions } from '../../utils/placements'
@@ -45,6 +45,7 @@ export default class ResidentProfileController {
     private readonly placementService: PlacementService,
     private readonly personService: PersonService,
     private readonly applicationService: ApplicationService,
+    private readonly assessmentService: AssessmentService,
   ) {}
 
   show(activeTab: ResidentProfileTab = 'personal', subTab?: ResidentProfileSubTab): RequestHandler {
@@ -82,6 +83,7 @@ export default class ResidentProfileController {
       const placementActions = actions(placement, user)
       const tabParameters = {
         applicationService: this.applicationService,
+        assessmentService: this.assessmentService,
         personService: this.personService,
         crn,
         token,

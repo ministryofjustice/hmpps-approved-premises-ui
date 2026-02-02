@@ -4,6 +4,7 @@ import {
   activeOffenceFactory,
   adjudicationFactory,
   applicationFactory,
+  assessmentFactory,
   cas1OasysGroupFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
@@ -18,6 +19,7 @@ import { AND, GIVEN, THEN, WHEN } from '../../../helpers'
 import { DateFormats } from '../../../../server/utils/dateUtils'
 import { fullPersonFactory, restrictedPersonFactory } from '../../../../server/testutils/factories/person'
 import applicationDocument from '../../../fixtures/applicationDocument.json'
+import assessPaths from '../../../../server/paths/assess'
 
 context('ResidentProfile', () => {
   describe('show', () => {
@@ -119,12 +121,15 @@ context('ResidentProfile', () => {
 
     it('should show the placement tab', () => {
       const { placement, personRisks } = setup()
+      const assessment = assessmentFactory.build()
       const application = applicationFactory.completed('accepted').build({
         person: fullPersonFactory.build(),
         document: applicationDocument,
+        assessmentId: assessment.id,
       })
       placement.applicationId = application.id
       cy.task('stubApplicationGet', { application })
+      cy.task('stubAssessment', assessment)
 
       const spaceBookings = [
         cas1SpaceBookingShortSummaryFactory.upcoming().build(),
@@ -150,12 +155,17 @@ context('ResidentProfile', () => {
       AND('the placement details cards should be shown')
       page.shouldShowPlacementDetails()
 
-      WHEN('I select the Application sidenav')
-      page.clickSideNav('Application')
+      WHEN('I select the Application and assessment sidenav')
+      page.clickSideNav('Application and assessment')
 
       THEN('I should see the application details')
-      page.shouldHaveActiveSideNav(`Application`)
+      page.shouldHaveActiveSideNav(`Application and assessment`)
       page.shouldShowApplication(application)
+
+      AND('I should see the assessment link')
+      cy.get('a')
+        .contains('View assessment')
+        .should('have.attr', 'href', assessPaths.assessments.show({ id: assessment.id }))
 
       WHEN('I click on the All AP placements side nav')
       page.clickSideNav('All AP placements')
