@@ -1,6 +1,6 @@
 import { render } from 'nunjucks'
 import { applicationFactory, assessmentFactory, cas1SpaceBookingShortSummaryFactory } from '../../testutils/factories'
-import { applicationCardList, applicationDocumentAccordion, placementCard } from './placementUtils'
+import { applicationCardList, applicationDocumentAccordion, assessmentCard, placementCard } from './placementUtils'
 import { DateFormats } from '../dateUtils'
 import assessPaths from '../../paths/assess'
 import { linkTo } from '../utils'
@@ -96,6 +96,9 @@ describe('application utils', () => {
     it('should generate inset assessment link section', () => {
       const assessment = assessmentFactory.build()
       const expectedLink = linkTo(assessPaths.assessments.show({ id: assessment.id }), { text: 'View assessment' })
+
+      assessmentCard(assessment)
+
       expect((render as jest.Mock).mock.calls[0]).toEqual([
         'partials/insetText.njk',
         {
