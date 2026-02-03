@@ -243,7 +243,7 @@ describe('tabController', () => {
       const assessmentService = createMock<AssessmentService>({})
       const application = applicationFactory.build()
 
-      const placement = cas1SpaceBookingFactory.build({ applicationId: application.id })
+      const placement = cas1SpaceBookingFactory.build({ applicationId: application.id, assessmentId: undefined })
       applicationService.findApplication.mockResolvedValue(application)
 
       jest.spyOn(placementUtils, 'applicationCardList').mockReturnValue([])

@@ -36,7 +36,7 @@ export const applicationDocumentAccordion = (application: ApprovedPremisesApplic
 }
 
 export const applicationCardList = (application: ApprovedPremisesApplication): Array<SummaryListWithCard> => {
-  const cards = [
+  return [
     card({
       html: alertBanner({
         variant: 'information',
@@ -50,8 +50,6 @@ export const applicationCardList = (application: ApprovedPremisesApplication): A
       ),
     }),
   ]
-
-  return cards
 }
 
 export const assessmentCard = (assessment: Cas1Assessment): SummaryListWithCard => {

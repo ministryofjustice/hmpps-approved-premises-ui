@@ -27,20 +27,24 @@ export const placementApplicationTabController = async ({
   token,
   placement,
 }: TabControllerParameters): Promise<TabData & { bottomCardList?: Array<SummaryListWithCard> }> => {
-  const application = await applicationService.findApplication(token, placement.applicationId)
+  const applicationPromise = applicationService.findApplication(token, placement.applicationId)
+  const bottomCardListPromise = (async (): Promise<Array<SummaryListWithCard>> => {
+    if (!placement.assessmentId) return []
 
-  let assessment
-  if (application.assessmentId) {
-    ;[assessment] = await settlePromises<[Cas1Assessment]>([
-      assessmentService.findAssessment(token, application.assessmentId),
+    const [assessment] = await settlePromises<[Cas1Assessment]>([
+      assessmentService.findAssessment(token, placement.assessmentId),
     ])
-  }
+
+    return assessment ? [assessmentCard(assessment)] : []
+  })()
+
+  const [application, bottomCardList] = await Promise.all([applicationPromise, bottomCardListPromise])
 
   return {
     cardList: applicationCardList(application),
     subHeading: 'Application and assessment',
     accordion: applicationDocumentAccordion(application),
-    ...(assessment && { bottomCardList: [assessmentCard(assessment)] }),
+    ...(bottomCardList.length && { bottomCardList }),
   }
 }
 
