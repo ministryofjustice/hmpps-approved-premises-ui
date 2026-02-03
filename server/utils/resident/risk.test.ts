@@ -5,9 +5,8 @@ import { cas1OasysGroupFactory, cas1SpaceBookingFactory, risksFactory } from '..
 import { riskTabController } from './risk'
 import { PersonService } from '../../services'
 import { DateFormats } from '../dateUtils'
-import { ndeliusRiskCard, tableRow } from './riskUtils'
+import { ndeliusRiskCard, oasysMetadataRow } from './riskUtils'
 import { ErrorWithData } from '../errors'
-import { TabData } from '.'
 
 const personService = createMock<PersonService>({})
 
@@ -67,35 +66,19 @@ describe('risk tab controller', () => {
       })
 
       expect(result.cardList[3].html).toMatchStringIgnoringWhitespace(
-        `${tableRow('R10.1 ROSH summary')}Nunjucks template partials/detailsBlock.njk`,
+        `${oasysMetadataRow('R10.1', 'ROSH summary', roshSummary)}Nunjucks template partials/detailsBlock.njk`,
       )
 
       expect(result.cardList[7].html).toMatchStringIgnoringWhitespace(
-        `${tableRow('RM32 OASys risk management plan')}Nunjucks template partials/detailsBlock.njk`,
+        `${oasysMetadataRow('RM32', 'OASys risk management plan', riskManagementPlan)}Nunjucks template partials/detailsBlock.njk`,
       )
       expect(result.cardList[8].html).toMatchStringIgnoringWhitespace(
-        `${tableRow('2.4.1 OASys')}Nunjucks template partials/detailsBlock.njk`,
+        `${oasysMetadataRow('2.4.1', 'OASys offence details', offenceDetails)}Nunjucks template partials/detailsBlock.njk`,
       )
     })
 
     describe('OASys information not available', () => {
       const placement = cas1SpaceBookingFactory.build()
-
-      const testNoResult = (result: TabData) => {
-        expect(result.subHeading).toEqual('Risk information')
-        expect(result.cardList).toHaveLength(3)
-        expect(result.cardList[1].html).toMatchStringIgnoringWhitespace('Nunjucks template partials/insetText.njk')
-        expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
-          html: `<p class="govuk-!-margin-bottom-2">No OASys risk assessment for person added</p><p>Go to the <a href="/manage/resident/crn/placement/${placement.id}/placement/application">application</a> to view risk information for this person.</p>`,
-        })
-
-        expect(result.cardList[2].html).toMatchStringIgnoringWhitespace(
-          'Nunjucks template components/riskWidgets/rosh-widget/template.njk',
-        )
-        expect(render).toHaveBeenCalledWith('components/riskWidgets/rosh-widget/template.njk', {
-          params: personRisks.roshRisks.value,
-        })
-      }
 
       it('should render the page if no OASys record is returned', async () => {
         personService.getOasysAnswers.mockImplementation(async () => {
@@ -103,7 +86,13 @@ describe('risk tab controller', () => {
         })
 
         const result = await riskTabController({ personService, token, crn, personRisks, placement })
-        testNoResult(result)
+        expect(result.subHeading).toEqual('Risk information')
+
+        expect(result.cardList).toHaveLength(12)
+        expect(result.cardList[1].html).toMatchStringIgnoringWhitespace('Nunjucks template partials/insetText.njk')
+        expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
+          html: `<p class="govuk-!-margin-bottom-2">No OASys risk assessment for person added</p><p>Go to the <a href="/manage/resident/crn/placement/${placement.id}/placement/application">application</a> to view risk information for this person.</p>`,
+        })
       })
 
       it('should render the page if the OASys record has no assessment', async () => {
@@ -114,7 +103,13 @@ describe('risk tab controller', () => {
         })
 
         const result = await riskTabController({ personService, token, crn, personRisks, placement })
-        testNoResult(result)
+        expect(result.cardList).toHaveLength(3)
+        expect(result.cardList[2].html).toMatchStringIgnoringWhitespace(
+          'Nunjucks template components/riskWidgets/rosh-widget/template.njk',
+        )
+        expect(render).toHaveBeenCalledWith('components/riskWidgets/rosh-widget/template.njk', {
+          params: personRisks.roshRisks.value,
+        })
       })
     })
   })

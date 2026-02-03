@@ -194,19 +194,7 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })
-  get(paths.resident.tabSentence.orders.pattern, residentProfileController.show('sentence', 'orders'), {
-    auditEvent: 'MANAGE_RESIDENT',
-    allowedPermissions: ['cas1_ap_resident_profile'],
-  })
-  get(paths.resident.tabSentence.parole.pattern, residentProfileController.show('sentence', 'parole'), {
-    auditEvent: 'MANAGE_RESIDENT',
-    allowedPermissions: ['cas1_ap_resident_profile'],
-  })
   get(paths.resident.tabSentence.prison.pattern, residentProfileController.show('sentence', 'prison'), {
-    auditEvent: 'MANAGE_RESIDENT',
-    allowedPermissions: ['cas1_ap_resident_profile'],
-  })
-  get(paths.resident.tabEnforcement.pattern, residentProfileController.show('enforcement'), {
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })

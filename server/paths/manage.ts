@@ -134,11 +134,8 @@ const paths = {
     tabSentence: {
       offence: residentPath.path('sentence').path('offence'),
       licence: residentPath.path('sentence').path('licence'),
-      orders: residentPath.path('sentence').path('orders'),
-      parole: residentPath.path('sentence').path('parole'),
       prison: residentPath.path('sentence').path('prison'),
     },
-    tabEnforcement: residentPath.path('enforcement'),
   },
   bookings: {
     // In effect deprecated: legacy bookings have been migrated to space bookings. A redirect is now in place.

@@ -3,7 +3,7 @@ import { card, TabData } from './index'
 import { DateFormats } from '../dateUtils'
 import { TabControllerParameters } from './TabControllerParameters'
 import { insetText, ndeliusRiskCard, riskOasysCards, roshWidget } from './riskUtils'
-import { linkTo, settlePromises } from '../utils'
+import { linkTo, settlePromisesWithOutcomes } from '../utils'
 import paths from '../../paths/manage'
 
 export const riskTabController = async ({
@@ -13,9 +13,10 @@ export const riskTabController = async ({
   personRisks,
   placement,
 }: TabControllerParameters): Promise<TabData> => {
-  const [roshSummary, riskManagementPlan, offenceDetails] = await settlePromises<
-    [Cas1OASysGroup, Cas1OASysGroup, Cas1OASysGroup, Cas1OASysGroup]
-  >([
+  const {
+    values: [roshSummary, riskManagementPlan, offenceDetails],
+    outcomes: [roshResult, rmResult, offenceResult],
+  } = await settlePromisesWithOutcomes<[Cas1OASysGroup, Cas1OASysGroup, Cas1OASysGroup]>([
     personService.getOasysAnswers(token, crn, 'roshSummary'),
     personService.getOasysAnswers(token, crn, 'riskManagementPlan'),
     personService.getOasysAnswers(token, crn, 'offenceDetails'),
@@ -33,7 +34,7 @@ export const riskTabController = async ({
         ),
       }),
       roshWidget(personRisks.roshRisks?.status?.toLowerCase() === 'retrieved' && personRisks.roshRisks.value),
-      ...riskOasysCards(roshSummary, riskManagementPlan, offenceDetails),
+      ...riskOasysCards({ roshSummary, roshResult, riskManagementPlan, rmResult, offenceDetails, offenceResult }),
     ],
   }
 }

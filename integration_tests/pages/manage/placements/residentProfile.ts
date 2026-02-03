@@ -66,7 +66,7 @@ export default class ResidentProfilePage extends Page {
     cy.get('h1').should('contain.text', `CRN: ${placement.person.crn} is restricted`)
   }
 
-  shouldShowCard(card: SummaryListWithCard, checkContents = true) {
+  shouldShowCard(card: SummaryListWithCard) {
     const cardTitle = card.card?.title
     const title =
       cardTitle &&
@@ -74,22 +74,20 @@ export default class ResidentProfilePage extends Page {
         ? cardTitle.text
         : new DOMParser().parseFromString(cardTitle.html, 'text/html').body.textContent)
     if (title) cy.get('.govuk-summary-card__title').contains(title).should('exist')
-    if (checkContents) {
-      cy.get('.govuk-summary-card__title')
-        .contains(title)
-        .parents('.govuk-summary-card')
-        .within(() => {
-          if (card.rows) {
-            this.shouldContainSummaryListItems(card.rows)
-          }
-          if (card.table) {
-            cy.get('table:not(.text-table)').within(() => {
-              this.shouldContainTableColumns(card.table.head.map(cell => (cell as TextItem).text))
-              this.shouldContainOrderedTableRows(card.table.rows)
-            })
-          }
-        })
-    }
+    cy.get('.govuk-summary-card__title')
+      .contains(title)
+      .parents('.govuk-summary-card')
+      .within(() => {
+        if (card.rows) {
+          this.shouldContainSummaryListItems(card.rows)
+        }
+        if (card.table) {
+          cy.get('table:not(.text-table)').within(() => {
+            this.shouldContainTableColumns(card.table.head.map(cell => (cell as TextItem).text))
+            this.shouldContainOrderedTableRows(card.table.rows)
+          })
+        }
+      })
   }
 
   checkHeader() {
@@ -129,17 +127,23 @@ export default class ResidentProfilePage extends Page {
   }
 
   shouldShowOffencesInformation(offences: Array<ActiveOffence>, oasysOffenceDetails: Cas1OASysGroup) {
+    cy.stub(residentUtils, 'detailsBody')
     cy.get('.govuk-summary-card__title').contains('Offence').should('exist')
-    const cards = offencesTabCards(offences, { ...oasysOffenceDetails, answers: [] })
+    const cards = offencesTabCards({
+      offences,
+      oasysAnswers: oasysOffenceDetails,
+      offencesOutcome: 'success',
+      oasysOutcome: 'success',
+    })
     this.shouldShowCard(cards[0])
     this.shouldShowCard(cards[1])
-    this.shouldShowCard(cards[2], false)
-    this.shouldShowCard(cards[3], false)
+    this.shouldShowCard(cards[2])
+    this.shouldShowCard(cards[3])
   }
 
   shouldShowLicenceInformation(licence: Licence) {
     cy.stub(residentUtils, 'insetText')
-    const cardList = licenseCards(licence)
+    const cardList = licenseCards(licence, 'success')
     cy.get('.govuk-inset-text').should('contain.text', 'Imported from Create and vary a licence service.')
     cardList.slice(1).forEach(card => {
       this.shouldShowCard(card)
@@ -147,7 +151,14 @@ export default class ResidentProfilePage extends Page {
   }
 
   shouldShowPrisonInformation(adjudications: Array<Adjudication>, csraSummaries: Array<CsraSummary>, person: Person) {
-    const cards = prisonCards(adjudications, csraSummaries, person)
+    const cards = prisonCards({
+      adjudications,
+      csraSummaries,
+      person,
+      adjudicationResult: 'success',
+      csraResult: 'success',
+      personResult: 'success',
+    })
     cards.forEach(card => this.shouldShowCard(card))
   }
 

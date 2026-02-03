@@ -137,7 +137,6 @@ export const linkTo = (
  * Returns a value from an object when given a path, the path can be in dot notation or array notation
  * @param object object to find property in
  * @param path path to property
- * @param defaultValue value to return if property is not found
  * @returns the property value or the default value
  */
 export const resolvePath = (object: Record<string, unknown>, path: string) =>
@@ -259,11 +258,40 @@ export const objectClean = <T>(object: Record<string, unknown>): T => {
  */
 
 export const settlePromises = async <T>(promises: Array<Promise<unknown>>, defaults?: Array<unknown>): Promise<T> => {
+  const { values } = await settlePromisesWithOutcomes<T>(promises, defaults)
+  return values
+}
+
+export type ApiOutcome = 'success' | 'failure' | 'notFound'
+/**
+ * Waits until all promises have either resolved or rejected.
+ * @param promises Array of promises to settle
+ * @param defaults Array of default values to return if a promise rejects
+ * @return Record containing:
+ *  values: Array containing either the result, if a promise has resolved, or undefined if it rejected.
+ *  outcomes: Array of ApiOutcomes
+ *
+ * @example
+ *   const [offences, offenceAnswers] = await settlePromises<[Array<ActiveOffence>,Cas1OASysGroup]>([
+ *     personService.getOffences(token, crn),
+ *     personService.getOasysAnswers(token, crn, 'offenceDetails'),
+ *   ])
+ */
+export const settlePromisesWithOutcomes = async <T>(
+  promises: Array<Promise<unknown>>,
+  defaults?: Array<unknown>,
+): Promise<{ outcomes: Array<ApiOutcome>; values: T }> => {
   const results = await Promise.allSettled(promises)
-  return results.map((result, index) => {
+  const meta: Array<ApiOutcome> = []
+  const value = results.map((result, index) => {
+    const statusCode: number =
+      (result as PromiseRejectedResult).reason?.status || (result as PromiseRejectedResult).reason?.data?.status
+    const failType = statusCode === 404 ? 'notFound' : 'failure'
+    meta.push(result.status === 'fulfilled' ? 'success' : failType)
     if (result.status === 'fulfilled') {
       return result.value
     }
     return defaults ? defaults[index] : undefined
-  }) as T
+  })
+  return { values: value as T, outcomes: meta }
 }

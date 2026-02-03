@@ -12,7 +12,7 @@ import {
   BespokeCondition,
 } from '@approved-premises/api'
 import { subYears } from 'date-fns'
-import { SummaryListItem, SummaryListWithCard, Table, TableRow } from '@approved-premises/ui'
+import { SummaryListWithCard, Table, TableRow } from '@approved-premises/ui'
 import { bulletList, summaryListItem } from '../formUtils'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
@@ -20,49 +20,21 @@ import {
   card,
   CsraClassification,
   csraClassificationMapping,
-  detailsBody,
   insetText,
+  loadingErrorMessage,
   ResidentProfileSubTab,
 } from './index'
-import { sentenceCase } from '../utils'
+import { ApiOutcome, sentenceCase } from '../utils'
 import { dateCell, htmlCell, textCell } from '../tableUtils'
+import { summaryCards } from './riskUtils'
 
 export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   const basePath = paths.resident.tabSentence
   return [
-    {
-      text: 'Offence',
-      href: paths.resident.tabSentence.offence({ crn, placementId }),
-      active: subTab === 'offence',
-    },
+    { text: 'Offence details', href: basePath.offence({ crn, placementId }), active: subTab === 'offence' },
     { text: 'Licence', href: basePath.licence({ crn, placementId }), active: subTab === 'licence' },
-    { text: 'Orders', href: basePath.orders({ crn, placementId }), active: subTab === 'orders' },
-    { text: 'Parole', href: basePath.parole({ crn, placementId }), active: subTab === 'parole' },
     { text: 'Prison', href: basePath.prison({ crn, placementId }), active: subTab === 'prison' },
   ]
-}
-
-const oasysAnswer = (oasysAnswers: Cas1OASysGroup, questionNumber: string, questionName: string): SummaryListItem => {
-  if (oasysAnswers?.assessmentMetadata?.hasApplicableAssessment) {
-    const question = oasysAnswers.answers.find(({ questionNumber: qn }) => questionNumber === qn)
-    return {
-      key: {
-        html: `${questionName}
-<p class="govuk-body-s">Imported from OASys ${questionNumber}</p>
-<p class="govuk-body-s">Last updated on ${DateFormats.isoDateToUIDate(oasysAnswers.assessmentMetadata.dateCompleted)}<p>`,
-      },
-      value: {
-        html: question ? detailsBody(question.label, `${question.answer}`) : '',
-      },
-    }
-  }
-  return {
-    key: {
-      html: `${questionName}
-<p class="govuk-body-s">OASys question ${questionNumber} not available</p>`,
-    },
-    value: { text: '' },
-  }
 }
 
 const getOffenceDescriptions = (
@@ -72,8 +44,10 @@ const getOffenceDescriptions = (
   return { mainCategoryDescription, subCategoryDescription: mainCategoryDescription === sub ? '' : sub }
 }
 
-export const offenceCards = (offences: Array<ActiveOffence>): Array<SummaryListWithCard> => {
-  if (!offences?.length) return [card({ html: insetText('No offences found') })]
+export const offenceCards = (offences: Array<ActiveOffence>, offencesMeta: ApiOutcome): Array<SummaryListWithCard> => {
+  const title = 'Offence'
+  const errorMessage = loadingErrorMessage({ result: offencesMeta, item: 'offence', source: 'NDelius' })
+  if (errorMessage) return [card({ title, html: errorMessage })]
 
   const mainOffence: ActiveOffence = offences.find(({ mainOffence: isMain }) => isMain) || offences[0]
 
@@ -81,7 +55,7 @@ export const offenceCards = (offences: Array<ActiveOffence>): Array<SummaryListW
   const { mainCategoryDescription, subCategoryDescription } = getOffenceDescriptions(mainOffence)
   return [
     card({
-      title: 'Offence',
+      title,
       rows: [
         summaryListItem('Offence type', mainCategoryDescription),
         summaryListItem('Sub-category', subCategoryDescription),
@@ -118,18 +92,32 @@ export const additionalOffencesRows = (offences: Array<ActiveOffence>, mainOffen
     })
     .filter(Boolean)
 
-export const oasysOffenceCards = (oasysAnswers: Cas1OASysGroup): Array<SummaryListWithCard> => [
-  card({ title: 'Offence analysis', rows: [oasysAnswer(oasysAnswers, '2.1', 'Offence analysis')] }),
-  card({ title: 'Previous behaviours', rows: [oasysAnswer(oasysAnswers, '2.12', 'Previous behaviours')] }),
+export const oasysOffenceCards = (oasysAnswers: Cas1OASysGroup, callResult: ApiOutcome): Array<SummaryListWithCard> => [
+  ...summaryCards(['2.1', '2.12'], oasysAnswers, callResult),
 ]
 
-export const offencesTabCards = (
-  offences: Array<ActiveOffence>,
-  oasysAnswers: Cas1OASysGroup,
-): Array<SummaryListWithCard> => [...offenceCards(offences), ...oasysOffenceCards(oasysAnswers)]
+export const offencesTabCards = ({
+  offences,
+  oasysAnswers,
+  offencesOutcome,
+  oasysOutcome,
+}: {
+  offences: Array<ActiveOffence>
+  oasysAnswers: Cas1OASysGroup
+  offencesOutcome: ApiOutcome
+  oasysOutcome: ApiOutcome
+}): Array<SummaryListWithCard> => [
+  ...offenceCards(offences, offencesOutcome),
+  ...oasysOffenceCards(oasysAnswers, oasysOutcome),
+]
 
-export const licenseCards = (licence: Licence): Array<SummaryListWithCard> => {
-  if (!licence) return [card({ html: insetText('No licence available') })]
+export const licenseCards = (licence: Licence, licenceResult: ApiOutcome): Array<SummaryListWithCard> => {
+  const errorMessage = loadingErrorMessage({
+    result: licenceResult,
+    item: 'licence',
+    source: 'Create and vary a licence',
+  })
+  if (errorMessage) return [card({ title: 'Licence overview', html: errorMessage })]
 
   const coalesceAdditionalConditions = (conditions: Array<AdditionalCondition>) => {
     const groups = conditions.reduce(
@@ -210,43 +198,74 @@ export const adjudicationRows = (adjudications: Array<Adjudication>): Array<Tabl
   })
 }
 
-export const prisonCards = (
-  adjudications: Array<Adjudication>,
-  csraSumaries: Array<CsraSummary>,
-  person: Person,
-): Array<SummaryListWithCard> => [
-  card({
-    title: 'Prison details',
-    rows: [
-      summaryListItem(
-        'Prison name',
-        person?.type === 'FullPerson' ? ((person as FullPerson).prisonName ?? '').trim() : 'Not available',
-      ),
-    ],
-  }),
-  card({
-    title: 'Cell Sharing Risk Assessment (CSRA)',
-    table: csraSumaries?.length
-      ? {
-          head: [
-            { text: 'Date assessed', classes: 'govuk-table__header--nowrap' },
-            textCell('Classification'),
-            textCell('Comment'),
-          ],
-          rows: csraRows(csraSumaries),
-        }
-      : undefined,
-    html: csraSumaries?.length ? undefined : 'No assessments found',
-  }),
-  card(
-    adjudications
-      ? {
-          title: 'Adjudications',
-          table: {
+export const prisonCards = ({
+  adjudications,
+  adjudicationResult,
+  csraSummaries,
+  csraResult,
+  person,
+  personResult,
+}: {
+  adjudications: Array<Adjudication>
+  adjudicationResult: ApiOutcome
+  csraSummaries: Array<CsraSummary>
+  csraResult: ApiOutcome
+  person: Person
+  personResult: ApiOutcome
+}): Array<SummaryListWithCard> => {
+  const adjudicationsError = loadingErrorMessage({
+    result: adjudicationResult,
+    item: 'adjudication',
+    source: 'Digital Prison Service',
+  })
+
+  const csraError = loadingErrorMessage({
+    result: csraResult,
+    item: 'CSRA',
+    source: 'Digital Prison Service',
+  })
+
+  const personError = loadingErrorMessage({
+    result: personResult,
+    item: 'person',
+    source: 'NDelius',
+  })
+  return [
+    card({
+      title: 'Prison details',
+      rows: !personError
+        ? [
+            summaryListItem(
+              'Prison name',
+              person?.type === 'FullPerson' ? ((person as FullPerson).prisonName ?? '').trim() : 'Not available',
+            ),
+          ]
+        : undefined,
+      html: personError,
+    }),
+    card({
+      title: 'Cell Sharing Risk Assessment (CSRA)',
+      table: !csraError
+        ? {
+            head: [
+              { text: 'Date assessed', classes: 'govuk-table__header--nowrap' },
+              textCell('Classification'),
+              textCell('Comment'),
+            ],
+            rows: csraRows(csraSummaries || []),
+          }
+        : undefined,
+      html: csraError,
+    }),
+    card({
+      title: 'Adjudications',
+      table: !adjudicationsError
+        ? {
             head: ['Date created', 'Description', 'Outcome'].map(textCell),
             rows: adjudicationRows(adjudications),
-          },
-        }
-      : { html: insetText('No adjudications found') },
-  ),
-]
+          }
+        : undefined,
+      html: adjudicationsError,
+    }),
+  ]
+}

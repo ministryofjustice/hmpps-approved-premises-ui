@@ -1,6 +1,6 @@
 import { render } from 'nunjucks'
 import { cas1OasysGroupFactory, risksFactory } from '../../testutils/factories'
-import { ndeliusRiskCard, roshWidget, summaryCards } from './riskUtils'
+import { ndeliusRiskCard, oasysGroupMapping, oasysMetadataRow, roshWidget, summaryCards } from './riskUtils'
 import { roshRisksFactory } from '../../testutils/factories/risks'
 import * as utils from './index'
 
@@ -27,20 +27,13 @@ describe('risk utils', () => {
       const group = cas1OasysGroupFactory.offenceDetails().build()
       const questionNumbers = group.answers.map(({ questionNumber }) => questionNumber)
 
-      const result = summaryCards(questionNumbers, group, 'group name')
+      const result = summaryCards(questionNumbers, group)
       group.answers.forEach((answer, index) => {
         expect(result[index].card).toEqual({ title: { text: answer.label } })
 
-        expect(result[index].html).toMatchStringIgnoringWhitespace(`
-      <table class="govuk-table text-table">
-        <tbody class="govuk-table__body">
-          <tr class="govuk-table__row">
-            <td class="govuk-table__cell">
-              ${answer.questionNumber} group name
-            </td>
-          </tr>
-        </tbody>
-      </table>Nunjucks template partials/detailsBlock.njk`)
+        expect(result[index].html).toMatchStringIgnoringWhitespace(
+          `${oasysMetadataRow(answer.questionNumber, oasysGroupMapping[group.group], group)}Nunjucks template partials/detailsBlock.njk`,
+        )
       })
     })
   })

@@ -27,12 +27,12 @@ export const healthSideNavigation = (subTab: ResidentProfileSubTab, crn: string,
 
 export const healthDetailsCards = (supportingInformation: Cas1OASysGroup) => [
   card({ html: insetText('Imported from OASys') }),
-  ...summaryCards(['13.1'], supportingInformation, 'OASys supporting information'),
+  ...summaryCards(['13.1'], supportingInformation),
 ]
 
 export const mentalHealthCards = (personAcctAlerts: Array<PersonAcctAlert>, riskToSelf: Cas1OASysGroup) => [
   card({ html: insetText('Imported from Digital Prison Service and OASys') }),
-  ...summaryCards(['FA62', 'FA63', 'FA64', 'R8.1.1', 'R8.2.1', 'R8.3.1'], riskToSelf, 'OASys risk to self'),
+  ...summaryCards(['FA62', 'FA63', 'FA64', 'R8.1.1', 'R8.2.1', 'R8.3.1'], riskToSelf),
   card({
     title: 'ACCT alerts',
     topHtml: tableRow('Imported from Digital Prison Service'),
@@ -44,11 +44,11 @@ export const mentalHealthCards = (personAcctAlerts: Array<PersonAcctAlert>, risk
         dateCellNoWrap(acctAlert.dateExpires),
       ]),
     },
-    html: !personAcctAlerts?.length ? 'No ACCT alerts found' : undefined,
+    html: !personAcctAlerts?.length ? '<p>No ACCT alerts found</p>' : undefined,
   }),
 ]
 
 export const drugAndAlcoholCards = (supportingInformation: Cas1OASysGroup) => [
   card({ html: insetText('Imported from OASys') }),
-  ...summaryCards(['8.9', '9.9'], supportingInformation, 'OASys supporting information'),
+  ...summaryCards(['8.9', '9.9'], supportingInformation),
 ]

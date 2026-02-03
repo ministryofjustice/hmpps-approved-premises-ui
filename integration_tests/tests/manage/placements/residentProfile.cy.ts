@@ -167,7 +167,7 @@ context('ResidentProfile', () => {
       page.shouldShowAllApPlacements(spaceBookings)
     })
 
-    it('should show the offence tab', () => {
+    it('should show the sentence tab', () => {
       const offences = activeOffenceFactory.buildList(3)
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
       const adjudications = adjudicationFactory.buildList(5)
@@ -184,9 +184,9 @@ context('ResidentProfile', () => {
 
       const page = visitPage({ placement, personRisks }, 'Offence')
 
-      AND('the Offence tab should be selected')
+      AND('the Sentence tab should be selected')
       page.shouldHaveActiveTab('Offence')
-      AND('the Offences information should be shown')
+      AND('the Offence details information should be shown')
       page.shouldShowOffencesInformation(offences, oasysOffenceDetails)
 
       WHEN('I select the licence side-nav')
@@ -234,11 +234,12 @@ context('ResidentProfile', () => {
       page.shouldShowOasysCards(['2.4.1', '2.4.2'], oasysOffenceDetails, 'OASys')
     })
 
-    it('should render the page tab if there are no external data', () => {
+    it('should render the tabs if there are no external data', () => {
       const { placement, personRisks } = setup()
       cy.task('stubOasysGroup404', { person: placement.person })
       cy.task('stubAdjudications404', { person: placement.person })
       cy.task('stubPersonOffences404', { person: placement.person })
+      cy.task('stubCsra404', { person: placement.person })
 
       const page = visitPage({ placement, personRisks })
 
@@ -251,18 +252,17 @@ context('ResidentProfile', () => {
       page.shouldHaveActiveTab('Risk')
       cy.contains('No OASys risk assessment for person added')
 
-      WHEN('I select the offence tab')
+      WHEN('I select the sentence tab')
       page.clickTab('Offence')
-      THEN('The Offence tab should be selected')
+      THEN('The Sentence tab should be selected')
       page.shouldHaveActiveTab('Offence')
-      cy.contains('No offences found')
-      cy.contains('OASys question 2.1 not available')
+      cy.contains('No offence information found in NDelius')
 
       WHEN('I select the prison side-tab')
       page.clickSideNav('Prison')
       page.shouldHaveActiveSideNav('Prison')
 
-      cy.contains('No adjudications found')
+      cy.contains('No adjudication information found in Digital Prison Service')
     })
 
     it('should not allow access to the page if user lacks permission', () => {
