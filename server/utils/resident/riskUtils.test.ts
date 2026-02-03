@@ -1,4 +1,5 @@
 import { render } from 'nunjucks'
+import { TableRow } from '@approved-premises/ui'
 import { cas1OasysGroupFactory, risksFactory } from '../../testutils/factories'
 import { ndeliusRiskCard, oasysGroupMapping, oasysMetadataRow, roshWidget, summaryCards } from './riskUtils'
 import { roshRisksFactory } from '../../testutils/factories/risks'
@@ -39,18 +40,28 @@ describe('risk utils', () => {
   })
 
   describe('NDelius risk card', () => {
-    it('Should render the risk card with ndelius link', () => {
-      const crn = 'crn'
-      const personRisks = risksFactory.build({ flags: { value: ['Risk flag text'] } })
-      const mockLink = 'ndelius link'
-
+    const crn = 'crn'
+    const mockLink = 'ndelius link'
+    beforeEach(() => {
       jest.spyOn(utils, 'ndeliusDeeplink').mockReturnValue(mockLink)
+    })
 
-      expect(ndeliusRiskCard(crn, personRisks)).toEqual({
-        card: { title: { text: 'NDelius risk flags' } },
-        html: mockLink,
-        table: { head: [{ text: 'Risk flag' }], rows: [[{ text: 'Risk flag text' }]] },
-      })
+    const expected = (rows: Array<TableRow>) => ({
+      card: { title: { text: 'NDelius risk flags' } },
+      html: mockLink,
+      table: { head: [{ text: 'Risk flag' }], rows },
+    })
+
+    it('Should render the risk card with ndelius link', () => {
+      const personRisks = risksFactory.build({ flags: { value: ['Risk flag text'] } })
+
+      expect(ndeliusRiskCard(crn, personRisks)).toEqual(expected([[{ text: 'Risk flag text' }]]))
+    })
+
+    it('Should handle no risks', () => {
+      const personRisks = risksFactory.build({ flags: { value: undefined } })
+
+      expect(ndeliusRiskCard(crn, personRisks)).toEqual(expected([]))
     })
   })
 })

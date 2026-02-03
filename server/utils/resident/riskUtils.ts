@@ -145,7 +145,7 @@ export const ndeliusRiskCard = (crn: string, personRisks: PersonRisks) =>
   card({
     title: 'NDelius risk flags',
     html: ndeliusDeeplink({ crn, text: 'View risk flags in NDelius', component: 'RegisterSummary' }),
-    table: { head: [textCell('Risk flag')], rows: personRisks.flags.value.map(risk => [textCell(risk)]) },
+    table: { head: [textCell('Risk flag')], rows: (personRisks.flags?.value || []).map(risk => [textCell(risk)]) },
   })
 
 export const insetText = (html: string): string => {
