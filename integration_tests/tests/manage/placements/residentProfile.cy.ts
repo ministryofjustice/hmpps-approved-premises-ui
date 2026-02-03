@@ -128,6 +128,7 @@ context('ResidentProfile', () => {
         assessmentId: assessment.id,
       })
       placement.applicationId = application.id
+      placement.assessmentId = assessment.id
       cy.task('stubApplicationGet', { application })
       cy.task('stubAssessment', assessment)
 
