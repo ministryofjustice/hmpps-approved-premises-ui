@@ -182,12 +182,13 @@ context('ResidentProfile', () => {
       cy.task('stubCsra', { person: placement.person, csraSummaries })
       cy.task('stubFindPerson', { person: placement.person })
 
-      const page = visitPage({ placement, personRisks }, 'Offence')
+      const page = visitPage({ placement, personRisks }, 'Sentence')
 
       AND('the Sentence tab should be selected')
-      page.shouldHaveActiveTab('Offence')
+      page.shouldHaveActiveTab('Sentence')
+
       AND('the Offence details information should be shown')
-      page.shouldShowOffencesInformation(offences, oasysOffenceDetails)
+      page.shouldShowOffencesInformation(offences, oasysOffenceDetails, placement)
 
       WHEN('I select the licence side-nav')
       page.clickSideNav('Licence')
@@ -253,9 +254,9 @@ context('ResidentProfile', () => {
       cy.contains('No OASys risk assessment for person added')
 
       WHEN('I select the sentence tab')
-      page.clickTab('Offence')
+      page.clickTab('Sentence')
       THEN('The Sentence tab should be selected')
-      page.shouldHaveActiveTab('Offence')
+      page.shouldHaveActiveTab('Sentence')
       cy.contains('No offence information found in NDelius')
 
       WHEN('I select the prison side-tab')

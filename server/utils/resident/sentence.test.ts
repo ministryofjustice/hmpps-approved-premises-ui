@@ -1,6 +1,6 @@
 import { createMock } from '@golevelup/ts-jest'
 import { Adjudication, Licence } from '@approved-premises/api'
-import { offencesTabCards } from './sentenceUtils'
+import { offencesTabCards, sentenceCards } from './sentenceUtils'
 import { sentenceLicenceTabController, sentenceOffencesTabController, sentencePrisonTabController } from './sentence'
 import {
   activeOffenceFactory,
@@ -8,24 +8,26 @@ import {
   cas1OasysGroupFactory,
   licenceFactory,
   csraSummaryFactory,
+  cas1SpaceBookingFactory,
 } from '../../testutils/factories'
 import * as sentenceUtils from './sentenceUtils'
 import { PersonService } from '../../services'
 import { ErrorWithData } from '../errors'
-import { fullPersonFactory } from '../../testutils/factories/person'
 
 const personService = createMock<PersonService>({})
 
 jest.mock('nunjucks')
-
-const crn = 'S123456'
-const token = 'token'
 
 const mockService404 = async () => {
   throw new ErrorWithData({ status: 404 })
 }
 
 describe('sentenceTabController', () => {
+  const placement = cas1SpaceBookingFactory.build()
+  const { person } = placement
+  const { crn } = person
+  const token = 'token'
+
   const offences = [
     ...activeOffenceFactory.buildList(5, { mainOffence: false }),
     activeOffenceFactory.build({ mainOffence: true }),
@@ -37,14 +39,17 @@ describe('sentenceTabController', () => {
       personService.getOasysAnswers.mockResolvedValue(offenceDetails)
       personService.getOffences.mockResolvedValue(offences)
 
-      expect(await sentenceOffencesTabController({ personService, token, crn })).toEqual({
-        subHeading: 'Offence details',
-        cardList: offencesTabCards({
-          offences,
-          oasysAnswers: offenceDetails,
-          offencesOutcome: 'success',
-          oasysOutcome: 'success',
-        }),
+      expect(await sentenceOffencesTabController({ personService, token, crn, placement })).toEqual({
+        subHeading: 'Offence and sentence',
+        cardList: [
+          ...offencesTabCards({
+            offences,
+            oasysAnswers: offenceDetails,
+            offencesOutcome: 'success',
+            oasysOutcome: 'success',
+          }),
+          ...sentenceCards(placement),
+        ],
       })
 
       expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
@@ -55,14 +60,17 @@ describe('sentenceTabController', () => {
       personService.getOasysAnswers.mockImplementation(mockService404)
       personService.getOffences.mockImplementation(mockService404)
 
-      expect(await sentenceOffencesTabController({ personService, token, crn })).toEqual({
-        subHeading: 'Offence details',
-        cardList: offencesTabCards({
-          offences: undefined,
-          oasysAnswers: undefined,
-          offencesOutcome: 'notFound',
-          oasysOutcome: 'notFound',
-        }),
+      expect(await sentenceOffencesTabController({ personService, token, crn, placement })).toEqual({
+        subHeading: 'Offence and sentence',
+        cardList: [
+          ...offencesTabCards({
+            offences: undefined,
+            oasysAnswers: undefined,
+            offencesOutcome: 'notFound',
+            oasysOutcome: 'notFound',
+          }),
+          ...sentenceCards(placement),
+        ],
       })
 
       expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
@@ -74,7 +82,6 @@ describe('sentenceTabController', () => {
     it('should render the prison side-tab', async () => {
       const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
       const csraSummaries = csraSummaryFactory.buildList(3)
-      const person = fullPersonFactory.build()
 
       personService.getAdjudications.mockResolvedValue(adjudications)
       personService.csraSummaries.mockResolvedValue(csraSummaries)

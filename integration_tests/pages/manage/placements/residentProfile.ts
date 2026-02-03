@@ -126,7 +126,11 @@ export default class ResidentProfilePage extends Page {
     })
   }
 
-  shouldShowOffencesInformation(offences: Array<ActiveOffence>, oasysOffenceDetails: Cas1OASysGroup) {
+  shouldShowOffencesInformation(
+    offences: Array<ActiveOffence>,
+    oasysOffenceDetails: Cas1OASysGroup,
+    placement: Cas1SpaceBooking,
+  ) {
     cy.stub(residentUtils, 'detailsBody')
     cy.get('.govuk-summary-card__title').contains('Offence').should('exist')
     const cards = offencesTabCards({
@@ -139,6 +143,11 @@ export default class ResidentProfilePage extends Page {
     this.shouldShowCard(cards[1])
     this.shouldShowCard(cards[2])
     this.shouldShowCard(cards[3])
+    cy.get('.govuk-inset-text').should('contain.text', 'We cannot display sentence details from NDelius yet.')
+    cy.get('.govuk-inset-text').should(
+      'contain.text',
+      `You can view this information in the event details. The event number is ${placement.deliusEventNumber}`,
+    )
   }
 
   shouldShowLicenceInformation(licence: Licence) {
