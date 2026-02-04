@@ -107,7 +107,7 @@
     "ext": "js,json,html,njk"
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.823.0",
+    "@aws-sdk/client-sqs": "^3.982.0",
     "@faker-js/faker": "^8.0.0",
     "@microsoft/applicationinsights-web": "^3.3.8",
     "@ministryofjustice/frontend": "^5.1.5",
