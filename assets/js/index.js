@@ -5,6 +5,7 @@ import linkDebounce from './linkDebounce'
 import SubNavAsTabs from './tabPanelTableScript'
 import makeAutocomplete from './accessibleAutocomplete'
 import clearErrorsOnSubmit from './clearErrors'
+import initWhatsNewTopBanner from './whatsNewTopBanner'
 
 GOVUKFrontend.initAll()
 
@@ -29,3 +30,4 @@ document.querySelectorAll('[data-module="moj-date-picker"]').forEach(el => {
   new DatePicker(el)
 })
 document.querySelectorAll('form[data-clear-errors-on-submit]').forEach(clearErrorsOnSubmit)
+document.querySelectorAll('#whats-new-top-banner').forEach(initWhatsNewTopBanner)
