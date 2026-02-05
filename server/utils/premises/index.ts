@@ -26,7 +26,7 @@ import { displayName } from '../personUtils'
 import { canonicalDates, placementStatusCell } from '../placements'
 import { dateCell, htmlCell, textCell } from '../tableUtils'
 import { getRoomCharacteristicLabel } from '../characteristicsUtils'
-import { hasPermission } from '../users'
+import { getPlacementLink } from '../resident'
 
 export { premisesActions } from './premisesActions'
 
@@ -206,15 +206,7 @@ export const mapPlacementTableRows = (
   placements.map(placement => {
     const { id, person, tier, keyWorkerAllocation, characteristics } = placement
     const { arrivalDate, departureDate } = canonicalDates(placement)
-    const residentPermission =
-      request?.session?.user && hasPermission(request.session.user, ['cas1_ap_resident_profile'])
-    const link =
-      residentPermission && person?.personType === 'FullPersonSummary'
-        ? managePaths.resident.tabPersonal.personalDetails({ crn: person.crn, placementId: id })
-        : managePaths.premises.placements.show({
-            premisesId,
-            placementId: id,
-          })
+    const link = getPlacementLink({ request, premisesId, person, placementId: placement.id })
     const fieldValues: Record<ColumnField, TableCell> = {
       personName: htmlCell(`<a href="${link}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`),
       tier: htmlCell(getTierOrBlank(tier)),

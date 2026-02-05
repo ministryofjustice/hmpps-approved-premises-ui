@@ -3,6 +3,7 @@ import { TabItem } from '@approved-premises/ui'
 import { Cas1SpaceBooking, PersonRisks } from '@approved-premises/api'
 import { ApplicationService, AssessmentService, PersonService, PlacementService } from '../../services'
 import paths from '../../paths/manage'
+import peoplePaths from '../../paths/people'
 
 import { actions } from '../../utils/placements'
 import {
@@ -125,7 +126,7 @@ export default class ResidentProfileController {
       const backLink = getPageBackLink(
         paths.resident.show.pattern,
         req,
-        [paths.premises.show.pattern, paths.premises.occupancy.day.pattern],
+        [paths.premises.show.pattern, paths.premises.occupancy.day.pattern, peoplePaths.timeline.show.pattern],
         paths.premises.show({ premisesId: placement.premises.id }),
       )
 
