@@ -81,7 +81,7 @@ export const tabLabels: Record<
   health: { label: 'Health' },
   placement: { label: 'Placement' },
   risk: { label: 'Risk' },
-  sentence: { label: 'Offence' },
+  sentence: { label: 'Sentence' },
 }
 
 export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: ResidentProfileTab): Array<TabItem> => {
@@ -205,6 +205,7 @@ type NdeliusComponent =
   | 'AddressandAccommodation'
   | 'EqualityMonitoring'
   | 'RegisterSummary'
+  | 'EventsList'
 
 export const ndeliusDeeplink = (args: {
   component: NdeliusComponent

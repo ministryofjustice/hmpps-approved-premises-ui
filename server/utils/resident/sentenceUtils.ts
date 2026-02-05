@@ -10,6 +10,7 @@ import {
   AdditionalCondition,
   StandardCondition,
   BespokeCondition,
+  Cas1SpaceBooking,
 } from '@approved-premises/api'
 import { subYears } from 'date-fns'
 import { SummaryListWithCard, Table, TableRow } from '@approved-premises/ui'
@@ -22,8 +23,10 @@ import {
   csraClassificationMapping,
   insetText,
   loadingErrorMessage,
+  ndeliusDeeplink,
   ResidentProfileSubTab,
 } from './index'
+
 import { ApiOutcome, sentenceCase } from '../utils'
 import { dateCell, htmlCell, textCell } from '../tableUtils'
 import { summaryCards } from './riskUtils'
@@ -31,7 +34,7 @@ import { summaryCards } from './riskUtils'
 export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   const basePath = paths.resident.tabSentence
   return [
-    { text: 'Offence details', href: basePath.offence({ crn, placementId }), active: subTab === 'offence' },
+    { text: 'Offence and sentence', href: basePath.offence({ crn, placementId }), active: subTab === 'offence' },
     { text: 'Licence', href: basePath.licence({ crn, placementId }), active: subTab === 'licence' },
     { text: 'Prison', href: basePath.prison({ crn, placementId }), active: subTab === 'prison' },
   ]
@@ -45,7 +48,7 @@ const getOffenceDescriptions = (
 }
 
 export const offenceCards = (offences: Array<ActiveOffence>, offencesMeta: ApiOutcome): Array<SummaryListWithCard> => {
-  const title = 'Offence'
+  const title = 'Offence details'
   const errorMessage = loadingErrorMessage({ result: offencesMeta, item: 'offence', source: 'NDelius' })
   if (errorMessage) return [card({ title, html: errorMessage })]
 
@@ -91,6 +94,21 @@ export const additionalOffencesRows = (offences: Array<ActiveOffence>, mainOffen
       )
     })
     .filter(Boolean)
+
+export const sentenceCards = (placement: Cas1SpaceBooking) => {
+  const link = ndeliusDeeplink({
+    crn: placement.person.crn,
+    text: 'View event list on NDelius (opens in a new tab)',
+    component: 'EventsList',
+  })
+  return [
+    card({
+      html: insetText(
+        `<p>We cannot display sentence details from NDelius yet.</p><p>You can view this information in the event details. The event number is ${placement.deliusEventNumber}</p>${link}`,
+      ),
+    }),
+  ]
+}
 
 export const oasysOffenceCards = (oasysAnswers: Cas1OASysGroup, callResult: ApiOutcome): Array<SummaryListWithCard> => [
   ...summaryCards(['2.1', '2.12'], oasysAnswers, callResult),

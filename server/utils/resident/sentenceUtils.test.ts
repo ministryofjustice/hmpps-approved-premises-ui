@@ -9,6 +9,7 @@ import {
   additionalOffencesRows,
   offencesTabCards,
   csraRows,
+  sentenceCards,
 } from './sentenceUtils'
 import * as sentenceFns from './sentenceUtils'
 import {
@@ -29,12 +30,14 @@ import {
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { bulletList } from '../formUtils'
 import { oasysMetadataRow } from './riskUtils'
+import * as utils from './index'
 
 jest.mock('nunjucks')
 
 const crn = 'S123456'
 
 describe('sentence', () => {
+  const placement = cas1SpaceBookingFactory.build()
   const offences = [
     ...activeOffenceFactory.buildList(5, { mainOffence: false }),
     activeOffenceFactory.build({ mainOffence: true }),
@@ -53,14 +56,13 @@ describe('sentence', () => {
   describe('sentenceSideNavigation', () => {
     it('Builds the side navigation for the sentence tab', () => {
       const subTab: ResidentProfileSubTab = 'offence'
-      const placement = cas1SpaceBookingFactory.build()
       const basePath: string = `/manage/resident/${crn}/placement/${placement.id}/sentence/`
 
       expect(sentenceSideNavigation(subTab, crn, placement.id)).toEqual([
         {
           active: true,
           href: `${basePath}offence`,
-          text: 'Offence details',
+          text: 'Offence and sentence',
         },
         {
           active: false,
@@ -80,7 +82,7 @@ describe('sentence', () => {
     it('should render the offence summary list', () => {
       expect(offenceCards(offences, 'success')).toEqual([
         {
-          card: { title: { text: 'Offence' } },
+          card: { title: { text: 'Offence details' } },
           rows: [
             { key: { text: 'Offence type' }, value: { text: indexOffence.mainCategoryDescription } },
             { key: { text: 'Sub-category' }, value: { text: indexOffence.subCategoryDescription } },
@@ -166,6 +168,21 @@ describe('sentence', () => {
     })
   })
 
+  describe('sentenceCards', () => {
+    it('should render the sentence section with NDelius link', () => {
+      jest.spyOn(utils, 'ndeliusDeeplink')
+      expect(sentenceCards(placement)).toEqual([{ html: 'rendered-output' }])
+      expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
+        html: `<p>We cannot display sentence details from NDelius yet.</p><p>You can view this information in the event details. The event number is ${placement.deliusEventNumber}</p>`,
+      })
+      expect(utils.ndeliusDeeplink).toHaveBeenCalledWith({
+        component: 'EventsList',
+        crn: placement.person.crn,
+        text: 'View event list on NDelius (opens in a new tab)',
+      })
+    })
+  })
+
   describe('csraRows', () => {
     const expectedSummary = (summary: CsraSummary) => [
       { text: DateFormats.isoDateToUIDate(summary.assessmentDate, { format: 'short' }) },
@@ -219,7 +236,7 @@ describe('sentence', () => {
     it('should render the side navigation', () => {
       const baseUrl = '/manage/resident/crn/placement/placementId/sentence/'
       expect(sentenceSideNavigation('licence', 'crn', 'placementId')).toEqual([
-        { active: false, href: `${baseUrl}offence`, text: 'Offence details' },
+        { active: false, href: `${baseUrl}offence`, text: 'Offence and sentence' },
         { active: true, href: `${baseUrl}licence`, text: 'Licence' },
         { active: false, href: `${baseUrl}prison`, text: 'Prison' },
       ])
