@@ -1,7 +1,9 @@
 import { render } from 'nunjucks'
-import { applicationFactory, cas1SpaceBookingShortSummaryFactory } from '../../testutils/factories'
-import { applicationCardList, applicationDocumentAccordion, placementCard } from './placementUtils'
+import { applicationFactory, assessmentFactory, cas1SpaceBookingShortSummaryFactory } from '../../testutils/factories'
+import { applicationCardList, applicationDocumentAccordion, assessmentCard, placementCard } from './placementUtils'
 import { DateFormats } from '../dateUtils'
+import assessPaths from '../../paths/assess'
+import { linkTo } from '../utils'
 
 jest.mock('nunjucks')
 
@@ -85,6 +87,22 @@ describe('application utils', () => {
         'partials/insetText.njk',
         {
           html: `Application submitted by ${application.applicantUserDetails.name} on ${DateFormats.isoDateToUIDate(application.submittedAt)}`,
+        },
+      ])
+    })
+  })
+
+  describe('assessmentLink inset', () => {
+    it('should generate inset assessment link section', () => {
+      const assessment = assessmentFactory.build()
+      const expectedLink = linkTo(assessPaths.assessments.show({ id: assessment.id }), { text: 'View assessment' })
+
+      assessmentCard(assessment)
+
+      expect((render as jest.Mock).mock.calls[0]).toEqual([
+        'partials/insetText.njk',
+        {
+          html: `Application assessed by ${assessment.allocatedToStaffMember.name} on ${DateFormats.isoDateToUIDate(assessment.submittedAt)}<p class="govuk-!-margin-top-4">${expectedLink}</p>`,
         },
       ])
     })

@@ -66,6 +66,7 @@ export const controllers = (services: Services) => {
     services.placementService,
     services.personService,
     services.applicationService,
+    services.assessmentService,
   )
 
   return {

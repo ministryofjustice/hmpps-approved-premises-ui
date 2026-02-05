@@ -1,4 +1,9 @@
-import { ApprovedPremisesApplication, Cas1SpaceBooking, Cas1SpaceBookingShortSummary } from '@approved-premises/api'
+import {
+  ApprovedPremisesApplication,
+  Cas1Assessment,
+  Cas1SpaceBooking,
+  Cas1SpaceBookingShortSummary,
+} from '@approved-premises/api'
 import { SummaryListWithCard } from '@approved-premises/ui'
 import { Accordion, alertBanner, card, renderCardList, renderPersonDetails, ResidentProfileSubTab } from './index'
 import { SubmittedDocumentRenderer } from '../forms/submittedDocumentRenderer'
@@ -7,6 +12,8 @@ import { DateFormats } from '../dateUtils'
 import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
 import { placementStatusTag, requirementsInformation } from '../placements'
 import paths from '../../paths/manage'
+import assessPaths from '../../paths/assess'
+import { linkTo } from '../utils'
 
 export const applicationDocumentAccordion = (application: ApprovedPremisesApplication): Accordion => {
   const sections = new SubmittedDocumentRenderer(application).response
@@ -45,6 +52,14 @@ export const applicationCardList = (application: ApprovedPremisesApplication): A
   ]
 }
 
+export const assessmentCard = (assessment: Cas1Assessment): SummaryListWithCard => {
+  return card({
+    html: `<h3 class="govuk-heading-m">Assessment</h3>${insetText(
+      `Application assessed by ${assessment.allocatedToStaffMember?.name} on ${DateFormats.isoDateToUIDate(assessment.submittedAt)}<p class="govuk-!-margin-top-4">${linkTo(assessPaths.assessments.show({ id: assessment.id }), { text: 'View assessment' })}</p>`,
+    )}`,
+  })
+}
+
 export const placementSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placement: Cas1SpaceBooking) => {
   const basePath = paths.resident.tabPlacement
   const placementId = placement.id
@@ -60,7 +75,7 @@ export const placementSideNavigation = (subTab: ResidentProfileSubTab, crn: stri
       active: subTab === 'allApPlacements',
     },
     {
-      text: 'Application',
+      text: 'Application and assessment',
       href: basePath.application({ crn, placementId }),
       active: subTab === 'application',
     },

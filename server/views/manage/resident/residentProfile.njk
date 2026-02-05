@@ -59,6 +59,11 @@
             {% if accordion %}
                 {{ govukAccordion(accordion) }}
             {% endif %}
+
+            {% if bottomCardList %}
+                {% set cardList = bottomCardList %}
+                {% include "./partials/cardList.njk" %}
+            {% endif %}
         </div>
     </div>
 
