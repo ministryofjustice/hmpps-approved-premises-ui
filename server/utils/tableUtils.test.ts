@@ -19,6 +19,9 @@ describe('tableUtils', () => {
     it('returns a cell with a date in the short format from an ISO date', () => {
       expect(dateCell('2022-01-01')).toEqual({ text: '1 Jan 2022' })
     })
+    it('Handles an empty date', () => {
+      expect(dateCell('')).toEqual({ text: '' })
+    })
   })
 
   describe('noWrapCell', () => {
@@ -31,6 +34,11 @@ describe('tableUtils', () => {
     it('returns a cell with a date in the short format from an ISO date wrapped in a non-break span', () => {
       expect(dateCellNoWrap('2022-01-01')).toEqual({
         html: '<span class="govuk-table__cell--nowrap">1 Jan 2022</span>',
+      })
+    })
+    it('handles an empty date', () => {
+      expect(dateCellNoWrap(undefined)).toEqual({
+        html: '<span class="govuk-table__cell--nowrap"></span>',
       })
     })
   })

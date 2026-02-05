@@ -1,13 +1,16 @@
-import { ApprovedPremisesApplication, Cas1SpaceBooking } from '@approved-premises/api'
+import { ApprovedPremisesApplication, Cas1Assessment, Cas1SpaceBooking } from '@approved-premises/api'
+import { SummaryListWithCard } from '@approved-premises/ui'
 import { TabData } from './index'
 import {
   applicationCardList,
   applicationDocumentAccordion,
+  assessmentCard,
   placementDetailsCards,
   allApPlacementsTabData,
 } from './placementUtils'
 import { TabControllerParameters } from './TabControllerParameters'
 import { sortSpaceBookingsByCanonicalArrivalDate } from '../placements'
+import { settlePromises } from '../utils'
 
 export { placementSideNavigation } from './placementUtils'
 
@@ -20,17 +23,20 @@ export const placementTabController = (placement: Cas1SpaceBooking): TabData => 
 
 export const placementApplicationTabController = async ({
   applicationService,
+  assessmentService,
   token,
   placement,
-}: TabControllerParameters): Promise<TabData> => {
-  const [application]: [ApprovedPremisesApplication] = await Promise.all([
+}: TabControllerParameters): Promise<TabData & { bottomCardList?: Array<SummaryListWithCard> }> => {
+  const [application, assessment] = await settlePromises<[ApprovedPremisesApplication, Cas1Assessment]>([
     applicationService.findApplication(token, placement.applicationId),
+    placement.assessmentId && assessmentService.findAssessment(token, placement.assessmentId),
   ])
 
   return {
     cardList: applicationCardList(application),
-    subHeading: 'Application',
+    subHeading: 'Application and assessment',
     accordion: applicationDocumentAccordion(application),
+    bottomCardList: assessment && [assessmentCard(assessment)],
   }
 }
 

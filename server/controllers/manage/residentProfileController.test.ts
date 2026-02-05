@@ -6,7 +6,7 @@ import { faker } from '@faker-js/faker'
 import { placementSideNavigation } from '../../utils/resident/placement'
 import { personalSideNavigation } from '../../utils/resident/personalUtils'
 import { sentenceSideNavigation } from '../../utils/resident/sentenceUtils'
-import { ApplicationService, PersonService, PlacementService } from '../../services'
+import { ApplicationService, AssessmentService, PersonService, PlacementService } from '../../services'
 
 import paths from '../../paths/manage'
 
@@ -35,8 +35,14 @@ describe('residentProfileController', () => {
   const placementService = createMock<PlacementService>({})
   const personService = createMock<PersonService>({})
   const applicationService = createMock<ApplicationService>({})
+  const assessmentService = createMock<AssessmentService>({})
 
-  const residentProfileController = new ResidentProfileController(placementService, personService, applicationService)
+  const residentProfileController = new ResidentProfileController(
+    placementService,
+    personService,
+    applicationService,
+    assessmentService,
+  )
 
   const setUp = ({ person = personFactory.build({ crn }) }: { person?: Person } = {}) => {
     const placement = cas1SpaceBookingFactory.upcoming().build({ person })

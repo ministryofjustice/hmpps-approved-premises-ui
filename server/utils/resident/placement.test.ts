@@ -1,6 +1,6 @@
 import { Cas1SpaceBooking } from '@approved-premises/api'
 import { createMock } from '@golevelup/ts-jest'
-import { ApplicationService, PersonService } from 'server/services'
+import { ApplicationService, AssessmentService, PersonService } from 'server/services'
 import { placementTabController, allApPlacementsTabController, placementApplicationTabController } from './placement'
 import {
   cas1SpaceBookingFactory,
@@ -240,21 +240,24 @@ describe('tabController', () => {
   describe('placementApplicationTabController', () => {
     it('should render the application document as an accordion', async () => {
       const applicationService = createMock<ApplicationService>({})
+      const assessmentService = createMock<AssessmentService>({})
       const application = applicationFactory.build()
 
-      const placement = cas1SpaceBookingFactory.build({ applicationId: application.id })
+      const placement = cas1SpaceBookingFactory.build({ applicationId: application.id, assessmentId: undefined })
       applicationService.findApplication.mockResolvedValue(application)
 
       jest.spyOn(placementUtils, 'applicationCardList').mockReturnValue([])
       jest.spyOn(placementUtils, 'applicationDocumentAccordion').mockReturnValue({ id: 'accordion', items: [] })
 
-      expect(await placementApplicationTabController({ applicationService, token, placement })).toEqual({
+      expect(
+        await placementApplicationTabController({ applicationService, assessmentService, token, placement }),
+      ).toEqual({
         accordion: {
           id: 'accordion',
           items: [],
         },
         cardList: [],
-        subHeading: 'Application',
+        subHeading: 'Application and assessment',
       })
     })
   })
