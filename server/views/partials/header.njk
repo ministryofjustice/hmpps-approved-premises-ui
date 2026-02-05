@@ -1,8 +1,6 @@
 {%- from "moj/components/primary-navigation/macro.njk" import mojPrimaryNavigation -%}
 {% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
 
-{% include "partials/whatsNewTopBanner.njk" %}
-
 <header class="hmpps-header" role="banner">
     <div class="hmpps-header__container">
         <div class="hmpps-header__title">
@@ -40,6 +38,10 @@
         </nav>
     </div>
 </header>
+
+{% if showTechnicalUpdatesBanner %}
+    {% include "components/technicalUpdatesBanner/template.njk" %}
+{% endif %}
 
 {% if not hideNav %}
     {{ mojPrimaryNavigation({

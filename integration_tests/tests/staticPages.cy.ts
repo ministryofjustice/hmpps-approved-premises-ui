@@ -33,30 +33,33 @@ context('static pages', () => {
 
   describe("what's new top banner", () => {
     beforeEach(() => {
-      cy.clearLocalStorage('whats-new-top-banner-hidden')
+      cy.clearCookie('technical-updates-banner')
     })
 
-    it('shows the banner by default', () => {
-      signIn('applicant')
+    it('shows the banner on manage pages', () => {
+      signIn('future_manager')
 
-      cy.get('#whats-new-top-banner').should('be.visible').and('contain', 'New features')
+      cy.visit('/manage/premises', { failOnStatusCode: false })
+
+      cy.get('#technical-updates-banner').should('be.visible').and('contain', 'New features')
     })
 
-    it("hides the banner when clicking 'Hide message'", () => {
+    it('does not show the banner on non-manage pages', () => {
       signIn('applicant')
 
-      cy.get('#whats-new-top-banner').should('be.visible')
-      cy.get('#hide-message').click()
-      cy.get('#whats-new-top-banner').should('not.be.visible')
+      cy.get('#technical-updates-banner').should('not.exist')
     })
 
-    it("hides the banner when clicking 'Whats new' and navigates to the page", () => {
-      signIn('applicant')
+    it('hides the banner after visiting whats-new page', () => {
+      signIn('future_manager')
 
-      cy.get('#whats-new-top-banner').should('be.visible')
-      cy.get('#whats-new-top-banner a[href="/whats-new"]').click()
-      Page.verifyOnPage(Page, "What's new")
-      cy.get('#whats-new-top-banner').should('not.be.visible')
+      cy.visit('/manage/premises', { failOnStatusCode: false })
+      cy.get('#technical-updates-banner').should('be.visible')
+
+      cy.visit('/whats-new')
+
+      cy.visit('/manage/premises', { failOnStatusCode: false })
+      cy.get('#technical-updates-banner').should('not.exist')
     })
   })
 })

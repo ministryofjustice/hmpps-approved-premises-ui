@@ -1,7 +1,16 @@
 {% extends "partials/layout.njk" %}
 
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
 {% set pageTitle = applicationName + " - What's new" %}
-{% set hideNav = true %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: backLink,
+        classes: "govuk-!-margin-top-5"
+    }) }}
+{% endblock %}
 
 {% block content %}
     <h1 class="govuk-heading-l">What's new</h1>
@@ -25,6 +34,6 @@
         <li>let you change some information in the profile</li>
     </ul>
 
-    <p>You can <a class="govuk-link" href="https://forms.office.com/pages/responsepage.aspx?id=KEeHxuZx_kGp4S6MNndq2KxXUZ1jbxlMsEoiPoZPWGNUOVpGMkgxU1dXTU1QSDVQNUJZRVFMTDdYQS4u&route=shorturl" target="_blank" rel="noreferrer noopener">give us feedback</a> to help improve the service.</p>
+    <p>You can <a class="govuk-link" href="https://forms.office.com/e/jSiRQFF82r" target="_blank" rel="noreferrer noopener">give us feedback</a> to help improve the service.</p>
 {% endblock %}
 
