@@ -3,13 +3,13 @@
 /* tslint:disable */
 /* eslint-disable */
 export type CsraSummary = {
-    assessmentAgencyId: string;
+    assessmentAgencyId?: string;
     assessmentCode: string;
     assessmentComment?: string;
     assessmentDate: string;
     assessmentSeq: number;
     bookingId: number;
     cellSharingAlertFlag: boolean;
-    classificationCode: string;
+    classificationCode?: string;
 };
 
