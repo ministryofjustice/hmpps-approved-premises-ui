@@ -19,7 +19,6 @@ import ReportService from './reportService'
 import ApAreaService from './apAreaService'
 import CruManagementAreaService from './cruManagementAreaService'
 import AppealService from './appealService'
-import SessionService from './sessionService'
 
 import config, { AuditConfig } from '../config'
 
@@ -65,7 +64,6 @@ export const services = () => {
   const reportService = new ReportService(reportClientBuilder)
   const apAreaService = new ApAreaService(referenceDataClientBuilder)
   const cruManagementAreaService = new CruManagementAreaService(cas1ReferenceDataClientBuilder)
-  const sessionService = new SessionService()
 
   return {
     appealService,
@@ -85,7 +83,6 @@ export const services = () => {
     reportService,
     apAreaService,
     cruManagementAreaService,
-    sessionService,
   }
 }
 
@@ -108,5 +105,4 @@ export {
   ReportService,
   ApAreaService,
   CruManagementAreaService,
-  SessionService,
 }

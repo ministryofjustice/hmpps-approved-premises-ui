@@ -10,7 +10,7 @@ import {
 } from '../../utils/applications/manageApplications'
 import TasklistService from '../../services/tasklistService'
 import ApplicationService from '../../services/applicationService'
-import { AssessmentService, PersonService, SessionService } from '../../services'
+import { AssessmentService, PersonService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import adminPaths from '../../paths/admin'
@@ -30,6 +30,7 @@ import { getSearchOptions } from '../../utils/getSearchOptions'
 import { RestrictedPersonError } from '../../utils/errors'
 import peoplePaths from '../../paths/people'
 import { applicationKeyDetails, personKeyDetails } from '../../utils/applications/helpers'
+import { getPageBackLink } from '../../utils/backlinks'
 
 interface ShowRequest extends Request {
   query: { tab: ApplicationShowPageTab }
@@ -42,7 +43,6 @@ export default class ApplicationsController {
     private readonly applicationService: ApplicationService,
     private readonly assessmentService: AssessmentService,
     private readonly personService: PersonService,
-    private readonly sessionService: SessionService,
   ) {}
 
   index(): RequestHandler {
@@ -107,7 +107,7 @@ export default class ApplicationsController {
     return async (req: ShowRequest, res: Response) => {
       const application = await this.applicationService.findApplication(req.user.token, req.params.id)
 
-      const backLink = this.sessionService.getPageBackLink(paths.applications.show.pattern, req, [
+      const backLink = getPageBackLink(paths.applications.show.pattern, req, [
         paths.applications.index.pattern,
         paths.applications.dashboard.pattern,
         peoplePaths.timeline.show.pattern,

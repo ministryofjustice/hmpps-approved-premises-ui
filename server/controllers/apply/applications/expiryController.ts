@@ -3,16 +3,14 @@ import type { Request, RequestHandler, Response } from 'express'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import paths from '../../../paths/apply'
 import { Cas1ExpireApplicationReason } from '../../../@types/shared'
-import { ApplicationService, SessionService } from '../../../services'
+import { ApplicationService } from '../../../services'
 import { applicationKeyDetails } from '../../../utils/applications/helpers'
 import { ValidationError } from '../../../utils/errors'
 import { getApplicationSummary } from '../../../utils/applications/utils'
+import { getPageBackLink } from '../../../utils/backlinks'
 
 export default class ExpiryController {
-  constructor(
-    private readonly applicationService: ApplicationService,
-    private readonly sessionService: SessionService,
-  ) {}
+  constructor(private readonly applicationService: ApplicationService) {}
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
@@ -21,7 +19,7 @@ export default class ExpiryController {
 
       const application = await this.applicationService.findApplication(req.user.token, id)
 
-      const backLink = this.sessionService.getPageBackLink(paths.applications.expire.pattern, req, [
+      const backLink = getPageBackLink(paths.applications.expire.pattern, req, [
         paths.applications.show.pattern,
         paths.applications.index.pattern,
         paths.applications.dashboard.pattern,
@@ -50,7 +48,7 @@ export default class ExpiryController {
 
         await this.applicationService.expire(req.user.token, req.params.id, body)
 
-        const returnUrl = this.sessionService.getPageBackLink(paths.applications.expire.pattern, req, [])
+        const returnUrl = getPageBackLink(paths.applications.expire.pattern, req, [])
         req.flash('success', 'Application marked as expired')
         return res.redirect(returnUrl)
       } catch (error) {

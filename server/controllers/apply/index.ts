@@ -21,16 +21,10 @@ export const controllers = (services: Services) => {
     apAreaService,
     appealService,
     placementService,
-    sessionService,
     assessmentService,
   } = services
 
-  const applicationsController = new ApplicationsController(
-    applicationService,
-    assessmentService,
-    personService,
-    sessionService,
-  )
+  const applicationsController = new ApplicationsController(applicationService, assessmentService, personService)
   const pagesController = new PagesController(applicationService, {
     personService,
     applicationService,
@@ -40,11 +34,11 @@ export const controllers = (services: Services) => {
   })
   const offencesController = new OffencesController(personService, applicationService)
   const documentsController = new DocumentsController(personService)
-  const withdrawalsController = new WithdrawalsController(applicationService, sessionService)
+  const withdrawalsController = new WithdrawalsController(applicationService)
   const notesController = new NotesController(applicationService)
   const withdrawablesController = new WithdrawablesController(applicationService, placementService)
   const appealsController = new AppealsController(appealService, applicationService)
-  const expiryController = new ExpiryController(applicationService, sessionService)
+  const expiryController = new ExpiryController(applicationService)
 
   return {
     appealsController,

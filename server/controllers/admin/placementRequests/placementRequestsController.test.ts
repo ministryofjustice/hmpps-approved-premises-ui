@@ -3,7 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PlacementRequestsController from './placementRequestsController'
 
-import { PlacementRequestService, SessionService } from '../../../services'
+import { PlacementRequestService } from '../../../services'
 import {
   userDetailsFactory,
   cas1PlacementRequestDetailFactory,
@@ -20,6 +20,7 @@ import managePaths from '../../../paths/manage'
 import * as validationUtils from '../../../utils/validation'
 import { ValidationError } from '../../../utils/errors'
 import { changePlacementLink } from '../../../utils/placementRequests/adminIdentityBar'
+import * as backLinks from '../../../utils/backlinks'
 
 jest.mock('../../../utils/applications/utils')
 jest.mock('../../../utils/applications/getResponses')
@@ -34,7 +35,6 @@ describe('PlacementRequestsController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
-  const sessionService = createMock<SessionService>({})
 
   let placementRequestsController: PlacementRequestsController
 
@@ -43,14 +43,14 @@ describe('PlacementRequestsController', () => {
 
     request = createMock<Request>({ user: { token }, flash: jest.fn() })
 
-    placementRequestsController = new PlacementRequestsController(placementRequestService, sessionService)
+    placementRequestsController = new PlacementRequestsController(placementRequestService)
 
     jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate')
   })
 
   describe('show', () => {
     it('should render the placement request template with a space booking', async () => {
-      jest.spyOn(sessionService, 'getPageBackLink').mockReturnValue('/admin/cru-dashboard?status=unableToMatch&page=2')
+      jest.spyOn(backLinks, 'getPageBackLink').mockReturnValue('/admin/cru-dashboard?status=unableToMatch&page=2')
       const placementRequest = cas1PlacementRequestDetailFactory.build({
         openChangeRequests: cas1ChangeRequestSummaryFactory.buildList(2),
       })
@@ -60,11 +60,11 @@ describe('PlacementRequestsController', () => {
 
       await placementRequestsController.show()(request, response, next)
 
-      expect(sessionService.getPageBackLink).toHaveBeenCalledWith(
-        '/admin/placement-requests/:placementRequestId',
-        request,
-        ['/admin/cru-dashboard', '/admin/cru-dashboard/change-requests', '/admin/cru-dashboard/search'],
-      )
+      expect(backLinks.getPageBackLink).toHaveBeenCalledWith('/admin/placement-requests/:placementRequestId', request, [
+        '/admin/cru-dashboard',
+        '/admin/cru-dashboard/change-requests',
+        '/admin/cru-dashboard/search',
+      ])
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/show', {
         backlink: '/admin/cru-dashboard?status=unableToMatch&page=2',
         adminIdentityBar: adminIdentityBar(placementRequest, response.locals.user),

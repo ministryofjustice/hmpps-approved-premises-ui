@@ -1,28 +1,22 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { PlacementRequestService, SessionService } from '../../../services'
+import { PlacementRequestService } from '../../../services'
 import matchPaths from '../../../paths/match'
 import adminPaths from '../../../paths/admin'
+import { getPageBackLink } from '../../../utils/backlinks'
 
 export default class BookingsController {
-  constructor(
-    private readonly placementRequestService: PlacementRequestService,
-    private readonly sessionService: SessionService,
-  ) {}
+  constructor(private readonly placementRequestService: PlacementRequestService) {}
 
   bookingNotMade(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       const { placementRequestId } = req.params
       const confirmPath = matchPaths.placementRequests.bookingNotMade.create({ placementRequestId })
 
-      const backLink = this.sessionService.getPageBackLink(
-        matchPaths.placementRequests.bookingNotMade.confirm.pattern,
-        req,
-        [
-          matchPaths.v2Match.placementRequests.search.occupancy.pattern,
-          matchPaths.v2Match.placementRequests.search.spaces.pattern,
-          adminPaths.admin.placementRequests.show.pattern,
-        ],
-      )
+      const backLink = getPageBackLink(matchPaths.placementRequests.bookingNotMade.confirm.pattern, req, [
+        matchPaths.v2Match.placementRequests.search.occupancy.pattern,
+        matchPaths.v2Match.placementRequests.search.spaces.pattern,
+        adminPaths.admin.placementRequests.show.pattern,
+      ])
 
       return res.render('match/placementRequests/bookings/unable-to-match', {
         backLink,
