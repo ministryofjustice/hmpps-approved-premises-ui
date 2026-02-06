@@ -19,12 +19,17 @@ export const mentalHealthTabController = async ({
   token,
   crn,
 }: TabControllerParameters): Promise<TabData> => {
-  const [personAcctAlerts, riskToSelf]: [Array<PersonAcctAlert>, Cas1OASysGroup] = await settlePromises([
+  const [personAcctAlerts, riskToSelf, supportingInformation]: [
+    Array<PersonAcctAlert>,
+    Cas1OASysGroup,
+    Cas1OASysGroup,
+  ] = await settlePromises([
     personService.getAcctAlerts(token, crn),
     personService.getOasysAnswers(token, crn, 'riskToSelf'),
+    personService.getOasysAnswers(token, crn, 'supportingInformation', [10]),
   ])
   return {
     subHeading: 'Mental health',
-    cardList: mentalHealthCards(personAcctAlerts, riskToSelf),
+    cardList: mentalHealthCards(personAcctAlerts, riskToSelf, supportingInformation),
   }
 }
