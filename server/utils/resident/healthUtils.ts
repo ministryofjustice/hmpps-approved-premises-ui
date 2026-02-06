@@ -30,9 +30,14 @@ export const healthDetailsCards = (supportingInformation: Cas1OASysGroup) => [
   ...summaryCards(['13.1'], supportingInformation),
 ]
 
-export const mentalHealthCards = (personAcctAlerts: Array<PersonAcctAlert>, riskToSelf: Cas1OASysGroup) => [
+export const mentalHealthCards = (
+  personAcctAlerts: Array<PersonAcctAlert>,
+  riskToSelf: Cas1OASysGroup,
+  supportingInformation: Cas1OASysGroup,
+) => [
   card({ html: insetText('Imported from Digital Prison Service and OASys') }),
   ...summaryCards(['FA62', 'FA63', 'FA64', 'R8.1.1', 'R8.2.1', 'R8.3.1'], riskToSelf),
+  ...summaryCards(['10.9'], supportingInformation),
   card({
     title: 'ACCT alerts',
     topHtml: tableRow('Imported from Digital Prison Service'),

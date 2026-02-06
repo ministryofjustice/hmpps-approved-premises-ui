@@ -94,6 +94,11 @@ context('ResidentProfile', () => {
         group: oasysSupportingInformation,
         includeOptionalSections: [13],
       })
+      cy.task('stubOasysGroup', {
+        person: placement.person,
+        group: oasysSupportingInformation,
+        includeOptionalSections: [10],
+      })
 
       const page = visitPage({ placement, personRisks })
 
@@ -109,7 +114,7 @@ context('ResidentProfile', () => {
 
       THEN('I should see the Mental health cards')
       page.shouldHaveActiveSideNav(`Mental health`)
-      page.shouldShowMentalHealthSection(acctAlerts, riskToSelf)
+      page.shouldShowMentalHealthSection(acctAlerts, riskToSelf, oasysSupportingInformation)
 
       WHEN('I select the drug and alcohol subtab')
       page.clickSideNav('Drug and alcohol use')
