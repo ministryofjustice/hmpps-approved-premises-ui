@@ -39,6 +39,10 @@
     </div>
 </header>
 
+{% if showTechnicalUpdatesBanner %}
+    {% include "components/technicalUpdatesBanner/template.njk" %}
+{% endif %}
+
 {% if not hideNav %}
     {{ mojPrimaryNavigation({
         label: 'Primary navigation',

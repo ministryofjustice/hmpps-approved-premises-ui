@@ -23,5 +23,9 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'COOKIE_POLICY',
   })
 
+  get(staticPaths.pages.whatsNew.pattern, staticController.render('whatsNew'), {
+    auditEvent: 'VIEW_WHATS_NEW',
+  })
+
   return router
 }
