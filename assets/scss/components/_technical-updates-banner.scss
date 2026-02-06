@@ -1,0 +1,16 @@
+@use "govuk-frontend/dist/govuk" as *;
+
+$moj-new-features-purple: #44247b;
+
+.technical-updates-banner {
+    background-color: $moj-new-features-purple;
+    padding: 10px 0 10px 0;
+}
+
+.technical-updates-container {
+    color: govuk-colour('white');
+}
+
+.technical-updates-content {
+    float: left;
+}
