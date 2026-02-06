@@ -37,7 +37,7 @@ context('static pages', () => {
     })
 
     it('shows the banner on manage pages', () => {
-      signIn('future_manager')
+      signIn(['future_manager', 'manage_resident'])
 
       cy.visit('/manage/premises', { failOnStatusCode: false })
 
@@ -45,13 +45,19 @@ context('static pages', () => {
     })
 
     it('does not show the banner on non-manage pages', () => {
-      signIn('applicant')
+      signIn(['future_manager', 'manage_resident'])
 
       cy.get('#technical-updates-banner').should('not.exist')
     })
 
+    it('does not show the banner to users without manage resident permission', () => {
+      signIn(['future_manager'])
+      cy.visit('/manage/premises', { failOnStatusCode: false })
+      cy.get('#technical-updates-banner').should('not.exist')
+    })
+
     it('hides the banner after visiting whats-new page', () => {
-      signIn('future_manager')
+      signIn(['future_manager', 'manage_resident'])
 
       cy.visit('/manage/premises', { failOnStatusCode: false })
       cy.get('#technical-updates-banner').should('be.visible')
