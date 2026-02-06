@@ -7,8 +7,17 @@ import type { Services } from '../services'
 import paths from '../paths/manage'
 
 import actions from './utils'
+import { TECHNICAL_BANNER_VERSION } from '../controllers/staticController'
+import { hasPermission } from '../utils/users'
 
 export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
+  router.use('/manage', (req, res, next) => {
+    res.locals.showTechnicalUpdatesBanner =
+      hasPermission(res.locals.user, ['cas1_ap_resident_profile']) &&
+      !req.headers.cookie?.includes(`technical-updates-banner=${TECHNICAL_BANNER_VERSION}`)
+    next()
+  })
+
   const { get, post } = actions(router, services.auditService)
 
   const {
