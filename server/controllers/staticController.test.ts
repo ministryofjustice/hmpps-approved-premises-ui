@@ -17,6 +17,6 @@ describe('StaticController', () => {
 
     requestHandler(request, response, next)
 
-    expect(response.render).toHaveBeenCalledWith('static/template-name.njk')
+    expect(response.render).toHaveBeenCalledWith('static/template-name.njk', { backLink: undefined })
   })
 })
