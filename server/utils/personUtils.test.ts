@@ -6,7 +6,14 @@ import {
   unknownPersonFactory,
   unknownPersonSummaryFactory,
 } from '../testutils/factories/person'
-import { displayName, isApplicableTier, isFullPerson, isUnknownPerson, tierBadge } from './personUtils'
+import {
+  displayName,
+  isApplicableTier,
+  isFullPerson,
+  isNotRestrictedPerson,
+  isUnknownPerson,
+  tierBadge,
+} from './personUtils'
 
 describe('personUtils', () => {
   describe('tierBadge', () => {
@@ -52,6 +59,17 @@ describe('personUtils', () => {
 
     it('returns false if the person is a restricted person', () => {
       expect(isFullPerson(restrictedPersonFactory.build())).toEqual(false)
+    })
+  })
+
+  describe('isNotRestrictedPerson', () => {
+    it('returns true if the person or personSummary is not restricted', () => {
+      expect(isNotRestrictedPerson(fullPersonFactory.build())).toEqual(true)
+      expect(isNotRestrictedPerson(fullPersonSummaryFactory.build())).toEqual(true)
+    })
+    it('returns false if the person or personSummary is restricted', () => {
+      expect(isNotRestrictedPerson(restrictedPersonFactory.build())).toEqual(false)
+      expect(isNotRestrictedPerson(restrictedPersonSummaryFactory.build())).toEqual(false)
     })
   })
 

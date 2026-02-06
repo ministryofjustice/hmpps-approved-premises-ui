@@ -8,6 +8,8 @@ import {
 import { isAfter } from 'date-fns'
 import { faker } from '@faker-js/faker'
 import { ApplicationType, GroupedApplications, TaskNames } from '@approved-premises/ui'
+import { createMock, DeepMocked } from '@golevelup/ts-jest'
+import type { Request } from 'express'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
 import {
   applicationFactory,
@@ -22,6 +24,7 @@ import {
   tierEnvelopeFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/apply'
+import managePaths from '../../paths/manage'
 import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
 import PlacementRequest from '../../form-pages/placement-application'
@@ -56,6 +59,8 @@ import { sortHeader } from '../sortHeader'
 import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
 import { renderTimelineEventContent } from '../timeline'
 import { summaryListItem } from '../formUtils'
+import { fullPersonFactory } from '../../testutils/factories/person'
+import * as residentUtils from '../resident'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -869,14 +874,30 @@ describe('utils', () => {
       const timelineUrl = { type: urlType, url: faker.internet.url() }
       expect(mapTimelineUrlsForUi([timelineUrl])).toEqual([{ url: timelineUrl.url, type: translation }])
     })
+
+    it('maps spaceBooking URLS to resident profile page', () => {
+      jest.spyOn(residentUtils, 'getPlacementLink').mockReturnValue('mock-url')
+
+      const [premisesId, placementId] = [faker.string.uuid(), faker.string.uuid()]
+      const legacyUrl = managePaths.premises.placements.show({ premisesId, placementId })
+      const person = fullPersonFactory.build()
+      const request: DeepMocked<Request> = createMock<Request>({})
+
+      expect(mapTimelineUrlsForUi([{ type: 'spaceBooking', url: legacyUrl }], person, request)).toEqual([
+        { url: 'mock-url', type: 'placement' },
+      ])
+
+      expect(residentUtils.getPlacementLink).toHaveBeenCalledWith({ person, request, placementId, premisesId })
+    })
   })
 
   describe('mapPersonTimelineForUi', () => {
     it('maps the application timelines events for the UI', () => {
       const applicationTimeline = applicationTimelineFactory.build()
       const personalTimeline = personalTimelineFactory.build({ applications: [applicationTimeline] })
+      const request: DeepMocked<Request> = createMock<Request>({})
 
-      expect(mapPersonalTimelineForUi(personalTimeline)).toEqual([
+      expect(mapPersonalTimelineForUi(personalTimeline, request)).toEqual([
         {
           ...applicationTimeline,
           timelineEvents: mapApplicationTimelineEventsForUi(applicationTimeline.timelineEvents),

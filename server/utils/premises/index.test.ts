@@ -327,7 +327,7 @@ describe('premisesUtils', () => {
       const request = createMock<Request>({ session: { user: { permissions: ['cas1_ap_resident_profile'] } } })
       const tableRows = placementTableRows('upcoming', 'Test_Premises_Id', placements, request)
       expect(tableRows[0][0]).toEqual({
-        html: `<a href="/manage/resident/${placements[0].person.crn}/placement/${placements[0].id}/personal/personalDetails" data-cy-id="${placements[0].id}">${displayName(placements[0].person)}, ${placements[0].person.crn}</a>`,
+        html: `<a href="/manage/resident/${placements[0].person.crn}/placement/${placements[0].id}" data-cy-id="${placements[0].id}">${displayName(placements[0].person)}, ${placements[0].person.crn}</a>`,
       })
     })
 

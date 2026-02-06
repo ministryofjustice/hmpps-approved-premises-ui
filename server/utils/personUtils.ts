@@ -1,5 +1,6 @@
 import {
   FullPerson,
+  FullPersonSummary,
   Person,
   PersonSummary,
   RestrictedPerson,
@@ -24,6 +25,11 @@ const isApplicableTier = (sex: string, tier: string): boolean => {
 
   return applicableTiers.includes(tier)
 }
+
+export type PersonAny = Person | PersonSummary
+
+export const isNotRestrictedPerson = (person?: PersonAny): boolean =>
+  (person as FullPerson)?.type === 'FullPerson' || (person as FullPersonSummary)?.personType === 'FullPersonSummary'
 
 const isFullPerson = (person?: Person): person is FullPerson => (person as FullPerson)?.type === 'FullPerson'
 

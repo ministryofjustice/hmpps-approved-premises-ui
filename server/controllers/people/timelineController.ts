@@ -1,5 +1,6 @@
 import { type Request, type RequestHandler, type Response } from 'express'
-
+import { RequestWithSession } from '@approved-premises/ui'
+import { mapPersonalTimelineForUi } from '../../utils/applications/utils'
 import PersonService from '../../services/personService'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/people'
@@ -39,7 +40,13 @@ export default class TimelineController {
 
       try {
         const timeline = await this.personService.getTimeline(req.user.token, formattedCRN)
-        return res.render('people/timeline/show', { timeline, crn, pageHeading: `Timeline for ${formattedCRN}` })
+        const applications = mapPersonalTimelineForUi(timeline, req as RequestWithSession)
+        return res.render('people/timeline/show', {
+          timeline,
+          applications,
+          crn,
+          pageHeading: `Timeline for ${formattedCRN}`,
+        })
       } catch (error) {
         crnErrorHandling(req, error, crn)
         return res.redirect(paths.timeline.find({}))

@@ -6,6 +6,7 @@ import type {
   GroupedApplications,
   JourneyType,
   PageResponse,
+  RequestWithSession,
   SelectOption,
   TableCell,
   TableRow,
@@ -30,7 +31,7 @@ import paths from '../../paths/apply'
 
 import placementApplicationPaths from '../../paths/placementApplications'
 import Apply from '../../form-pages/apply'
-import { displayName, isApplicableTier, isFullPerson } from '../personUtils'
+import { displayName, isApplicableTier, isFullPerson, PersonAny } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import Assess from '../../form-pages/assess'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
@@ -48,6 +49,7 @@ import { APPLICATION_SUITABLE, ApplicationStatusTag, applicationSuitableStatuses
 import { renderTimelineEventContent } from '../timeline'
 import { summaryListItem } from '../formUtils'
 import { htmlCell, textCell } from '../tableUtils'
+import { getPlacementLink } from '../resident'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
@@ -296,7 +298,7 @@ export const eventTypeTranslations: Record<Cas1TimelineEventType, string> = {
 
 const mapApplicationTimelineEventsForUi = (
   timelineEvents: Array<Cas1TimelineEvent>,
-  params: { hideUrls: boolean } = { hideUrls: false },
+  params: { hideUrls?: boolean; person?: PersonAny; request?: RequestWithSession } = { hideUrls: false },
 ): Array<UiTimelineEvent> => {
   const { hideUrls } = params
   return timelineEvents
@@ -316,7 +318,9 @@ const mapApplicationTimelineEventsForUi = (
         content: renderTimelineEventContent(timelineEvent),
       }
       if (!hideUrls) {
-        event.associatedUrls = timelineEvent.associatedUrls ? mapTimelineUrlsForUi(timelineEvent.associatedUrls) : []
+        event.associatedUrls = timelineEvent.associatedUrls
+          ? mapTimelineUrlsForUi(timelineEvent.associatedUrls, params.person, params.request)
+          : []
       }
 
       const createdBy = timelineEvent.triggerSource === 'system' ? 'System' : timelineEvent.createdBySummary?.name
@@ -330,15 +334,31 @@ const mapApplicationTimelineEventsForUi = (
     })
 }
 
-const mapTimelineUrlsForUi = (timelineUrls: Array<Cas1TimelineEventAssociatedUrl>) => {
-  return timelineUrls.map(item => ({ url: item.url, type: urlTypeForUi(item.type) }))
+const mapTimelineUrlsForUi = (
+  timelineUrls: Array<Cas1TimelineEventAssociatedUrl>,
+  person?: PersonAny,
+  request?: RequestWithSession,
+) => {
+  return timelineUrls.map(item => {
+    let { url } = item
+    if (item.type === 'spaceBooking' && person && request) {
+      const match = /\/premises\/([0-9a-fA-F-]+)\/placements\/([0-9a-fA-F-]+)/.exec(item.url)
+      const [, premisesId, placementId] = match || []
+      url = getPlacementLink({ request, premisesId, person, placementId })
+    }
+
+    return { url, type: urlTypeForUi(item.type) }
+  })
 }
 
-const mapPersonalTimelineForUi = (personalTimeline: Cas1PersonalTimeline) => {
+const mapPersonalTimelineForUi = (personalTimeline: Cas1PersonalTimeline, request: RequestWithSession) => {
   return personalTimeline.applications.map(applicationTimeline => {
     return {
       ...applicationTimeline,
-      timelineEvents: mapApplicationTimelineEventsForUi(applicationTimeline.timelineEvents),
+      timelineEvents: mapApplicationTimelineEventsForUi(applicationTimeline.timelineEvents, {
+        request,
+        person: personalTimeline.person,
+      }),
     }
   })
 }
