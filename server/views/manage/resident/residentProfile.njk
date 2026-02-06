@@ -50,7 +50,9 @@
 
         <div class="govuk-grid-column-three-quarters">
 
-            <h2 class="govuk-heading-m">{{ subHeading }}</h2>
+            {% if subHeading %}
+                <h2 class="govuk-heading-m">{{ subHeading }}</h2>
+            {% endif %}
 
             {% if cardList %}
                 {% include "./partials/cardList.njk" %}

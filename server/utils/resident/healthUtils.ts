@@ -17,11 +17,6 @@ export const healthSideNavigation = (subTab: ResidentProfileSubTab, crn: string,
       href: basePath.mentalHealth({ crn, placementId }),
       active: subTab === 'mentalHealth',
     },
-    {
-      text: 'Drug and alcohol use',
-      href: basePath.drugsAndAlcohol({ crn, placementId }),
-      active: subTab === 'drugAndAlcohol',
-    },
   ]
 }
 
@@ -51,9 +46,4 @@ export const mentalHealthCards = (
     },
     html: !personAcctAlerts?.length ? '<p>No ACCT alerts found</p>' : undefined,
   }),
-]
-
-export const drugAndAlcoholCards = (supportingInformation: Cas1OASysGroup) => [
-  card({ html: insetText('Imported from OASys') }),
-  ...summaryCards(['8.9', '9.9'], supportingInformation),
 ]

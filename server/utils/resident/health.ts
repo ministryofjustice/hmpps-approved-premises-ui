@@ -1,7 +1,7 @@
 import { Cas1OASysGroup, PersonAcctAlert } from '@approved-premises/api'
 import { TabControllerParameters } from './TabControllerParameters'
 import { TabData } from './index'
-import { drugAndAlcoholCards, healthDetailsCards, mentalHealthCards } from './healthUtils'
+import { healthDetailsCards, mentalHealthCards } from './healthUtils'
 import { settlePromises } from '../utils'
 
 export const healthTabController = async ({ personService, token, crn }: TabControllerParameters): Promise<TabData> => {
@@ -32,15 +32,4 @@ export const mentalHealthTabController = async ({
     subHeading: 'Mental health',
     cardList: mentalHealthCards(personAcctAlerts, riskToSelf, supportingInformation),
   }
-}
-
-export const drugAndAlcoholTabController = async ({
-  personService,
-  token,
-  crn,
-}: TabControllerParameters): Promise<TabData> => {
-  const [supportingInformation] = await settlePromises<[Cas1OASysGroup]>([
-    personService.getOasysAnswers(token, crn, 'supportingInformation', [8, 9]),
-  ])
-  return { subHeading: 'Drug and Alcohol use', cardList: drugAndAlcoholCards(supportingInformation) }
 }
