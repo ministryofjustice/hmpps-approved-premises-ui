@@ -50,7 +50,7 @@ describe('residentsUtils', () => {
         },
         {
           active: false,
-          href: `${baseUrl}drugAndAlcohol/drugAndAlcohol`,
+          href: `${baseUrl}drugAndAlcohol`,
           text: 'Drug and alcohol',
         },
       ])

@@ -136,7 +136,7 @@ const paths = {
       prison: residentPath.path('sentence').path('prison'),
     },
     tabDrugAndAlcohol: {
-      drugAndAlcohol: residentPath.path('drugAndAlcohol').path('drugAndAlcohol'),
+      drugAndAlcohol: residentPath.path('drugAndAlcohol'),
     },
   },
   bookings: {

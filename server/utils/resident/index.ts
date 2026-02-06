@@ -25,7 +25,6 @@ export type ResidentProfileSubTab =
   | 'personalDetails'
   | 'healthDetails'
   | 'mentalHealth'
-  | 'drugAndAlcohol'
   | 'placementDetails'
   | 'allApPlacements'
   | 'application'
