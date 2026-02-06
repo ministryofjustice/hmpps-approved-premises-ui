@@ -22,6 +22,7 @@ export const applicationDocumentAccordion = (application: ApprovedPremisesApplic
 
   return {
     id: 'applicationAccordion',
+    rememberExpanded: false,
 
     items: [
       personDetails,

@@ -29,6 +29,7 @@ describe('application utils', () => {
     it('should render the application document as a card accordion', () => {
       expect(applicationDocumentAccordion(application)).toEqual({
         id: 'applicationAccordion',
+        rememberExpanded: false,
         items: [
           expectedItem('Person details', 'personDetails.njk'),
           expectedItem('Type of AP required'),
