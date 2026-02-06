@@ -3,8 +3,9 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import BookingsController from './bookingsController'
 
-import { PlacementRequestService, SessionService } from '../../../services'
+import { PlacementRequestService } from '../../../services'
 import { NewBookingNotMade } from '../../../@types/shared'
+import * as backlinkUtils from '../../../utils/backlinks'
 
 import matchPaths from '../../../paths/match'
 import adminPaths from '../../../paths/admin'
@@ -17,14 +18,13 @@ describe('BookingsController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
-  const sessionService = createMock<SessionService>({})
 
   let bookingsController: BookingsController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    sessionService.getPageBackLink.mockReturnValue('/backlink')
-    bookingsController = new BookingsController(placementRequestService, sessionService)
+    jest.spyOn(backlinkUtils, 'getPageBackLink').mockReturnValue('/backlink')
+    bookingsController = new BookingsController(placementRequestService)
   })
 
   describe('bookingNotMade', () => {

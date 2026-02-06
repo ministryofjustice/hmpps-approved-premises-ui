@@ -2,13 +2,13 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
-import { ApplicationService, SessionService } from '../../../services'
+import { ApplicationService } from '../../../services'
 import {
   addErrorMessageToFlash,
   catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
 } from '../../../utils/validation'
-
+import * as backlinkUtils from '../../../utils/backlinks'
 import paths from '../../../paths/apply'
 import WithdrawalsController from './withdrawalsController'
 import { applicationFactory, withdrawableFactory } from '../../../testutils/factories'
@@ -28,8 +28,7 @@ describe('withdrawalsController', () => {
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const applicationService = createMock<ApplicationService>({})
-  const sessionService = createMock<SessionService>()
-  sessionService.getPageBackLink.mockReturnValue(referrer)
+  jest.spyOn(backlinkUtils, 'getPageBackLink').mockReturnValue(referrer)
   const application = applicationFactory.build()
 
   const defaultRenderParameters = {
@@ -42,7 +41,7 @@ describe('withdrawalsController', () => {
   let withdrawalsController: WithdrawalsController
 
   beforeEach(() => {
-    withdrawalsController = new WithdrawalsController(applicationService, sessionService)
+    withdrawalsController = new WithdrawalsController(applicationService)
     applicationService.findApplication.mockResolvedValue(application)
     request = createMock<Request>({ user: { token } })
     response = createMock<Response>({})
@@ -119,6 +118,7 @@ describe('withdrawalsController', () => {
         const withdrawables = withdrawablesFactory.build({ withdrawables: withdrawable })
 
         applicationService.getWithdrawablesWithNotes.mockResolvedValue(withdrawables)
+        jest.spyOn(backlinkUtils, 'getPageBackLink').mockReturnValue(referrer)
 
         const requestHandler = withdrawalsController.new()
         const thisRequest = { ...request, params: { id: applicationId } }
@@ -130,7 +130,7 @@ describe('withdrawalsController', () => {
           withdrawables: withdrawables.withdrawables,
           notes: withdrawables.notes,
         })
-        expect(sessionService.getPageBackLink).toHaveBeenCalledWith('/applications/:id/withdrawals/new', thisRequest, [
+        expect(backlinkUtils.getPageBackLink).toHaveBeenCalledWith('/applications/:id/withdrawals/new', thisRequest, [
           '/admin/placement-requests/:placementRequestId',
           '/applications/:id',
           '/applications',

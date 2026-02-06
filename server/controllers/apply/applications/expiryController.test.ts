@@ -2,13 +2,14 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
-import { ApplicationService, SessionService } from '../../../services'
+import { ApplicationService } from '../../../services'
 import * as validationUtils from '../../../utils/validation'
 
 import { applicationFactory } from '../../../testutils/factories'
 import { applicationKeyDetails } from '../../../utils/applications/helpers'
 import ExpiryController from './expiryController'
 import { getApplicationSummary } from '../../../utils/applications/utils'
+import * as backLinks from '../../../utils/backlinks'
 
 describe('expiryController', () => {
   const token = 'SOME_TOKEN'
@@ -20,7 +21,6 @@ describe('expiryController', () => {
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const applicationService = createMock<ApplicationService>({})
-  const sessionService = createMock<SessionService>()
   const application = applicationFactory.build()
 
   const defaultRenderParameters = {
@@ -35,9 +35,10 @@ describe('expiryController', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    expiryController = new ExpiryController(applicationService, sessionService)
+
+    expiryController = new ExpiryController(applicationService)
     applicationService.findApplication.mockResolvedValue(application)
-    sessionService.getPageBackLink.mockReturnValue(referrer)
+    jest.spyOn(backLinks, 'getPageBackLink').mockReturnValue(referrer)
     request = createMock<Request>({ user: { token }, params: { id: applicationId } })
     response = createMock<Response>({})
   })

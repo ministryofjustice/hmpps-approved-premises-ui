@@ -12,8 +12,9 @@ import { type Cas1ApplicationSummary } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController from './applicationsController'
-import { ApplicationService, AssessmentService, PersonService, SessionService } from '../../services'
+import { ApplicationService, AssessmentService, PersonService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
+import * as backLinkUtils from '../../utils/backlinks'
 import {
   activeOffenceFactory,
   applicationFactory,
@@ -53,21 +54,15 @@ describe('applicationsController', () => {
   const applicationService = createMock<ApplicationService>({})
   const assessmentService = createMock<AssessmentService>({})
   const personService = createMock<PersonService>({})
-  const sessionService = createMock<SessionService>({})
 
   let applicationsController: ApplicationsController
 
   beforeEach(() => {
-    applicationsController = new ApplicationsController(
-      applicationService,
-      assessmentService,
-      personService,
-      sessionService,
-    )
+    applicationsController = new ApplicationsController(applicationService, assessmentService, personService)
     request = createMock<Request>({ user: { token } })
     response = createMock<Response>({})
     jest.clearAllMocks()
-    sessionService.getPageBackLink.mockReturnValue('back-link')
+    jest.spyOn(backLinkUtils, 'getPageBackLink').mockReturnValue('back-link')
   })
 
   describe('index', () => {

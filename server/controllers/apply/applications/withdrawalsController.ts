@@ -9,17 +9,15 @@ import paths from '../../../paths/apply'
 import adminPaths from '../../../paths/admin'
 import { Cas1Application, NewWithdrawal, Withdrawables } from '../../../@types/shared'
 import { SelectedWithdrawableType } from '../../../utils/applications/withdrawables'
-import { ApplicationService, SessionService } from '../../../services'
+import { ApplicationService } from '../../../services'
 import { applicationKeyDetails } from '../../../utils/applications/helpers'
 import config from '../../../config'
+import { getPageBackLink } from '../../../utils/backlinks'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
 export default class WithdrawalsController {
-  constructor(
-    private readonly applicationService: ApplicationService,
-    private readonly sessionService: SessionService,
-  ) {}
+  constructor(private readonly applicationService: ApplicationService) {}
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
@@ -45,7 +43,7 @@ export default class WithdrawalsController {
         })
       }
 
-      const backLink = this.sessionService.getPageBackLink(paths.applications.withdraw.new.pattern, req, [
+      const backLink = getPageBackLink(paths.applications.withdraw.new.pattern, req, [
         adminPaths.admin.placementRequests.show.pattern,
         paths.applications.show.pattern,
         paths.applications.index.pattern,
@@ -85,7 +83,7 @@ export default class WithdrawalsController {
         await this.applicationService.withdraw(req.user.token, req.params.id, body)
 
         const returnUrl = config.flags.oneApplication
-          ? this.sessionService.getPageBackLink(paths.applications.withdraw.new.pattern, req, [])
+          ? getPageBackLink(paths.applications.withdraw.new.pattern, req, [])
           : paths.applications.index({})
 
         req.flash('success', 'Application withdrawn')
