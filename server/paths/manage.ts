@@ -121,7 +121,6 @@ const paths = {
     tabHealth: {
       healthDetails: residentPath.path('health').path('healthDetails'),
       mentalHealth: residentPath.path('health').path('mentalHealth'),
-      drugsAndAlcohol: residentPath.path('health').path('drugsAndAlcohol'),
     },
     tabPlacement: {
       placementDetails: residentPath.path('placement').path('placement'),
@@ -135,6 +134,9 @@ const paths = {
       offence: residentPath.path('sentence').path('offence'),
       licence: residentPath.path('sentence').path('licence'),
       prison: residentPath.path('sentence').path('prison'),
+    },
+    tabDrugAndAlcohol: {
+      drugAndAlcohol: residentPath.path('drugAndAlcohol').path('drugAndAlcohol'),
     },
   },
   bookings: {

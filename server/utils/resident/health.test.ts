@@ -1,7 +1,7 @@
 import { createMock } from '@golevelup/ts-jest'
 import * as healthUtils from './healthUtils'
 import { card } from './index'
-import { drugAndAlcoholTabController, healthTabController, mentalHealthTabController } from './health'
+import { healthTabController, mentalHealthTabController } from './health'
 import { PersonService } from '../../services'
 import { acctAlertFactory, cas1OasysGroupFactory } from '../../testutils/factories'
 import { healthDetailsCards } from './healthUtils'
@@ -71,20 +71,6 @@ describe('Health tab', () => {
 
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Mental health' })
       expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(undefined, riskToSelf)
-    })
-  })
-
-  describe('drugAndAlcoholTabController', () => {
-    it('should get Oasys supporting info and then render the cards', async () => {
-      jest.spyOn(healthUtils, 'drugAndAlcoholCards').mockReturnValue(mockCardList)
-      personService.getOasysAnswers.mockResolvedValue(supportingInformation)
-
-      const result = await drugAndAlcoholTabController({ personService, token, crn })
-
-      expect(result).toEqual({ cardList: mockCardList, subHeading: 'Drug and Alcohol use' })
-
-      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [8, 9])
-      expect(healthUtils.drugAndAlcoholCards).toHaveBeenCalledWith(supportingInformation)
     })
   })
 })

@@ -20,7 +20,7 @@ import { getPageBackLink } from '../backlinks'
 import { displayName } from '../personUtils'
 import { RenderAs, summaryListItem } from '../formUtils'
 
-export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence'
+export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'drugAndAlcohol'
 export type ResidentProfileSubTab =
   | 'personalDetails'
   | 'healthDetails'
@@ -82,6 +82,7 @@ export const tabLabels: Record<
   placement: { label: 'Placement' },
   risk: { label: 'Risk' },
   sentence: { label: 'Sentence' },
+  drugAndAlcohol: { label: 'Drug and alcohol' },
 }
 
 export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: ResidentProfileTab): Array<TabItem> => {
@@ -93,6 +94,8 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
         return pathRoot.tabPersonal.personalDetails(pathParams)
       case 'health':
         return pathRoot.tabHealth.healthDetails(pathParams)
+      case 'drugAndAlcohol':
+        return pathRoot.tabDrugAndAlcohol.drugAndAlcohol(pathParams)
       case 'placement':
         return pathRoot.tabPlacement.placementDetails(pathParams)
       case 'risk':

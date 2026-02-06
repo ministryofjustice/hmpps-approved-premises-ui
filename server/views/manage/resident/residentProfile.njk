@@ -38,7 +38,7 @@
         items: tabItems
     }) }}
 
-    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+    <h1 class="govuk-heading-l{% if not subHeading %} govuk-!-margin-bottom-4{% endif %}">{{ pageHeading }}</h1>
 
     <div class="govuk-grid-row">
 
@@ -50,7 +50,9 @@
 
         <div class="govuk-grid-column-three-quarters">
 
-            <h2 class="govuk-heading-m">{{ subHeading }}</h2>
+            {% if subHeading %}
+                <h2 class="govuk-heading-m">{{ subHeading }}</h2>
+            {% endif %}
 
             {% if cardList %}
                 {% include "./partials/cardList.njk" %}

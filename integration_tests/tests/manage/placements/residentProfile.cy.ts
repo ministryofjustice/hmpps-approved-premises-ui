@@ -87,11 +87,6 @@ context('ResidentProfile', () => {
       cy.task('stubOasysGroup', {
         person: placement.person,
         group: oasysSupportingInformation,
-        includeOptionalSections: [8, 9],
-      })
-      cy.task('stubOasysGroup', {
-        person: placement.person,
-        group: oasysSupportingInformation,
         includeOptionalSections: [13],
       })
 
@@ -110,12 +105,25 @@ context('ResidentProfile', () => {
       THEN('I should see the Mental health cards')
       page.shouldHaveActiveSideNav(`Mental health`)
       page.shouldShowMentalHealthSection(acctAlerts, riskToSelf)
+    })
 
-      WHEN('I select the drug and alcohol subtab')
-      page.clickSideNav('Drug and alcohol use')
+    it('should show the drug and alcohol tab', () => {
+      const { placement, personRisks } = setup({})
+      const oasysSupportingInformation = cas1OasysGroupFactory.supportingInformation().build()
+
+      cy.task('stubOasysGroup', {
+        person: placement.person,
+        group: oasysSupportingInformation,
+        includeOptionalSections: [8, 9],
+      })
+
+      const page = visitPage({ placement, personRisks })
+
+      WHEN('I click the Drug and alcohol tab')
+      page.clickTab('Drug and alcohol')
 
       THEN('I should see the Drug and alcohol section')
-      page.shouldHaveActiveSideNav(`Drug and alcohol use`)
+      page.shouldHaveActiveTab('Drug and alcohol')
       page.shouldShowOasysCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
     })
 

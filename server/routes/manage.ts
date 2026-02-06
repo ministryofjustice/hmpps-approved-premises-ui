@@ -159,10 +159,14 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })
-  get(paths.resident.tabHealth.drugsAndAlcohol.pattern, residentProfileController.show('health', 'drugAndAlcohol'), {
-    auditEvent: 'MANAGE_RESIDENT',
-    allowedPermissions: ['cas1_ap_resident_profile'],
-  })
+  get(
+    paths.resident.tabDrugAndAlcohol.drugAndAlcohol.pattern,
+    residentProfileController.show('drugAndAlcohol', 'drugAndAlcohol'),
+    {
+      auditEvent: 'MANAGE_RESIDENT',
+      allowedPermissions: ['cas1_ap_resident_profile'],
+    },
+  )
   get(
     paths.resident.tabPlacement.placementDetails.pattern,
     residentProfileController.show('placement', 'placementDetails'),
