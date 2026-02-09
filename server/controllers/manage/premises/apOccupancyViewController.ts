@@ -17,7 +17,6 @@ import {
   type SortablePlacementColumnField,
   daySummaryRows,
   durationSelectOptions,
-  filterOutOfServiceBeds,
   generateDaySummaryText,
   occupancyCalendar,
   outOfServiceBedColumnMap,
@@ -33,7 +32,6 @@ import { generateErrorMessages, generateErrorSummary } from '../../../utils/vali
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { createQueryString, makeArrayOfType } from '../../../utils/utils'
-import config from '../../../config'
 import { roomCharacteristicMap } from '../../../utils/characteristicsUtils'
 
 export default class ApOccupancyViewController {
@@ -119,16 +117,11 @@ export default class ApOccupancyViewController {
         }),
       ]
 
-      const [premises, rawDaySummary, premisesCapacity] = (await Promise.all(promises)) as [
+      const [premises, daySummary, premisesCapacity] = (await Promise.all(promises)) as [
         Cas1Premises,
         Cas1PremisesDaySummary,
         Cas1PremiseCapacity,
       ]
-
-      const daySummary = filterOutOfServiceBeds(
-        rawDaySummary,
-        config.flags.pocEnabled ? characteristicsArray : undefined,
-      )
 
       const dayCapacity = premisesCapacity.capacity[0]
 
@@ -138,17 +131,15 @@ export default class ApOccupancyViewController {
         backLink: getPageBackLink(paths.premises.placements.show.pattern, req, [paths.premises.occupancy.view.pattern]),
         previousDayLink: getDayLink(daySummary.previousDate),
         nextDayLink: getDayLink(daySummary.nextDate),
-        daySummaryRows: daySummaryRows(dayCapacity, null, config.flags.pocEnabled ? 'singleRow' : 'none'),
+        daySummaryRows: daySummaryRows(dayCapacity, null, 'none'),
         daySummaryText: generateDaySummaryText(dayCapacity),
-        ...tableCaptions(daySummary, characteristicsArray, config.flags.pocEnabled),
+        ...tableCaptions(daySummary),
         placementTableHeader: tableHeader<PlacementColumnField>(placementColumnMap, sortBy, sortDirection, hrefPrefix),
         placementTableRows: placementTableRows(premisesId, daySummary.spaceBookingSummaries, req),
 
         outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
         outOfServiceBedTableRows: outOfServiceBedTableRows(premisesId, daySummary.outOfServiceBeds),
-        criteriaOptions: config.flags.pocEnabled
-          ? null
-          : convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, characteristicsArray),
+        criteriaOptions: convertKeyValuePairToCheckBoxItems(roomCharacteristicMap, characteristicsArray),
       })
     }
   }

@@ -196,6 +196,7 @@ export const renderPersonDetails = (application: ApprovedPremisesApplication): s
 }
 
 type AlertVariant = 'information' | 'success' | 'warning' | 'error'
+
 export const alertBanner = (parameters: { variant: AlertVariant; title: string; html?: string }) => {
   return nunjucks.render(`manage/resident/partials/alert.njk`, parameters)
 }
