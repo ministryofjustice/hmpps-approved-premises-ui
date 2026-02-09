@@ -4,6 +4,7 @@ import { acctAlertFactory, cas1OasysGroupFactory, cas1SpaceBookingFactory } from
 import { healthDetailsCards, healthSideNavigation, mentalHealthCards } from './healthUtils'
 import { DateFormats } from '../dateUtils'
 import { oasysMetadataRow, tableRow } from './riskUtils'
+import { loadingErrorMessage } from '.'
 
 jest.mock('nunjucks')
 
@@ -41,7 +42,7 @@ describe('healthUtils', () => {
     it('should render error card for recent assessment (FM-286)', () => {
       const supportingInformation = cas1OasysGroupFactory.supportingInformation().build()
 
-      const result = healthDetailsCards(supportingInformation)
+      const result = healthDetailsCards(supportingInformation, 'success')
 
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', { html: 'Imported from OASys' })
@@ -57,7 +58,7 @@ describe('healthUtils', () => {
         .supportingInformation()
         .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
 
-      const result = healthDetailsCards(supportingInformation)
+      const result = healthDetailsCards(supportingInformation, 'success')
 
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', { html: 'Imported from OASys' })
@@ -70,11 +71,18 @@ describe('healthUtils', () => {
 
   describe('mentalHealthCards', () => {
     it('should render the mental health cards', () => {
-      const acctAlerts = acctAlertFactory.buildList(2)
+      const personAcctAlerts = acctAlertFactory.buildList(2)
       const riskToSelf = cas1OasysGroupFactory.riskToSelf().build()
       const supportingInformation = cas1OasysGroupFactory.supportingInformation().build()
 
-      const result = mentalHealthCards(acctAlerts, riskToSelf, supportingInformation)
+      const result = mentalHealthCards({
+        personAcctAlerts,
+        riskToSelf,
+        supportingInformation,
+        riskToSelfOutcome: 'success',
+        personAcctAlertsOutcome: 'success',
+        supportingInformationOutcome: 'success',
+      })
 
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
@@ -97,7 +105,7 @@ describe('healthUtils', () => {
         card: { title: { text: 'ACCT alerts' } },
         table: {
           head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Expiry date' }],
-          rows: acctAlerts.map((acctAlert: PersonAcctAlert) => [
+          rows: personAcctAlerts.map((acctAlert: PersonAcctAlert) => [
             {
               html: `<span class="govuk-table__cell--nowrap">${DateFormats.isoDateToUIDate(acctAlert.dateCreated, { format: 'short' })}</span>`,
             },
@@ -110,5 +118,26 @@ describe('healthUtils', () => {
         topHtml: tableRow('Imported from Digital Prison Service'),
       })
     })
+  })
+
+  it('should render blank mental health cards when OASys fails', () => {
+    const result = mentalHealthCards({
+      personAcctAlerts: undefined,
+      riskToSelf: undefined,
+      supportingInformation: undefined,
+      riskToSelfOutcome: 'failure',
+      personAcctAlertsOutcome: 'failure',
+      supportingInformationOutcome: 'failure',
+    })
+    const errorRts = loadingErrorMessage({ result: 'failure', item: 'OASys risk to self', source: 'OASys' })
+
+    expect(result[1].html).toMatchStringIgnoringWhitespace(errorRts)
+    expect(result[6].html).toMatchStringIgnoringWhitespace(errorRts)
+    expect(result[7].html).toMatchStringIgnoringWhitespace(
+      loadingErrorMessage({ result: 'failure', item: 'OASys supporting information', source: 'OASys' }),
+    )
+    expect(result[8].html).toMatchStringIgnoringWhitespace(
+      loadingErrorMessage({ result: 'failure', item: 'ACCT alerts', source: 'Digital Prison Service' }),
+    )
   })
 })

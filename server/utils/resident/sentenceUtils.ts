@@ -252,12 +252,7 @@ export const prisonCards = ({
     card({
       title: 'Prison details',
       rows: !personError
-        ? [
-            summaryListItem(
-              'Prison name',
-              person?.type === 'FullPerson' ? ((person as FullPerson).prisonName ?? '').trim() : 'Not available',
-            ),
-          ]
+        ? [summaryListItem('Prison name', ((person as FullPerson)?.prisonName ?? 'Not available').trim())]
         : undefined,
       html: personError,
     }),

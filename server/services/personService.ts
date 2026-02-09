@@ -17,7 +17,14 @@ import type {
 import { HttpError } from 'http-errors'
 import type { PersonClient, RestClientBuilder } from '../data'
 
-export class OasysNotFoundError extends Error {}
+export class OasysNotFoundError extends Error {
+  constructor(
+    message?: string,
+    private readonly data?: Record<string, unknown>,
+  ) {
+    super(message)
+  }
+}
 
 export default class PersonService {
   constructor(private readonly personClientFactory: RestClientBuilder<PersonClient>) {}
@@ -48,11 +55,10 @@ export default class PersonService {
     try {
       return await personClient.oasysMetadata(crn)
     } catch (error) {
-      const knownError = error as HttpError
-      if (knownError?.data?.status === 404) {
-        throw new OasysNotFoundError(`Oasys record not found for CRN: ${crn}`)
+      if ((error as HttpError)?.data?.status === 404) {
+        throw new OasysNotFoundError(`Oasys record not found for CRN: ${crn}`, { status: 404 })
       }
-      throw knownError
+      throw error
     }
   }
 
@@ -67,7 +73,7 @@ export default class PersonService {
       return await personClient.oasysAnswers(crn, group, selectedSections)
     } catch (error) {
       if ((error as HttpError)?.data?.status === 404) {
-        throw new OasysNotFoundError(`Oasys record not found for CRN: ${crn}`)
+        throw new OasysNotFoundError(`Oasys record not found for CRN: ${crn}`, { status: 404 })
       }
       throw error
     }

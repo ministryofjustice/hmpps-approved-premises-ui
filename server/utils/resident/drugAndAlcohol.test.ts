@@ -27,7 +27,7 @@ describe('Drug and Alcohol tab', () => {
       expect(result).toEqual({ cardList: mockCardList })
 
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [8, 9])
-      expect(drugAndAlcoholUtils.drugAndAlcoholCards).toHaveBeenCalledWith(supportingInformation)
+      expect(drugAndAlcoholUtils.drugAndAlcoholCards).toHaveBeenCalledWith(supportingInformation, 'success')
     })
   })
 })

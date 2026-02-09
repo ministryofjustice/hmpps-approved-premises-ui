@@ -88,22 +88,14 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
   const getSelfLink = (tab: ResidentProfileTab): string => {
     const pathRoot = managePaths.resident
     const pathParams = { placementId: placement.id, crn: placement.person.crn }
-    switch (tab) {
-      case 'personal':
-        return pathRoot.tabPersonal.personalDetails(pathParams)
-      case 'health':
-        return pathRoot.tabHealth.healthDetails(pathParams)
-      case 'drugAndAlcohol':
-        return pathRoot.tabDrugAndAlcohol.drugAndAlcohol(pathParams)
-      case 'placement':
-        return pathRoot.tabPlacement.placementDetails(pathParams)
-      case 'risk':
-        return pathRoot.tabRisk.riskDetails(pathParams)
-      case 'sentence':
-        return pathRoot.tabSentence.offence(pathParams)
-      default:
-        return pathRoot.show(pathParams)
-    }
+    return {
+      personal: pathRoot.tabPersonal.personalDetails(pathParams),
+      health: pathRoot.tabHealth.healthDetails(pathParams),
+      drugAndAlcohol: pathRoot.tabDrugAndAlcohol.drugAndAlcohol(pathParams),
+      placement: pathRoot.tabPlacement.placementDetails(pathParams),
+      risk: pathRoot.tabRisk.riskDetails(pathParams),
+      sentence: pathRoot.tabSentence.offence(pathParams),
+    }[tab]
   }
   return Object.entries(tabLabels).map(([key, { label }]) => ({
     text: label,

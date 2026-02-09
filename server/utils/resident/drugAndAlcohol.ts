@@ -2,15 +2,18 @@ import { Cas1OASysGroup } from '@approved-premises/api'
 import { TabControllerParameters } from './TabControllerParameters'
 import { TabData } from './index'
 import { drugAndAlcoholCards } from './drugAndAlcoholUtils'
-import { settlePromises } from '../utils'
+import { settlePromisesWithOutcomes } from '../utils'
 
 export const drugAndAlcoholTabController = async ({
   personService,
   token,
   crn,
 }: TabControllerParameters): Promise<TabData> => {
-  const [supportingInformation] = await settlePromises<[Cas1OASysGroup]>([
+  const {
+    values: [supportingInformation],
+    outcomes: [supportingInformationResult],
+  } = await settlePromisesWithOutcomes<[Cas1OASysGroup]>([
     personService.getOasysAnswers(token, crn, 'supportingInformation', [8, 9]),
   ])
-  return { cardList: drugAndAlcoholCards(supportingInformation) }
+  return { cardList: drugAndAlcoholCards(supportingInformation, supportingInformationResult) }
 }
