@@ -61,8 +61,9 @@ describe('healthUtils', () => {
     it('should render the mental health cards', () => {
       const acctAlerts = acctAlertFactory.buildList(2)
       const riskToSelf = cas1OasysGroupFactory.riskToSelf().build()
+      const supportingInformation = cas1OasysGroupFactory.supportingInformation().build()
 
-      const result = mentalHealthCards(acctAlerts, riskToSelf)
+      const result = mentalHealthCards(acctAlerts, riskToSelf, supportingInformation)
 
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
@@ -78,8 +79,10 @@ describe('healthUtils', () => {
       expect(result[3].html).toMatchStringIgnoringWhitespace(
         `${oasysMetadataRow('FA64', 'OASys risk to self', riskToSelf)}Nunjucks template partials/detailsBlock.njk`,
       )
-
-      expect(result[7]).toEqual({
+      expect(result[7].html).toMatchStringIgnoringWhitespace(
+        `${oasysMetadataRow('10.9', 'OASys supporting information', supportingInformation)}Nunjucks template partials/detailsBlock.njk`,
+      )
+      expect(result[8]).toEqual({
         card: { title: { text: 'ACCT alerts' } },
         table: {
           head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Expiry date' }],
