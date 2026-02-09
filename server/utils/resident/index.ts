@@ -17,7 +17,7 @@ import config from '../../config'
 import { hasPermission } from '../users'
 import managePaths from '../../paths/manage'
 import { getPageBackLink } from '../backlinks'
-import { displayName } from '../personUtils'
+import { displayName, isNotRestrictedPerson, PersonAny } from '../personUtils'
 import { RenderAs, summaryListItem } from '../formUtils'
 
 export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'drugAndAlcohol'
@@ -258,4 +258,24 @@ export const loadingErrorMessage = ({
     default:
       return `We cannot load ${item} information right now because ${source} is not available.<br>Try again later`
   }
+}
+
+export const getPlacementLink = ({
+  request,
+  premisesId,
+  placementId,
+  person,
+}: {
+  request: RequestWithSession
+  premisesId: string
+  placementId: string
+  person: PersonAny
+}) => {
+  const residentPermission = request?.session?.user && hasPermission(request.session.user, ['cas1_ap_resident_profile'])
+  return residentPermission && isNotRestrictedPerson(person)
+    ? managePaths.resident.show({ crn: person.crn, placementId })
+    : managePaths.premises.placements.show({
+        premisesId,
+        placementId,
+      })
 }

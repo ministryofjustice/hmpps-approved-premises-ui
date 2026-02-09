@@ -10,8 +10,6 @@
 {% set query = "?crn=" + crn if crn else
     "" %}
 
-{% set applications = ApplyUtils.mapPersonalTimelineForUi(timeline) %}
-
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",

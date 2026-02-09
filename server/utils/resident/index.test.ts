@@ -3,12 +3,15 @@ import { render } from 'nunjucks'
 import { FullPerson, RiskEnvelopeStatus } from '@approved-premises/api'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import { Request } from 'express'
-import { card, detailsBody, getResidentHeader, residentTabItems, returnPath } from './index'
-import { cas1SpaceBookingFactory, risksFactory } from '../../testutils/factories'
+import { faker } from '@faker-js/faker'
+import { card, detailsBody, getPlacementLink, getResidentHeader, residentTabItems, returnPath } from './index'
+import { cas1SpaceBookingFactory, risksFactory, userFactory } from '../../testutils/factories'
 import { canonicalDates, placementStatusTag } from '../placements'
 import { DateFormats } from '../dateUtils'
+import managePaths from '../../paths/manage'
 
 import * as backlinkUtils from '../backlinks'
+import { fullPersonFactory, restrictedPersonFactory } from '../../testutils/factories/person'
 
 jest.mock('nunjucks')
 
@@ -186,6 +189,35 @@ describe('residentsUtils', () => {
           ],
           `/manage/premises/${placement.premises.id}/placements/${placement.id}`,
         )
+      })
+    })
+
+    describe('getPlacementLink', () => {
+      const requestWithPermission: DeepMocked<Request> = createMock<Request>({
+        session: { user: userFactory.build({ permissions: ['cas1_ap_resident_profile'] }) },
+      })
+      const fullPerson = fullPersonFactory.build()
+      const [premisesId, placementId] = [faker.string.uuid(), faker.string.uuid()]
+
+      it('returns the resident profile page url if the user has permission and the person is not restricted', () => {
+        expect(
+          getPlacementLink({ request: requestWithPermission, person: fullPerson, premisesId, placementId }),
+        ).toEqual(managePaths.resident.show({ placementId, crn: fullPerson.crn }))
+      })
+
+      it('returns the legacy placement page url if the user lacks permission or the person is restricted', () => {
+        const legacyUrl = managePaths.premises.placements.show({ premisesId, placementId })
+        const restrictedPerson = restrictedPersonFactory.build()
+        const requestWithoutPermission: DeepMocked<Request> = createMock<Request>({
+          session: { user: userFactory.build() },
+        })
+
+        expect(
+          getPlacementLink({ request: requestWithoutPermission, person: fullPerson, premisesId, placementId }),
+        ).toEqual(legacyUrl)
+        expect(
+          getPlacementLink({ request: requestWithPermission, person: restrictedPerson, premisesId, placementId }),
+        ).toEqual(legacyUrl)
       })
     })
   })
