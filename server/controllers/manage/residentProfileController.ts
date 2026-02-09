@@ -31,11 +31,8 @@ import {
   allApPlacementsTabController,
 } from '../../utils/resident/placement'
 import { settlePromises } from '../../utils/utils'
-import {
-  drugAndAlcoholTabController,
-  healthTabController,
-  mentalHealthTabController,
-} from '../../utils/resident/health'
+import { healthTabController, mentalHealthTabController } from '../../utils/resident/health'
+import { drugAndAlcoholTabController } from '../../utils/resident/drugAndAlcohol'
 import { healthSideNavigation } from '../../utils/resident/healthUtils'
 import { riskSideNavigation } from '../../utils/resident/riskUtils'
 import { CrnMismatchError, RestrictedPersonError } from '../../utils/errors'
@@ -102,7 +99,6 @@ export default class ResidentProfileController {
           sideNavigation = healthSideNavigation(subTab, crn, placement.id)
           if (subTab === 'healthDetails') tabData = await healthTabController(tabParameters)
           if (subTab === 'mentalHealth') tabData = await mentalHealthTabController(tabParameters)
-          if (subTab === 'drugAndAlcohol') tabData = await drugAndAlcoholTabController(tabParameters)
           break
         case 'placement':
           sideNavigation = placementSideNavigation(subTab, crn, placement)
@@ -119,6 +115,9 @@ export default class ResidentProfileController {
           if (subTab === 'offence') tabData = await sentenceOffencesTabController(tabParameters)
           if (subTab === 'licence') tabData = await sentenceLicenceTabController(tabParameters)
           if (subTab === 'prison') tabData = await sentencePrisonTabController(tabParameters)
+          break
+        case 'drugAndAlcohol':
+          tabData = await drugAndAlcoholTabController(tabParameters)
           break
         default:
       }
