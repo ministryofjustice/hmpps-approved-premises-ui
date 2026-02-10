@@ -38,8 +38,24 @@ describe('healthUtils', () => {
   })
 
   describe('healthDetailsCards', () => {
-    it('should render the health details cards', () => {
+    it('should render error card for recent assessment (FM-286)', () => {
       const supportingInformation = cas1OasysGroupFactory.supportingInformation().build()
+
+      const result = healthDetailsCards(supportingInformation)
+
+      expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
+      expect(render).toHaveBeenCalledWith('partials/insetText.njk', { html: 'Imported from OASys' })
+
+      expect(result[1].html).toMatchStringIgnoringWhitespace(
+        `<p>We cannot load general health - any physical or mental health conditions right now.</p>
+         <p>Go to OASys to check if any general health details have been entered.</p>`,
+      )
+    })
+
+    it('should render the health details cards for a legacy assessment before April 5th 2025', () => {
+      const supportingInformation = cas1OasysGroupFactory
+        .supportingInformation()
+        .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
 
       const result = healthDetailsCards(supportingInformation)
 
