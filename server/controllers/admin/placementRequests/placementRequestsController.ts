@@ -1,6 +1,7 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
+import { getPageBackLink } from '../../../utils/backlinks'
 import { changeRequestBanners } from '../../../utils/placementRequests/changeRequestsUtils'
-import { PlacementRequestService, SessionService } from '../../../services'
+import { PlacementRequestService } from '../../../services'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { placementsSummaries } from '../../../utils/placementRequests/placementSummaryList'
 import { adminIdentityBar } from '../../../utils/placementRequests'
@@ -12,10 +13,7 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 import { changePlacementLink } from '../../../utils/placementRequests/adminIdentityBar'
 
 export default class PlacementRequestsController {
-  constructor(
-    private readonly placementRequestService: PlacementRequestService,
-    private readonly sessionService: SessionService,
-  ) {}
+  constructor(private readonly placementRequestService: PlacementRequestService) {}
 
   show(): TypedRequestHandler<Request> {
     return async (req: Request, res: Response) => {
@@ -26,7 +24,7 @@ export default class PlacementRequestsController {
       )
 
       res.render('admin/placementRequests/show', {
-        backlink: this.sessionService.getPageBackLink(paths.admin.placementRequests.show.pattern, req, [
+        backlink: getPageBackLink(paths.admin.placementRequests.show.pattern, req, [
           paths.admin.cruDashboard.index.pattern,
           paths.admin.cruDashboard.changeRequests.pattern,
           paths.admin.cruDashboard.search.pattern,
