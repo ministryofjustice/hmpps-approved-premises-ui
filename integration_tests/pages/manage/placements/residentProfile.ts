@@ -107,7 +107,7 @@ export default class ResidentProfilePage extends Page {
       this.shouldShowDescription('Arrival', arrivalDate)
       this.shouldShowDescription('Departure', departureDate)
       this.shouldShowDescription('Length of stay', duration)
-      // FM-285 this.shouldShowBadge(`${this.personRisks.roshRisks.value.overallRisk} RoSH`)
+      this.shouldShowBadge(`${this.personRisks.roshRisks.value.overallRisk} RoSH`)
       this.personRisks.flags.value.forEach((flag: string) => {
         this.shouldShowBadge(flag)
       })

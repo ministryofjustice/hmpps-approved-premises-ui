@@ -120,7 +120,7 @@ describe('residentsUtils', () => {
         photoUrl: undefined,
         statusBadge: placementStatusTag(placement),
         badges: [
-          // FM-285 '<span class="moj-badge moj-badge--black">Very High RoSH</span>',
+          '<span class="moj-badge moj-badge--black">Very High RoSH</span>',
           '<span class="moj-badge moj-badge--black">CAT 2 / LEVEL 1 MAPPA</span>',
           ...personRisks.flags.value.map(label => `<span class="moj-badge moj-badge--black">${label}</span>`),
         ],
@@ -147,7 +147,7 @@ describe('residentsUtils', () => {
       expect(getResidentHeader(placement, personRisks)).toEqual(
         expect.objectContaining({
           statusBadge: placementStatusTag(placement),
-          // FM-285 badges: ['<span class="moj-badge moj-badge--black">Unknown RoSH</span>'],
+          badges: ['<span class="moj-badge moj-badge--black">No recent RoSH</span>'],
         }),
       )
     })

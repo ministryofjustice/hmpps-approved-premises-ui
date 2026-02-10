@@ -116,15 +116,14 @@ const isRetrieved = (status: RiskEnvelopeStatus) => status.toLowerCase() === 're
 
 export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: PersonRisks): ResidentHeader {
   const { arrivalDate, departureDate } = canonicalDates(placement)
-  // FM-285 - Temporarily remove the RoSH level from header
   const {
-    //  FM-285 roshRisks: { status: roshStatus, value: roshValue },
+    roshRisks: { status: roshStatus, value: roshValue },
     mappa: { status: mappaStatus, value: mappaValue },
     flags: { status: flagsStatus, value: flags },
   } = personRisks
 
   const badges: Array<string> = [
-    //  FM-285 getBadge(`${isRetrieved(roshStatus) && roshValue?.overallRisk ? roshValue.overallRisk : 'Unknown'} RoSH`),
+    getBadge(`${isRetrieved(roshStatus) && roshValue?.overallRisk ? roshValue.overallRisk : 'No recent'} RoSH`),
     isRetrieved(mappaStatus) && getBadge(`${mappaValue?.level} MAPPA`),
     ...(isRetrieved(flagsStatus) && flags ? flags.map(flag => getBadge(flag)) : []),
   ].filter(Boolean)
