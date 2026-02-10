@@ -95,7 +95,7 @@ export const oasysQuestionMappping: Record<Cas1OASysGroupName, OasysGroupDefinit
     { label: 'General Health - Any physical or mental health conditions', questionNumber: '13.1' },
   ],
 }
-const byQuestionNumber = (() => {
+export const oasysQuestionDetailsByNumber = (() => {
   const out = {} as Record<string, { label: string; groupName: Cas1OASysGroupName }>
   Object.entries(oasysQuestionMappping).forEach(([groupName, definitions]) => {
     definitions.forEach(({ label, questionNumber }) => {
@@ -115,7 +115,7 @@ export const summaryCards = (
       const question: OASysQuestion = block?.answers
         ? block.answers.find(({ questionNumber }) => questionNumber === qNumber)
         : undefined
-      const definition = byQuestionNumber[qNumber]
+      const definition = oasysQuestionDetailsByNumber[qNumber]
       const error =
         result &&
         loadingErrorMessage({
