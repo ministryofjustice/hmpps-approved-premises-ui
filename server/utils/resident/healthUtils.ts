@@ -17,11 +17,6 @@ export const healthSideNavigation = (subTab: ResidentProfileSubTab, crn: string,
       href: basePath.mentalHealth({ crn, placementId }),
       active: subTab === 'mentalHealth',
     },
-    {
-      text: 'Drug and alcohol use',
-      href: basePath.drugsAndAlcohol({ crn, placementId }),
-      active: subTab === 'drugAndAlcohol',
-    },
   ]
 }
 
@@ -30,9 +25,14 @@ export const healthDetailsCards = (supportingInformation: Cas1OASysGroup) => [
   ...summaryCards(['13.1'], supportingInformation),
 ]
 
-export const mentalHealthCards = (personAcctAlerts: Array<PersonAcctAlert>, riskToSelf: Cas1OASysGroup) => [
+export const mentalHealthCards = (
+  personAcctAlerts: Array<PersonAcctAlert>,
+  riskToSelf: Cas1OASysGroup,
+  supportingInformation: Cas1OASysGroup,
+) => [
   card({ html: insetText('Imported from Digital Prison Service and OASys') }),
   ...summaryCards(['FA62', 'FA63', 'FA64', 'R8.1.1', 'R8.2.1', 'R8.3.1'], riskToSelf),
+  ...summaryCards(['10.9'], supportingInformation),
   card({
     title: 'ACCT alerts',
     topHtml: tableRow('Imported from Digital Prison Service'),
@@ -46,9 +46,4 @@ export const mentalHealthCards = (personAcctAlerts: Array<PersonAcctAlert>, risk
     },
     html: !personAcctAlerts?.length ? '<p>No ACCT alerts found</p>' : undefined,
   }),
-]
-
-export const drugAndAlcoholCards = (supportingInformation: Cas1OASysGroup) => [
-  card({ html: insetText('Imported from OASys') }),
-  ...summaryCards(['8.9', '9.9'], supportingInformation),
 ]

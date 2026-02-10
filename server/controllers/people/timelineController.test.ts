@@ -9,6 +9,7 @@ import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/val
 
 import paths from '../../paths/people'
 import { crnErrorHandling } from '../../utils/people'
+import { mapPersonalTimelineForUi } from '../../utils/applications/utils'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/people/index')
@@ -87,15 +88,14 @@ describe('TimelineController', () => {
 
       personService.getTimeline.mockResolvedValue(timeline)
 
-      const requestHandler = timelineController.show()
-
-      await requestHandler({ ...request, query: { crn } }, response, next)
+      await timelineController.show()({ ...request, query: { crn } }, response, next)
 
       expect(personService.getTimeline).toHaveBeenCalledWith(token, crn)
       expect(response.render).toHaveBeenCalledWith('people/timeline/show', {
         timeline,
         crn,
         pageHeading: `Timeline for ${crn}`,
+        applications: mapPersonalTimelineForUi(timeline, request),
       })
     })
 

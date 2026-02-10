@@ -1,7 +1,8 @@
 import { createMock } from '@golevelup/ts-jest'
+import { Cas1OASysGroupName } from '@approved-premises/api'
 import * as healthUtils from './healthUtils'
 import { card } from './index'
-import { drugAndAlcoholTabController, healthTabController, mentalHealthTabController } from './health'
+import { healthTabController, mentalHealthTabController } from './health'
 import { PersonService } from '../../services'
 import { acctAlertFactory, cas1OasysGroupFactory } from '../../testutils/factories'
 import { healthDetailsCards } from './healthUtils'
@@ -17,6 +18,18 @@ const supportingInformation = cas1OasysGroupFactory.supportingInformation().buil
 const riskToSelf = cas1OasysGroupFactory.riskToSelf().build()
 
 describe('Health tab', () => {
+  beforeEach(() => {
+    personService.getOasysAnswers.mockImplementation(async (_, __, group: Cas1OASysGroupName) => {
+      switch (group) {
+        case 'riskToSelf':
+          return riskToSelf
+        case 'supportingInformation':
+          return supportingInformation
+        default:
+          return null
+      }
+    })
+  })
   afterEach(() => {
     jest.resetAllMocks()
   })
@@ -38,7 +51,6 @@ describe('Health tab', () => {
     beforeEach(() => {
       jest.spyOn(healthUtils, 'mentalHealthCards').mockReturnValue(mockCardList)
       personService.getAcctAlerts.mockResolvedValue(acctAlerts)
-      personService.getOasysAnswers.mockResolvedValue(riskToSelf)
     })
 
     it('should get acctAlerts and then render the cards', async () => {
@@ -47,8 +59,9 @@ describe('Health tab', () => {
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Mental health' })
       expect(personService.getAcctAlerts).toHaveBeenCalledWith(token, crn)
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'riskToSelf')
+      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [10])
 
-      expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(acctAlerts, riskToSelf)
+      expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(acctAlerts, riskToSelf, supportingInformation)
     })
 
     it('should render the page if the oasys response fails', async () => {
@@ -59,7 +72,7 @@ describe('Health tab', () => {
       const result = await mentalHealthTabController({ personService, token, crn })
 
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Mental health' })
-      expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(acctAlerts, undefined)
+      expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(acctAlerts, undefined, undefined)
     })
 
     it('should render the page if the acct alert response fails', async () => {
@@ -70,21 +83,7 @@ describe('Health tab', () => {
       const result = await mentalHealthTabController({ personService, token, crn })
 
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Mental health' })
-      expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(undefined, riskToSelf)
-    })
-  })
-
-  describe('drugAndAlcoholTabController', () => {
-    it('should get Oasys supporting info and then render the cards', async () => {
-      jest.spyOn(healthUtils, 'drugAndAlcoholCards').mockReturnValue(mockCardList)
-      personService.getOasysAnswers.mockResolvedValue(supportingInformation)
-
-      const result = await drugAndAlcoholTabController({ personService, token, crn })
-
-      expect(result).toEqual({ cardList: mockCardList, subHeading: 'Drug and Alcohol use' })
-
-      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [8, 9])
-      expect(healthUtils.drugAndAlcoholCards).toHaveBeenCalledWith(supportingInformation)
+      expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(undefined, riskToSelf, supportingInformation)
     })
   })
 })

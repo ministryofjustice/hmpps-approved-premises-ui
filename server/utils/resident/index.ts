@@ -17,15 +17,14 @@ import config from '../../config'
 import { hasPermission } from '../users'
 import managePaths from '../../paths/manage'
 import { getPageBackLink } from '../backlinks'
-import { displayName } from '../personUtils'
+import { displayName, isNotRestrictedPerson, PersonAny } from '../personUtils'
 import { RenderAs, summaryListItem } from '../formUtils'
 
-export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence'
+export type ResidentProfileTab = 'personal' | 'health' | 'placement' | 'risk' | 'sentence' | 'drugAndAlcohol'
 export type ResidentProfileSubTab =
   | 'personalDetails'
   | 'healthDetails'
   | 'mentalHealth'
-  | 'drugAndAlcohol'
   | 'placementDetails'
   | 'allApPlacements'
   | 'application'
@@ -82,6 +81,7 @@ export const tabLabels: Record<
   placement: { label: 'Placement' },
   risk: { label: 'Risk' },
   sentence: { label: 'Sentence' },
+  drugAndAlcohol: { label: 'Drug and alcohol' },
 }
 
 export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: ResidentProfileTab): Array<TabItem> => {
@@ -93,6 +93,8 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
         return pathRoot.tabPersonal.personalDetails(pathParams)
       case 'health':
         return pathRoot.tabHealth.healthDetails(pathParams)
+      case 'drugAndAlcohol':
+        return pathRoot.tabDrugAndAlcohol.drugAndAlcohol(pathParams)
       case 'placement':
         return pathRoot.tabPlacement.placementDetails(pathParams)
       case 'risk':
@@ -256,4 +258,24 @@ export const loadingErrorMessage = ({
     default:
       return `We cannot load ${item} information right now because ${source} is not available.<br>Try again later`
   }
+}
+
+export const getPlacementLink = ({
+  request,
+  premisesId,
+  placementId,
+  person,
+}: {
+  request: RequestWithSession
+  premisesId: string
+  placementId: string
+  person: PersonAny
+}) => {
+  const residentPermission = request?.session?.user && hasPermission(request.session.user, ['cas1_ap_resident_profile'])
+  return residentPermission && isNotRestrictedPerson(person)
+    ? managePaths.resident.show({ crn: person.crn, placementId })
+    : managePaths.premises.placements.show({
+        premisesId,
+        placementId,
+      })
 }
