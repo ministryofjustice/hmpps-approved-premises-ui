@@ -147,7 +147,7 @@ describe('residentsUtils', () => {
       expect(getResidentHeader(placement, personRisks)).toEqual(
         expect.objectContaining({
           statusBadge: placementStatusTag(placement),
-          badges: ['<span class="moj-badge moj-badge--black">Unknown RoSH</span>'],
+          badges: ['<span class="moj-badge moj-badge--black">No recent RoSH</span>'],
         }),
       )
     })
