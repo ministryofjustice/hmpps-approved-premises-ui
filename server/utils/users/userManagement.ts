@@ -63,7 +63,6 @@ const userRoles: Record<RoleInUse, string> = {
   ap_area_manager: 'AP area manager',
   user_manager: 'User manager',
   change_request_dev: 'Change request development',
-  manage_resident: 'Manage AP residents development',
   janitor: 'Janitor',
 }
 
