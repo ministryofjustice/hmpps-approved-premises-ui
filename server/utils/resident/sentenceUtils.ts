@@ -52,7 +52,7 @@ export const offenceCards = (
   offencesOutcome: ApiOutcome,
 ): Array<SummaryListWithCard> => {
   const title = 'Offence details'
-  const fullOutcome = offences?.length ? offencesOutcome : 'notFound'
+  const fullOutcome = offencesOutcome === 'success' && !offences?.length ? 'notFound' : offencesOutcome
 
   const errorMessage = loadingErrorMessage({ result: fullOutcome, item: 'offence', source: 'NDelius' })
   if (errorMessage) return [card({ title, html: errorMessage })]

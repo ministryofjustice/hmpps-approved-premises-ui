@@ -130,6 +130,15 @@ describe('sentence', () => {
       expect(offenceCards(undefined, 'success')).toEqual(notFoundCard)
       expect(offenceCards(offences, 'notFound')).toEqual(notFoundCard)
     })
+
+    it('should handle a 500 response correctly', async () => {
+      expect(offenceCards(undefined, 'failure')).toEqual([
+        {
+          card: { title: { text: 'Offence details' } },
+          html: 'We cannot load offence information right now because NDelius is not available.<br>Try again later',
+        },
+      ])
+    })
   })
 
   describe('additionalOffencesRows', () => {
