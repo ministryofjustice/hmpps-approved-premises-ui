@@ -2,15 +2,18 @@ import { Cas1OASysGroup, PersonAcctAlert } from '@approved-premises/api'
 import { TabControllerParameters } from './TabControllerParameters'
 import { TabData } from './index'
 import { healthDetailsCards, mentalHealthCards } from './healthUtils'
-import { settlePromises } from '../utils'
+import { ApiOutcome, settlePromisesWithOutcomes } from '../utils'
 
 export const healthTabController = async ({ personService, token, crn }: TabControllerParameters): Promise<TabData> => {
-  const [supportingInformation]: [Cas1OASysGroup] = await settlePromises([
+  const {
+    values: [supportingInformation],
+    outcomes: [supportingInformationOutcome],
+  }: { values: [Cas1OASysGroup]; outcomes: Array<ApiOutcome> } = await settlePromisesWithOutcomes([
     personService.getOasysAnswers(token, crn, 'supportingInformation', [13]),
   ])
   return {
     subHeading: 'Health and disability',
-    cardList: healthDetailsCards(supportingInformation),
+    cardList: healthDetailsCards(supportingInformation, supportingInformationOutcome),
   }
 }
 
@@ -19,17 +22,24 @@ export const mentalHealthTabController = async ({
   token,
   crn,
 }: TabControllerParameters): Promise<TabData> => {
-  const [personAcctAlerts, riskToSelf, supportingInformation]: [
-    Array<PersonAcctAlert>,
-    Cas1OASysGroup,
-    Cas1OASysGroup,
-  ] = await settlePromises([
-    personService.getAcctAlerts(token, crn),
-    personService.getOasysAnswers(token, crn, 'riskToSelf'),
-    personService.getOasysAnswers(token, crn, 'supportingInformation', [10]),
-  ])
+  const {
+    values: [personAcctAlerts, riskToSelf, supportingInformation],
+    outcomes: [personAcctAlertsOutcome, riskToSelfOutcome, supportingInformationOutcome],
+  }: { values: [Array<PersonAcctAlert>, Cas1OASysGroup, Cas1OASysGroup]; outcomes: Array<ApiOutcome> } =
+    await settlePromisesWithOutcomes([
+      personService.getAcctAlerts(token, crn),
+      personService.getOasysAnswers(token, crn, 'riskToSelf'),
+      personService.getOasysAnswers(token, crn, 'supportingInformation', [10]),
+    ])
   return {
     subHeading: 'Mental health',
-    cardList: mentalHealthCards(personAcctAlerts, riskToSelf, supportingInformation),
+    cardList: mentalHealthCards({
+      personAcctAlerts,
+      personAcctAlertsOutcome,
+      riskToSelf,
+      riskToSelfOutcome,
+      supportingInformation,
+      supportingInformationOutcome,
+    }),
   }
 }

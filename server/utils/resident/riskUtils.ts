@@ -130,7 +130,7 @@ export const summaryCards = (
           title: definition.label,
           html:
             error ||
-            `${oasysMetadataRow(qNumber, oasysGroupMapping[definition.groupName], block)}${question.answer ? detailsBody('View information', question.answer) : '<p class="govuk-hint">Not entered in OAsys</p>'}`,
+            `${oasysMetadataRow(qNumber, oasysGroupMapping[definition.groupName], block)}${question.answer ? detailsBody('View information', question.answer) : '<p class="govuk-hint">Not entered in OASys</p>'}`,
         })
       )
     })

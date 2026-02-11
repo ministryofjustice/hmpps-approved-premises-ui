@@ -112,26 +112,6 @@ context('ResidentProfile', () => {
       page.shouldShowMentalHealthSection(acctAlerts, riskToSelf, oasysSupportingInformation)
     })
 
-    it('should show the drug and alcohol tab', () => {
-      const { placement, personRisks } = setup({})
-      const oasysSupportingInformation = cas1OasysGroupFactory.supportingInformation().build()
-
-      cy.task('stubOasysGroup', {
-        person: placement.person,
-        group: oasysSupportingInformation,
-        includeOptionalSections: [8, 9],
-      })
-
-      const page = visitPage({ placement, personRisks })
-
-      WHEN('I click the Drug and alcohol tab')
-      page.clickTab('Drug and alcohol')
-
-      THEN('I should see the Drug and alcohol section')
-      page.shouldHaveActiveTab('Drug and alcohol')
-      page.shouldShowOasysCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
-    })
-
     it('should show the placement tab', () => {
       const { placement, personRisks } = setup()
       const assessment = assessmentFactory.build()
@@ -191,6 +171,38 @@ context('ResidentProfile', () => {
       page.shouldShowAllApPlacements(spaceBookings)
     })
 
+    it('should show the risk tab', () => {
+      const { placement, personRisks } = setup()
+      const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
+      const oasysRoshSummary = cas1OasysGroupFactory.roshSummary().build()
+      const oasysRiskManagementPlan = cas1OasysGroupFactory.riskManagementPlan().build()
+
+      cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
+      cy.task('stubOasysGroup', { person: placement.person, group: oasysRoshSummary })
+      cy.task('stubOasysGroup', { person: placement.person, group: oasysRiskManagementPlan })
+
+      const page = visitPage({ placement, personRisks }, 'Risk')
+
+      THEN('the Risk tab should be selected')
+      page.shouldHaveActiveTab('Risk')
+
+      AND('the OASys meta-data should be shown')
+      page.shouldShowInsetText(
+        `OASys last updated on ${DateFormats.isoDateToUIDate(oasysRoshSummary.assessmentMetadata.dateCompleted)}`,
+      )
+
+      AND('The Ndelius risk card should be populated')
+      page.shouldShowNDeliusRiskCard(placement, personRisks)
+
+      AND('The ROSH widget should be populated')
+      page.shouldShowRoshWidget(personRisks.roshRisks.value)
+
+      AND('the OASys risk cards should be populated')
+      page.shouldShowOasysCards(['R10.1', 'R10.2', 'SUM10'], oasysRoshSummary, 'ROSH summary')
+      page.shouldShowOasysCards(['RM30', 'RM31', 'RM32', 'RM33'], oasysRiskManagementPlan, 'OASys risk management plan')
+      page.shouldShowOasysCards(['2.4.1', '2.4.2'], oasysOffenceDetails, 'OASys')
+    })
+
     it('should show the sentence tab', () => {
       const offences = activeOffenceFactory.buildList(3)
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
@@ -227,36 +239,24 @@ context('ResidentProfile', () => {
       page.shouldShowPrisonInformation(adjudications, csraSummaries, placement.person)
     })
 
-    it('should show the risk tab', () => {
-      const { placement, personRisks } = setup()
-      const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
-      const oasysRoshSummary = cas1OasysGroupFactory.roshSummary().build()
-      const oasysRiskManagementPlan = cas1OasysGroupFactory.riskManagementPlan().build()
+    it('should show the drug and alcohol tab', () => {
+      const { placement, personRisks } = setup({})
+      const oasysSupportingInformation = cas1OasysGroupFactory.supportingInformation().build()
 
-      cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
-      cy.task('stubOasysGroup', { person: placement.person, group: oasysRoshSummary })
-      cy.task('stubOasysGroup', { person: placement.person, group: oasysRiskManagementPlan })
+      cy.task('stubOasysGroup', {
+        person: placement.person,
+        group: oasysSupportingInformation,
+        includeOptionalSections: [8, 9],
+      })
 
-      const page = visitPage({ placement, personRisks }, 'Risk')
+      const page = visitPage({ placement, personRisks })
 
-      THEN('the Risk tab should be selected')
-      page.shouldHaveActiveTab('Risk')
+      WHEN('I click the Drug and alcohol tab')
+      page.clickTab('Drug and alcohol')
 
-      AND('the OASys meta-data should be shown')
-      page.shouldShowInsetText(
-        `OASys last updated on ${DateFormats.isoDateToUIDate(oasysRoshSummary.assessmentMetadata.dateCompleted)}`,
-      )
-
-      AND('The Ndelius risk card should be populated')
-      page.shouldShowNDeliusRiskCard(placement, personRisks)
-
-      AND('The ROSH widget should be populated')
-      page.shouldShowRoshWidget(personRisks.roshRisks.value)
-
-      AND('the OASys risk cards should be populated')
-      page.shouldShowOasysCards(['R10.1', 'R10.2', 'SUM10'], oasysRoshSummary, 'ROSH summary')
-      page.shouldShowOasysCards(['RM30', 'RM31', 'RM32', 'RM33'], oasysRiskManagementPlan, 'OASys risk management plan')
-      page.shouldShowOasysCards(['2.4.1', '2.4.2'], oasysOffenceDetails, 'OASys')
+      THEN('I should see the Drug and alcohol section')
+      page.shouldHaveActiveTab('Drug and alcohol')
+      page.shouldShowOasysCards(['8.9', '9.9'], oasysSupportingInformation, 'OASys supporting information')
     })
 
     it('should render the tabs if there are no external data', () => {

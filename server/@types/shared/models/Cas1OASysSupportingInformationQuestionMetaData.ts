@@ -12,11 +12,11 @@ export type Cas1OASysSupportingInformationQuestionMetaData = {
      */
     oasysAnswerLinkedToHarm?: boolean;
     /**
-     * If the response to this question in OAsys for the person hsa been identified as 'linked to re-offending'
+     * If the response to this question in OASys for the person hsa been identified as 'linked to re-offending'
      */
     oasysAnswerLinkedToReOffending?: boolean;
     /**
-     * The OAsys section that this question relates to
+     * The OASys section that this question relates to
      */
     section: number;
     sectionLabel: string;
