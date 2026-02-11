@@ -79,6 +79,10 @@ describe('sentence', () => {
   })
 
   describe('offenceCards', () => {
+    const notFoundCard = [
+      { card: { title: { text: 'Offence details' } }, html: 'No offence information found in NDelius' },
+    ]
+
     it('should render the offence summary list', () => {
       expect(offenceCards(offences, 'success')).toEqual([
         {
@@ -119,6 +123,12 @@ describe('sentence', () => {
       const offence = activeOffenceFactory.build({ mainOffence: true })
       offence.subCategoryDescription = offence.mainCategoryDescription
       expect(offenceCards([offence], 'success')[1].html).toEqual('No additional offences')
+    })
+
+    it('should handle an empty or undefined offences list, or 404 response', async () => {
+      expect(offenceCards([], 'success')).toEqual(notFoundCard)
+      expect(offenceCards(undefined, 'success')).toEqual(notFoundCard)
+      expect(offenceCards(offences, 'notFound')).toEqual(notFoundCard)
     })
   })
 
