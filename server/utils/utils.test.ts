@@ -395,7 +395,7 @@ describe('utils', () => {
       if (val === 'error') throw new Error(val)
       return val
     }
-    const promises = [fn('one'), fn('error'), fn('two')] as Array<Promise<never>>
+    const promises = [fn('one'), fn('error'), fn('two')] as Array<Promise<string>>
 
     it('should wait for all promises to resolve or reject, and return results', async () => {
       const result = await settlePromises(promises)
