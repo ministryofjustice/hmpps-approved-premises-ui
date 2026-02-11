@@ -47,9 +47,14 @@ const getOffenceDescriptions = (
   return { mainCategoryDescription, subCategoryDescription: mainCategoryDescription === sub ? '' : sub }
 }
 
-export const offenceCards = (offences: Array<ActiveOffence>, offencesMeta: ApiOutcome): Array<SummaryListWithCard> => {
+export const offenceCards = (
+  offences: Array<ActiveOffence>,
+  offencesOutcome: ApiOutcome,
+): Array<SummaryListWithCard> => {
   const title = 'Offence details'
-  const errorMessage = loadingErrorMessage({ result: offencesMeta, item: 'offence', source: 'NDelius' })
+  const fullOutcome = offencesOutcome === 'success' && !offences?.length ? 'notFound' : offencesOutcome
+
+  const errorMessage = loadingErrorMessage({ result: fullOutcome, item: 'offence', source: 'NDelius' })
   if (errorMessage) return [card({ title, html: errorMessage })]
 
   const mainOffence: ActiveOffence = offences.find(({ mainOffence: isMain }) => isMain) || offences[0]
