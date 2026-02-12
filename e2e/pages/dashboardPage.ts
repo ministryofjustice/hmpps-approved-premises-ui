@@ -22,7 +22,7 @@ export class DashboardPage extends BasePage {
   }
 
   async clickManage() {
-    await this.page.getByRole('link', { name: 'Manage an Approved Premises' }).click()
+    await this.page.getByRole('link', { name: 'Manage Approved Premises residents' }).click()
   }
 
   async clickDownloadData() {
