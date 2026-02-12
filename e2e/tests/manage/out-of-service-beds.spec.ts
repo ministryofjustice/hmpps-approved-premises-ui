@@ -24,7 +24,7 @@ const markABedAsOutOfService = async (page: Page, futureManager: UserLoginDetail
   // And I am on the list of premises page
   const dashboard = await visitDashboard(page)
   await dashboard.clickManage()
-  const premisesListPage = await PremisesListPage.initialize(page, 'List of Approved Premises')
+  const premisesListPage = await PremisesListPage.initialize(page, 'Approved Premises (AP)')
 
   // When choose to view the detail of a particular premises
   await premisesListPage.choosePremises(premisesName)
@@ -85,7 +85,7 @@ test('Future manager updates an out of service bed', async ({ page, futureManage
   // And I am on the list of premises page
   const dashboard = await visitDashboard(page)
   await dashboard.clickManage()
-  const premisesListPage = await PremisesListPage.initialize(page, 'List of Approved Premises')
+  const premisesListPage = await PremisesListPage.initialize(page, 'Approved Premises (AP)')
 
   // When choose to view the detail of a particular premises
   await premisesListPage.choosePremises(premisesName)
