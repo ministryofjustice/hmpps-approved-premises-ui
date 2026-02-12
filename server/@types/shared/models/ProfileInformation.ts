@@ -2,4 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type LostBedStatus = 'active' | 'cancelled';
+export type ProfileInformation = {
+    question?: string;
+    resultValue?: string;
+    type: string;
+};
+
