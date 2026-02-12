@@ -72,9 +72,7 @@ class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
       actualArrivalTime: '12:00',
       actualDepartureDate: DateFormats.dateObjToIsoDate(actualDepartureDate),
       actualDepartureTime: '18:30',
-      departure: cas1SpaceBookingDepartureFactory.build({
-        moveOnCategory: undefined,
-      }),
+      departure: cas1SpaceBookingDepartureFactory.build(),
       status: 'departed',
     })
   }

@@ -1,3 +1,4 @@
+import { manageBooking } from 'e2e/steps/manage'
 import { test } from '../../test'
 import { createApplication } from '../../steps/apply'
 import { assessApplication } from '../../steps/assess'
@@ -8,6 +9,7 @@ import { signOut } from '../../steps/signOut'
 test('Apply, assess, match and book an application for an Approved Premises with a release date', async ({
   page,
   assessor,
+  futureManager,
   person,
   oasysSections,
 }) => {
@@ -17,8 +19,9 @@ test('Apply, assess, match and book an application for an Approved Premises with
     true,
     true,
   )
+
   const { datesOfPlacement, duration } = await assessApplication({ page, assessor, person }, id)
-  await matchAndBookApplication({
+  const { premisesName, newDatesOfPlacement } = await matchAndBookApplication({
     person,
     applicationId: id,
     page,
@@ -30,25 +33,10 @@ test('Apply, assess, match and book an application for an Approved Premises with
     preferredPostcode,
   })
   await signOut(page)
-
-  // TODO fix this for resident profile compatibility
-  // const { datesOfPlacement, duration } = await assessApplication({ page, assessor, person }, id)
-  // const { premisesName, newDatesOfPlacement } = await matchAndBookApplication({
-  //   person,
-  //   applicationId: id,
-  //   page,
-  //   apType,
-  //   releaseType,
-  //   preferredAps,
-  //   datesOfPlacement,
-  //   duration,
-  //   preferredPostcode,
-  // })
-  // await signOut(page)
-  // await signIn(page, futureManager)
-  // await manageBooking({
-  //   page,
-  //   premisesName,
-  //   datesOfPlacement: newDatesOfPlacement,
-  // })
+  await signIn(page, futureManager)
+  await manageBooking({
+    page,
+    premisesName,
+    datesOfPlacement: newDatesOfPlacement,
+  })
 })
