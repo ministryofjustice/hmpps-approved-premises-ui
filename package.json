@@ -156,7 +156,7 @@
     "url-value-parser": "^2.2.0"
   },
   "devDependencies": {
-    "@golevelup/ts-jest": "0.5.0",
+    "@golevelup/ts-jest": "0.7.0",
     "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
     "@ministryofjustice/eslint-config-hmpps": "^1.0.1",
     "@pact-foundation/pact": "^16.0.2",
@@ -185,7 +185,7 @@
     "cypress": "^14.0.0",
     "cypress-axe": "^1.6.0",
     "cypress-multi-reporters": "^2.0.0",
-    "esbuild": "^0.25.5",
+    "esbuild": "^0.27.0",
     "esbuild-plugin-clean": "^1.0.1",
     "esbuild-plugin-copy": "^2.1.1",
     "esbuild-plugin-manifest": "^1.0.5",
@@ -211,7 +211,7 @@
     "typescript": "^5.8.3"
   },
   "overrides": {
-    "cross-spawn": "7.0.5",
+    "cross-spawn": "7.0.6",
     "diff": "^8.0.3"
   }
 }
