@@ -1,7 +1,7 @@
 {
   "basic-information": {
     "confirm-your-details": {
-      "emailAddress": "bob@test.com",
+      "emailAddress": "bob@test.gov.uk",
       "name": "Bob Smith",
       "phoneNumber": "01234567890",
       "area": "5e44b880-df20-4751-938f-a14be5fe609d",
@@ -29,7 +29,7 @@
       }
     },
     "case-manager-information": {
-      "emailAddress": "bob@test.com",
+      "emailAddress": "bob@test.gov.uk",
       "name": "Bob Smith",
       "phoneNumber": "01234567890"
     },

@@ -4,6 +4,7 @@ import { lowerCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
 import { UserDetails, userDetailsKeys } from './confirmYourDetails'
+import { isValidEmail } from '../../../../utils/formUtils'
 
 export type CaseManagerDetails = Omit<UserDetails, 'area'>
 
@@ -45,6 +46,8 @@ export default class CaseManagerInformation implements TasklistPage {
     caseManagerKeys.forEach(field => {
       if (!this.body[field]) {
         errors[field] = `You must enter the case manager's ${lowerCase(field)}`
+      } else if (field === 'emailAddress' && !isValidEmail(this.body.emailAddress || '')) {
+        errors.emailAddress = 'Enter an email address ending .gov.uk'
       }
     })
 

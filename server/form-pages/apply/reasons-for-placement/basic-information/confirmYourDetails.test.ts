@@ -19,7 +19,7 @@ describe('ConfirmYourDetails', () => {
   const body: Body = {
     detailsToUpdate: ['name', 'emailAddress', 'phoneNumber', 'area'],
     name: 'Bob',
-    emailAddress: 'bob@test.com',
+    emailAddress: 'bob@test.gov.uk',
     phoneNumber: '0123456789',
     caseManagementResponsibility: 'yes',
     area: area.id,
@@ -229,6 +229,17 @@ describe('ConfirmYourDetails', () => {
         caseManagementResponsibility: 'You must enter whether you have case management responsibility',
       })
     })
+
+    it('should return an error if the email address is not a .gov.uk email address', () => {
+      const page = new ConfirmYourDetails(
+        { ...body, emailAddress: 'name@example.com', detailsToUpdate: ['emailAddress'] },
+        application,
+      )
+
+      expect(page.errors()).toEqual({
+        emailAddress: 'Enter an email address ending .gov.uk',
+      })
+    })
   })
 
   describe('response', () => {
@@ -238,7 +249,7 @@ describe('ConfirmYourDetails', () => {
       expect(page.response()).toEqual({
         [page.questions.updateDetails.label]: ['Name', 'Email address', 'Phone number', 'Area'].join(', '),
         'Applicant name': 'Bob',
-        'Applicant email address': 'bob@test.com',
+        'Applicant email address': 'bob@test.gov.uk',
         'Applicant phone number': '0123456789',
         'Applicant AP area': area.name,
         'Do you have case management responsibility?': 'Yes',
@@ -250,7 +261,7 @@ describe('ConfirmYourDetails', () => {
 
       expect(page.response()).toEqual({
         [page.questions.updateDetails.label]: 'Email address',
-        'Applicant email address': 'bob@test.com',
+        'Applicant email address': 'bob@test.gov.uk',
         'Do you have case management responsibility?': 'Yes',
         'Applicant name': body.userDetailsFromDelius.name,
         'Applicant phone number': body.userDetailsFromDelius.phoneNumber,
