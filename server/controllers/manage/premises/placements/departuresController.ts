@@ -205,7 +205,7 @@ export default class DeparturesController {
         this.newErrors(departureFormSessionData, placement, req.session.user) ||
         departureFormSessionData.reasonId !== BREACH_OR_RECALL_REASON_ID
       ) {
-        return res.redirect(departurePaths.new({ premisesId, placementId }))
+        return res.redirect(returnPath(req, placement))
       }
 
       const departureReasons = (await this.placementService.getDepartureReasons(token)).filter(
@@ -264,7 +264,7 @@ export default class DeparturesController {
         this.newErrors(departureFormSessionData, placement, req.session.user) ||
         !isMoveOnReason.includes(departureFormSessionData.reasonId)
       ) {
-        return res.redirect(departurePaths.new({ premisesId, placementId }))
+        return res.redirect(returnPath(req, placement))
       }
 
       const moveOnCategories = await this.placementService.getMoveOnCategories(token)
@@ -323,7 +323,7 @@ export default class DeparturesController {
       } = await this.getFormPageData(req)
 
       if (!departureFormSessionData || this.newErrors(departureFormSessionData, placement, req.session.user)) {
-        return res.redirect(departurePaths.new({ premisesId, placementId }))
+        return res.redirect(returnPath(req, placement))
       }
 
       let backlink = departurePaths.new({ premisesId, placementId })
@@ -348,6 +348,11 @@ export default class DeparturesController {
       const { premisesId, placementId, placement } = await this.getFormPageData(req)
 
       const departureData = this.formData.get(placementId, req.session)
+
+      if (!departureData) {
+        return res.redirect(returnPath(req, placement))
+      }
+
       let { notes } = req.body
 
       try {
