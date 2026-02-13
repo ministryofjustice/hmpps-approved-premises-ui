@@ -298,3 +298,8 @@ export const bulletList = (items: Array<string>): string => {
     ? `<ul class="govuk-list govuk-list--bullet">${items.map(item => `<li>${item}</li>`).join('')}</ul>`
     : ''
 }
+
+export const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.gov\.uk$/i
+  return emailRegex.test(email)
+}
