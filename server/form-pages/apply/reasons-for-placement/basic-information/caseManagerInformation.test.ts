@@ -5,7 +5,7 @@ import CaseManagerInformation, { CaseManagerDetails, caseManagerKeys } from './c
 describe('CaseMangerInformation', () => {
   const body: CaseManagerDetails = {
     name: 'Bob',
-    emailAddress: 'bob@test.com',
+    emailAddress: 'bob@test.gov.uk',
     phoneNumber: '0123456789',
   }
 
@@ -30,6 +30,14 @@ describe('CaseMangerInformation', () => {
         expect(page.errors()).toEqual({
           [field]: `You must enter the case manager's ${lowerCase(field)}`,
         })
+      })
+    })
+
+    it('should return an error if the email address is not a .gov.uk email address', () => {
+      const page = new CaseManagerInformation({ ...body, emailAddress: 'name@example.com' })
+
+      expect(page.errors()).toEqual({
+        emailAddress: 'Enter an email address ending .gov.uk',
       })
     })
   })
