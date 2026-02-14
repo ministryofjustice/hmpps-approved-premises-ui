@@ -110,7 +110,7 @@
     "@aws-sdk/client-sqs": "^3.982.0",
     "@faker-js/faker": "^8.0.0",
     "@microsoft/applicationinsights-web": "^3.3.8",
-    "@ministryofjustice/frontend": "^5.1.5",
+    "@ministryofjustice/frontend": "^8.0.0",
     "@ministryofjustice/hmpps-npm-script-allowlist": "0.0.3",
     "@playwright/test": "^1.56.1",
     "@sentry/node": "^10.11.0",
