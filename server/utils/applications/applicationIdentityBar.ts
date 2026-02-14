@@ -3,13 +3,9 @@ import { IdentityBar, IdentityBarMenuItem, UserDetails } from '../../@types/ui'
 import paths from '../../paths/apply'
 import { ApplicationStatusTag, expirableStatuses, withdrawableStatuses } from './statusTag'
 import { hasPermission } from '../users'
-import { displayName } from '../personUtils'
-import config from '../../config'
 
 export const applicationTitle = (application: Application, pageHeading: string): string => {
-  const { oneApplication } = config.flags
-
-  let heading = oneApplication ? pageHeading : displayName(application.person)
+  let heading = pageHeading
 
   if (application.type === 'Offline') {
     heading += '<strong class="govuk-tag govuk-tag--grey govuk-!-margin-5">Offline application</strong>'
@@ -19,36 +15,13 @@ export const applicationTitle = (application: Application, pageHeading: string):
     heading += new ApplicationStatusTag(application.status, { classes: 'govuk-!-margin-5' }).html()
   }
 
-  return oneApplication
-    ? `<h1 class="govuk-heading-l">${heading}</h1>`
-    : ` <h1 class="govuk-caption-l">${pageHeading}</h1>
-  <h2 class="govuk-heading-l">${heading}</h2>
-  <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>`
+  return `<h1 class="govuk-heading-l">${heading}</h1>`
 }
 
 export const applicationMenuItems = (application: Application, user: UserDetails): Array<IdentityBarMenuItem> => {
   const items: Array<IdentityBarMenuItem> = []
 
-  if (config.flags.oneApplication) {
-    if (withdrawableStatuses.includes(application.status)) {
-      items.push({
-        text: 'Withdraw application or placement request',
-        href: paths.applications.withdraw.new({ id: application.id }),
-        classes: 'govuk-button--secondary',
-        attributes: {
-          'data-cy-withdraw-application': application.id,
-        },
-      })
-    }
-
-    if (expirableStatuses.includes(application.status)) {
-      items.push({
-        text: 'Expire application',
-        href: paths.applications.expire({ id: application.id }),
-        classes: 'govuk-button--secondary',
-      })
-    }
-  } else if (application.status !== 'withdrawn') {
+  if (withdrawableStatuses.includes(application.status)) {
     items.push({
       text: 'Withdraw application or placement request',
       href: paths.applications.withdraw.new({ id: application.id }),
@@ -56,6 +29,14 @@ export const applicationMenuItems = (application: Application, user: UserDetails
       attributes: {
         'data-cy-withdraw-application': application.id,
       },
+    })
+  }
+
+  if (expirableStatuses.includes(application.status)) {
+    items.push({
+      text: 'Expire application',
+      href: paths.applications.expire({ id: application.id }),
+      classes: 'govuk-button--secondary',
     })
   }
 

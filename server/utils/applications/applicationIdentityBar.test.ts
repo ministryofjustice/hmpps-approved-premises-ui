@@ -3,7 +3,6 @@ import { applicationFactory, personFactory, userDetailsFactory } from '../../tes
 import { applicationIdentityBar, applicationMenuItems, applicationTitle } from './applicationIdentityBar'
 import paths from '../../paths/apply'
 import config from '../../config'
-import { displayName } from '../personUtils'
 import { expirableStatuses, withdrawableStatuses } from './statusTag'
 
 describe('applicationIdentityBar', () => {
@@ -18,16 +17,8 @@ describe('applicationIdentityBar', () => {
       const person = personFactory.build()
       const application = applicationFactory.build({ person })
 
-      config.flags.oneApplication = true
       expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
         <h1 class="govuk-heading-l">heading</h1>
-      `)
-
-      config.flags.oneApplication = false
-      expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
-        <h1 class="govuk-caption-l">heading</h1>
-        <h2 class="govuk-heading-l">${displayName(person)}</h2>
-        <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>
       `)
     })
 
@@ -35,19 +26,11 @@ describe('applicationIdentityBar', () => {
       const person = personFactory.build()
       const application = applicationFactory.build({ person, type: 'Offline' })
 
-      config.flags.oneApplication = true
       expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
         <h1 class="govuk-heading-l">
           heading
           <strong class="govuk-tag govuk-tag--grey govuk-!-margin-5" >Offline application</strong>
         </h1>
-      `)
-
-      config.flags.oneApplication = false
-      expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
-        <h1 class="govuk-caption-l">heading</h1>
-        <h2 class="govuk-heading-l">${displayName(person)}<strong class="govuk-tag govuk-tag--grey govuk-!-margin-5" >Offline application</strong></h2>
-        <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>
       `)
     })
 
@@ -55,19 +38,11 @@ describe('applicationIdentityBar', () => {
       const person = personFactory.build()
       const application = applicationFactory.build({ person, status: 'withdrawn' })
 
-      config.flags.oneApplication = true
       expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
         <h1 class="govuk-heading-l">
           heading
           <strong class="govuk-tag govuk-tag--red govuk-!-margin-5" data-cy-status="withdrawn">Application withdrawn</strong>
         </h1>
-      `)
-
-      config.flags.oneApplication = false
-      expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
-        <h1 class="govuk-caption-l">heading</h1>
-        <h2 class="govuk-heading-l">${displayName(person)}<strong class="govuk-tag govuk-tag--red govuk-!-margin-5" data-cy-status="withdrawn">Application withdrawn</strong></h2>
-        <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>
       `)
     })
 
@@ -75,19 +50,11 @@ describe('applicationIdentityBar', () => {
       const person = personFactory.build()
       const application = applicationFactory.build({ person, status: 'expired' })
 
-      config.flags.oneApplication = true
       expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
         <h1 class="govuk-heading-l">
           heading
           <strong class="govuk-tag govuk-tag--red govuk-!-margin-5" data-cy-status="expired">Expired application</strong>
         </h1>
-      `)
-
-      config.flags.oneApplication = false
-      expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
-        <h1 class="govuk-caption-l">heading</h1>
-        <h2 class="govuk-heading-l">${displayName(person)}<strong class="govuk-tag govuk-tag--red govuk-!-margin-5" data-cy-status="expired" >Expired application</strong></h2>
-        <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>
       `)
     })
   })
@@ -159,13 +126,6 @@ describe('applicationIdentityBar', () => {
     })
 
     describe('with singleApplication feature enabled', () => {
-      beforeEach(() => {
-        config.flags.oneApplication = true
-      })
-      afterEach(() => {
-        config.flags.oneApplication = false
-      })
-
       it.each(expirableStatuses)('should return an expiry button for an application status of %s', status => {
         const application = applicationFactory.build({ status, createdByUserId: user.id, id: applicationId })
         expect(applicationMenuItems(application, { ...user, permissions: [] })).toEqual([

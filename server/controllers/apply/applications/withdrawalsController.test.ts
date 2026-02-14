@@ -14,7 +14,6 @@ import WithdrawalsController from './withdrawalsController'
 import { applicationFactory, withdrawableFactory } from '../../../testutils/factories'
 import withdrawablesFactory from '../../../testutils/factories/withdrawablesFactory'
 import { applicationKeyDetails } from '../../../utils/applications/helpers'
-import config from '../../../config'
 
 jest.mock('../../../utils/validation')
 
@@ -186,17 +185,10 @@ describe('withdrawalsController', () => {
   })
 
   describe('create', () => {
-    const { flags: originalFlags } = config
-
     beforeEach(() => {
       request.params.id = applicationId
       request.body.reason = 'other'
       request.body.otherReason = 'Some other reason'
-      config.flags.oneApplication = true
-    })
-
-    afterEach(() => {
-      config.flags = originalFlags
     })
 
     it('calls the service method, redirects to the originating screen and shows a confirmation message', async () => {
@@ -208,13 +200,6 @@ describe('withdrawalsController', () => {
       })
       expect(response.redirect).toHaveBeenCalledWith(referrer)
       expect(request.flash).toHaveBeenCalledWith('success', 'Application withdrawn')
-    })
-
-    it('redirects to the application index page if feature flag is not set', async () => {
-      config.flags.oneApplication = false
-      await withdrawalsController.create()(request, response, next)
-
-      expect(response.redirect).toHaveBeenCalledWith(paths.applications.index({}))
     })
 
     it('redirects to the "new" method with an error if "other" is the selected reason but no "otherReason" is supplied', async () => {

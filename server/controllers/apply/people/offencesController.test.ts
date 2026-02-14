@@ -10,7 +10,6 @@ import { RestrictedPersonError } from '../../../utils/errors'
 import { fetchErrorsAndUserInput } from '../../../utils/validation'
 import { ApplicationService } from '../../../services'
 import Cas1ApplicationSummary from '../../../testutils/factories/cas1ApplicationSummary'
-import config from '../../../config'
 import { statusesLimitedToOne } from '../../../utils/applications/statusTag'
 
 jest.mock('../../../utils/personUtils')
@@ -26,20 +25,14 @@ describe('OffencesController', () => {
 
   let offencesController: OffencesController
   let request: DeepMocked<Request>
-  const { flags: originalFlags } = config
 
   beforeEach(() => {
-    jest.resetAllMocks()
     offencesController = new OffencesController(personService, applicationService)
     request = createMock<Request>({
       user: { token },
       params: { crn },
     })
     ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: {}, errorSummary: [], userInput: {} })
-  })
-
-  afterEach(() => {
-    config.flags = originalFlags
   })
 
   describe('selectOffence', () => {
@@ -75,10 +68,10 @@ describe('OffencesController', () => {
       const restrictedPerson = restrictedPersonFactory.build()
       personService.findByCrn.mockResolvedValue(restrictedPerson)
 
-      const requestHandler = offencesController.selectOffence()
+      const t = async () => offencesController.selectOffence()(request, response, next)
 
-      expect(async () => requestHandler(request, response, next)).rejects.toThrowError(RestrictedPersonError)
-      expect(async () => requestHandler(request, response, next)).rejects.toThrowError(`CRN: ${crn} is restricted`)
+      expect(t).rejects.toThrowError(RestrictedPersonError)
+      expect(t).rejects.toThrowError(`CRN: ${crn} is restricted`)
       expect(personService.findByCrn).toHaveBeenCalledWith(token, crn)
     })
 
@@ -109,71 +102,62 @@ describe('OffencesController', () => {
       expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
       expect(isFullPerson).toHaveBeenCalledWith(person)
     })
-
-    describe('interruption page redirection', () => {
-      beforeEach(async () => {
-        config.flags.oneApplication = true
-        ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-        const applications = Cas1ApplicationSummary.buildList(2)
-        applicationService.getAll.mockResolvedValue({
-          pageNumber: '1',
-          totalPages: '1',
-          totalResults: '1',
-          pageSize: '10',
-          data: applications,
-        })
-        personService.findByCrn.mockResolvedValue(personFactory.build())
-        personService.getOffences.mockResolvedValue(activeOffenceFactory.buildList(5))
+  })
+  describe('interruption page redirection', () => {
+    beforeEach(async () => {
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+      const applications = Cas1ApplicationSummary.buildList(2)
+      applicationService.getAll.mockResolvedValue({
+        pageNumber: '1',
+        totalPages: '1',
+        totalResults: '1',
+        pageSize: '10',
+        data: applications,
       })
-      it('redirects to the interruption page if a search for applications in a live state, returns any', async () => {
-        await offencesController.selectOffence()(request, response, next)
+      personService.findByCrn.mockResolvedValue(personFactory.build())
+      personService.getOffences.mockResolvedValue(activeOffenceFactory.buildList(5))
+    })
+    afterEach(() => {
+      jest.resetAllMocks()
+    })
+    it('redirects to the interruption page if a search for applications in a live state, returns any', async () => {
+      await offencesController.selectOffence()(request, response, next)
 
-        expect(response.redirect).toHaveBeenCalledWith('/applications/people/some-crn/manage-applications')
-        expect(applicationService.getAll).toHaveBeenCalledWith(
-          token,
-          1,
-          undefined,
-          undefined,
-          { crnOrName: 'some-crn', status: statusesLimitedToOne },
-          1,
-        )
-      })
+      expect(response.redirect).toHaveBeenCalledWith('/applications/people/some-crn/manage-applications')
+      expect(applicationService.getAll).toHaveBeenCalledWith(
+        token,
+        1,
+        undefined,
+        undefined,
+        { crnOrName: 'some-crn', status: statusesLimitedToOne },
+        1,
+      )
+    })
 
-      it(`doesn't redirect to the interruption page if the list is empty`, async () => {
-        applicationService.getAll.mockResolvedValue({
-          pageNumber: '1',
-          totalPages: '1',
-          totalResults: '0',
-          pageSize: '10',
-          data: [],
-        })
-
-        await offencesController.selectOffence()(request, response, next)
-
-        expect(response.redirect).not.toHaveBeenCalled()
-        expect(response.render).toHaveBeenCalled()
-        expect(applicationService.getAll).toHaveBeenCalled()
+    it(`doesn't redirect to the interruption page if the list is empty`, async () => {
+      applicationService.getAll.mockResolvedValue({
+        pageNumber: '1',
+        totalPages: '1',
+        totalResults: '0',
+        pageSize: '10',
+        data: [],
       })
 
-      it(`doesn't redirect to the interruption page if the feature flag is not set`, async () => {
-        config.flags.oneApplication = false
+      await offencesController.selectOffence()(request, response, next)
 
-        await offencesController.selectOffence()(request, response, next)
+      expect(response.redirect).not.toHaveBeenCalled()
+      expect(response.render).toHaveBeenCalled()
+      expect(applicationService.getAll).toHaveBeenCalled()
+    })
 
-        expect(response.redirect).not.toHaveBeenCalled()
-        expect(response.render).toHaveBeenCalled()
-        expect(applicationService.getAll).not.toHaveBeenCalled()
-      })
+    it(`doesn't redirect to the interruption page if the test CRN is used`, async () => {
+      request.params = { crn: 'X371199' }
 
-      it(`doesn't redirect to the interruption page if the test CRN is used`, async () => {
-        request.params = { crn: 'X371199' }
+      await offencesController.selectOffence()(request, response, next)
 
-        await offencesController.selectOffence()(request, response, next)
-
-        expect(response.redirect).not.toHaveBeenCalled()
-        expect(response.render).toHaveBeenCalled()
-        expect(applicationService.getAll).not.toHaveBeenCalled()
-      })
+      expect(response.redirect).not.toHaveBeenCalled()
+      expect(response.render).toHaveBeenCalled()
+      expect(applicationService.getAll).not.toHaveBeenCalled()
     })
   })
 })

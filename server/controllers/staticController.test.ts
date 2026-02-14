@@ -19,4 +19,12 @@ describe('StaticController', () => {
 
     expect(response.render).toHaveBeenCalledWith('static/template-name.njk', { backLink: undefined })
   })
+
+  it('renders the given template', () => {
+    const requestHandler = staticController.render('template-name')
+
+    requestHandler(request, response, next)
+
+    expect(response.render).toHaveBeenCalledWith('static/template-name.njk', { backLink: undefined })
+  })
 })

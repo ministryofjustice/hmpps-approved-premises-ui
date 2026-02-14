@@ -19,7 +19,6 @@ import {
   dayStatusFromDayCapacity,
   daySummaryRows,
   durationSelectOptions,
-  filterOutOfServiceBeds,
   generateCharacteristicsSummary,
   generateDaySummaryText,
   occupancyCalendar,
@@ -33,7 +32,6 @@ import { DateFormats } from '../dateUtils'
 import { premiseCharacteristicAvailability } from '../../testutils/factories/cas1PremiseCapacity'
 import { getTierOrBlank } from '../applications/helpers'
 import { displayName } from '../personUtils'
-import config from '../../config'
 import { roomCharacteristicMap } from '../characteristicsUtils'
 import { sortHeader } from '../sortHeader'
 import { canonicalDates } from '../placements'
@@ -345,49 +343,11 @@ describe('apOccupancy utils', () => {
   describe('tableCaptions', () => {
     const daySummary = cas1PremisesDaySummaryFactory.build({ forDate: '2025-02-12' })
 
-    afterEach(() => {
-      config.flags.pocEnabled = false
-    })
-
     it('should generate table captions', () => {
-      const captions = tableCaptions(daySummary, ['isArsonSuitable'])
+      const captions = tableCaptions(daySummary)
       expect(captions).toEqual({
         outOfServiceBedCaption: 'Out of service beds on Wed 12 Feb 2025',
         placementTableCaption: 'People booked in on Wed 12 Feb 2025',
-      })
-    })
-
-    it('should generate detailed table captions with no characteristics', () => {
-      const captions = tableCaptions(daySummary, [], true)
-      expect(captions).toEqual({
-        outOfServiceBedCaption: '4 out of service beds on Wed 12 Feb 2025',
-        placementTableCaption: '5 people booked in on Wed 12 Feb 2025',
-      })
-    })
-
-    it('should generate POC table captions with characteristics', () => {
-      const captions = tableCaptions(daySummary, ['isArsonSuitable', 'isStepFreeDesignated'], true)
-      expect(captions).toEqual({
-        outOfServiceBedCaption:
-          '4 out of service beds on Wed 12 Feb 2025 with: suitable for active arson risk and step-free',
-        placementTableCaption:
-          '5 people booked in on Wed 12 Feb 2025 requiring: suitable for active arson risk and step-free',
-      })
-    })
-
-    it('should generate singular table captions', () => {
-      const captions = tableCaptions(
-        {
-          ...daySummary,
-          spaceBookingSummaries: cas1SpaceBookingSummaryFactory.buildList(1),
-          outOfServiceBeds: cas1OutOfServiceBedSummaryFactory.buildList(1),
-        },
-        [],
-        true,
-      )
-      expect(captions).toEqual({
-        outOfServiceBedCaption: '1 out of service bed on Wed 12 Feb 2025',
-        placementTableCaption: '1 person booked in on Wed 12 Feb 2025',
       })
     })
   })
@@ -398,17 +358,5 @@ describe('generateCharacteristicsSummary', () => {
     expect(generateCharacteristicsSummary(['isSingle', 'isArsonSuitable'], ' prefix ')).toEqual(
       ' prefix single room and suitable for active arson risk',
     )
-  })
-})
-
-describe('filterOutOfServiceBeds', () => {
-  const outOfServiceBeds = [
-    cas1OutOfServiceBedSummaryFactory.build({ characteristics: ['isStepFreeDesignated'] }),
-    cas1OutOfServiceBedSummaryFactory.build({ characteristics: ['isArsonSuitable', 'isStepFreeDesignated'] }),
-  ]
-  const daySummary = cas1PremisesDaySummaryFactory.build({ forDate: '2025-02-12', outOfServiceBeds })
-  it('should filter the oosb list in a day summary based on characteristics', () => {
-    const filtered = filterOutOfServiceBeds(daySummary, ['isArsonSuitable'])
-    expect(filtered.outOfServiceBeds).toEqual([outOfServiceBeds[1]])
   })
 })
