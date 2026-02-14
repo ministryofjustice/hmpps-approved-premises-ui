@@ -1,7 +1,7 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { NewCancellation } from '@approved-premises/api'
+import { NewCancellation } from '@approved-premises/ui'
 import referenceDataFactory from './referenceData'
 import { DateFormats } from '../../utils/dateUtils'
 import cancellationReasonsJson from '../referenceData/stubs/cancellation-reasons.json'

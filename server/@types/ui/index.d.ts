@@ -585,3 +585,10 @@ export type DateRange = {
 export type RequestWithSession = Request & {
   session: Session & { pageReferers?: Record<string, string>; user?: UserDetails }
 }
+
+export type NewCancellation = {
+  date: string
+  notes?: string
+  otherReason?: string
+  reason: string
+}

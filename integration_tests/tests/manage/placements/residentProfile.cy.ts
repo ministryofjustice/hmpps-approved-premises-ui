@@ -133,7 +133,7 @@ context('ResidentProfile', () => {
       cy.task('stubPersonSpaceBookings', { person: placement.person, spaceBookings })
 
       GIVEN(' that I am signed in as a user with access resident profile')
-      signIn(['manage_resident'])
+      signIn(['future_manager'])
 
       WHEN('I visit the resident profile page on the placement tab')
       const page = ResidentProfilePage.visit(placement, personRisks)
@@ -301,7 +301,7 @@ context('ResidentProfile', () => {
     it("should show an error if the CRN in the URL doesn't match the CRN on the placement's user", () => {
       const { placement } = setup()
       GIVEN(' that I am signed in as a user with access to the resident profile')
-      signIn(['manage_resident'])
+      signIn(['future_manager'])
       WHEN('I visit the resident profile page with mismatched CRNs')
       THEN('I should see an error')
       ResidentProfilePage.visitCrnMismatch('X123456', placement)
@@ -330,7 +330,7 @@ context('ResidentProfile', () => {
       const person = restrictedPersonFactory.build()
       const { placement } = setup({ person })
       GIVEN(' that I am signed in as a user with access to the resident profile')
-      signIn(['manage_resident'])
+      signIn(['future_manager'])
       WHEN('I visit the resident profile page for an LAO person that I am not whitelisted for')
       THEN('I should see an error')
       ResidentProfilePage.visitRestrictedPerson(placement)
