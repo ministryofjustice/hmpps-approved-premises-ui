@@ -89,15 +89,6 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
         href: paths.premises.placements.nonArrival({ premisesId: placement.premises.id, placementId: placement.id }),
       })
     }
-
-    // TODO: Check that there are no existing appeals
-    if (hasPermission(user, ['cas1_placement_appeal_create'])) {
-      actionList.push({
-        text: 'Request an appeal',
-        classes: 'govuk-button--secondary',
-        href: paths.premises.placements.appeal.new({ premisesId: placement.premises.id, placementId: placement.id }),
-      })
-    }
   }
 
   if (status === 'arrived') {
@@ -106,14 +97,6 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
         text: 'Record departure',
         classes: 'govuk-button--secondary',
         href: paths.premises.placements.departure.new({ premisesId: placement.premises.id, placementId: placement.id }),
-      })
-    }
-
-    if (hasPermission(user, ['cas1_transfer_create'])) {
-      actionList.push({
-        text: 'Request a transfer',
-        classes: 'govuk-button--secondary',
-        href: paths.premises.placements.transfers.new({ premisesId: placement.premises.id, placementId: placement.id }),
       })
     }
   }

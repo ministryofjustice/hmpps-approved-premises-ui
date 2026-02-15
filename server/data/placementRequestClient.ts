@@ -1,13 +1,8 @@
 import {
   BookingNotMade,
-  Cas1ChangeRequest,
-  Cas1ChangeRequestSortField,
-  Cas1ChangeRequestSummary,
   Cas1CruManagementArea,
-  type Cas1NewChangeRequest,
   Cas1PlacementRequestDetail,
   Cas1PlacementRequestSummary,
-  Cas1RejectChangeRequest,
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
@@ -102,57 +97,5 @@ export default class PlacementRequestClient {
       path: paths.placementRequests.withdrawal.create({ placementRequestId }),
       data: { reason },
     })) as Promise<Cas1PlacementRequestDetail>
-  }
-
-  async createPlacementAppeal(placementRequestId: string, newChangeRequest: Cas1NewChangeRequest) {
-    return this.restClient.post({
-      path: paths.placementRequests.appeal({ placementRequestId }),
-      data: newChangeRequest,
-    })
-  }
-
-  async getChangeRequests(
-    filterParams: GetChangeRequestsQueryParams = {},
-    page: number = 1,
-    sortBy: Cas1ChangeRequestSortField = 'name',
-    sortDirection: SortDirection = 'asc',
-  ) {
-    return this.restClient.getPaginatedResponse<Cas1ChangeRequestSummary>({
-      path: paths.placementRequests.changeRequests({}),
-      page: page.toString(),
-      query: { ...filterParams, sortBy, sortDirection },
-    })
-  }
-
-  async createPlannedTransfer(placementRequestId: string, newChangeRequest: Cas1NewChangeRequest) {
-    return this.restClient.post({
-      path: paths.placementRequests.plannedTransfer({ placementRequestId }),
-      data: newChangeRequest,
-    })
-  }
-
-  async createExtension(placementRequestId: string, newChangeRequest: Cas1NewChangeRequest) {
-    return this.restClient.post({
-      path: paths.placementRequests.extension({ placementRequestId }),
-      data: newChangeRequest,
-    })
-  }
-
-  async getChangeRequest(params: { placementRequestId: string; changeRequestId: string }) {
-    return this.restClient.get({
-      path: paths.placementRequests.changeRequest(params),
-    }) as Promise<Cas1ChangeRequest>
-  }
-
-  async rejectChangeRequest(params: {
-    placementRequestId: string
-    changeRequestId: string
-    rejectChangeRequest: Cas1RejectChangeRequest
-  }) {
-    const { rejectChangeRequest, ...pathParams } = params
-    return this.restClient.patch({
-      path: paths.placementRequests.changeRequest(pathParams),
-      data: rejectChangeRequest,
-    }) as Promise<Cas1ChangeRequest>
   }
 }

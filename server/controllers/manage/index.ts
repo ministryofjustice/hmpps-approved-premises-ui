@@ -15,9 +15,6 @@ import NonArrivalsController from './premises/placements/nonArrivalsController'
 import KeyworkerController from './premises/placements/keyworkerController'
 import DeparturesController from './premises/placements/departuresController'
 import ChangesController from './premises/placements/changesController'
-import TransfersController from './premises/placements/transfersController'
-import PlannedTransferController from './premises/changeRequests/plannedTransferController'
-import PlacementAppealController from './premises/changeRequests/placementAppealController'
 import LocalRestrictionsController from './premises/localRestrictionsController'
 import ResidentProfileController from './residentProfileController'
 
@@ -52,15 +49,6 @@ export const controllers = (services: Services) => {
   const departuresController = new DeparturesController(services.premisesService, services.placementService)
   const apOccupancyViewController = new ApOccupancyViewController(services.premisesService)
   const changesController = new ChangesController(services.placementService, services.premisesService)
-  const transfersController = new TransfersController(services.placementService, services.premisesService)
-  const plannedTransferController = new PlannedTransferController(
-    services.placementService,
-    services.placementRequestService,
-  )
-  const placementAppealController = new PlacementAppealController(
-    services.premisesService,
-    services.placementRequestService,
-  )
 
   const residentProfileController = new ResidentProfileController(
     services.placementService,
@@ -84,9 +72,6 @@ export const controllers = (services: Services) => {
     keyworkerController,
     apOccupancyViewController,
     changesController,
-    transfersController,
-    placementAppealController,
-    plannedTransferController,
     residentProfileController,
   }
 }
@@ -105,8 +90,5 @@ export {
   LocalRestrictionsController,
   ApOccupancyViewController,
   ChangesController,
-  TransfersController,
-  PlacementAppealController,
-  PlannedTransferController,
   ResidentProfileController,
 }

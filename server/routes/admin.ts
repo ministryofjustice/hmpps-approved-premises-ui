@@ -18,7 +18,6 @@ export default function routes(controllers: Controllers, router: Router, service
     reportsController,
     userManagementController,
     deliusUserController,
-    changeRequestsController,
     nationalOccupancyController,
     occupancyViewController,
   } = controllers
@@ -26,10 +25,6 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.admin.cruDashboard.index.pattern, cruDashboardController.index(), {
     auditEvent: 'ADMIN_LIST_PLACEMENT_REQUESTS',
     allowedPermissions: ['cas1_view_cru_dashboard'],
-  })
-  get(paths.admin.cruDashboard.changeRequests.pattern, cruDashboardController.changeRequests(), {
-    auditEvent: 'ADMIN_LIST_CHANGE_REQUESTS',
-    allowedPermissions: ['cas1_change_request_list'],
   })
   get(paths.admin.cruDashboard.search.pattern, cruDashboardController.search(), {
     auditEvent: 'ADMIN_SEARCH_PLACEMENT_REQUESTS',
@@ -52,16 +47,6 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.admin.nationalOccupancy.premisesDayView.pattern, occupancyViewController.viewDay(), {
     auditEvent: 'NATIONAL_OCCUPANCY_PREMISES__DAY_VIEW',
     allowedPermissions: ['cas1_national_occupancy_view'],
-  })
-
-  // Change requests
-  get(paths.admin.placementRequests.changeRequests.review.pattern, changeRequestsController.review(), {
-    auditEvent: 'ADMIN_CHANGE_REQUEST_REVIEW',
-    allowedPermissions: ['cas1_placement_appeal_assess'],
-  })
-  post(paths.admin.placementRequests.changeRequests.review.pattern, changeRequestsController.decide(), {
-    auditEvent: 'ADMIN_CHANGE_REQUEST_ACTION',
-    allowedPermissions: ['cas1_placement_appeal_assess'],
   })
 
   get(paths.admin.placementRequests.index.pattern, redirectController.redirect(paths.admin.cruDashboard.index), {

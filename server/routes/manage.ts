@@ -36,9 +36,6 @@ export default function routes(controllers: Controllers, router: Router, service
     keyworkerController,
     apOccupancyViewController,
     changesController,
-    transfersController,
-    plannedTransferController,
-    placementAppealController,
     occupancyViewController,
     residentProfileController,
   } = controllers
@@ -344,69 +341,6 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.premises.placements.changes.dayOccupancy.pattern, occupancyViewController.viewDay(), {
     auditEvent: 'CREATE_BOOKING_VIEW_DAY_OCCUPANCY',
     allowedPermissions: ['cas1_space_booking_create'],
-  })
-
-  // Placement transfers
-  get(paths.premises.placements.transfers.new.pattern, transfersController.new(), {
-    auditEvent: 'TRANSFER_REQUEST_NEW',
-    allowedPermissions: ['cas1_transfer_create'],
-  })
-  post(paths.premises.placements.transfers.new.pattern, transfersController.saveNew(), {
-    auditEvent: 'TRANSFER_REQUEST_NEW_SAVE',
-    allowedPermissions: ['cas1_transfer_create'],
-  })
-  get(paths.premises.placements.transfers.emergencyDetails.pattern, transfersController.details(), {
-    auditEvent: 'TRANSFER_REQUEST_EMERGENCY_DETAILS',
-    allowedPermissions: ['cas1_transfer_create'],
-  })
-  post(paths.premises.placements.transfers.emergencyDetails.pattern, transfersController.saveDetails(), {
-    auditEvent: 'TRANSFER_REQUEST_EMERGENCY_DETAILS_SAVE',
-    allowedPermissions: ['cas1_transfer_create'],
-  })
-  get(paths.premises.placements.transfers.emergencyConfirm.pattern, transfersController.confirm(), {
-    auditEvent: 'TRANSFER_REQUEST_EMERGENCY_CONFIRM',
-    allowedPermissions: ['cas1_transfer_create'],
-  })
-  post(paths.premises.placements.transfers.emergencyConfirm.pattern, transfersController.create(), {
-    auditEvent: 'TRANSFER_REQUEST_EMERGENCY_CREATE',
-    allowedPermissions: ['cas1_transfer_create'],
-  })
-  get(paths.premises.placements.transfers.plannedDetails.pattern, plannedTransferController.details(), {
-    auditEvent: 'TRANSFER_REQUEST_PLANNED_DETAILS',
-    allowedPermissions: ['cas1_transfer_create'],
-  })
-  post(paths.premises.placements.transfers.plannedDetails.pattern, plannedTransferController.detailsSave(), {
-    auditEvent: 'TRANSFER_REQUEST_PLANNED_DETAILS_SAVE',
-    allowedPermissions: ['cas1_transfer_create'],
-  })
-  get(paths.premises.placements.transfers.plannedConfirm.pattern, plannedTransferController.confirm(), {
-    auditEvent: 'TRANSFER_REQUEST_PLANNED_CONFIRM',
-    allowedPermissions: ['cas1_transfer_create'],
-  })
-  post(paths.premises.placements.transfers.plannedConfirm.pattern, plannedTransferController.create(), {
-    auditEvent: 'TRANSFER_REQUEST_PLANNED_CREATE',
-    allowedPermissions: ['cas1_transfer_create'],
-  })
-
-  // Change requests - Appeals
-  get(paths.premises.placements.appeal.new.pattern, placementAppealController.new(), {
-    auditEvent: 'PLACEMENT_APPEAL_NEW',
-    allowedPermissions: ['cas1_placement_appeal_create'],
-  })
-
-  post(paths.premises.placements.appeal.new.pattern, placementAppealController.newSave(), {
-    auditEvent: 'PLACEMENT_APPEAL_SAVE',
-    allowedPermissions: ['cas1_placement_appeal_create'],
-  })
-
-  get(paths.premises.placements.appeal.confirm.pattern, placementAppealController.confirm(), {
-    auditEvent: 'PLACEMENT_APPEAL_CONFIRM',
-    allowedPermissions: ['cas1_placement_appeal_create'],
-  })
-
-  post(paths.premises.placements.appeal.confirm.pattern, placementAppealController.create(), {
-    auditEvent: 'PLACEMENT_APPEAL_CREATE',
-    allowedPermissions: ['cas1_placement_appeal_create'],
   })
 
   // Occupancy

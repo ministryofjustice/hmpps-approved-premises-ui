@@ -28,9 +28,7 @@
             }) }}
 
             <form action="{{ currentUrl }}" method="get" class="search-and-filter">
-                {% if activeTab != 'changeRequests' %}
-                    <input type="hidden" name="status" value="{{ activeTab }}">
-                {% endif %}
+                <input type="hidden" name="status" value="{{ activeTab }}">
 
                 <h2 class="govuk-heading-m">Filters</h2>
 
@@ -46,7 +44,7 @@
                         items: convertObjectsToSelectOptions(cruManagementAreas, 'All areas', 'name', 'id', 'cruManagementArea', 'all', context)
                     }) }}
 
-                    {% if activeTab != "pendingPlacement" and activeTab != 'changeRequests' %}
+                    {% if activeTab != "pendingPlacement" %}
                         {{ govukSelect({
                             label: {
                                 text: "Request type",
