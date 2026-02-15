@@ -50,16 +50,6 @@ export const cruDashboardTabItems = (
       active: activeTab === 'matched',
       href: cruDashboardTabLink({ cruManagementArea, requestType, status: 'matched' }),
     },
-    hasPermission(user, ['cas1_change_request_list'])
-      ? {
-          text: 'Change requests',
-          active: activeTab === 'changeRequests',
-          href: `${paths.admin.cruDashboard.changeRequests({})}${createQueryString(
-            { cruManagementArea },
-            { addQueryPrefix: true },
-          )}`,
-        }
-      : undefined,
     {
       text: 'Search',
       active: activeTab === 'search',

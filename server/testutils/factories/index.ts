@@ -88,11 +88,8 @@ import cas1BedDetailFactory from './cas1BedDetail'
 import cas1NewEmergencyTransferFactory from './cas1NewEmergencyTransfer'
 import cas1ChangeRequestSummaryFactory from './cas1ChangeRequestSummary'
 import cas1NewChangeRequestFactory from './cas1NewChangeRequest'
-import appealSessionDataFactory from './appealSessionData'
 import cas1PlacementRequestDetailFactory from './cas1PlacementRequestDetail'
 import cas1PlacementRequestSummaryFactory from './cas1PlacementRequestSummary'
-import cas1ChangeRequestFactory from './cas1ChangeRequest'
-import cas1RejectChangeRequestFactory from './cas1RejectChangeRequest'
 import oasysQuestionFactory from './oasysQuestion'
 import cas1OasysGroupFactory, { roshSummaryFactory } from './cas1OASysGroup'
 import cas1PremisesLocalRestrictionSummaryFactory from './cas1PremisesLocalRestrictionSummary'
@@ -107,7 +104,6 @@ export {
   activeOffenceFactory,
   adjudicationFactory,
   appealFactory,
-  appealSessionDataFactory,
   apAreaFactory,
   applicationFactory,
   cas1ApplicationSummaryFactory,
@@ -138,7 +134,6 @@ export {
   cas1SpaceBookingShortSummaryFactory,
   cas1TimelineEventFactory,
   cas1AssignKeyWorkerFactory,
-  cas1ChangeRequestFactory,
   cas1NewArrivalFactory,
   cas1NewChangeRequestFactory,
   cas1NewDepartureFactory,
@@ -201,7 +196,6 @@ export {
   spaceSearchResultFactory,
   spaceSearchResultsFactory,
   spaceSearchStateFactory,
-  cas1RejectChangeRequestFactory,
   cas1PremisesLocalRestrictionSummaryFactory,
   cas1PremisesNewLocalRestrictionFactory,
   cas1CurrentKeyworkerFactory,

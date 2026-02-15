@@ -82,7 +82,6 @@ describe('placementUtils', () => {
         'cas1_space_booking_record_departure',
         'cas1_space_booking_record_keyworker',
         'cas1_space_booking_record_non_arrival',
-        'cas1_transfer_create',
         'cas1_space_booking_create',
       ],
     })
@@ -110,11 +109,6 @@ describe('placementUtils', () => {
       classes: 'govuk-button--secondary',
       href: paths.premises.placements.keyworker.new({ premisesId: premises.id, placementId }),
       text: 'Edit keyworker',
-    }
-    const requestTransferOption = {
-      classes: 'govuk-button--secondary',
-      href: paths.premises.placements.transfers.new({ premisesId: premises.id, placementId }),
-      text: 'Request a transfer',
     }
     const changePlacementOption = {
       classes: 'govuk-button--secondary',
@@ -183,7 +177,7 @@ describe('placementUtils', () => {
 
       it('should allow recording a departure, assigning a keyworker, requesting a transfer and changing the placement', () => {
         expect(actions(placementAfterArrival, userDetails)).toEqual([
-          { items: [keyworkerOption, departureOption, requestTransferOption, changePlacementOption] },
+          { items: [keyworkerOption, departureOption, changePlacementOption] },
         ])
       })
 
@@ -196,17 +190,6 @@ describe('placementUtils', () => {
             }),
           ),
         ).toEqual([{ items: [departureOption] }])
-      })
-
-      it('should require the correct permission for requesting a transfer', () => {
-        expect(
-          actions(
-            placementAfterArrival,
-            userDetailsFactory.build({
-              permissions: ['cas1_transfer_create'],
-            }),
-          ),
-        ).toEqual([{ items: [requestTransferOption] }])
       })
 
       it('should require the correct permission for changing the placement', () => {

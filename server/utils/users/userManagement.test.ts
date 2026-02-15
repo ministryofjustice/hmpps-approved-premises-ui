@@ -122,7 +122,6 @@ describe('userManagement', () => {
         { selected: false, text: 'Future manager', value: 'future_manager' },
         { selected: false, text: 'AP area manager', value: 'ap_area_manager' },
         { selected: false, text: 'User manager', value: 'user_manager' },
-        { selected: false, text: 'Change request development', value: 'change_request_dev' },
         { selected: false, text: 'Janitor', value: 'janitor' },
       ])
     })
@@ -145,7 +144,6 @@ describe('userManagement', () => {
         { selected: false, text: 'Future manager', value: 'future_manager' },
         { selected: false, text: 'AP area manager', value: 'ap_area_manager' },
         { selected: false, text: 'User manager', value: 'user_manager' },
-        { selected: false, text: 'Change request development', value: 'change_request_dev' },
         { selected: false, text: 'Janitor', value: 'janitor' },
       ])
     })

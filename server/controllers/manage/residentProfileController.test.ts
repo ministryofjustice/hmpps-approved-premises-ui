@@ -181,7 +181,6 @@ describe('residentProfileController', () => {
       response.locals.user.permissions = [
         'cas1_space_booking_record_arrival',
         'cas1_space_booking_record_non_arrival',
-        'cas1_placement_appeal_create',
         'cas1_space_booking_create',
       ]
 
@@ -200,11 +199,6 @@ describe('residentProfileController', () => {
             {
               text: 'Record non-arrival',
               href: `/manage/premises/${placement.premises.id}/placements/${placement.id}/non-arrival`,
-              classes: 'govuk-button--secondary',
-            },
-            {
-              text: 'Request an appeal',
-              href: `/manage/premises/${placement.premises.id}/placements/${placement.id}/appeal/new`,
               classes: 'govuk-button--secondary',
             },
             {

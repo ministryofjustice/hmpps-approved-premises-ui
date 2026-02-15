@@ -1,19 +1,13 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import {
-  Cas1ChangeRequestSummary,
-  Cas1PlacementRequestSummary,
-  PlacementRequestSortField,
-  PlacementRequestStatus,
-} from '@approved-premises/api'
+import { Cas1PlacementRequestSummary, PlacementRequestSortField, PlacementRequestStatus } from '@approved-premises/api'
 import { PaginatedResponse } from '@approved-premises/ui'
 import createError from 'http-errors'
 import CruDashboardController from './cruDashboardController'
 
 import { CruManagementAreaService, PlacementRequestService, PremisesService } from '../../services'
 import {
-  cas1ChangeRequestSummaryFactory,
   cas1PlacementRequestSummaryFactory,
   cruManagementAreaFactory,
   paginatedResponseFactory,
@@ -26,7 +20,6 @@ import { dashboardTableHeader, dashboardTableRows } from '../../utils/placementR
 import { pagination } from '../../utils/pagination'
 import { placementRequestStatusSelectOptions, tierSelectOptions } from '../../utils/formUtils'
 import { createQueryString } from '../../utils/utils'
-import { changeRequestsTableHeader, changeRequestsTableRows } from '../../utils/placementRequests/changeRequestsUtils'
 
 describe('CruDashboardController', () => {
   const token = 'SOME_TOKEN'
@@ -198,74 +191,6 @@ describe('CruDashboardController', () => {
       await cruDashboardController.index()({ ...request, query: { status: 'foo' } }, response, next)
 
       expect(next).toHaveBeenCalledWith(createError(404, 'Not found'))
-    })
-  })
-
-  describe('changeRequests', () => {
-    const changeRequestsPath = paths.admin.cruDashboard.changeRequests({})
-    const paginatedResponse = paginatedResponseFactory.build({
-      data: cas1ChangeRequestSummaryFactory.buildList(5),
-    }) as PaginatedResponse<Cas1ChangeRequestSummary>
-
-    beforeEach(() => {
-      placementRequestService.getChangeRequests.mockResolvedValue(paginatedResponse)
-    })
-
-    it('renders the default view', async () => {
-      const expectedHrefPrefix = `${changeRequestsPath}?${createQueryString({
-        cruManagementArea: user.cruManagementArea.id,
-      })}&`
-
-      const requestHandler = cruDashboardController.changeRequests()
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
-        pageHeading: 'CRU Dashboard',
-        actions: cruDashboardActions(response.locals.user),
-        activeTab: 'changeRequests',
-        tabs: cruDashboardTabItems(user, 'changeRequests', user.cruManagementArea.id),
-        tableHead: changeRequestsTableHeader('name', 'asc', expectedHrefPrefix),
-        tableRows: changeRequestsTableRows(paginatedResponse.data),
-        pagination: pagination(
-          Number(paginatedResponse.pageNumber),
-          Number(paginatedResponse.totalPages),
-          expectedHrefPrefix,
-        ),
-        cruManagementAreas,
-        cruManagementArea: user.cruManagementArea.id,
-      })
-    })
-
-    it('renders with filters, pagination and sorting applied', async () => {
-      const query = {
-        page: '2',
-        sortBy: 'tier',
-        sortDirection: 'desc',
-        cruManagementArea: 'some-other-id',
-      }
-
-      const expectedHrefPrefix = `${changeRequestsPath}?${createQueryString({
-        cruManagementArea: 'some-other-id',
-        sortBy: 'tier',
-        sortDirection: 'desc',
-      })}&`
-
-      placementRequestService.getChangeRequests.mockResolvedValue({ ...paginatedResponse, pageNumber: '2' })
-
-      const requestHandler = cruDashboardController.changeRequests()
-
-      await requestHandler({ ...request, query }, response, next)
-
-      expect(response.render).toHaveBeenCalledWith(
-        'admin/cruDashboard/index',
-        expect.objectContaining({
-          tabs: cruDashboardTabItems(user, 'changeRequests', 'some-other-id'),
-          tableHead: changeRequestsTableHeader('tier', 'desc', expectedHrefPrefix),
-          pagination: pagination(2, Number(paginatedResponse.totalPages), expectedHrefPrefix),
-          cruManagementArea: 'some-other-id',
-        }),
-      )
     })
   })
 

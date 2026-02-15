@@ -6,7 +6,6 @@ import UserManagementController from './userManagementController'
 import DeliusUserController from './deliusUserController'
 import ReportsController from './reportsController'
 import CruDashboardController from './cruDashboardController'
-import ChangeRequestsController from './placementRequests/changeRequestsController'
 import NationalOccupancyController from './nationalOccupancyController'
 
 import type { Services } from '../../services'
@@ -23,10 +22,6 @@ export const controllers = (services: Services) => {
   const reportsController = new ReportsController(reportService)
   const userManagementController = new UserManagementController(services.userService, cruManagementAreaService)
   const deliusUserController = new DeliusUserController(services.userService)
-  const changeRequestsController = new ChangeRequestsController(
-    services.placementRequestService,
-    services.placementService,
-  )
 
   const nationalOccupancyController = new NationalOccupancyController(premisesService, cruManagementAreaService)
 
@@ -37,7 +32,6 @@ export const controllers = (services: Services) => {
     reportsController,
     userManagementController,
     deliusUserController,
-    changeRequestsController,
     nationalOccupancyController,
   }
 }
@@ -47,6 +41,5 @@ export {
   PlacementRequestsWithdrawalsController,
   ReportsController,
   DeliusUserController,
-  ChangeRequestsController,
   NationalOccupancyController,
 }

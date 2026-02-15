@@ -1,5 +1,4 @@
 import {
-  Cas1ApprovedPlacementAppeal,
   Cas1AssignKeyWorker,
   Cas1NewArrival,
   Cas1NewDeparture,
@@ -91,17 +90,6 @@ export default class PlacementClient {
     return this.restClient.post({
       path: paths.premises.placements.emergencyTransfer({ premisesId, placementId }),
       data: newEmergencyTransfer,
-    })
-  }
-
-  async approvePlacementAppeal(
-    premisesId: string,
-    placementId: string,
-    approvedPlacementAppeal: Cas1ApprovedPlacementAppeal,
-  ) {
-    return this.restClient.post({
-      path: paths.premises.placements.appeal({ premisesId, placementId }),
-      data: approvedPlacementAppeal,
     })
   }
 }
