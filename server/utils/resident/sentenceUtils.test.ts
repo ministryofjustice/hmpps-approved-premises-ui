@@ -190,7 +190,7 @@ describe('sentence', () => {
   describe('sentenceCards', () => {
     it('should render the sentence section with NDelius link', () => {
       jest.spyOn(utils, 'ndeliusDeeplink')
-      expect(sentenceCards(placement)).toEqual([{ html: 'rendered-output' }])
+      expect(sentenceCards(placement)).toEqual([{ html: '<h2 class="govuk-heading-m">Sentence</h2>rendered-output' }])
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
         html: `<p>We cannot display sentence details from NDelius yet.</p><p>You can view this information in the event details. The event number is ${placement.deliusEventNumber}</p>`,
       })
