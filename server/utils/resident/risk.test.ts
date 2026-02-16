@@ -5,7 +5,7 @@ import { cas1OasysGroupFactory, cas1SpaceBookingFactory, risksFactory } from '..
 import { riskTabController } from './risk'
 import { PersonService } from '../../services'
 import { DateFormats } from '../dateUtils'
-import { ndeliusRiskCard, oasysMetadataRow } from './riskUtils'
+import { oasysMetadataRow } from './riskUtils'
 import { ErrorWithData } from '../errors'
 
 const personService = createMock<PersonService>({})
@@ -47,32 +47,36 @@ describe('risk tab controller', () => {
             return null
         }
       })
-
       const result = await riskTabController({ personService, token, crn, personRisks })
 
       expect(result.subHeading).toEqual('Risk information')
-      expect(result.cardList).toHaveLength(12)
-      expect(result.cardList[0]).toEqual(ndeliusRiskCard(crn, personRisks))
-      expect(result.cardList[1].html).toMatchStringIgnoringWhitespace('Nunjucks template partials/insetText.njk')
+      expect(result.cardList).toHaveLength(15)
+      expect(result.cardList[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
-        html: `OASys last updated on ${DateFormats.isoDateToUIDate(roshSummary.assessmentMetadata.dateCompleted)}`,
+        html: `Imported from OASys`,
       })
-
-      expect(result.cardList[2].html).toMatchStringIgnoringWhitespace(
-        'Nunjucks template components/riskWidgets/rosh-widget/template.njk',
+      expect(result.cardList[1].html).toMatchStringIgnoringWhitespace(
+        `<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>Nunjucks template partials/insetText.njk`,
       )
+      expect(result.cardList[2].html).toMatch(`<h2 class="govuk-heading-m">OASys risk assessments</h2>`)
+      expect(result.cardList[3].html).toMatch('Nunjucks template components/riskWidgets/rosh-widget/template.njk')
       expect(render).toHaveBeenCalledWith('components/riskWidgets/rosh-widget/template.njk', {
         params: personRisks.roshRisks.value,
       })
+      expect(result.cardList[4].html).toMatch(`<h3 class="govuk-heading-s">Risk assessment</h3>`)
+      expect(result.cardList[5]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
+      expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
+        html: `Assessment completed on ${DateFormats.isoDateToUIDate(roshSummary?.assessmentMetadata?.dateCompleted)}`,
+      })
 
-      expect(result.cardList[3].html).toMatchStringIgnoringWhitespace(
+      expect(result.cardList[6].html).toMatchStringIgnoringWhitespace(
         `${oasysMetadataRow('R10.1', 'ROSH summary', roshSummary)}Nunjucks template partials/detailsBlock.njk`,
       )
 
-      expect(result.cardList[7].html).toMatchStringIgnoringWhitespace(
+      expect(result.cardList[10].html).toMatchStringIgnoringWhitespace(
         `${oasysMetadataRow('RM32', 'OASys risk management plan', riskManagementPlan)}Nunjucks template partials/detailsBlock.njk`,
       )
-      expect(result.cardList[8].html).toMatchStringIgnoringWhitespace(
+      expect(result.cardList[11].html).toMatchStringIgnoringWhitespace(
         `${oasysMetadataRow('2.4.1', 'OASys offence details', offenceDetails)}Nunjucks template partials/detailsBlock.njk`,
       )
     })
@@ -88,8 +92,10 @@ describe('risk tab controller', () => {
         const result = await riskTabController({ personService, token, crn, personRisks, placement })
         expect(result.subHeading).toEqual('Risk information')
 
-        expect(result.cardList).toHaveLength(12)
-        expect(result.cardList[1].html).toMatchStringIgnoringWhitespace('Nunjucks template partials/insetText.njk')
+        expect(result.cardList).toHaveLength(15)
+        expect(result.cardList[1].html).toMatchStringIgnoringWhitespace(
+          '<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>Nunjucks template partials/insetText.njk',
+        )
         expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
           html: `<p class="govuk-!-margin-bottom-2">No OASys risk assessment for person added</p><p>Go to the <a href="/manage/resident/crn/placement/${placement.id}/placement/application">application</a> to view risk information for this person.</p>`,
         })
@@ -103,8 +109,8 @@ describe('risk tab controller', () => {
         })
 
         const result = await riskTabController({ personService, token, crn, personRisks, placement })
-        expect(result.cardList).toHaveLength(3)
-        expect(result.cardList[2].html).toMatchStringIgnoringWhitespace(
+        expect(result.cardList).toHaveLength(6)
+        expect(result.cardList[3].html).toMatchStringIgnoringWhitespace(
           'Nunjucks template components/riskWidgets/rosh-widget/template.njk',
         )
         expect(render).toHaveBeenCalledWith('components/riskWidgets/rosh-widget/template.njk', {

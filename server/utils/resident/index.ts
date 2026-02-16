@@ -169,6 +169,14 @@ export const card = ({
     topHtml,
   })
 
+export const subHeadingH2 = (text: string): string => {
+  return `<h2 class="govuk-heading-m">${text}</h2>`
+}
+
+export const subHeadingH3 = (text: string): string => {
+  return `<h3 class="govuk-heading-s">${text}</h3>`
+}
+
 export const detailsBody = (summaryText: string, text: string) => {
   return nunjucks.render(`partials/detailsBlock.njk`, { summaryText, text })
 }
