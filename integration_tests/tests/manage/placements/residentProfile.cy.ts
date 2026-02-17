@@ -188,11 +188,11 @@ context('ResidentProfile', () => {
 
       AND('the OASys meta-data should be shown')
       page.shouldShowInsetText(
-        `OASys last updated on ${DateFormats.isoDateToUIDate(oasysRoshSummary.assessmentMetadata.dateCompleted)}`,
+        `Assessment completed on ${DateFormats.isoDateToUIDate(oasysRoshSummary.assessmentMetadata.dateCompleted)}`,
       )
 
       AND('The Ndelius risk card should be populated')
-      page.shouldShowNDeliusRiskCard(placement, personRisks)
+      page.shouldShowNDeliusRiskCard()
 
       AND('The ROSH widget should be populated')
       page.shouldShowRoshWidget(personRisks.roshRisks.value)
