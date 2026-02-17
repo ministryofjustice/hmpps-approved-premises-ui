@@ -13,7 +13,7 @@ const personService = createMock<PersonService>({})
 const token = 'token'
 const crn = 'crn'
 
-const acctAlerts = acctAlertFactory.buildList(10)
+const personAcctAlerts = acctAlertFactory.buildList(10)
 const supportingInformation = cas1OasysGroupFactory.supportingInformation().build()
 const riskToSelf = cas1OasysGroupFactory.riskToSelf().build()
 
@@ -43,15 +43,24 @@ describe('Health tab', () => {
 
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Health and disability' })
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [13])
-      expect(healthDetailsCards).toHaveBeenCalledWith(supportingInformation)
+      expect(healthDetailsCards).toHaveBeenCalledWith(supportingInformation, 'success')
     })
   })
 
   describe('mentalHealthTabController', () => {
     beforeEach(() => {
       jest.spyOn(healthUtils, 'mentalHealthCards').mockReturnValue(mockCardList)
-      personService.getAcctAlerts.mockResolvedValue(acctAlerts)
+      personService.getAcctAlerts.mockResolvedValue(personAcctAlerts)
     })
+
+    const successParameters = {
+      personAcctAlerts,
+      riskToSelf,
+      supportingInformation,
+      personAcctAlertsOutcome: 'success',
+      riskToSelfOutcome: 'success',
+      supportingInformationOutcome: 'success',
+    }
 
     it('should get acctAlerts and then render the cards', async () => {
       const result = await mentalHealthTabController({ personService, token, crn })
@@ -61,7 +70,7 @@ describe('Health tab', () => {
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'riskToSelf')
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [10])
 
-      expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(acctAlerts, riskToSelf, supportingInformation)
+      expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(successParameters)
     })
 
     it('should render the page if the oasys response fails', async () => {
@@ -72,7 +81,13 @@ describe('Health tab', () => {
       const result = await mentalHealthTabController({ personService, token, crn })
 
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Mental health' })
-      expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(acctAlerts, undefined, undefined)
+      expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith({
+        ...successParameters,
+        riskToSelf: undefined,
+        riskToSelfOutcome: 'notFound',
+        supportingInformation: undefined,
+        supportingInformationOutcome: 'notFound',
+      })
     })
 
     it('should render the page if the acct alert response fails', async () => {
@@ -83,7 +98,11 @@ describe('Health tab', () => {
       const result = await mentalHealthTabController({ personService, token, crn })
 
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Mental health' })
-      expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(undefined, riskToSelf, supportingInformation)
+      expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith({
+        ...successParameters,
+        personAcctAlerts: undefined,
+        personAcctAlertsOutcome: 'notFound',
+      })
     })
   })
 })

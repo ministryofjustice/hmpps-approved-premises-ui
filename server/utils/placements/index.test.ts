@@ -423,6 +423,7 @@ describe('placementUtils', () => {
               value: { text: departedPlacement.actualDepartureTime },
             },
             { key: { text: 'Departure reason' }, value: { text: departedPlacement.departure?.reason?.name } },
+            { key: { text: 'Move on' }, value: { text: departedPlacement.departure?.moveOnCategory?.name } },
             {
               key: { text: 'More information' },
               value: {

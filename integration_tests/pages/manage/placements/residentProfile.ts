@@ -115,16 +115,23 @@ export default class ResidentProfilePage extends Page {
   }
 
   shouldShowMentalHealthSection(
-    acctAlerts: Array<PersonAcctAlert>,
+    personAcctAlerts: Array<PersonAcctAlert>,
     riskToSelf: Cas1OASysGroup,
-    supportinginformation: Cas1OASysGroup,
+    supportingInformation: Cas1OASysGroup,
   ) {
     cy.stub(residentUtils, 'insetText')
     cy.stub(residentUtils, 'detailsBody')
 
     cy.get('.govuk-inset-text').should('contain.text', 'Imported from Digital Prison Service and OASys')
 
-    const cards = mentalHealthCards(acctAlerts, riskToSelf, supportinginformation).slice(1)
+    const cards = mentalHealthCards({
+      personAcctAlerts,
+      riskToSelf,
+      supportingInformation,
+      personAcctAlertsOutcome: 'success',
+      riskToSelfOutcome: 'success',
+      supportingInformationOutcome: 'success',
+    }).slice(1)
     cards.forEach(card => {
       this.shouldShowCard(card)
     })

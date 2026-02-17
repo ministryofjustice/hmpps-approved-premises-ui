@@ -88,22 +88,14 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
   const getSelfLink = (tab: ResidentProfileTab): string => {
     const pathRoot = managePaths.resident
     const pathParams = { placementId: placement.id, crn: placement.person.crn }
-    switch (tab) {
-      case 'personal':
-        return pathRoot.tabPersonal.personalDetails(pathParams)
-      case 'health':
-        return pathRoot.tabHealth.healthDetails(pathParams)
-      case 'drugAndAlcohol':
-        return pathRoot.tabDrugAndAlcohol.drugAndAlcohol(pathParams)
-      case 'placement':
-        return pathRoot.tabPlacement.placementDetails(pathParams)
-      case 'risk':
-        return pathRoot.tabRisk.riskDetails(pathParams)
-      case 'sentence':
-        return pathRoot.tabSentence.offence(pathParams)
-      default:
-        return pathRoot.show(pathParams)
-    }
+    return {
+      personal: pathRoot.tabPersonal.personalDetails(pathParams),
+      health: pathRoot.tabHealth.healthDetails(pathParams),
+      drugAndAlcohol: pathRoot.tabDrugAndAlcohol.drugAndAlcohol(pathParams),
+      placement: pathRoot.tabPlacement.placementDetails(pathParams),
+      risk: pathRoot.tabRisk.riskDetails(pathParams),
+      sentence: pathRoot.tabSentence.offence(pathParams),
+    }[tab]
   }
   return Object.entries(tabLabels).map(([key, { label }]) => ({
     text: label,
@@ -116,16 +108,14 @@ const isRetrieved = (status: RiskEnvelopeStatus) => status.toLowerCase() === 're
 
 export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: PersonRisks): ResidentHeader {
   const { arrivalDate, departureDate } = canonicalDates(placement)
-
   const {
     roshRisks: { status: roshStatus, value: roshValue },
     mappa: { status: mappaStatus, value: mappaValue },
     flags: { status: flagsStatus, value: flags },
   } = personRisks
-  const roshRisk = roshValue?.overallRisk
 
   const badges: Array<string> = [
-    getBadge(`${isRetrieved(roshStatus) && roshRisk ? roshRisk : 'Unknown'} RoSH`),
+    getBadge(`${isRetrieved(roshStatus) && roshValue?.overallRisk ? roshValue.overallRisk : 'No recent'} RoSH`),
     isRetrieved(mappaStatus) && getBadge(`${mappaValue?.level} MAPPA`),
     ...(isRetrieved(flagsStatus) && flags ? flags.map(flag => getBadge(flag)) : []),
   ].filter(Boolean)
@@ -231,7 +221,7 @@ export const returnPath = (req: Request, placement: Cas1SpaceBooking) => {
     : managePaths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })
 
   return getPageBackLink(
-    `${managePaths.premises.placements.show.pattern}:action`,
+    `${managePaths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })}:action`,
     req as RequestWithSession,
     [managePaths.premises.placements.show.pattern, `${managePaths.resident.show.pattern}{/*tab}`],
     defaultPath,

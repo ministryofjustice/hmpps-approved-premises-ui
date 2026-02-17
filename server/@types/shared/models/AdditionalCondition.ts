@@ -3,12 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 export type AdditionalCondition = {
-    category?: string;
-    code?: string;
-    hasImageUpload?: boolean;
-    id?: number;
-    restrictions?: string;
-    text?: string;
-    type?: string;
+    category: string;
+    code: string;
+    id: number;
+    text: string;
+    type: string;
 };
 

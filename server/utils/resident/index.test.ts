@@ -147,7 +147,7 @@ describe('residentsUtils', () => {
       expect(getResidentHeader(placement, personRisks)).toEqual(
         expect.objectContaining({
           statusBadge: placementStatusTag(placement),
-          badges: ['<span class="moj-badge moj-badge--black">Unknown RoSH</span>'],
+          badges: ['<span class="moj-badge moj-badge--black">No recent RoSH</span>'],
         }),
       )
     })
@@ -181,7 +181,7 @@ describe('residentsUtils', () => {
 
         expect(returnPath(request, placement)).toEqual('backlink')
         expect(backlinkUtils.getPageBackLink).toHaveBeenCalledWith(
-          '/manage/premises/:premisesId/placements/:placementId:action',
+          `/manage/premises/${placement.premises.id}/placements/${placement.id}:action`,
           {},
           [
             '/manage/premises/:premisesId/placements/:placementId',

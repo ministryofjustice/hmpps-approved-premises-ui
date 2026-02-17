@@ -257,7 +257,10 @@ export const objectClean = <T>(object: Record<string, unknown>): T => {
  *   ])
  */
 
-export const settlePromises = async <T>(promises: Array<Promise<unknown>>, defaults?: Array<unknown>): Promise<T> => {
+export const settlePromises = async <T extends unknown[]>(
+  promises: { [P in keyof T]: Promise<T[P]> },
+  defaults?: { [P in keyof T]: T[P] },
+): Promise<T> => {
   const { values } = await settlePromisesWithOutcomes<T>(promises, defaults)
   return values
 }
@@ -277,9 +280,9 @@ export type ApiOutcome = 'success' | 'failure' | 'notFound'
  *     personService.getOasysAnswers(token, crn, 'offenceDetails'),
  *   ])
  */
-export const settlePromisesWithOutcomes = async <T>(
-  promises: Array<Promise<unknown>>,
-  defaults?: Array<unknown>,
+export const settlePromisesWithOutcomes = async <T extends unknown[]>(
+  promises: { [P in keyof T]: Promise<T[P]> },
+  defaults?: { [P in keyof T]: T[P] },
 ): Promise<{ outcomes: Array<ApiOutcome>; values: T }> => {
   const results = await Promise.allSettled(promises)
   const meta: Array<ApiOutcome> = []

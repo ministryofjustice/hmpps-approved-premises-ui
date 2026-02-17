@@ -6,6 +6,7 @@ import { isApplicableTier, isFullPerson } from '../../../../utils/personUtils'
 import { lowerCase, sentenceCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
+import { isValidEmail } from '../../../../utils/formUtils'
 
 const updatableDetailsLabels: Record<string, string> = {
   area: 'AP area',
@@ -66,6 +67,7 @@ export default class ConfirmYourDetails implements TasklistPage {
     },
     emailAddress: {
       label: 'Email address',
+      hint: 'You can only use an email address ending .gov.uk',
     },
     phoneNumber: {
       label: 'Phone number',
@@ -201,6 +203,13 @@ export default class ConfirmYourDetails implements TasklistPage {
         !this.body[detailKey]
       ) {
         errors[detailKey] = `You must enter your updated ${lowerCase(detailKey)}`
+      } else if (
+        detailKey === 'emailAddress' &&
+        this.body?.detailsToUpdate?.length &&
+        this.body?.detailsToUpdate?.includes('emailAddress') &&
+        !isValidEmail(this.body.emailAddress || '')
+      ) {
+        errors.emailAddress = 'Enter an email address ending .gov.uk'
       }
     })
 
