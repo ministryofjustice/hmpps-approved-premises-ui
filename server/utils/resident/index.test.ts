@@ -181,7 +181,7 @@ describe('residentsUtils', () => {
 
         expect(returnPath(request, placement)).toEqual('backlink')
         expect(backlinkUtils.getPageBackLink).toHaveBeenCalledWith(
-          '/manage/premises/:premisesId/placements/:placementId:action',
+          `/manage/premises/${placement.premises.id}/placements/${placement.id}:action`,
           {},
           [
             '/manage/premises/:premisesId/placements/:placementId',
