@@ -1,5 +1,4 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
-import { Session } from 'express-session'
 import { RequestWithSession } from '@approved-premises/ui'
 import { getPageBackLink } from './backlinks'
 
@@ -40,13 +39,13 @@ describe('Link management', () => {
 
     it('should return a homepage link if there is no stored referer and the current referer does not match a path', () => {
       const request = mockRequest(null, null)
-      request.session = {} as Session
+      request.session = {} as typeof request.session
       expect(getPageBackLink(pagePattern, request, matchList)).toEqual('/')
     })
 
     it('should return the provided default path if there is no stored referer and the current referer does not match a path', () => {
       const request = mockRequest(null, null)
-      request.session = {} as Session
+      request.session = {} as typeof request.session
       expect(getPageBackLink(pagePattern, request, matchList, 'defaultPath')).toEqual('defaultPath')
     })
   })
