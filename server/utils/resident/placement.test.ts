@@ -138,7 +138,7 @@ describe('tabController', () => {
             },
             rows: expectation.arrayContaining([
               {
-                key: { text: 'Arrival date' },
+                key: { text: 'Actual arrival date' },
                 value: {
                   text: placement.actualArrivalDate
                     ? DateFormats.isoDateToUIDate(placement.actualArrivalDate)
@@ -165,7 +165,7 @@ describe('tabController', () => {
           },
           rows: expect.arrayContaining([
             {
-              key: { text: 'Arrival date' },
+              key: { text: 'Actual arrival date' },
               value: {
                 text: DateFormats.isoDateToUIDate(placement.actualArrivalDate),
               },
@@ -224,7 +224,7 @@ describe('tabController', () => {
           },
           rows: expectation.arrayContaining([
             {
-              key: { text: 'Departure date' },
+              key: { text: 'Actual departure date' },
               value: {
                 text: placement.actualDepartureDate
                   ? DateFormats.isoDateToUIDate(placement.actualDepartureDate)

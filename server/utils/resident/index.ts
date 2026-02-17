@@ -186,6 +186,7 @@ export const renderPersonDetails = (application: ApprovedPremisesApplication): s
 }
 
 type AlertVariant = 'information' | 'success' | 'warning' | 'error'
+
 export const alertBanner = (parameters: { variant: AlertVariant; title: string; html?: string }) => {
   return nunjucks.render(`manage/resident/partials/alert.njk`, parameters)
 }
@@ -220,7 +221,7 @@ export const returnPath = (req: Request, placement: Cas1SpaceBooking) => {
     : managePaths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })
 
   return getPageBackLink(
-    `${managePaths.premises.placements.show.pattern}:action`,
+    `${managePaths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })}:action`,
     req as RequestWithSession,
     [managePaths.premises.placements.show.pattern, `${managePaths.resident.show.pattern}{/*tab}`],
     defaultPath,

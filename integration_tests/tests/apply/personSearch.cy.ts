@@ -32,7 +32,7 @@ context('Apply - Person Search', () => {
       const firstRequestData = JSON.parse(requests[0].body).data
       const secondRequestData = JSON.parse(requests[1].body).data
 
-      expect(firstRequestData['basic-information']['confirm-your-details'].emailAddress).equal('bob@test.com')
+      expect(firstRequestData['basic-information']['confirm-your-details'].emailAddress).equal('bob@test.gov.uk')
       expect(secondRequestData['basic-information']['case-manager-information'].name).equal('Bob Smith')
     })
   })

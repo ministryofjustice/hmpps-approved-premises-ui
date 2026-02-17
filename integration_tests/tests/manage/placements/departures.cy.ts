@@ -1,4 +1,6 @@
 import { Cas1PremisesBasicSummary, Cas1SpaceBooking } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
+import { subDays } from 'date-fns'
 import {
   cas1NewDepartureFactory,
   cas1PremisesBasicSummaryFactory,
@@ -18,6 +20,7 @@ import {
   MOVE_TO_AP_REASON_ID,
   PLANNED_MOVE_ON_REASON_ID,
 } from '../../../../server/utils/placements'
+import { DateFormats } from '../../../../server/utils/dateUtils'
 
 context('Departures', () => {
   let placement: Cas1SpaceBooking
@@ -25,8 +28,12 @@ context('Departures', () => {
 
   beforeEach(() => {
     const premises = cas1PremisesFactory.build()
+    const arrivalDateTime = faker.date.recent({ refDate: subDays(new Date(), 1), days: 50 })
     placement = cas1SpaceBookingFactory.current().build({
       premises,
+      expectedArrivalDate: DateFormats.dateObjToIsoDate(arrivalDateTime),
+      actualArrivalDate: DateFormats.dateObjToIsoDate(arrivalDateTime),
+      actualArrivalTime: DateFormats.dateObjTo24hrTime(arrivalDateTime),
     })
     premisesList = cas1PremisesBasicSummaryFactory.buildList(10)
 
@@ -43,7 +50,6 @@ context('Departures', () => {
       reasonId: departureReasonsJson.find(reason => reason.name === 'End of ROTL').id,
       moveOnCategoryId: undefined,
     })
-
     // Given I am signed in as a future manager
     signIn('future_manager')
 
@@ -119,7 +125,7 @@ context('Departures', () => {
       moveOnCategoryId: 'You must select a move on category',
     })
 
-    // When I select Transfer to another AP'
+    // When I select Transfer to another AP
     moveOnPage.completeForm(MOVE_TO_AP_REASON_ID)
 
     // When I submit the form with no AP selected
