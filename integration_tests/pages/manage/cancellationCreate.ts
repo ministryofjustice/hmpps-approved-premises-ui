@@ -1,4 +1,4 @@
-import type { NewCancellation } from '@approved-premises/api'
+import { NewCancellation } from '@approved-premises/ui'
 import Page from '../page'
 import paths from '../../../server/paths/manage'
 import applyPaths from '../../../server/paths/apply'
