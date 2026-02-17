@@ -1,5 +1,5 @@
 import { FullPerson, PersonRisks } from '@approved-premises/api'
-import { card, ndeliusDeeplink, ResidentProfileSubTab, summaryItemNd } from './index'
+import { card, insetText, ndeliusDeeplink, ResidentProfileSubTab, summaryItemNd } from './index'
 import paths from '../../paths/manage'
 import { summaryListItem } from '../formUtils'
 import { PersonStatusTag } from '../people/personStatusTag'
@@ -77,7 +77,8 @@ export const personDetailsCardList = (person: FullPerson, personRisks: PersonRis
 
 export const contactsCardList = (crn: string) => [
   card({
-    title: 'Contact details',
-    html: ndeliusDeeplink({ crn, text: 'See contacts in NDelius', component: 'PersonalContacts' }),
+    html: insetText(`<p>We cannot display personal contacts from NDelius yet. For example, probation practitioner contact details.</p>
+${ndeliusDeeplink({ crn, text: 'View personal contacts in NDelius (opens in a new tab).', component: 'PersonalContacts' })}
+`),
   }),
 ]
