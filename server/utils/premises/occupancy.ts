@@ -13,7 +13,7 @@ import { DateFormats } from '../dateUtils'
 import managePaths from '../../paths/manage'
 import { summaryListItem } from '../formUtils'
 import { sortHeader } from '../sortHeader'
-import { joinWithCommas, pluralize } from '../utils'
+import { joinWithCommas } from '../utils'
 import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { getRoomCharacteristicLabel, roomCharacteristicMap } from '../characteristicsUtils'
 import { mapPlacementTableRows } from './index'
@@ -166,34 +166,14 @@ export const daySummaryRows = (
   return { rows }
 }
 
-export const filterOutOfServiceBeds = (
-  daySummary: Cas1PremisesDaySummary,
-  characteristicsArray?: Array<Cas1SpaceBookingCharacteristic>,
-): Cas1PremisesDaySummary => {
-  const outOfServiceBeds =
-    characteristicsArray && characteristicsArray.length
-      ? daySummary.outOfServiceBeds.filter(({ characteristics }) =>
-          characteristicsArray.some(characteristic => characteristics.includes(characteristic)),
-        )
-      : daySummary.outOfServiceBeds
-  return { ...daySummary, outOfServiceBeds }
-}
-
 export const tableCaptions = (
   daySummary: Cas1PremisesDaySummary,
-  characteristicsArray: Array<Cas1SpaceBookingCharacteristic>,
-  detailedFormat = false,
 ): { placementTableCaption: string; outOfServiceBedCaption: string } => {
   const formattedDate = DateFormats.isoDateToUIDate(daySummary.forDate)
-  return detailedFormat
-    ? {
-        placementTableCaption: `${pluralize('person', daySummary.spaceBookingSummaries?.length, 'people')} booked in on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray, ' requiring: ')}`,
-        outOfServiceBedCaption: `${pluralize('out of service bed', daySummary.outOfServiceBeds?.length)} on ${formattedDate}${generateCharacteristicsSummary(characteristicsArray, ' with: ')}`,
-      }
-    : {
-        placementTableCaption: `People booked in on ${formattedDate}`,
-        outOfServiceBedCaption: `Out of service beds on ${formattedDate}`,
-      }
+  return {
+    placementTableCaption: `People booked in on ${formattedDate}`,
+    outOfServiceBedCaption: `Out of service beds on ${formattedDate}`,
+  }
 }
 
 const itemListHtml = (items: Array<string>): TableCell =>
