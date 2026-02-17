@@ -22,7 +22,7 @@ import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { licenseCards, offencesTabCards, prisonCards } from '../../../../server/utils/resident/sentenceUtils'
 import { placementDetailsCards, allApPlacementsTabData } from '../../../../server/utils/resident/placementUtils'
-import { contactsCardList, personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
+import { personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
 import { AND, THEN, WHEN } from '../../../helpers'
 import { SubmittedDocumentRenderer } from '../../../../server/utils/forms/submittedDocumentRenderer'
 import { detailedStatus } from '../../../../server/utils/placements/status'
@@ -183,13 +183,15 @@ export default class ResidentProfilePage extends Page {
   }
 
   shouldShowPersonalInformation(person: Person, personRisks: PersonRisks) {
+    cy.stub(residentUtils, 'insetText').returns('inset text')
     const cards = personDetailsCardList(person as FullPerson, personRisks)
     cards.forEach(card => this.shouldShowCard(card))
   }
 
-  shouldShowContacts(person: Person) {
-    const cards = contactsCardList(person.crn)
-    cards.forEach(card => this.shouldShowCard(card))
+  shouldShowContacts() {
+    cy.contains(
+      'We cannot display personal contacts from NDelius yet. For example, probation practitioner contact details.',
+    )
   }
 
   shouldShowOasysCards(numbers: Array<string>, group: Cas1OASysGroup, groupName: string) {
