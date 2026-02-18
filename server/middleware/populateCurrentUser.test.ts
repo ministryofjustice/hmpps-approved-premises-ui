@@ -38,12 +38,13 @@ describe('populateCurrentUser', () => {
     ;(userService.getActingUser as jest.Mock).mockResolvedValue(user)
 
     const middleware = populateCurrentUser(userService)
+    const requestWithSession = {...request,session:{...request.session,user:undefined as typeof request.session.user}}
 
-    await middleware(request, response, next)
+    await middleware(requestWithSession, response, next)
 
     expect(userService.getActingUser).toHaveBeenCalledWith(token)
 
-    expect(request.session.user).toEqual(user)
+    expect(requestWithSession.session.user).toEqual(user)
     expect(response.locals.user).toEqual({ ...response.locals.user, ...user })
 
     expect(next).toHaveBeenCalled()
