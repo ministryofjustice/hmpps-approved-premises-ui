@@ -3,11 +3,9 @@ import PlacementService from './placementService'
 import PlacementClient from '../data/placementClient'
 import { Cas1ReferenceDataClient } from '../data'
 import {
-  cas1ApprovedPlacementAppealfactory,
   cas1AssignKeyWorkerFactory,
   cas1NewArrivalFactory,
   cas1NewDepartureFactory,
-  cas1NewEmergencyTransferFactory,
   cas1NewSpaceBookingCancellationFactory,
   cas1NonArrivalFactory,
   cas1SpaceBookingFactory,
@@ -189,41 +187,6 @@ describe('PlacementService', () => {
       expect(result).toEqual({})
       expect(placementClientFactory).toHaveBeenCalledWith(token)
       expect(placementClient.cancel).toHaveBeenCalledWith(premisesId, placementId, cancellation)
-    })
-  })
-
-  describe('createEmergencyTransfer', () => {
-    it('calls the createEmergencyTransfer method of the placement client and returns a response', async () => {
-      const newTransfer = cas1NewEmergencyTransferFactory.build()
-      placementClient.createEmergencyTransfer.mockResolvedValue({})
-
-      const result = await placementService.createEmergencyTransfer(token, premisesId, placementId, newTransfer)
-
-      expect(result).toEqual({})
-      expect(placementClientFactory).toHaveBeenCalledWith(token)
-      expect(placementClient.createEmergencyTransfer).toHaveBeenCalledWith(premisesId, placementId, newTransfer)
-    })
-  })
-
-  describe('approvePlacementAppeal', () => {
-    it('calls the approvePlacementAppeal method of the placement client and returns a response', async () => {
-      const approvedPlacementAppeal = cas1ApprovedPlacementAppealfactory.build()
-      placementClient.approvePlacementAppeal.mockResolvedValue({})
-
-      const result = await placementService.approvePlacementAppeal(
-        token,
-        premisesId,
-        placementId,
-        approvedPlacementAppeal,
-      )
-
-      expect(result).toEqual({})
-      expect(placementClientFactory).toHaveBeenCalledWith(token)
-      expect(placementClient.approvePlacementAppeal).toHaveBeenCalledWith(
-        premisesId,
-        placementId,
-        approvedPlacementAppeal,
-      )
     })
   })
 })

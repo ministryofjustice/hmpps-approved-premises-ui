@@ -1,6 +1,5 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { getPageBackLink } from '../../../utils/backlinks'
-import { changeRequestBanners } from '../../../utils/placementRequests/changeRequestsUtils'
 import { PlacementRequestService } from '../../../services'
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { placementsSummaries } from '../../../utils/placementRequests/placementSummaryList'
@@ -35,11 +34,6 @@ export default class PlacementRequestsController {
         placementRequest,
         placementRequestSummaryList: placementRequestSummaryList(placementRequest),
         placements: placementsSummaries(placementRequest),
-        changeRequestBanners: changeRequestBanners(
-          placementRequestId,
-          placementRequest.openChangeRequests,
-          res.locals.user,
-        ),
       })
     }
   }

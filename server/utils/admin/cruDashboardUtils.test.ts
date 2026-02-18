@@ -32,7 +32,7 @@ describe('CRU dashboard utilities', () => {
 
   describe('cruDashboardTabItems', () => {
     it('returns CRU all dashboard base tab items for a user with all permissions', () => {
-      const user = userDetailsFactory.build({ permissions: ['cas1_change_request_list'] })
+      const user = userDetailsFactory.build()
 
       expect(cruDashboardTabItems(user)).toEqual([
         {
@@ -52,11 +52,6 @@ describe('CRU dashboard utilities', () => {
         },
         {
           active: false,
-          href: '/admin/cru-dashboard/change-requests',
-          text: 'Change requests',
-        },
-        {
-          active: false,
           href: '/admin/cru-dashboard/search',
           text: 'Search',
         },
@@ -64,7 +59,7 @@ describe('CRU dashboard utilities', () => {
     })
 
     it('returns CRU all dashboard tab items with filters for a user with all permissions', () => {
-      const user = userDetailsFactory.build({ permissions: ['cas1_change_request_list'] })
+      const user = userDetailsFactory.build()
 
       expect(cruDashboardTabItems(user, 'notMatched', 'cru-management-area-id', 'parole')).toEqual([
         {
@@ -81,11 +76,6 @@ describe('CRU dashboard utilities', () => {
           active: false,
           href: '/admin/cru-dashboard?cruManagementArea=cru-management-area-id&requestType=parole&status=matched',
           text: 'Booked',
-        },
-        {
-          active: false,
-          href: '/admin/cru-dashboard/change-requests?cruManagementArea=cru-management-area-id',
-          text: 'Change requests',
         },
         {
           active: false,

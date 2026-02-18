@@ -1,6 +1,5 @@
 import type { NextFunction, Request, Response, TypedRequestHandler } from 'express'
 import {
-  Cas1ChangeRequestSortField,
   Cas1CruManagementArea,
   PlacementRequestRequestType,
   PlacementRequestSortField,
@@ -17,7 +16,6 @@ import { cruDashboardActions, cruDashboardTabItems } from '../../utils/admin/cru
 import { pagination } from '../../utils/pagination'
 import { dashboardTableHeader, dashboardTableRows } from '../../utils/placementRequests/table'
 import { placementRequestStatusSelectOptions, tierSelectOptions } from '../../utils/formUtils'
-import { changeRequestsTableHeader, changeRequestsTableRows } from '../../utils/placementRequests/changeRequestsUtils'
 
 interface IndexRequest extends Request {
   query: {
@@ -86,41 +84,6 @@ export default class CruDashboardController {
         tableHead: dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
         tableRows: dashboardTableRows(dashboard.data, status),
         pagination: pagination(Number(dashboard.pageNumber), Number(dashboard.totalPages), hrefPrefix),
-      })
-    }
-  }
-
-  changeRequests(): TypedRequestHandler<Request, Response> {
-    return async (req: Request, res: Response) => {
-      const { user } = res.locals
-      const cruManagementArea: Cas1CruManagementArea['id'] | 'all' =
-        req.query.cruManagementArea || user.cruManagementArea?.id
-      const cruManagementAreas = await this.cruManagementAreaService.getCruManagementAreas(user.token)
-
-      const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<Cas1ChangeRequestSortField>(
-        req,
-        adminPaths.admin.cruDashboard.changeRequests({}),
-        { cruManagementArea },
-      )
-
-      const changeRequests = await this.placementRequestService.getChangeRequests(
-        req.user.token,
-        { cruManagementAreaId: cruManagementArea === 'all' ? undefined : cruManagementArea },
-        pageNumber,
-        sortBy,
-        sortDirection,
-      )
-
-      res.render('admin/cruDashboard/index', {
-        pageHeading: 'CRU Dashboard',
-        actions: cruDashboardActions(user),
-        tabs: cruDashboardTabItems(user, 'changeRequests', cruManagementArea),
-        activeTab: 'changeRequests',
-        cruManagementAreas,
-        cruManagementArea,
-        tableHead: changeRequestsTableHeader(sortBy || 'name', sortDirection || 'asc', hrefPrefix),
-        tableRows: changeRequestsTableRows(changeRequests.data),
-        pagination: pagination(Number(changeRequests.pageNumber), Number(changeRequests.totalPages), hrefPrefix),
       })
     }
   }
