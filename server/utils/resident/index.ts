@@ -169,6 +169,14 @@ export const card = ({
     topHtml,
   })
 
+export const subHeadingH2 = (text: string): string => {
+  return `<h2 class="govuk-heading-m">${text}</h2>`
+}
+
+export const subHeadingH3 = (text: string): string => {
+  return `<h3 class="govuk-heading-s">${text}</h3>`
+}
+
 export const detailsBody = (summaryText: string, text: string) => {
   return nunjucks.render(`partials/detailsBlock.njk`, { summaryText, text })
 }
@@ -186,6 +194,7 @@ export const renderPersonDetails = (application: ApprovedPremisesApplication): s
 }
 
 type AlertVariant = 'information' | 'success' | 'warning' | 'error'
+
 export const alertBanner = (parameters: { variant: AlertVariant; title: string; html?: string }) => {
   return nunjucks.render(`manage/resident/partials/alert.njk`, parameters)
 }
@@ -220,7 +229,7 @@ export const returnPath = (req: Request, placement: Cas1SpaceBooking) => {
     : managePaths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })
 
   return getPageBackLink(
-    `${managePaths.premises.placements.show.pattern}:action`,
+    `${managePaths.premises.placements.show({ premisesId: placement.premises.id, placementId: placement.id })}:action`,
     req as RequestWithSession,
     [managePaths.premises.placements.show.pattern, `${managePaths.resident.show.pattern}{/*tab}`],
     defaultPath,

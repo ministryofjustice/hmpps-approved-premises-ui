@@ -4,7 +4,6 @@ import { ApplicationService, PersonService } from '../../../services'
 import { isFullPerson } from '../../../utils/personUtils'
 import { RestrictedPersonError } from '../../../utils/errors'
 import { fetchErrorsAndUserInput } from '../../../utils/validation'
-import config from '../../../config'
 import paths from '../../../paths/apply'
 import { statusesLimitedToOne } from '../../../utils/applications/statusTag'
 
@@ -25,7 +24,7 @@ export default class OffencesController {
       const { crn } = req.params
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
-      if (config.flags.oneApplication && !testCrnList.includes(crn)) {
+      if (!testCrnList.includes(crn)) {
         const { data: applicationList } = await this.applicationService.getAll(
           req.user.token,
           1,
@@ -40,9 +39,7 @@ export default class OffencesController {
 
         if (applicationList.length > 0) return res.redirect(paths.applications.people.manageApplications({ crn }))
       }
-
       const person = await this.personService.findByCrn(req.user.token, crn)
-
       if (!isFullPerson(person)) throw new RestrictedPersonError(crn)
 
       const offences = await this.personService.getOffences(req.user.token, crn)

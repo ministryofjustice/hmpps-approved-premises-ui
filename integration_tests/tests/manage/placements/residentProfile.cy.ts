@@ -43,7 +43,7 @@ context('ResidentProfile', () => {
 
     const visitPage = ({ placement, personRisks }, tab?: string): ResidentProfilePage => {
       GIVEN(' that I am signed in as a user with access resident profile')
-      signIn(['manage_resident', 'future_manager'])
+      signIn(['future_manager'])
 
       WHEN('I visit the resident profile page')
       const page = ResidentProfilePage.visit(placement, personRisks)
@@ -188,11 +188,11 @@ context('ResidentProfile', () => {
 
       AND('the OASys meta-data should be shown')
       page.shouldShowInsetText(
-        `OASys last updated on ${DateFormats.isoDateToUIDate(oasysRoshSummary.assessmentMetadata.dateCompleted)}`,
+        `Assessment completed on ${DateFormats.isoDateToUIDate(oasysRoshSummary.assessmentMetadata.dateCompleted)}`,
       )
 
       AND('The Ndelius risk card should be populated')
-      page.shouldShowNDeliusRiskCard(placement, personRisks)
+      page.shouldShowNDeliusRiskCard()
 
       AND('The ROSH widget should be populated')
       page.shouldShowRoshWidget(personRisks.roshRisks.value)

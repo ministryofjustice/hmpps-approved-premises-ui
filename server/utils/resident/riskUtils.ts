@@ -1,8 +1,15 @@
-import { Cas1OASysGroup, Cas1OASysGroupName, OASysQuestion, PersonRisks, RoshRisks } from '@approved-premises/api'
+import { Cas1OASysGroup, Cas1OASysGroupName, OASysQuestion, RoshRisks } from '@approved-premises/api'
 import { SummaryListWithCard } from '@approved-premises/ui'
 import nunjucks from 'nunjucks'
-import { card, detailsBody, loadingErrorMessage, ndeliusDeeplink, ResidentProfileSubTab } from './index'
-import { textCell } from '../tableUtils'
+import {
+  card,
+  detailsBody,
+  insetText,
+  loadingErrorMessage,
+  ndeliusDeeplink,
+  ResidentProfileSubTab,
+  subHeadingH2,
+} from './index'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { ApiOutcome } from '../utils'
@@ -10,7 +17,7 @@ import { ApiOutcome } from '../utils'
 export const riskSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   return [
     {
-      text: 'Risk details',
+      text: 'Risk information',
       href: paths.resident.tabRisk.riskDetails({ crn, placementId }),
       active: subTab === 'riskDetails',
     },
@@ -141,16 +148,10 @@ export const roshWidget = (params: RoshRisks) => {
   return card({ html: nunjucks.render(`components/riskWidgets/rosh-widget/template.njk`, { params }) })
 }
 
-export const ndeliusRiskCard = (crn: string, personRisks: PersonRisks) =>
+export const ndeliusRiskCard = (crn: string) =>
   card({
-    title: 'NDelius risk flags',
-    html: ndeliusDeeplink({ crn, text: 'View risk flags in NDelius', component: 'RegisterSummary' }),
-    table: { head: [textCell('Risk flag')], rows: (personRisks.flags?.value || []).map(risk => [textCell(risk)]) },
+    html: `${subHeadingH2('NDelius risk flags (registers)')}${insetText(ndeliusDeeplink({ crn, text: 'View risk information in NDelius (opens in a new tab)', component: 'RegisterSummary' }))}`,
   })
-
-export const insetText = (html: string): string => {
-  return nunjucks.render(`partials/insetText.njk`, { html })
-}
 
 export const riskOasysCards = ({
   roshSummary,

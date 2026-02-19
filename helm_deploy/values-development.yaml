@@ -20,7 +20,6 @@ generic-service:
     COMMUNITY_ACCOMMODATION_API_TIMEOUT_RESPONSE: 30000
     COMMUNITY_ACCOMMODATION_API_TIMEOUT_DEADLINE: 30000
     NDELIUS_DEEPLINK: 'https://ndelius.test.probation.service.justice.gov.uk/NDelius-war/delius/JSP/deeplink.xhtml'
-    ONE_APPLICATION: true
     IN_MAINTENANCE_MODE: false
     PLANNED_MAINTENANCE_BANNER: false
 

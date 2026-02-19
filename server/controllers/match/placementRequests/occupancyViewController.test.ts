@@ -561,7 +561,7 @@ describe('OccupancyViewController', () => {
         premises,
         nextDayLink: `${pathPrefix}/2025-03-24`,
         previousDayLink: `${pathPrefix}/2025-03-22`,
-        ...tableCaptions(premisesDaySummary, [], true),
+        ...tableCaptions(premisesDaySummary),
         outOfServiceBedTableHeader: tableHeader<OutOfServiceBedColumnField>(outOfServiceBedColumnMap),
         outOfServiceBedTableRows: outOfServiceBedTableRows(premises.id, premisesDaySummary.outOfServiceBeds),
         placementTableHeader: tableHeader<PlacementColumnField>(

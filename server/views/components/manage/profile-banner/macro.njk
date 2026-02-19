@@ -2,7 +2,7 @@
 
 {% macro profileBanner(resident, actions) %}
 
-<div class="{{ 'profile-banner' }} govuk-!-margin-bottom-2">
+<div class="{{ 'profile-banner' }} govuk-!-margin-bottom-2 govuk-!-margin-top-7">
     {% if resident.photoUrl %}
     <div class="profile-banner__photo">
         <img class="residents-profile-pic" alt="Photo of {{ resident.name }}" src="{{ resident.photoUrl }}">
