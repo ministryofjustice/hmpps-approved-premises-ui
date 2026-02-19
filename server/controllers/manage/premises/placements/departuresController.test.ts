@@ -109,9 +109,7 @@ describe('DeparturesController', () => {
 
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
-      const requestHandler = departuresController.new()
-
-      await requestHandler(request, response, next)
+      await departuresController.new()(request, response, next)
 
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/new', {
@@ -129,9 +127,7 @@ describe('DeparturesController', () => {
     it('renders the form with data saved in session', async () => {
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
-      const requestHandler = departuresController.new()
-
-      await requestHandler(request, response, next)
+      await departuresController.new()(request, response, next)
 
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/new', {
@@ -154,11 +150,9 @@ describe('DeparturesController', () => {
     }
 
     it('returns errors for empty arrival date, time and reason', async () => {
-      const requestHandler = departuresController.saveNew()
-
       request.body = {}
 
-      await requestHandler(request, response, next)
+      await departuresController.saveNew()(request, response, next)
 
       const expectedErrorData = {
         departureDate: 'You must enter a date of departure',
@@ -180,8 +174,6 @@ describe('DeparturesController', () => {
     })
 
     it('returns errors for invalid date or time', async () => {
-      const requestHandler = departuresController.saveNew()
-
       request.body = {
         'departureDate-day': '32',
         'departureDate-month': '13',
@@ -190,7 +182,7 @@ describe('DeparturesController', () => {
         reasonId: rootDepartureReason1.id,
       }
 
-      await requestHandler(request, response, next)
+      await departuresController.saveNew()(request, response, next)
 
       const expectedErrorData = {
         departureDate: 'You must enter a valid date of departure',
@@ -204,8 +196,6 @@ describe('DeparturesController', () => {
 
     describe('future date or time', () => {
       it('returns a date error for a date in the future', async () => {
-        const requestHandler = departuresController.saveNew()
-
         request.body = {
           'departureDate-day': '15',
           'departureDate-month': '11',
@@ -214,7 +204,7 @@ describe('DeparturesController', () => {
           reasonId: rootDepartureReason1.id,
         }
 
-        await requestHandler(request, response, next)
+        await departuresController.saveNew()(request, response, next)
 
         const expectedErrorData = {
           departureDate: 'The date of departure must be today or in the past',
@@ -226,8 +216,6 @@ describe('DeparturesController', () => {
       })
 
       it('returns a time error for a date today but time in the future', async () => {
-        const requestHandler = departuresController.saveNew()
-
         request.body = {
           'departureDate-day': '14',
           'departureDate-month': '11',
@@ -236,7 +224,7 @@ describe('DeparturesController', () => {
           reasonId: rootDepartureReason1.id,
         }
 
-        await requestHandler(request, response, next)
+        await departuresController.saveNew()(request, response, next)
 
         const expectedErrorData = {
           departureTime: 'The time of departure must be in the past',
@@ -289,8 +277,6 @@ describe('DeparturesController', () => {
 
     describe('date or time before arrival date', () => {
       it('returns a date error for a date before the arrival date', async () => {
-        const requestHandler = departuresController.saveNew()
-
         request.body = {
           'departureDate-day': '01',
           'departureDate-month': '11',
@@ -299,7 +285,7 @@ describe('DeparturesController', () => {
           reasonId: rootDepartureReason1.id,
         }
 
-        await requestHandler(request, response, next)
+        await departuresController.saveNew()(request, response, next)
 
         const expectedErrorData = {
           departureDate: 'The date of departure must be the same as or after 9 Nov 2024, when the person arrived',
@@ -311,8 +297,6 @@ describe('DeparturesController', () => {
       })
 
       it('returns a time error for a date on the same day but before the arrival time', async () => {
-        const requestHandler = departuresController.saveNew()
-
         request.body = {
           'departureDate-day': '9',
           'departureDate-month': '11',
@@ -321,7 +305,7 @@ describe('DeparturesController', () => {
           reasonId: rootDepartureReason1.id,
         }
 
-        await requestHandler(request, response, next)
+        await departuresController.saveNew()(request, response, next)
 
         const expectedErrorData = {
           departureTime: 'The time of departure must be after the time of arrival, 11:30 on 9 Nov 2024',
@@ -333,55 +317,36 @@ describe('DeparturesController', () => {
       })
     })
 
-    describe('if the selected reason is not Breach or recall or Planned move-on', () => {
-      beforeEach(() => {
-        request.body = validBody
-      })
+    it('saves datetime and selected reason and redirects to the notes page if the selected reason is not Breach or recall or Planned move-on', async () => {
+      request.body = validBody
+      await departuresController.saveNew()(request, response, next)
 
-      it('saves the datetime and selected reason to the session and redirects to the notes page', async () => {
-        const requestHandler = departuresController.saveNew()
-
-        await requestHandler(request, response, next)
-
-        expect(departuresController.formData.update).toHaveBeenCalledWith(placement.id, request.session, request.body)
-        expect(response.redirect).toHaveBeenCalledWith(
-          paths.premises.placements.departure.notes({ premisesId, placementId: placement.id }),
-        )
-      })
+      expect(departuresController.formData.update).toHaveBeenCalledWith(placement.id, request.session, request.body)
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.premises.placements.departure.notes({ premisesId, placementId: placement.id }),
+      )
     })
 
-    describe('if the selected reason is Breach or recall', () => {
-      beforeEach(() => {
-        request.body = { ...validBody, reasonId: rootDepartureReason2.id }
-      })
+    it('saves datetime and selected reason to session and redirects to the Breach or recall page if the selected reason is Breach or recall', async () => {
+      request.body = { ...validBody, reasonId: rootDepartureReason2.id }
 
-      it('saves the datetime and selected reason to the session and redirects to the Breach or recall page', async () => {
-        const requestHandler = departuresController.saveNew()
+      await departuresController.saveNew()(request, response, next)
 
-        await requestHandler(request, response, next)
-
-        expect(departuresController.formData.update).toHaveBeenCalledWith(placement.id, request.session, request.body)
-        expect(response.redirect).toHaveBeenCalledWith(
-          paths.premises.placements.departure.breachOrRecallReason({ premisesId, placementId: placement.id }),
-        )
-      })
+      expect(departuresController.formData.update).toHaveBeenCalledWith(placement.id, request.session, request.body)
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.premises.placements.departure.breachOrRecallReason({ premisesId, placementId: placement.id }),
+      )
     })
 
-    describe('if the selected reason is Planned move-on', () => {
-      beforeEach(() => {
-        request.body = { ...validBody, reasonId: rootDepartureReason3.id }
-      })
+    it('saves datetime and selected reason to session and redirects to Move on category page if the selected reason is Planned move-on', async () => {
+      request.body = { ...validBody, reasonId: rootDepartureReason3.id }
 
-      it('saves the datetime and selected reason to the session and redirects to the Move on category page', async () => {
-        const requestHandler = departuresController.saveNew()
+      await departuresController.saveNew()(request, response, next)
 
-        await requestHandler(request, response, next)
-
-        expect(departuresController.formData.update).toHaveBeenCalledWith(placement.id, request.session, request.body)
-        expect(response.redirect).toHaveBeenCalledWith(
-          paths.premises.placements.departure.moveOnCategory({ premisesId, placementId: placement.id }),
-        )
-      })
+      expect(departuresController.formData.update).toHaveBeenCalledWith(placement.id, request.session, request.body)
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.premises.placements.departure.moveOnCategory({ premisesId, placementId: placement.id }),
+      )
     })
   })
 
@@ -389,9 +354,7 @@ describe('DeparturesController', () => {
     it('renders the Breach or recall reason form with placement information, list of breach or recall departure reasons, errors and user input', async () => {
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
-      const requestHandler = departuresController.breachOrRecallReason()
-
-      await requestHandler(request, response, next)
+      await departuresController.breachOrRecallReason()(request, response, next)
 
       expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/breach-or-recall', {
@@ -407,48 +370,28 @@ describe('DeparturesController', () => {
       })
     })
 
-    describe('if there is no departure data in the session', () => {
-      it('redirects to the new departure page', async () => {
-        request.session.multiPageFormData = undefined
+    it('if there is no departure data in the session it redirects to the placement view', async () => {
+      request.session.multiPageFormData = undefined
 
-        const requestHandler = departuresController.breachOrRecallReason()
+      await departuresController.breachOrRecallReason()(request, response, next)
 
-        await requestHandler(request, response, next)
-
-        expect(response.redirect).toHaveBeenCalledWith(
-          paths.premises.placements.departure.new({
-            premisesId,
-            placementId: placement.id,
-          }),
-        )
-      })
+      expect(response.redirect).toHaveBeenCalledWith('return path')
     })
 
-    describe('if the selected main reason is not breach or recall', () => {
-      it('redirects to the new departure page', async () => {
-        request.session.multiPageFormData.departures[placement.id].reasonId = 'not-breach-or-recall-id'
+    it('if the selected main reason is not breach or recall  it redirects to the placement view', async () => {
+      request.session.multiPageFormData.departures[placement.id].reasonId = 'not-breach-or-recall-id'
 
-        const requestHandler = departuresController.breachOrRecallReason()
+      await departuresController.breachOrRecallReason()(request, response, next)
 
-        await requestHandler(request, response, next)
-
-        expect(response.redirect).toHaveBeenCalledWith(
-          paths.premises.placements.departure.new({
-            premisesId,
-            placementId: placement.id,
-          }),
-        )
-      })
+      expect(response.redirect).toHaveBeenCalledWith('return path')
     })
   })
 
   describe('saveBreachOrRecallReason', () => {
     it('returns errors if the breach or recall reason is not selected', async () => {
-      const requestHandler = departuresController.saveBreachOrRecallReason()
-
       request.body = {}
 
-      await requestHandler(request, response, next)
+      await departuresController.saveBreachOrRecallReason()(request, response, next)
 
       const expectedErrorData = {
         breachOrRecallReasonId: 'You must select a breach or recall reason',
@@ -472,9 +415,7 @@ describe('DeparturesController', () => {
         breachOrRecallReasonId: childDepartureReason1.id,
       }
 
-      const requestHandler = departuresController.saveBreachOrRecallReason()
-
-      await requestHandler(request, response, next)
+      await departuresController.saveBreachOrRecallReason()(request, response, next)
 
       expect(departuresController.formData.update).toHaveBeenCalledWith(placement.id, request.session, {
         breachOrRecallReasonId: childDepartureReason1.id,
@@ -497,9 +438,7 @@ describe('DeparturesController', () => {
 
         when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
-        const requestHandler = departuresController.moveOnCategory()
-
-        await requestHandler(request, response, next)
+        await departuresController.moveOnCategory()(request, response, next)
 
         expect(premisesService.getPlacement).toHaveBeenCalledWith({ token, premisesId, placementId: placement.id })
         expect(premisesService.getCas1All).toHaveBeenCalledWith(token)
@@ -522,48 +461,28 @@ describe('DeparturesController', () => {
       },
     )
 
-    describe('if there is no departure data in the session', () => {
-      it('redirects to the new departure page', async () => {
-        request.session.multiPageFormData = undefined
+    it('redirects to placement view if there is no departure data in the session', async () => {
+      request.session.multiPageFormData = undefined
 
-        const requestHandler = departuresController.moveOnCategory()
+      await departuresController.moveOnCategory()(request, response, next)
 
-        await requestHandler(request, response, next)
-
-        expect(response.redirect).toHaveBeenCalledWith(
-          paths.premises.placements.departure.new({
-            premisesId,
-            placementId: placement.id,
-          }),
-        )
-      })
+      expect(response.redirect).toHaveBeenCalledWith('return path')
     })
 
-    describe('if the selected main reason is not Planned move-on', () => {
-      it('redirects to the new departure page', async () => {
-        request.session.multiPageFormData.departures[placement.id].reasonId = 'not-planned-move-on-id'
+    it('redirects to the placement view if the selected main reason is not Planned move-on', async () => {
+      request.session.multiPageFormData.departures[placement.id].reasonId = 'not-planned-move-on-id'
 
-        const requestHandler = departuresController.moveOnCategory()
+      await departuresController.moveOnCategory()(request, response, next)
 
-        await requestHandler(request, response, next)
-
-        expect(response.redirect).toHaveBeenCalledWith(
-          paths.premises.placements.departure.new({
-            premisesId,
-            placementId: placement.id,
-          }),
-        )
-      })
+      expect(response.redirect).toHaveBeenCalledWith('return path')
     })
   })
 
   describe('saveMoveOnCategory', () => {
     it('returns errors if the planned move on category is not selected', async () => {
-      const requestHandler = departuresController.saveMoveOnCategory()
-
       request.body = {}
 
-      await requestHandler(request, response, next)
+      await departuresController.saveMoveOnCategory()(request, response, next)
 
       const expectedErrorData = {
         moveOnCategoryId: 'You must select a move on category',
@@ -583,11 +502,9 @@ describe('DeparturesController', () => {
     })
 
     it('returns errors if the move-on category is Transfer to AP, but the AP is not selected', async () => {
-      const requestHandler = departuresController.saveMoveOnCategory()
-
       request.body = { moveOnCategoryId: MOVE_TO_AP_REASON_ID }
 
-      await requestHandler(request, response, next)
+      await departuresController.saveMoveOnCategory()(request, response, next)
 
       expect(departuresController.formData.update).not.toHaveBeenCalled()
       expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
@@ -609,9 +526,7 @@ describe('DeparturesController', () => {
         moveOnCategoryId: moveOnCategories[1].id,
       }
 
-      const requestHandler = departuresController.saveMoveOnCategory()
-
-      await requestHandler(request, response, next)
+      await departuresController.saveMoveOnCategory()(request, response, next)
 
       expect(departuresController.formData.update).toHaveBeenCalledWith(placement.id, request.session, {
         moveOnCategoryId: moveOnCategories[1].id,
@@ -628,9 +543,7 @@ describe('DeparturesController', () => {
 
       when(validationUtils.fetchErrorsAndUserInput).calledWith(request).mockReturnValue(errorsAndUserInput)
 
-      const requestHandler = departuresController.notes()
-
-      await requestHandler(request, response, next)
+      await departuresController.notes()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/placements/departure/notes', {
         backlink: paths.premises.placements.departure.new({ premisesId, placementId: placement.id }),
@@ -645,61 +558,44 @@ describe('DeparturesController', () => {
       })
     })
 
-    describe('if the reason selected was Breach or recall', () => {
-      it('points the back link to the Breach or recall page', async () => {
-        request.session.multiPageFormData.departures[placement.id].reasonId = BREACH_OR_RECALL_REASON_ID
+    it('points the back link to the Breach or recall page if the reason selected was Breach or recall', async () => {
+      request.session.multiPageFormData.departures[placement.id].reasonId = BREACH_OR_RECALL_REASON_ID
 
-        const requestHandler = departuresController.notes()
+      await departuresController.notes()(request, response, next)
 
-        await requestHandler(request, response, next)
-
-        expect(response.render).toHaveBeenCalledWith(
-          'manage/premises/placements/departure/notes',
-          expect.objectContaining({
-            backlink: paths.premises.placements.departure.breachOrRecallReason({
-              premisesId,
-              placementId: placement.id,
-            }),
-          }),
-        )
-      })
-    })
-
-    describe('if the reason selected was Planned move on', () => {
-      it('points the back link to the Move on category page', async () => {
-        request.session.multiPageFormData.departures[placement.id].reasonId = PLANNED_MOVE_ON_REASON_ID
-
-        const requestHandler = departuresController.notes()
-
-        await requestHandler(request, response, next)
-
-        expect(response.render).toHaveBeenCalledWith(
-          'manage/premises/placements/departure/notes',
-          expect.objectContaining({
-            backlink: paths.premises.placements.departure.moveOnCategory({
-              premisesId,
-              placementId: placement.id,
-            }),
-          }),
-        )
-      })
-    })
-
-    describe('if there is no departure data in the session', () => {
-      it('redirects to the new departure page', async () => {
-        request.session.multiPageFormData = undefined
-
-        const requestHandler = departuresController.notes()
-
-        await requestHandler(request, response, next)
-
-        expect(response.redirect).toHaveBeenCalledWith(
-          paths.premises.placements.departure.new({
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/placements/departure/notes',
+        expect.objectContaining({
+          backlink: paths.premises.placements.departure.breachOrRecallReason({
             premisesId,
             placementId: placement.id,
           }),
-        )
-      })
+        }),
+      )
+    })
+
+    it('points the back link to the Move on category page if the reason selected was Planned move on', async () => {
+      request.session.multiPageFormData.departures[placement.id].reasonId = PLANNED_MOVE_ON_REASON_ID
+
+      await departuresController.notes()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'manage/premises/placements/departure/notes',
+        expect.objectContaining({
+          backlink: paths.premises.placements.departure.moveOnCategory({
+            premisesId,
+            placementId: placement.id,
+          }),
+        }),
+      )
+    })
+
+    it('redirects to the placement view if there is no departure data in the session', async () => {
+      request.session.multiPageFormData = undefined
+
+      await departuresController.notes()(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith('return path')
     })
   })
 
@@ -725,9 +621,8 @@ describe('DeparturesController', () => {
         request.body = {
           notes: 'Some notes',
         }
-        const requestHandler = departuresController.create()
 
-        await requestHandler(request, response, next)
+        await departuresController.create()(request, response, next)
 
         expect(placementService.createDeparture).toHaveBeenCalledWith(token, premisesId, placement.id, {
           departureDate: date,
@@ -741,23 +636,27 @@ describe('DeparturesController', () => {
       },
     )
 
-    describe('when errors are raised by the API', () => {
-      it('should call catchValidationErrorOrPropogate with a standard error', async () => {
-        const requestHandler = departuresController.create()
+    it('should call catchValidationErrorOrPropogate with a standard error when errors are raised by the API', async () => {
+      const err = new Error()
 
-        const err = new Error()
+      placementService.createDeparture.mockRejectedValue(err)
 
-        placementService.createDeparture.mockRejectedValue(err)
+      await departuresController.create()(request, response, next)
 
-        await requestHandler(request, response, next)
+      expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        err,
+        paths.premises.placements.departure.notes({ premisesId, placementId: placement.id }),
+      )
+    })
 
-        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-          request,
-          response,
-          err,
-          paths.premises.placements.departure.notes({ premisesId, placementId: placement.id }),
-        )
-      })
+    it('redirects to the placement view if there is no departure data in the session', async () => {
+      request.session.multiPageFormData = undefined
+
+      await departuresController.create()(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith('return path')
     })
   })
 })
