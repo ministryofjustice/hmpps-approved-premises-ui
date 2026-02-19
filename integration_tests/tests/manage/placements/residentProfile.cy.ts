@@ -73,7 +73,7 @@ context('ResidentProfile', () => {
       page.clickSideNav('Contacts')
 
       THEN('I should see the contacts section')
-      page.shouldShowContacts(placement.person)
+      page.shouldShowContacts()
     })
 
     it('should show the health tab', () => {
