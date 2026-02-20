@@ -2,6 +2,7 @@ import {
   ActiveOffence,
   Adjudication,
   ApprovedPremisesApplication,
+  BookingDetails,
   Cas1OASysGroup,
   Cas1SpaceBooking,
   Cas1SpaceBookingShortSummary,
@@ -17,6 +18,7 @@ import { SummaryListWithCard, TextItem } from '@approved-premises/ui'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 import * as residentUtils from '../../../../server/utils/resident'
+import { smokingStatusMapping, mentalHealthCards } from '../../../../server/utils/resident/healthUtils'
 
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
@@ -26,7 +28,6 @@ import { personDetailsCardList } from '../../../../server/utils/resident/persona
 import { AND, THEN, WHEN } from '../../../helpers'
 import { SubmittedDocumentRenderer } from '../../../../server/utils/forms/submittedDocumentRenderer'
 import { detailedStatus } from '../../../../server/utils/placements/status'
-import { mentalHealthCards } from '../../../../server/utils/resident/healthUtils'
 
 export default class ResidentProfilePage extends Page {
   constructor(
@@ -135,6 +136,23 @@ export default class ResidentProfilePage extends Page {
     cards.forEach(card => {
       this.shouldShowCard(card)
     })
+  }
+
+  shouldShowSmokingStatus(bookingDetails: BookingDetails) {
+    const smokingInfo = bookingDetails.profileInformation?.find(info => info.type === 'SMOKE')
+    const expectedStatus = smokingInfo?.resultValue
+      ? smokingStatusMapping[smokingInfo.resultValue] || smokingInfo.resultValue
+      : null
+
+    if (expectedStatus) {
+      cy.get('.govuk-summary-card__title')
+        .contains('Smoker or vaper')
+        .parents('.govuk-summary-card')
+        .within(() => {
+          cy.get('.govuk-summary-list__key').contains('Smoker or vaper').should('exist')
+          cy.get('.govuk-summary-list__value').contains(expectedStatus).should('exist')
+        })
+    }
   }
 
   shouldShowOffencesInformation(

@@ -10,6 +10,7 @@ import {
   acctAlertFactory,
   activeOffenceFactory,
   adjudicationFactory,
+  bookingDetailsFactory,
   cas1SpaceBookingShortSummaryFactory,
   personFactory,
   personalTimelineFactory,
@@ -306,6 +307,19 @@ describe('PersonService', () => {
       expect(personClientFactory).toHaveBeenCalledWith(token)
       expect(personClient.spaceBookings).toHaveBeenCalledWith(crn, expectedIncludeCancelled)
       expect(actual).toEqual(expected)
+    })
+  })
+
+  describe('getBookingDetails', () => {
+    it('returns the booking details for a person', async () => {
+      const bookingDetails = bookingDetailsFactory.build()
+      personClient.bookingDetails.mockResolvedValue(bookingDetails)
+
+      const result = await service.getBookingDetails(token, 'crn')
+
+      expect(result).toEqual(bookingDetails)
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.bookingDetails).toHaveBeenCalledWith('crn')
     })
   })
 })
