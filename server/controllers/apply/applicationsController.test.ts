@@ -235,6 +235,7 @@ describe('applicationsController', () => {
         headers: {
           referer: referrer,
         },
+        query: {},
       })
     })
 
@@ -735,17 +736,15 @@ describe('applicationsController', () => {
 
     it('sets errors and redirects if the confirmation checkbox is not ticked', async () => {
       const application = applicationFactory.build()
-      request.params.id = 'some-id'
-      request.body.confirmation = 'some-id'
+
       applicationService.findApplication.mockResolvedValue(application)
+      const indexRequest = { ...request, params: { id: 'some-id' }, body: { confirmation: 'some-id' } }
 
-      const requestHandler = applicationsController.submit()
+      await applicationsController.submit()(indexRequest, response, next)
 
-      await requestHandler(request, response, next)
-
-      expect(applicationService.findApplication).toHaveBeenCalledWith(token, request)
+      expect(applicationService.findApplication).toHaveBeenCalledWith(token, 'some-id')
       expect(addErrorMessageToFlash).toHaveBeenCalledWith(
-        request,
+        indexRequest,
         'You must confirm the information provided is complete, accurate and up to date.',
         'confirmation',
       )

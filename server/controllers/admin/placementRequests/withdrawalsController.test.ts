@@ -61,9 +61,7 @@ describe('withdrawalsController', () => {
     it('renders the template', async () => {
       when(flash).calledWith('applicationId').mockReturnValue([applicationId])
 
-      const requestHandler = withdrawalsController.new()
-
-      await requestHandler(request, response, next)
+      await withdrawalsController.new()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/withdrawals/new', {
         pageHeading: 'Why is this request for placement being withdrawn?',
@@ -82,9 +80,7 @@ describe('withdrawalsController', () => {
 
       when(flash).calledWith('applicationId').mockReturnValue(undefined)
 
-      const requestHandler = withdrawalsController.new()
-
-      await requestHandler(request, response, next)
+      await withdrawalsController.new()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/withdrawals/new', {
         pageHeading: 'Why is this request for placement being withdrawn?',
@@ -115,12 +111,11 @@ describe('withdrawalsController', () => {
 
     it('calls the service method, redirects to the CRU dashboard and shows a confirmation message', async () => {
       const withdrawalMessageContent = 'some message'
-      const requestHandler = withdrawalsController.create()
 
       ;(withdrawalMessage as jest.MockedFn<typeof withdrawalMessage>).mockReturnValue(withdrawalMessageContent)
       placementRequestService.withdraw.mockResolvedValue(placementRequestDetail)
 
-      await requestHandler(request, response, next)
+      await withdrawalsController.create()(request, response, next)
 
       expect(placementRequestService.withdraw).toHaveBeenCalledWith(
         token,
@@ -136,15 +131,13 @@ describe('withdrawalsController', () => {
     })
 
     it('redirects with errors if the API returns an error', async () => {
-      const requestHandler = withdrawalsController.create()
-
       const err = new Error()
 
       placementRequestService.withdraw.mockImplementation(() => {
         throw err
       })
 
-      await requestHandler(request, response, next)
+      await withdrawalsController.create()(request, response, next)
 
       expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
         request,
@@ -155,16 +148,16 @@ describe('withdrawalsController', () => {
     })
 
     it('redirects with errors if reason is blank', async () => {
-      const requestHandler = withdrawalsController.create()
+      const indexRequest = {
+        ...request,
+        body: { ...request.body, reason: undefined },
+        params: { placementRequestId: applicationId },
+      }
 
-      await requestHandler(
-        { ...request, body: { ...request.body, reason: undefined }, params: { placementRequestId: applicationId } },
-        response,
-        next,
-      )
+      await withdrawalsController.create()(indexRequest, response, next)
 
       expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
+        indexRequest,
         response,
         new ErrorWithData({}),
         paths.admin.placementRequests.withdrawal.new({ placementRequestId: request.params.placementRequestId }),
@@ -183,11 +176,9 @@ describe('withdrawalsController', () => {
       })
 
       it('redirects to the applications dashboard', async () => {
-        const requestHandler = withdrawalsController.create()
-
         placementRequestService.withdraw.mockResolvedValue(placementRequestDetail)
 
-        await requestHandler(request, response, next)
+        await withdrawalsController.create()(request, response, next)
 
         expect(placementRequestService.withdraw).toHaveBeenCalledWith(
           token,

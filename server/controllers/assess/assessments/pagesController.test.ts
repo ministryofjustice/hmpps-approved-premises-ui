@@ -228,20 +228,18 @@ describe('pagesController', () => {
       })
 
       it('catches an error if informationReceived is yes but the body is invalid', async () => {
-        const requestHandler = pagesController.updateInformationRecieved(someTask, 'page-name')
-
         const err = new Error()
 
         assessmentService.save.mockImplementation(() => {
           throw err
         })
-
+        const requestWithBody = { ...request, body: { informationReceived: 'yes' } }
         const res = createMock<Response>()
 
-        await requestHandler({ ...request, body: { informationReceived: 'yes' } }, res)
+        await pagesController.updateInformationRecieved(someTask, 'page-name')(requestWithBody, res)
 
         expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-          request,
+          requestWithBody,
           res,
           err,
           paths.assessments.pages.show({ id: request.params.id, task: someTask, page: 'page-name' }),
@@ -249,16 +247,15 @@ describe('pagesController', () => {
       })
 
       it('forwards to the update action if informationReceived is no', async () => {
-        const requestHandler = pagesController.updateInformationRecieved(someTask, 'page-name')
-
         const res = createMock<Response>()
+        const requestWithBody = { ...request, body: { informationReceived: 'no' } }
 
-        await requestHandler({ ...request, body: { informationReceived: 'no' } }, res)
+        await pagesController.updateInformationRecieved(someTask, 'page-name')(requestWithBody, res)
 
         expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
 
         expect(updateSpy).toHaveBeenCalledWith(someTask, 'page-name')
-        expect(updateHandler).toHaveBeenCalledWith(request, res)
+        expect(updateHandler).toHaveBeenCalledWith(requestWithBody, res)
       })
     })
   })

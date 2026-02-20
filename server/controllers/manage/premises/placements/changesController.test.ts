@@ -1,5 +1,5 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
-import type { NextFunction, Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { Cas1SpaceBookingCharacteristic, Cas1UpdateSpaceBooking } from '@approved-premises/api'
 import { addDays } from 'date-fns'
 import { PlacementService, PremisesService } from '../../../../services'
@@ -246,9 +246,9 @@ describe('changesController', () => {
         const query = {
           criteria: ['hasEnSuite', 'isArsonSuitable'],
         }
+        const requestWithBody = { ...request, body, query }
 
-        const requestHandler = changesController.saveNew()
-        await requestHandler({ ...request, body, query }, response, next)
+        await changesController.saveNew()(requestWithBody, response, next)
 
         const expectedErrorData = {
           arrivalDate: 'You must enter an arrival date',
@@ -256,7 +256,7 @@ describe('changesController', () => {
         }
 
         expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-          request,
+          requestWithBody,
           response,
           new ValidationError({}),
           `${viewUrl}?criteria=hasEnSuite&criteria=isArsonSuitable`,
@@ -268,17 +268,19 @@ describe('changesController', () => {
       })
 
       it(`should redirect to the view when dates are invalid`, async () => {
-        const body = {
-          'arrivalDate-day': '31',
-          'arrivalDate-month': '02',
-          'arrivalDate-year': '2025',
-          'departureDate-day': '34',
-          'departureDate-month': '05',
-          'departureDate-year': '19999',
+        const requestWithBody = {
+          ...request,
+          body: {
+            'arrivalDate-day': '31',
+            'arrivalDate-month': '02',
+            'arrivalDate-year': '2025',
+            'departureDate-day': '34',
+            'departureDate-month': '05',
+            'departureDate-year': '19999',
+          },
         }
 
-        const requestHandler = changesController.saveNew()
-        await requestHandler({ ...request, body }, response, next)
+        await changesController.saveNew()(requestWithBody, response, next)
 
         const expectedErrorData = {
           arrivalDate: 'The arrival date is an invalid date',
@@ -286,7 +288,7 @@ describe('changesController', () => {
         }
 
         expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-          request,
+          requestWithBody,
           response,
           new ValidationError({}),
           viewUrl,
@@ -298,24 +300,27 @@ describe('changesController', () => {
       })
 
       it(`should redirect to the view when the departure date is before the arrival date`, async () => {
-        const body = {
-          'arrivalDate-day': '28',
-          'arrivalDate-month': '01',
-          'arrivalDate-year': '2025',
-          'departureDate-day': '27',
-          'departureDate-month': '01',
-          'departureDate-year': '2025',
+        const requestWithBody = {
+          ...request,
+          body: {
+            'arrivalDate-day': '28',
+            'arrivalDate-month': '01',
+            'arrivalDate-year': '2025',
+            'departureDate-day': '27',
+            'departureDate-month': '01',
+            'departureDate-year': '2025',
+          },
         }
 
         const requestHandler = changesController.saveNew()
-        await requestHandler({ ...request, body }, response, next)
+        await requestHandler(requestWithBody, response, next)
 
         const expectedErrorData = {
           departureDate: 'The departure date must be after the arrival date',
         }
 
         expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-          request,
+          requestWithBody,
           response,
           new ValidationError({}),
           viewUrl,
@@ -381,9 +386,9 @@ describe('changesController', () => {
 
     it('updates the placement and redirects the user to the placement request', async () => {
       placementService.updatePlacement.mockResolvedValue({})
+      const requestWithBody = { ...request, body }
 
-      const requestHandler = changesController.create()
-      await requestHandler({ ...request, body }, response, next)
+      await changesController.create()(requestWithBody, response, next)
 
       const expectedUpdateBody: Cas1UpdateSpaceBooking = {
         arrivalDate: '2025-05-05',
@@ -444,8 +449,10 @@ describe('changesController', () => {
         const apiError = new Error()
         placementService.updatePlacement.mockRejectedValue(apiError)
 
+        const requestWithBody = { ...request, body }
+
         const requestHandler = changesController.create()
-        await requestHandler({ ...request, body }, response, next)
+        await requestHandler(requestWithBody, response, next)
 
         const expectedRedirect = `${managePaths.premises.placements.changes.confirm(params)}?${createQueryString(
           {
@@ -457,7 +464,7 @@ describe('changesController', () => {
         )}`
 
         expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-          request,
+          requestWithBody,
           response,
           apiError,
           expectedRedirect,

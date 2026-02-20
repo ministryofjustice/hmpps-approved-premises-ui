@@ -45,7 +45,7 @@ describe('keyworkerController', () => {
     premisesService.getPlacement.mockResolvedValue(placement)
     premisesService.getCurrentKeyworkers.mockResolvedValue(currentKeyworkers)
 
-    request = createMock<Request>({ user: { token }, params: { premisesId, placementId: placement.id } })
+    request = createMock<Request>({ user: { token }, params: { premisesId, placementId: placement.id }, query: {} })
 
     jest.spyOn(validationUtils, 'fetchErrorsAndUserInput').mockReturnValue(errorsAndUserInput)
     jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue()

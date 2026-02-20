@@ -19,6 +19,7 @@ describe('V2BedsController', () => {
 
   const request: DeepMocked<Request> = createMock<Request>({
     user: { token },
+    query: {},
     session: { user: userDetailsFactory.build() },
   })
   const response: DeepMocked<Response> = createMock<Response>({})
@@ -73,7 +74,7 @@ describe('V2BedsController', () => {
     })
     it('should return the beds to the template', async () => {
       jest.spyOn(bedUtils, 'calculateBedCounts').mockReturnValue({ hasEnSuite: 1 })
-
+      // const requestWithQuery = {...request,query:{}}
       request.params.premisesId = premises.id
 
       const requestHandler = bedsController.index()

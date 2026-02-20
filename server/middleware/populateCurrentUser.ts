@@ -12,7 +12,6 @@ export default function populateCurrentUser(userService: UserService): RequestHa
     try {
       if (res.locals.user) {
         let { user } = req.session
-
         if (!user || user.version !== inMemoryStore.users[user.id]) {
           const currentVersion = user?.version
           user = await userService.getActingUser(res.locals.user.token)

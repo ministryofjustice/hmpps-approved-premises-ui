@@ -12,6 +12,7 @@ describe('PlacementApplicationReview', () => {
   it('initialises with expected values', () => {
     const request: DeepMocked<Request> = createMock<Request>({
       params: { id },
+      session: {},
     })
 
     const review = new PlacementApplicationReview(request, 'review')

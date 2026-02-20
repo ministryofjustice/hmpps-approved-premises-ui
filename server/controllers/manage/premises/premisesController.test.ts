@@ -50,7 +50,7 @@ describe('PremisesController', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    request = createMock<Request>({ user: { token }, params: { premisesId } })
+    request = createMock<Request>({ user: { token }, params: { premisesId }, query: {} })
     response = createMock<Response>({ locals: { user } })
     jest.useFakeTimers()
     jest.spyOn(backlinkUtils, 'getPageBackLink').mockReturnValue(referrer)
@@ -98,6 +98,7 @@ describe('PremisesController', () => {
         user: { token },
         params: { premisesId },
         session: { user: userDetailsFactory.build() },
+        query: {},
       })
     })
 

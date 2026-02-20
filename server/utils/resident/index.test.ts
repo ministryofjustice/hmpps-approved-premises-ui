@@ -180,9 +180,10 @@ describe('residentsUtils', () => {
         jest.spyOn(backlinkUtils, 'getPageBackLink').mockReturnValue('backlink')
 
         expect(returnPath(request, placement)).toEqual('backlink')
+
         expect(backlinkUtils.getPageBackLink).toHaveBeenCalledWith(
           `/manage/premises/${placement.premises.id}/placements/${placement.id}:action`,
-          {},
+          request,
           [
             '/manage/premises/:premisesId/placements/:placementId',
             '/manage/resident/:crn/placement/:placementId{/*tab}',

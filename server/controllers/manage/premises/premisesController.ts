@@ -45,8 +45,10 @@ export default class PremisesController {
 
   show(): RequestHandler {
     return async (req: ShowRequest, res: Response) => {
-      const { token } = req.user
-      const { premisesId } = req.params
+      const {
+        user: { token },
+        params: { premisesId },
+      } = req
 
       const tabSettings: Record<PremisesTab, TabSettings> = {
         upcoming: { pageSize: 20, sortBy: 'canonicalArrivalDate', sortDirection: 'asc' },

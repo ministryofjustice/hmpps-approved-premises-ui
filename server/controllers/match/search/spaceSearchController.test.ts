@@ -93,14 +93,20 @@ describe('spaceSearchController', () => {
     }
 
     it('it should render the search template with the search state found in session', async () => {
-      request.session.multiPageFormData = {
-        spaceSearch: { [placementRequestDetail.id]: searchState },
+      const indexRequest = {
+        ...request,
+        session: {
+          ...request.session,
+          multiPageFormData: {
+            spaceSearch: { [placementRequestDetail.id]: searchState },
+          },
+        },
       }
 
-      await spaceSearchController.search()(request, response, next)
+      await spaceSearchController.search()(indexRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/search', defaultRenderParameters)
-      expect(spaceSearchController.formData.get).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
+      expect(spaceSearchController.formData.get).toHaveBeenCalledWith(placementRequestDetail.id, indexRequest.session)
       expect(spaceSearchService.search).toHaveBeenCalledWith(token, searchState)
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })
@@ -118,13 +124,19 @@ describe('spaceSearchController', () => {
       })
 
       it('should render with the new placement details', async () => {
-        request.session.multiPageFormData = {
-          spaceSearch: {
-            [placementRequestDetail.id]: searchStateWithNewPlacement,
+        const indexRequest = {
+          ...request,
+          session: {
+            ...request.session,
+            multiPageFormData: {
+              spaceSearch: {
+                [placementRequestDetail.id]: searchStateWithNewPlacement,
+              },
+            },
           },
         }
 
-        await spaceSearchController.search()(request, response, next)
+        await spaceSearchController.search()(indexRequest, response, next)
 
         expect(placementsUtils.getPlacementOfStatus).toHaveBeenCalledWith('arrived', placementRequestDetail)
         expect(response.render).toHaveBeenCalledWith(
@@ -143,16 +155,22 @@ describe('spaceSearchController', () => {
       ])(
         'renders the correct back link if the criteria %s',
         async (_, newPlacementCriteriaChanged, expectedBackLink) => {
-          request.session.multiPageFormData = {
-            spaceSearch: {
-              [placementRequestDetail.id]: {
-                ...searchStateWithNewPlacement,
-                newPlacementCriteriaChanged,
+          const indexRequest = {
+            ...request,
+            session: {
+              ...request.session,
+              multiPageFormData: {
+                spaceSearch: {
+                  [placementRequestDetail.id]: {
+                    ...searchStateWithNewPlacement,
+                    newPlacementCriteriaChanged,
+                  },
+                },
               },
             },
           }
 
-          await spaceSearchController.search()(request, response, next)
+          await spaceSearchController.search()(indexRequest, response, next)
 
           expect(response.render).toHaveBeenCalledWith(
             'match/search',
@@ -168,8 +186,7 @@ describe('spaceSearchController', () => {
     it('should create the space search state if not found in session', async () => {
       const expectedSearchState = initialiseSearchState(placementRequestDetail)
 
-      const requestHandler = spaceSearchController.search()
-      await requestHandler(request, response, next)
+      await spaceSearchController.search()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'match/search',
@@ -188,8 +205,7 @@ describe('spaceSearchController', () => {
     it('should clear the search state if coming from the placement request page', async () => {
       request.headers.referer = `http://localhost${paths.admin.placementRequests.show({ placementRequestId: placementRequestDetail.id })}`
 
-      const requestHandler = spaceSearchController.search()
-      await requestHandler(request, response, next)
+      await spaceSearchController.search()(request, response, next)
 
       expect(spaceSearchController.formData.remove).toHaveBeenCalledWith(placementRequestDetail.id, request.session)
     })
@@ -216,13 +232,17 @@ describe('spaceSearchController', () => {
         errorSummary: expectedErrorSummary,
         userInput: expectedUserInput,
       })
-
-      request.session.multiPageFormData = {
-        spaceSearch: { [placementRequestDetail.id]: searchState },
+      const indexRequest = {
+        ...request,
+        session: {
+          ...request.session,
+          multiPageFormData: {
+            spaceSearch: { [placementRequestDetail.id]: searchState },
+          },
+        },
       }
 
-      const requestHandler = spaceSearchController.search()
-      await requestHandler(request, response, next)
+      await spaceSearchController.search()(indexRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'match/search',
@@ -245,8 +265,7 @@ describe('spaceSearchController', () => {
     }
 
     it('saves the submitted filters in the search state and redirects to the view', async () => {
-      const requestHandler = spaceSearchController.filterSearch()
-      await requestHandler({ ...request, body: searchParams }, response, next)
+      await spaceSearchController.filterSearch()({ ...request, body: searchParams }, response, next)
 
       expect(spaceSearchController.formData.update).toHaveBeenCalledWith(
         placementRequestDetail.id,
@@ -263,8 +282,7 @@ describe('spaceSearchController', () => {
         roomCriteria: undefined,
       }
 
-      const requestHandler = spaceSearchController.filterSearch()
-      await requestHandler({ ...request, body: searchParamsNoCriteria }, response, next)
+      await spaceSearchController.filterSearch()({ ...request, body: searchParamsNoCriteria }, response, next)
 
       expect(spaceSearchController.formData.update).toHaveBeenCalledWith(
         placementRequestDetail.id,
@@ -284,11 +302,12 @@ describe('spaceSearchController', () => {
         postcode: undefined,
       }
 
-      const requestHandler = spaceSearchController.filterSearch()
-      await requestHandler({ ...request, body: searchParamsNoPostcode }, response, next)
+      const indexRequest = { ...request, body: searchParamsNoPostcode }
+
+      await spaceSearchController.filterSearch()(indexRequest, response, next)
 
       expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
+        indexRequest,
         response,
         new ValidationError({}),
         searchPath,

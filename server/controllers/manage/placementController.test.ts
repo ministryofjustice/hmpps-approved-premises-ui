@@ -99,7 +99,7 @@ describe('placementController', () => {
       expect(placementService.getTimeline).not.toHaveBeenCalled()
       expect(backLinks.getPageBackLink).toHaveBeenCalledWith(
         '/manage/premises/:premisesId/placements/:placementId',
-        {},
+        request,
         [
           '/manage/premises/:premisesId',
           '/manage/premises/:premisesId/occupancy/day/:date',

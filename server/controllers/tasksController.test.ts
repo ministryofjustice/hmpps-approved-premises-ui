@@ -27,7 +27,7 @@ jest.mock('../utils/getPaginationDetails')
 describe('TasksController', () => {
   const token = 'SOME_TOKEN'
 
-  const request: DeepMocked<Request> = createMock<Request>({ user: { token } })
+  const request: DeepMocked<Request> = createMock<Request>({ user: { token }, params: {}, session: {}, query: {} })
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 

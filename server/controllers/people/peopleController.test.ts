@@ -38,11 +38,9 @@ describe('PeopleController', () => {
       const person = personFactory.build()
       personService.findByCrn.mockResolvedValue(person)
 
-      const requestHandler = peopleController.find()
+      const indexRequest = { ...request, body: { crn: person.crn } }
 
-      request.body.crn = person.crn
-
-      await requestHandler(request, response, next)
+      await peopleController.find()(indexRequest, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith('some-referrer/')
       expect(personService.findByCrn).toHaveBeenCalledWith(token, person.crn, false)
@@ -52,12 +50,9 @@ describe('PeopleController', () => {
     it('trims and makes the CRN uppercase', async () => {
       const person = personFactory.build()
       personService.findByCrn.mockResolvedValue(person)
+      const indexRequest = { ...request, body: { crn: `  ${person.crn.toLowerCase()} ` } }
 
-      const requestHandler = peopleController.find()
-
-      request.body.crn = `  ${person.crn.toLowerCase()} `
-
-      await requestHandler(request, response, next)
+      await peopleController.find()(indexRequest, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith('some-referrer/')
       expect(personService.findByCrn).toHaveBeenCalledWith(token, person.crn, false)

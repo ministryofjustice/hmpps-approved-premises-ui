@@ -97,20 +97,16 @@ describe('PlacementRequestsController', () => {
         const application = applicationFactory.build()
         placementApplicationService.submit.mockResolvedValue(placementApplication)
         applicationService.findApplication.mockResolvedValue(application)
+        placementApplicationService.getPlacementApplication.mockResolvedValue(placementApplication)
+        const indexRequest = { ...request, body: { confirmation: '1' }, params: { id: placementApplication.id } }
 
-        const requestHandler = placementRequestsController.submit()
-
-        await requestHandler(
-          { ...request, body: { confirmation: '1' }, params: { id: placementApplication.id } },
-          response,
-          next,
-        )
+        await placementRequestsController.submit()(indexRequest, response, next)
 
         expect(getResponses).toHaveBeenCalledWith(placementApplication)
         expect(response.render).toHaveBeenCalledWith('placement-applications/confirm', {
           pageHeading: 'Request for placement confirmed',
         })
-        expect(placementApplicationService.submit).toHaveBeenCalledWith(token, placementApplication.id, application)
+        expect(placementApplicationService.submit).toHaveBeenCalledWith(token, placementApplication, application)
       })
     })
 
