@@ -43,7 +43,7 @@ context('ResidentProfile', () => {
 
     const visitPage = ({ placement, personRisks }, tab?: string): ResidentProfilePage => {
       GIVEN(' that I am signed in as a user with access resident profile')
-      signIn(['manage_resident', 'future_manager'])
+      signIn(['future_manager'])
 
       WHEN('I visit the resident profile page')
       const page = ResidentProfilePage.visit(placement, personRisks)
@@ -73,7 +73,7 @@ context('ResidentProfile', () => {
       page.clickSideNav('Contacts')
 
       THEN('I should see the contacts section')
-      page.shouldShowContacts(placement.person)
+      page.shouldShowContacts()
     })
 
     it('should show the health tab', () => {

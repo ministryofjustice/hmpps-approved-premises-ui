@@ -361,16 +361,18 @@ describe('OccupancyViewController', () => {
     ])('returns an error if the start date is %s', async (_, dateInput) => {
       jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate')
 
-      const filterBodyNoStartDate: Request['body'] = {
-        ...filterBody,
-        ...dateInput,
+      const requestWithBody = {
+        ...request,
+        body: {
+          ...filterBody,
+          ...dateInput,
+        },
       }
 
-      const requestHandler = occupancyViewController.filterView()
-      await requestHandler({ ...request, body: filterBodyNoStartDate }, response, next)
+      await occupancyViewController.filterView()(requestWithBody, response, next)
 
       expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
+        requestWithBody,
         response,
         new ValidationError({}),
         occupancyViewUrl,
@@ -414,9 +416,9 @@ describe('OccupancyViewController', () => {
 
       it(`should redirect to occupancy view when dates are empty`, async () => {
         const body = {}
-
+        const requestWithBody = { ...request, body }
         const requestHandler = occupancyViewController.bookSpace()
-        await requestHandler({ ...request, body }, response, next)
+        await requestHandler(requestWithBody, response, next)
 
         const expectedErrorData = {
           arrivalDate: 'You must enter an arrival date',
@@ -424,7 +426,7 @@ describe('OccupancyViewController', () => {
         }
 
         expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-          request,
+          requestWithBody,
           response,
           new ValidationError({}),
           occupancyViewUrl,
@@ -444,9 +446,9 @@ describe('OccupancyViewController', () => {
           'departureDate-month': '05',
           'departureDate-year': '19999',
         }
+        const requestWithBody = { ...request, body }
 
-        const requestHandler = occupancyViewController.bookSpace()
-        await requestHandler({ ...request, body }, response, next)
+        await occupancyViewController.bookSpace()(requestWithBody, response, next)
 
         const expectedErrorData = {
           arrivalDate: 'The arrival date is an invalid date',
@@ -454,7 +456,7 @@ describe('OccupancyViewController', () => {
         }
 
         expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-          request,
+          requestWithBody,
           response,
           new ValidationError({}),
           occupancyViewUrl,
@@ -474,16 +476,16 @@ describe('OccupancyViewController', () => {
           'departureDate-month': '01',
           'departureDate-year': '2025',
         }
+        const requestWithBody = { ...request, body }
 
-        const requestHandler = occupancyViewController.bookSpace()
-        await requestHandler({ ...request, body }, response, next)
+        await occupancyViewController.bookSpace()(requestWithBody, response, next)
 
         const expectedErrorData = {
           departureDate: 'The departure date must be after the arrival date',
         }
 
         expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-          request,
+          requestWithBody,
           response,
           new ValidationError({}),
           occupancyViewUrl,

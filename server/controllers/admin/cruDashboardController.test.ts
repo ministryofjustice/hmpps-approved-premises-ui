@@ -95,7 +95,8 @@ describe('CruDashboardController', () => {
       })
 
       it('should render the tab with the users CRU management area filtered by default', async () => {
-        await cruDashboardController.index()({ ...request, query: { status } }, response, next)
+        const requestWithQuery = { ...request, query: { status } }
+        await cruDashboardController.index()(requestWithQuery, response, next)
 
         expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', defaultRenderParameters)
 
@@ -109,7 +110,7 @@ describe('CruDashboardController', () => {
 
         expect(cruManagementAreaService.getCruManagementAreas).toHaveBeenCalledWith(token)
 
-        expect(getPaginationDetails.getPaginationDetails).toHaveBeenCalledWith(request, basePath, {
+        expect(getPaginationDetails.getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, basePath, {
           status,
           cruManagementArea: user.cruManagementArea.id,
         })

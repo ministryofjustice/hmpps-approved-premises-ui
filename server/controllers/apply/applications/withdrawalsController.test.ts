@@ -143,13 +143,12 @@ describe('withdrawalsController', () => {
     it('renders the withdrawals type template', async () => {
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
-      request.params.id = applicationId
+      const indexRequest = { ...request, params: { id: applicationId } }
+
       const withdrawables = withdrawablesFactory.build({ withdrawables: [] })
       applicationService.getWithdrawablesWithNotes.mockResolvedValue(withdrawables)
 
-      const requestHandler = withdrawalsController.new()
-
-      await requestHandler(request, response, next)
+      await withdrawalsController.new()(indexRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('applications/withdrawables/new', {
         ...defaultRenderParameters,

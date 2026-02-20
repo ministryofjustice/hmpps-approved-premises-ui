@@ -36,7 +36,7 @@ describe('pagesController', () => {
 
   const placementApplicationService = createMock<PlacementApplicationService>({})
   const applicationService = createMock<ApplicationService>({})
-  const dataServices = createMock<DataServices>({}) as DataServices
+  const dataServices = createMock<DataServices>({ applicationService }) as DataServices
 
   const PageConstructor = jest.fn()
   const page = createMock<TasklistPage>({})

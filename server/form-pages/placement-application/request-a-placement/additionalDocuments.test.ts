@@ -21,6 +21,7 @@ describe('additionalDocuments', () => {
     beforeEach(() => {
       applicationService = createMock<ApplicationService>({
         getDocuments: getDocumentsMock,
+        findApplication: jest.fn().mockResolvedValue(application),
       })
     })
 

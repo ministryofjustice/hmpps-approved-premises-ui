@@ -128,7 +128,7 @@
     "date-fns": "^3.0.0",
     "dotenv": "^16.5.0",
     "eslint": "^9.28.0",
-    "express": "^4.21.2",
+    "express": "^4.22.1",
     "express-prom-bundle": "^7.0.0",
     "express-session": "^1.18.1",
     "fishery": "^2.3.1",
@@ -156,7 +156,7 @@
     "url-value-parser": "^2.2.0"
   },
   "devDependencies": {
-    "@golevelup/ts-jest": "0.5.0",
+    "@golevelup/ts-jest": "1.2.1",
     "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
     "@ministryofjustice/eslint-config-hmpps": "^1.0.1",
     "@pact-foundation/pact": "^16.0.2",

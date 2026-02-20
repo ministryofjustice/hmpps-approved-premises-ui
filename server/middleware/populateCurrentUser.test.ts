@@ -24,7 +24,7 @@ describe('populateCurrentUser', () => {
   beforeEach(() => {
     userService = createMock<UserService>()
 
-    request = createMock<Request>({})
+    request = createMock<Request>({ session: {} })
     response = createMock<Response>({ locals: { user: { token } } })
     next = jest.fn()
   })
