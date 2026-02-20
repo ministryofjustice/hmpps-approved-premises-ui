@@ -5,6 +5,7 @@ import { SuperAgentRequest } from 'superagent'
 import type {
   ActiveOffence,
   Adjudication,
+  BookingDetails,
   Cas1OASysGroup,
   Cas1OASysSupportingInformationQuestionMetaData,
   Cas1PersonalTimeline,
@@ -307,6 +308,19 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: args.spaceBookings,
+      },
+    }),
+
+  stubBookingDetails: (args: { person: Person; bookingDetails: BookingDetails }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.people.bookingDetails({ crn: args.person.crn }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.bookingDetails,
       },
     }),
 }

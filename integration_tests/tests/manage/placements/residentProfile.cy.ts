@@ -5,6 +5,7 @@ import {
   adjudicationFactory,
   applicationFactory,
   assessmentFactory,
+  bookingDetailsFactory,
   cas1OasysGroupFactory,
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
@@ -81,6 +82,7 @@ context('ResidentProfile', () => {
       const acctAlerts = acctAlertFactory.buildList(5)
       const oasysSupportingInformation = cas1OasysGroupFactory.supportingInformation().build()
       const riskToSelf = cas1OasysGroupFactory.riskToSelf().build()
+      const bookingDetails = bookingDetailsFactory.build()
 
       cy.task('stubAcctAlerts', { person: placement.person, acctAlerts })
       cy.task('stubOasysGroup', { person: placement.person, group: riskToSelf })
@@ -94,6 +96,7 @@ context('ResidentProfile', () => {
         group: oasysSupportingInformation,
         includeOptionalSections: [10],
       })
+      cy.task('stubBookingDetails', { person: placement.person, bookingDetails })
 
       const page = visitPage({ placement, personRisks })
 
@@ -103,6 +106,9 @@ context('ResidentProfile', () => {
       THEN('I should see the Health details section')
       page.shouldHaveActiveTab('Health')
       page.shouldHaveActiveSideNav(`Health and disability`)
+
+      AND('I should see the smoking status card')
+      page.shouldShowSmokingStatus(bookingDetails)
 
       WHEN('I select the Mental health subtab')
       page.clickSideNav('Mental health')
