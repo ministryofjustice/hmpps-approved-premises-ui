@@ -30,8 +30,8 @@ describe('assessmentsController', () => {
   const token = 'SOME_TOKEN'
   const userId = 'SOME_ID'
 
-  let request: DeepMocked<Request> = createMock<Request>({ user: { token } })
-  let response: DeepMocked<Response> = createMock<Response>({})
+  let request: DeepMocked<Request>
+  let response: DeepMocked<Response>
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const assessmentService = createMock<AssessmentService>({})
@@ -42,7 +42,7 @@ describe('assessmentsController', () => {
   beforeEach(() => {
     assessmentsController = new AssessmentsController(assessmentService, taskService)
     response = createMock<Response>({ locals: { user: { id: userId } } })
-    request = createMock<Request>({ user: { token } })
+    request = createMock<Request>({ user: { token }, query: {} })
   })
 
   describe('index', () => {
@@ -63,9 +63,7 @@ describe('assessmentsController', () => {
     })
 
     it('should list all the assessments with awaiting_assessment statuses by default', async () => {
-      const requestHandler = assessmentsController.index()
-
-      await requestHandler(request, response, next)
+      await assessmentsController.index()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('assessments/index', {
         pageHeading: 'Approved Premises applications',
@@ -180,9 +178,7 @@ describe('assessmentsController', () => {
     })
 
     it('fetches the assessment and renders the task list', async () => {
-      const requestHandler = assessmentsController.show()
-
-      await requestHandler(request, response, next)
+      await assessmentsController.show()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('assessments/tasklist', {
         assessment,
@@ -200,9 +196,7 @@ describe('assessmentsController', () => {
       const completedAssessment = { ...assessment, status: 'completed' as const }
       assessmentService.findAssessment.mockResolvedValue(completedAssessment)
 
-      const requestHandler = assessmentsController.show()
-
-      await requestHandler(request, response, next)
+      await assessmentsController.show()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('assessments/show', {
         assessment: completedAssessment,
@@ -217,9 +211,7 @@ describe('assessmentsController', () => {
       ;(informationSetAsNotReceived as jest.Mock).mockReturnValue(false)
       assessment.status = 'awaiting_response'
 
-      const requestHandler = assessmentsController.show()
-
-      await requestHandler(request, response, next)
+      await assessmentsController.show()(request, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith(
         paths.assessments.pages.show({
@@ -236,9 +228,7 @@ describe('assessmentsController', () => {
       ;(informationSetAsNotReceived as jest.Mock).mockReturnValue(true)
       assessment.status = 'awaiting_response'
 
-      const requestHandler = assessmentsController.show()
-
-      await requestHandler(request, response, next)
+      await assessmentsController.show()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('assessments/tasklist', {
         assessment,
@@ -262,9 +252,7 @@ describe('assessmentsController', () => {
       })
 
       it('sends the errors to the template', async () => {
-        const requestHandler = assessmentsController.show()
-
-        await requestHandler(request, response, next)
+        await assessmentsController.show()(request, response, next)
 
         expect(response.render).toHaveBeenCalledWith('assessments/tasklist', {
           assessment,
@@ -291,16 +279,13 @@ describe('assessmentsController', () => {
 
     describe('if the "confirmation" input isnt "confirmed"', () => {
       it('renders the "show" view with errors', async () => {
-        request.params.id = 'some-id'
-        request.body.confirmation = 'some-id'
+        const indexRequest = { ...request, params: { id: 'some-id' }, body: { confirmation: 'some-id' } }
 
-        const requestHandler = assessmentsController.submit()
+        await assessmentsController.submit()(indexRequest, response, next)
 
-        await requestHandler(request, response, next)
-
-        expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, request)
+        expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, 'some-id')
         expect(addErrorMessageToFlash).toHaveBeenCalledWith(
-          request,
+          indexRequest,
           'You must confirm the information provided is complete, accurate and up to date.',
           'confirmation',
         )
@@ -310,13 +295,11 @@ describe('assessmentsController', () => {
 
     describe('if the "confirmation" input is "confirmed"', () => {
       it('renders the success view', async () => {
-        request.body.confirmation = 'confirmed'
+        const indexRequest = { ...request, params: { id: 'some-id' }, body: { confirmation: 'confirmed' } }
 
-        const requestHandler = assessmentsController.submit()
+        await assessmentsController.submit()(indexRequest, response, next)
 
-        await requestHandler(request, response, next)
-
-        expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, request)
+        expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, 'some-id')
         expect(assessmentService.submit).toHaveBeenCalledWith(token, assessment)
         expect(response.render).toHaveBeenCalledWith('assessments/confirm', {
           pageHeading: 'Assessment submission confirmed',
@@ -335,12 +318,12 @@ describe('assessmentsController', () => {
         const expectedAssessment = { ...assessmentWithData, data: expectedData }
 
         assessmentService.findAssessment.mockResolvedValue(assessmentWithData)
-        request.body.confirmation = 'confirmed'
-        const requestHandler = assessmentsController.submit()
 
-        await requestHandler(request, response, next)
+        const indexRequest = { ...request, params: { id: 'some-id' }, body: { confirmation: 'confirmed' } }
 
-        expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, request)
+        await assessmentsController.submit()(indexRequest, response, next)
+
+        expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, 'some-id')
         expect(assessmentService.submit).toHaveBeenCalledWith(token, expectedAssessment)
         expect(response.render).toHaveBeenCalledWith('assessments/confirm', {
           pageHeading: 'Assessment submission confirmed',

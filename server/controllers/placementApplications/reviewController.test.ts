@@ -331,20 +331,17 @@ describe('reviewController', () => {
         throw err
       })
 
-      const requestHandler = reviewController.submit()
-
-      await requestHandler(
-        {
-          ...request,
-          body: {
-            decision: 'a decision',
-            decisionSummary: 'a decision summary',
-          },
+      const indexRequest = {
+        ...request,
+        body: {
+          decision: 'a decision',
+          decisionSummary: 'a decision summary',
         },
-        response,
-      )
+      }
 
-      expect(catchAPIErrorOrPropogate).toHaveBeenCalledWith(request, response, err)
+      await reviewController.submit()(indexRequest, response)
+
+      expect(catchAPIErrorOrPropogate).toHaveBeenCalledWith(indexRequest, response, err)
     })
   })
 

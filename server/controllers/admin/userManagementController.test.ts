@@ -16,7 +16,7 @@ jest.mock('../../utils/getPaginationDetails')
 describe('UserManagementController', () => {
   const token = 'SOME_TOKEN'
 
-  const request: DeepMocked<Request> = createMock<Request>({ user: { token }, session: {} })
+  const request: DeepMocked<Request> = createMock<Request>({ user: { token }, session: {}, query: {} })
   const response = createMock<Response>({ locals: { user: { token } } })
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
@@ -49,12 +49,15 @@ describe('UserManagementController', () => {
       }) as PaginatedResponse<ApprovedPremisesUser>
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
       userService.getUsers.mockResolvedValue(paginatedResponse)
+      cruManagementAreaService.getCruManagementAreas.mockResolvedValue(undefined)
     })
 
     it('renders the index page with all the users', async () => {
+      const requestWithQuery = { ...request, query: {} }
+
       const requestHandler = userManagementController.index()
 
-      await requestHandler(request, response, next)
+      await requestHandler(requestWithQuery, response, next)
 
       expect(userService.getUsers).toHaveBeenCalledWith(
         token,
@@ -73,7 +76,7 @@ describe('UserManagementController', () => {
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
       })
-      expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.admin.userManagement.index({}), {
+      expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.admin.userManagement.index({}), {
         role: undefined,
         qualification: undefined,
         selectedArea: undefined,

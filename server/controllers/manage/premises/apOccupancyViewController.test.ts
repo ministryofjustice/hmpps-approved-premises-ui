@@ -3,7 +3,6 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { PremisesService } from 'server/services'
-import { ParsedQs } from 'qs'
 import ApOccupancyViewController from './apOccupancyViewController'
 
 import {
@@ -43,7 +42,7 @@ describe('AP occupancyViewController', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    request = createMock<Request>({ user: { token }, params: { premisesId }, flash: jest.fn() })
+    request = createMock<Request>({ user: { token }, params: { premisesId }, flash: jest.fn(), query: {} })
     response = createMock<Response>({ locals: { user: { permissions: ['cas1_space_booking_list'] } } })
     jest.spyOn(backlinkUtils, 'getPageBackLink').mockReturnValue('back-link')
     jest.spyOn(occupancyUtils, 'placementTableRows').mockReturnValue([])
@@ -52,14 +51,11 @@ describe('AP occupancyViewController', () => {
   })
 
   describe('view', () => {
-    const mockPremises = async (startDate: string = DateFormats.dateObjToIsoDate(new Date())) => {
+    const mockPremises = (startDate: string = DateFormats.dateObjToIsoDate(new Date())) => {
       const premisesSummary: Cas1Premises = cas1PremisesFactory.build({ id: premisesId })
       const premisesCapacity = cas1PremiseCapacityFactory.build({ startDate })
       premisesService.getCapacity.mockResolvedValue(premisesCapacity)
       premisesService.find.mockResolvedValue(premisesSummary)
-
-      const requestHandler = occupancyViewController.view()
-      await requestHandler(request, response, next)
 
       return {
         premisesSummary,
@@ -70,7 +66,9 @@ describe('AP occupancyViewController', () => {
     it('should render the premises occupancy view with default date and duration', async () => {
       const startDate = '2024-01-01'
       const endDate = '2024-03-24'
-      const { premisesSummary, premisesCapacity } = await mockPremises(startDate)
+      const { premisesSummary, premisesCapacity } = mockPremises(startDate)
+
+      await occupancyViewController.view()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'manage/premises/occupancy/view',
@@ -87,13 +85,10 @@ describe('AP occupancyViewController', () => {
     })
 
     it('should render the premises occupancy view with specified valid date and duration', async () => {
-      request = createMock<Request>({
-        user: { token },
-        params: { premisesId },
-        flash: jest.fn(),
-        query: { startDate: '20/06/2024', durationDays: '7' },
-      })
-      const { premisesSummary, premisesCapacity } = await mockPremises('2024-06-20')
+      const indexRequest = { ...request, query: { startDate: '20/06/2024', durationDays: '7' } }
+      const { premisesSummary, premisesCapacity } = mockPremises('2024-06-20')
+
+      await occupancyViewController.view()(indexRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'manage/premises/occupancy/view',
@@ -113,13 +108,10 @@ describe('AP occupancyViewController', () => {
     })
 
     it('should render error if date is invalid', async () => {
-      request = createMock<Request>({
-        user: { token },
-        params: { premisesId },
-        flash: jest.fn(),
-        query: { startDate: 'not really a date', durationDays: '7' },
-      })
-      const { premisesSummary } = await mockPremises('2024-06-20')
+      const indexRequest = { ...request, query: { startDate: 'not really a date', durationDays: '7' } }
+      const { premisesSummary } = mockPremises('2024-06-20')
+
+      await occupancyViewController.view()(indexRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'manage/premises/occupancy/view',
@@ -136,10 +128,7 @@ describe('AP occupancyViewController', () => {
   })
 
   describe('dayView', () => {
-    const mockPremises = async (
-      date: string = DateFormats.dateObjToIsoDate(new Date()),
-      queryParameters: ParsedQs = {},
-    ) => {
+    const mockPremises = (date: string = DateFormats.dateObjToIsoDate(new Date())) => {
       const premisesSummary: Cas1Premises = cas1PremisesFactory.build({ id: premisesId })
       const premisesDaySummary: Cas1PremisesDaySummary = cas1PremisesDaySummaryFactory.build({ forDate: date })
       const dayCapacity = cas1PremiseCapacityForDayFactory.build()
@@ -147,10 +136,6 @@ describe('AP occupancyViewController', () => {
       premisesService.getDaySummary.mockResolvedValue(premisesDaySummary)
       premisesService.find.mockResolvedValue(premisesSummary)
       premisesService.getCapacity.mockResolvedValue(capacityForDay)
-      request.params.date = date
-      request.query = queryParameters
-      const requestHandler = occupancyViewController.dayView()
-      await requestHandler(request, response, next)
 
       return {
         premisesSummary,
@@ -161,7 +146,10 @@ describe('AP occupancyViewController', () => {
 
     it('should render the premises day summary with default sort and filter', async () => {
       const date = '2025-01-01'
-      const { premisesSummary, premisesDaySummary, dayCapacity } = await mockPremises(date)
+      const { premisesSummary, premisesDaySummary, dayCapacity } = mockPremises(date)
+      const indexRequest = { ...request, params: { date, premisesId } }
+
+      await occupancyViewController.dayView()(indexRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/premises/occupancy/dayView', {
         premises: premisesSummary,
@@ -188,7 +176,7 @@ describe('AP occupancyViewController', () => {
       expect(occupancyUtils.placementTableRows).toHaveBeenCalledWith(
         premisesId,
         premisesDaySummary.spaceBookingSummaries,
-        request,
+        indexRequest,
       )
       expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
       expect(premisesService.getDaySummary).toHaveBeenCalledWith({
@@ -202,11 +190,19 @@ describe('AP occupancyViewController', () => {
 
     it('should render the premises day summary with specified sort and filter', async () => {
       const date = '2025-01-01'
-      const { premisesSummary } = await mockPremises(date, {
-        sortBy: 'canonicalArrivalDate',
-        sortDirection: 'desc',
-        characteristics: ['hasEnSuite'],
-      })
+      const { premisesSummary } = mockPremises(date)
+      const indexRequest = {
+        ...request,
+        params: { date, premisesId },
+        query: {
+          sortBy: 'canonicalArrivalDate',
+          sortDirection: 'desc',
+          characteristics: ['hasEnSuite'],
+        },
+      }
+
+      await occupancyViewController.dayView()(indexRequest, response, next)
+
       const result = response.render.mock.calls[0][1]
       expect(result).toEqual(
         expect.objectContaining({
@@ -238,7 +234,7 @@ describe('AP occupancyViewController', () => {
       })
       expect(backlinkUtils.getPageBackLink).toHaveBeenCalledWith(
         '/manage/premises/:premisesId/placements/:placementId',
-        {},
+        indexRequest,
         ['/manage/premises/:premisesId/occupancy'],
       )
     })

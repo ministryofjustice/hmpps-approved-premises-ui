@@ -16,10 +16,10 @@ import paths from '../../../paths/manage'
 import {
   apAreaFactory,
   cas1BedDetailFactory,
+  cas1PremisesBasicSummaryFactory,
   cas1PremisesFactory,
   outOfServiceBedFactory,
   paginatedResponseFactory,
-  premisesFactory,
   userDetailsFactory,
 } from '../../../testutils/factories'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
@@ -327,8 +327,9 @@ describe('OutOfServiceBedsController', () => {
 
   describe('index', () => {
     it('requests a list of outOfService beds with a page number, sort and filter options, and renders the template', async () => {
+      const apAreas = apAreaFactory.buildList(3)
       const temporality = 'future'
-      const apAreaId = 'abc'
+      const apAreaId = apAreas[0].id
 
       const paginatedResponse = paginatedResponseFactory.build({
         data: outOfServiceBedFactory.buildList(1),
@@ -344,18 +345,17 @@ describe('OutOfServiceBedsController', () => {
         sortDirection: 'desc',
       }
 
-      const premises = premisesFactory.buildList(3)
+      const premises = cas1PremisesBasicSummaryFactory.buildList(3)
       const allPremises = premises
-      const apAreas = apAreaFactory.buildList(3)
+      premisesService.getCas1All.mockResolvedValue(allPremises)
+      apAreaService.getApAreas.mockResolvedValue(apAreas)
 
       outOfServiceBedService.getAllOutOfServiceBeds.mockResolvedValue(paginatedResponse)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
       const indexRequest = { ...request, query: { premisesId, apAreaId }, params: { temporality } }
 
-      const requestHandler = outOfServiceBedController.index()
-
-      await requestHandler(indexRequest, response, next)
+      await outOfServiceBedController.index()(indexRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/outOfServiceBeds/index', {
         outOfServiceBeds: paginatedResponse.data,
@@ -369,7 +369,7 @@ describe('OutOfServiceBedsController', () => {
         apAreaId,
         premisesId,
         disablePremisesSelect: false,
-        premises,
+        premises: [],
         allPremises,
         apAreas,
       })

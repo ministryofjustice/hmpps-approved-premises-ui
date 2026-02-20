@@ -50,6 +50,7 @@ describe('newPlacementController', () => {
         save: jest.fn().mockImplementation((callback: () => unknown) => callback()),
       },
       flash: jest.fn(),
+      body: {},
     })
 
     newPlacementController = new NewPlacementController(placementRequestService)

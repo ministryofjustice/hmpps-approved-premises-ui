@@ -24,7 +24,7 @@ describe('populateCurrentUser', () => {
   beforeEach(() => {
     userService = createMock<UserService>()
 
-    request = createMock<Request>({})
+    request = createMock<Request>({ session: {} })
     response = createMock<Response>({ locals: { user: { token } } })
     next = jest.fn()
   })
@@ -38,13 +38,12 @@ describe('populateCurrentUser', () => {
     ;(userService.getActingUser as jest.Mock).mockResolvedValue(user)
 
     const middleware = populateCurrentUser(userService)
-    const requestWithSession = {...request,session:{...request.session,user:undefined as typeof request.session.user}}
 
-    await middleware(requestWithSession, response, next)
+    await middleware(request, response, next)
 
     expect(userService.getActingUser).toHaveBeenCalledWith(token)
 
-    expect(requestWithSession.session.user).toEqual(user)
+    expect(request.session.user).toEqual(user)
     expect(response.locals.user).toEqual({ ...response.locals.user, ...user })
 
     expect(next).toHaveBeenCalled()

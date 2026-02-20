@@ -55,6 +55,8 @@ describe('residentProfileController', () => {
     const request: DeepMocked<Request> = createMock<Request>({
       user: { token },
       params: { crn, placementId: placement.id },
+      headers: {},
+      session: {},
     })
 
     return { placement, personRisks, request, response }
@@ -102,7 +104,15 @@ describe('residentProfileController', () => {
         },
       ])
 
-      expect(tabController).toBeCalledWith({ crn, personRisks, personService, token, placement })
+      expect(tabController).toBeCalledWith(
+        expect.objectContaining({
+          crn,
+          personRisks,
+          personService,
+          token,
+          placement,
+        }),
+      )
     })
 
     it('should render the Sentence -> Offence tab', async () => {
@@ -123,7 +133,9 @@ describe('residentProfileController', () => {
         },
       ])
 
-      expect(tabController).toHaveBeenCalledWith({ crn, personRisks, personService, token, placement })
+      expect(tabController).toHaveBeenCalledWith(
+        expect.objectContaining({ crn, personRisks, personService, token, placement }),
+      )
 
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
     })
