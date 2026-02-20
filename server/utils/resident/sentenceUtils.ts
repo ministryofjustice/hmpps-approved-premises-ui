@@ -108,9 +108,9 @@ export const sentenceCards = (placement: Cas1SpaceBooking) => {
   })
   return [
     card({
-      html: insetText(
+      html: `<h2 class="govuk-heading-m">Sentence</h2>${insetText(
         `<p>We cannot display sentence details from NDelius yet.</p><p>You can view this information in the event details. The event number is ${placement.deliusEventNumber}</p>${link}`,
-      ),
+      )}`,
     }),
   ]
 }

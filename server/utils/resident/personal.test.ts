@@ -37,11 +37,17 @@ describe('Personal tab', () => {
   describe('contactsTabController', () => {
     it('should render the contacts tab content', async () => {
       jest.spyOn(utils, 'ndeliusDeeplink').mockReturnValue('NDelius deeplink')
+      jest.spyOn(utils, 'insetText').mockImplementation(text => `inset("${text}")`)
 
-      expect(await contactsTabController({})).toEqual({
-        cardList: [{ card: { title: { text: 'Contact details' } }, html: 'NDelius deeplink' }],
-        subHeading: 'Contacts',
-      })
+      const {
+        subHeading,
+        cardList: [{ html }],
+      } = await contactsTabController({})
+
+      expect(subHeading).toMatch('Contact')
+      expect(html).toMatchStringIgnoringWhitespace(`
+inset("<p>We cannot display personal contacts from NDelius yet. For example, probation practitioner contact details.</p>
+NDelius deeplink")`)
     })
   })
 })

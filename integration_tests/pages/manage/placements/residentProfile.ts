@@ -22,11 +22,10 @@ import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { licenseCards, offencesTabCards, prisonCards } from '../../../../server/utils/resident/sentenceUtils'
 import { placementDetailsCards, allApPlacementsTabData } from '../../../../server/utils/resident/placementUtils'
-import { contactsCardList, personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
+import { personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
 import { AND, THEN, WHEN } from '../../../helpers'
 import { SubmittedDocumentRenderer } from '../../../../server/utils/forms/submittedDocumentRenderer'
 import { detailedStatus } from '../../../../server/utils/placements/status'
-import { ndeliusRiskCard } from '../../../../server/utils/resident/riskUtils'
 import { mentalHealthCards } from '../../../../server/utils/resident/healthUtils'
 
 export default class ResidentProfilePage extends Page {
@@ -73,7 +72,8 @@ export default class ResidentProfilePage extends Page {
       ('text' in cardTitle
         ? cardTitle.text
         : new DOMParser().parseFromString(cardTitle.html, 'text/html').body.textContent)
-    if (title) cy.get('.govuk-summary-card__title').contains(title).should('exist')
+    cy.log('*****  title', title)
+    if (title?.length) cy.get('.govuk-summary-card__title').contains(title).should('exist')
     cy.get('.govuk-summary-card__title')
       .contains(title)
       .parents('.govuk-summary-card')
@@ -154,6 +154,7 @@ export default class ResidentProfilePage extends Page {
     this.shouldShowCard(cards[1])
     this.shouldShowCard(cards[2])
     this.shouldShowCard(cards[3])
+    cy.get('h2').should('contain', 'Sentence')
     cy.get('.govuk-inset-text').should('contain.text', 'We cannot display sentence details from NDelius yet.')
     cy.get('.govuk-inset-text').should(
       'contain.text',
@@ -183,13 +184,15 @@ export default class ResidentProfilePage extends Page {
   }
 
   shouldShowPersonalInformation(person: Person, personRisks: PersonRisks) {
+    cy.stub(residentUtils, 'insetText').returns('inset text')
     const cards = personDetailsCardList(person as FullPerson, personRisks)
     cards.forEach(card => this.shouldShowCard(card))
   }
 
-  shouldShowContacts(person: Person) {
-    const cards = contactsCardList(person.crn)
-    cards.forEach(card => this.shouldShowCard(card))
+  shouldShowContacts() {
+    cy.contains(
+      'We cannot display personal contacts from NDelius yet. For example, probation practitioner contact details.',
+    )
   }
 
   shouldShowOasysCards(numbers: Array<string>, group: Cas1OASysGroup, groupName: string) {
@@ -217,8 +220,9 @@ export default class ResidentProfilePage extends Page {
     })
   }
 
-  shouldShowNDeliusRiskCard(placement: Cas1SpaceBooking, personRisks: PersonRisks) {
-    this.shouldShowCard(ndeliusRiskCard(placement.person.crn, personRisks))
+  shouldShowNDeliusRiskCard() {
+    cy.stub(residentUtils, 'ndeliusDeeplink').returns('gizmo')
+    cy.contains('NDelius risk flags (registers)')
   }
 
   shouldShowRoshWidget(risks: RoshRisks) {

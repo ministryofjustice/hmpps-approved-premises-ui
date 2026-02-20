@@ -5,9 +5,16 @@ import {
   Cas1SpaceBookingShortSummary,
 } from '@approved-premises/api'
 import { SummaryListWithCard } from '@approved-premises/ui'
-import { Accordion, alertBanner, card, renderCardList, renderPersonDetails, ResidentProfileSubTab } from './index'
+import {
+  Accordion,
+  alertBanner,
+  card,
+  insetText,
+  renderCardList,
+  renderPersonDetails,
+  ResidentProfileSubTab,
+} from './index'
 import { SubmittedDocumentRenderer } from '../forms/submittedDocumentRenderer'
-import { insetText } from './riskUtils'
 import { DateFormats } from '../dateUtils'
 import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
 import { placementStatusTag, requirementsInformation } from '../placements'
