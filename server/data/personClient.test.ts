@@ -9,6 +9,7 @@ import {
   acctAlertFactory,
   activeOffenceFactory,
   adjudicationFactory,
+  bookingDetailsFactory,
   cas1OasysGroupFactory,
   cas1OASysMetadataFactory,
   licenceFactory,
@@ -423,5 +424,31 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
         expect(result).toEqual([])
       },
     )
+  })
+
+  describe('bookingDetails', () => {
+    it('calls the API with CRN and retrieves booking details', async () => {
+      const crn = 'crn'
+      const bookingDetails = bookingDetailsFactory.build()
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the booking details for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.bookingDetails({ crn }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: bookingDetails,
+        },
+      })
+
+      const result = await personClient.bookingDetails(crn)
+      expect(result).toEqual(bookingDetails)
+    })
   })
 })
