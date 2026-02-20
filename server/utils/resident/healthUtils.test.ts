@@ -1,7 +1,18 @@
 import { PersonAcctAlert } from '@approved-premises/api'
 import { render } from 'nunjucks'
-import { acctAlertFactory, cas1OasysGroupFactory, cas1SpaceBookingFactory } from '../../testutils/factories'
-import { healthDetailsCards, healthSideNavigation, mentalHealthCards } from './healthUtils'
+import {
+  acctAlertFactory,
+  bookingDetailsFactory,
+  cas1OasysGroupFactory,
+  cas1SpaceBookingFactory,
+} from '../../testutils/factories'
+import {
+  getSmokingStatus,
+  healthDetailsCards,
+  healthSideNavigation,
+  mentalHealthCards,
+  smokingStatusMapping,
+} from './healthUtils'
 import { DateFormats } from '../dateUtils'
 import { oasysMetadataRow, tableRow } from './riskUtils'
 import { loadingErrorMessage } from '.'
@@ -42,7 +53,7 @@ describe('healthUtils', () => {
     it('should render error card for recent assessment (FM-286)', () => {
       const supportingInformation = cas1OasysGroupFactory.supportingInformation().build()
 
-      const result = healthDetailsCards(supportingInformation, 'success')
+      const result = healthDetailsCards(supportingInformation, 'success', null)
 
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', { html: 'Imported from OASys' })
@@ -58,7 +69,7 @@ describe('healthUtils', () => {
         .supportingInformation()
         .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
 
-      const result = healthDetailsCards(supportingInformation, 'success')
+      const result = healthDetailsCards(supportingInformation, 'success', null)
 
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', { html: 'Imported from OASys' })
@@ -139,5 +150,14 @@ describe('healthUtils', () => {
     expect(result[8].html).toMatchStringIgnoringWhitespace(
       loadingErrorMessage({ result: 'failure', item: 'ACCT alerts', source: 'Digital Prison Service' }),
     )
+  })
+
+  describe('getSmokingStatus', () => {
+    it.each(Object.entries(smokingStatusMapping))('should return "%s" for %s', (resultValue, expected) => {
+      const bookingDetails = bookingDetailsFactory.build({
+        profileInformation: [{ type: 'SMOKE', resultValue }],
+      })
+      expect(getSmokingStatus(bookingDetails)).toBe(expected)
+    })
   })
 })

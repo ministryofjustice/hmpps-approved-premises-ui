@@ -1,9 +1,22 @@
-import { Cas1OASysGroup, PersonAcctAlert } from '@approved-premises/api'
+import { BookingDetails, Cas1OASysGroup, PersonAcctAlert } from '@approved-premises/api'
 import { card, insetText, loadingErrorMessage, ResidentProfileSubTab } from '.'
 import paths from '../../paths/manage'
 import { dateCellNoWrap, textCell } from '../tableUtils'
 import { oasysQuestionDetailsByNumber, summaryCards, tableRow } from './riskUtils'
 import { ApiOutcome } from '../utils'
+import { summaryListItem } from '../formUtils'
+
+export const smokingStatusMapping: Record<string, string> = {
+  SMOKER_YES: 'Smoker',
+  SMOKER_NO: 'Non-smoker',
+  SMOKER_VAPER: 'Vaper',
+}
+
+export const getSmokingStatus = (bookingDetails: BookingDetails | null): string | null => {
+  const smokingInfo = bookingDetails?.profileInformation?.find(info => info.type === 'SMOKE')
+  const value = smokingInfo?.resultValue
+  return value ? smokingStatusMapping[value] || value : null
+}
 
 export const healthSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   const basePath = paths.resident.tabHealth
@@ -21,21 +34,35 @@ export const healthSideNavigation = (subTab: ResidentProfileSubTab, crn: string,
   ]
 }
 
-export const healthDetailsCards = (supportingInformation: Cas1OASysGroup, outcome: ApiOutcome) => {
+export const healthDetailsCards = (
+  supportingInformation: Cas1OASysGroup,
+  outcome: ApiOutcome,
+  bookingDetails: BookingDetails | null = null,
+) => {
   const cards = [card({ html: insetText('Imported from OASys') })]
+
+  const smokingCard = getSmokingStatus(bookingDetails)
+    ? card({
+        title: 'Smoker or vaper',
+        rows: [summaryListItem('Smoker or vaper', getSmokingStatus(bookingDetails))],
+      })
+    : null
+
   const assessentIso = supportingInformation?.assessmentMetadata?.dateCompleted
   if (assessentIso && assessentIso > '2025-04-09T18:00') {
     const definition = oasysQuestionDetailsByNumber['13.1']
-    return cards.concat(
+    const healthCards = cards.concat(
       card({
         title: definition.label,
         html: `<p>We cannot load general health - any physical or mental health conditions right now.</p>
 <p>Go to OASys to check if any general health details have been entered.</p>`,
       }),
     )
+    return smokingCard ? healthCards.concat(smokingCard) : healthCards
   }
 
-  return cards.concat(summaryCards(['13.1'], supportingInformation, outcome))
+  const healthCards = cards.concat(summaryCards(['13.1'], supportingInformation, outcome))
+  return smokingCard ? healthCards.concat(smokingCard) : healthCards
 }
 
 export const mentalHealthCards = ({

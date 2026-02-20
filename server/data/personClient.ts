@@ -3,6 +3,7 @@ import type { Response } from 'express'
 import type {
   ActiveOffence,
   Adjudication,
+  BookingDetails,
   Cas1OASysGroup,
   Cas1OASysGroupName,
   Cas1OASysMetadata,
@@ -127,5 +128,9 @@ export default class PersonClient {
       path: paths.people.spaceBookings({ crn }),
       query,
     })) as Array<Cas1SpaceBookingShortSummary>
+  }
+
+  async bookingDetails(crn: string): Promise<BookingDetails> {
+    return this.restClient.get<BookingDetails>({ path: paths.people.bookingDetails({ crn }) })
   }
 }
