@@ -22,46 +22,46 @@ export default class PlacementApplicationClient {
   }
 
   async create(applicationId: string): Promise<PlacementApplication> {
-    return (await this.restClient.post({
+    return this.restClient.post<PlacementApplication>({
       path: paths.placementApplications.create({}),
       data: { applicationId },
-    })) as Promise<PlacementApplication>
+    })
   }
 
   async update(placementApplication: PlacementApplication): Promise<PlacementApplication> {
-    return (await this.restClient.put({
+    return this.restClient.put<PlacementApplication>({
       path: paths.placementApplications.update({ id: placementApplication.id }),
       data: placementApplication,
-    })) as Promise<PlacementApplication>
+    })
   }
 
   async submission(
     placementApplicationId: string,
     submitPlacementApplication: SubmitPlacementApplication,
   ): Promise<PlacementApplication> {
-    return (await this.restClient.post({
+    return this.restClient.post<PlacementApplication>({
       path: paths.placementApplications.submit({ id: placementApplicationId }),
       data: submitPlacementApplication,
-    })) as Promise<PlacementApplication>
+    })
   }
 
   async decisionSubmission(
     placementApplicationId: string,
     decision: PlacementApplicationDecisionEnvelope,
   ): Promise<PlacementApplication> {
-    return (await this.restClient.post({
+    return this.restClient.post<PlacementApplication>({
       path: paths.placementApplications.submitDecision({ id: placementApplicationId }),
       data: decision,
-    })) as Promise<PlacementApplication>
+    })
   }
 
   async withdraw(
     placementApplicationId: string,
     reason: WithdrawPlacementRequestReason,
   ): Promise<PlacementApplication> {
-    return (await this.restClient.post({
+    return this.restClient.post<PlacementApplication>({
       path: paths.placementApplications.withdraw({ id: placementApplicationId }),
       data: { reason },
-    })) as Promise<PlacementApplication>
+    })
   }
 }

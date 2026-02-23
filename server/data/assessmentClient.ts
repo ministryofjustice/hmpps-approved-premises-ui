@@ -35,14 +35,14 @@ export default class AssessmentClient {
   }
 
   async find(assessmentId: string): Promise<Assessment> {
-    return (await this.restClient.get({ path: paths.assessments.show({ id: assessmentId }) })) as Assessment
+    return this.restClient.get<Assessment>({ path: paths.assessments.show({ id: assessmentId }) })
   }
 
   async update(assessment: Assessment): Promise<Assessment> {
-    return (await this.restClient.put({
+    return this.restClient.put<Assessment>({
       path: paths.assessments.update({ id: assessment.id }),
       data: { data: assessment.data },
-    })) as Assessment
+    })
   }
 
   async acceptance(assessmentId: string, data: Cas1AssessmentAcceptance): Promise<void> {
@@ -67,10 +67,10 @@ export default class AssessmentClient {
     assessmentId: string,
     clarificationNote: Cas1NewClarificationNote,
   ): Promise<Cas1ClarificationNote> {
-    return (await this.restClient.post({
+    return this.restClient.post<Cas1ClarificationNote>({
       path: paths.assessments.clarificationNotes.create({ id: assessmentId }),
       data: clarificationNote,
-    })) as Cas1ClarificationNote
+    })
   }
 
   async updateClarificationNote(
@@ -78,9 +78,9 @@ export default class AssessmentClient {
     clarificationNoteId: string,
     clarificationNote: Cas1UpdatedClarificationNote,
   ): Promise<Cas1ClarificationNote> {
-    return (await this.restClient.put({
+    return this.restClient.put<Cas1ClarificationNote>({
       path: paths.assessments.clarificationNotes.update({ id: assessmentId, clarificationNoteId }),
       data: clarificationNote,
-    })) as Cas1ClarificationNote
+    })
   }
 }

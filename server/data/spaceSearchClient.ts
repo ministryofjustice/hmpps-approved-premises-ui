@@ -17,19 +17,19 @@ export default class SpaceSearchClient {
   }
 
   async search(params: SpaceSearchParameters): Promise<SpaceSearchResults> {
-    return (await this.restClient.post({
+    return this.restClient.post<SpaceSearchResults>({
       path: paths.match.findSpaces.pattern,
       data: { ...params },
-    })) as Promise<SpaceSearchResults>
+    })
   }
 
   async createSpaceBooking(
     placementRequestId: Cas1PlacementRequestDetail['id'],
     data: NewSpaceBooking,
   ): Promise<SpaceBooking> {
-    return (await this.restClient.post({
+    return this.restClient.post<SpaceBooking>({
       path: paths.placementRequests.spaceBookings.create({ placementRequestId }),
       data,
-    })) as SpaceBooking
+    })
   }
 }

@@ -26,24 +26,22 @@ export default class OutOfServiceBedClient {
   }
 
   async create(premisesId: Premises['id'], outOfServiceBed: NewOutOfServiceBed): Promise<OutOfServiceBed> {
-    const response = await this.restClient.post({
+    return this.restClient.post<OutOfServiceBed>({
       path: paths.manage.premises.outOfServiceBeds.create({ premisesId }),
       data: outOfServiceBed,
     })
-
-    return response as OutOfServiceBed
   }
 
   async find(premisesId: Premises['id'], id: OutOfServiceBed['id']): Promise<OutOfServiceBed> {
-    return (await this.restClient.get({
+    return this.restClient.get<OutOfServiceBed>({
       path: paths.manage.premises.outOfServiceBeds.show({ premisesId, id }),
-    })) as OutOfServiceBed
+    })
   }
 
   async getAllByPremises(premisesId: Premises['id']): Promise<Array<OutOfServiceBed>> {
-    return (await this.restClient.get({
+    return this.restClient.get<Array<OutOfServiceBed>>({
       path: paths.manage.premises.outOfServiceBeds.premisesIndex({ premisesId }),
-    })) as Array<OutOfServiceBed>
+    })
   }
 
   async get({
@@ -83,12 +81,10 @@ export default class OutOfServiceBedClient {
     outOfServiceBedData: UpdateOutOfServiceBed,
     premisesId: Premises['id'],
   ): Promise<OutOfServiceBed> {
-    const response = await this.restClient.put({
+    return this.restClient.put<OutOfServiceBed>({
       path: paths.manage.premises.outOfServiceBeds.update({ id, premisesId }),
       data: { ...outOfServiceBedData },
     })
-
-    return response as OutOfServiceBed
   }
 
   async cancel(
@@ -96,11 +92,9 @@ export default class OutOfServiceBedClient {
     premisesId: Premises['id'],
     outOfServiceBedData: NewOutOfServiceBedCancellation,
   ): Promise<OutOfServiceBedCancellation> {
-    const response = await this.restClient.post({
+    return this.restClient.post<OutOfServiceBedCancellation>({
       path: paths.manage.premises.outOfServiceBeds.cancel({ id, premisesId }),
       data: { ...outOfServiceBedData },
     })
-
-    return response as OutOfServiceBedCancellation
   }
 }

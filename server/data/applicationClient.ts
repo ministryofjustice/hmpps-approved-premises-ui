@@ -28,31 +28,31 @@ export default class ApplicationClient {
   }
 
   async find(applicationId: string): Promise<Application> {
-    return (await this.restClient.get({
+    return this.restClient.get<Application>({
       path: paths.applications.show({ id: applicationId }),
-    })) as Application
+    })
   }
 
   async create(crn: string, activeOffence: ActiveOffence): Promise<Application> {
     const { convictionId, deliusEventNumber, offenceId } = activeOffence
 
-    return (await this.restClient.post({
+    return this.restClient.post<Application>({
       path: paths.applications.new.pattern,
       data: { crn, convictionId, deliusEventNumber, offenceId, type: 'CAS1' },
-    })) as Application
+    })
   }
 
   async update(applicationId: string, updateData: UpdateApprovedPremisesApplication): Promise<Application> {
-    return (await this.restClient.put({
+    return this.restClient.put<Application>({
       path: paths.applications.update({ id: applicationId }),
       data: { ...updateData, type: 'CAS1' },
-    })) as Application
+    })
   }
 
   async allForLoggedInUser(): Promise<Array<Cas1ApplicationSummary>> {
-    return (await this.restClient.get({
+    return this.restClient.get<Array<Cas1ApplicationSummary>>({
       path: paths.applications.me.pattern,
-    })) as Array<Cas1ApplicationSummary>
+    })
   }
 
   async all(
@@ -78,9 +78,9 @@ export default class ApplicationClient {
   }
 
   async documents(application: Application): Promise<Array<Document>> {
-    return (await this.restClient.get({
+    return this.restClient.get<Array<Document>>({
       path: paths.applications.documents({ id: application.id }),
-    })) as Array<Document>
+    })
   }
 
   async withdrawal(applicationId: string, body: NewWithdrawal): Promise<void> {
@@ -98,27 +98,27 @@ export default class ApplicationClient {
   }
 
   async timeline(applicationId: string): Promise<Array<Cas1TimelineEvent>> {
-    return (await this.restClient.get({
+    return this.restClient.get<Array<Cas1TimelineEvent>>({
       path: paths.applications.timeline({ id: applicationId }),
-    })) as Array<Cas1TimelineEvent>
+    })
   }
 
   async requestsForPlacement(applicationId: string): Promise<Array<RequestForPlacement>> {
-    return (await this.restClient.get({
+    return this.restClient.get<Array<RequestForPlacement>>({
       path: paths.applications.requestsForPlacement({ id: applicationId }),
-    })) as Array<RequestForPlacement>
+    })
   }
 
   async addNote(applicationId: string, note: ApplicationTimelineNote): Promise<ApplicationTimelineNote> {
-    return (await this.restClient.post({
+    return this.restClient.post<ApplicationTimelineNote>({
       path: paths.applications.addNote({ id: applicationId }),
       data: note,
-    })) as ApplicationTimelineNote
+    })
   }
 
   async withdrawablesWithNotes(applicationId: string): Promise<Withdrawables> {
-    return (await this.restClient.get({
+    return this.restClient.get<Withdrawables>({
       path: paths.applications.withdrawablesWithNotes({ id: applicationId }),
-    })) as Withdrawables
+    })
   }
 }

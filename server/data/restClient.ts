@@ -105,16 +105,16 @@ export default class RestClient {
     }
   }
 
-  async post(request: PostRequest = {}): Promise<unknown> {
-    return this.postOrPutOrPatch('post', request)
+  async post<T = unknown>(request: PostRequest = {}): Promise<T> {
+    return this.postOrPutOrPatch('post', request) as T
   }
 
-  async put(request: PutRequest = {}): Promise<unknown> {
-    return this.postOrPutOrPatch('put', request)
+  async put<T = unknown>(request: PutRequest = {}): Promise<T> {
+    return this.postOrPutOrPatch('put', request) as T
   }
 
-  async patch(request: PatchRequest = {}): Promise<unknown> {
-    return this.postOrPutOrPatch('patch', request)
+  async patch<T = unknown>(request: PatchRequest = {}): Promise<T> {
+    return this.postOrPutOrPatch('patch', request) as T
   }
 
   async delete(path: string): Promise<unknown> {

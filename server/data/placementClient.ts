@@ -21,15 +21,15 @@ export default class PlacementClient {
   }
 
   async getPlacement(placementId: string): Promise<Cas1SpaceBooking> {
-    return (await this.restClient.get({
+    return this.restClient.get<Cas1SpaceBooking>({
       path: paths.placements.placementWithoutPremises({ placementId }),
-    })) as Cas1SpaceBooking
+    })
   }
 
   async getTimeline(args: { premisesId: string; placementId: string }): Promise<Array<Cas1TimelineEvent>> {
-    return (await this.restClient.get({
+    return this.restClient.get<Array<Cas1TimelineEvent>>({
       path: paths.premises.placements.timeline(args),
-    })) as Array<Cas1TimelineEvent>
+    })
   }
 
   async updatePlacement(

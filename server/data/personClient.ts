@@ -40,39 +40,29 @@ export default class PersonClient {
     }
 
     const path = `${paths.people.search({})}?${createQueryString(query)}`
-    const response = await this.restClient.get({
+    return this.restClient.get<Person>({
       path,
     })
-
-    return response as Person
   }
 
   async prisonCaseNotes(crn: string): Promise<Array<PrisonCaseNote>> {
-    const response = await this.restClient.get({ path: paths.people.prisonCaseNotes({ crn }) })
-
-    return response as Array<PrisonCaseNote>
+    return this.restClient.get<Array<PrisonCaseNote>>({ path: paths.people.prisonCaseNotes({ crn }) })
   }
 
   async adjudications(crn: string): Promise<Array<Adjudication>> {
-    const response = await this.restClient.get({ path: paths.people.adjudications({ crn }) })
-
-    return response as Array<Adjudication>
+    return this.restClient.get<Array<Adjudication>>({ path: paths.people.adjudications({ crn }) })
   }
 
   async acctAlerts(crn: string): Promise<Array<PersonAcctAlert>> {
-    const response = await this.restClient.get({ path: paths.people.acctAlerts({ crn }) })
-
-    return response as Array<PersonAcctAlert>
+    return this.restClient.get<Array<PersonAcctAlert>>({ path: paths.people.acctAlerts({ crn }) })
   }
 
   async offences(crn: string): Promise<Array<ActiveOffence>> {
-    const response = await this.restClient.get({ path: paths.people.offences({ crn }) })
-
-    return response as Array<ActiveOffence>
+    return this.restClient.get<Array<ActiveOffence>>({ path: paths.people.offences({ crn }) })
   }
 
   async oasysMetadata(crn: string): Promise<Cas1OASysMetadata> {
-    return (await this.restClient.get({ path: paths.people.oasys.metadata({ crn }) })) as Cas1OASysMetadata
+    return this.restClient.get<Cas1OASysMetadata>({ path: paths.people.oasys.metadata({ crn }) })
   }
 
   async oasysAnswers(
@@ -93,7 +83,7 @@ export default class PersonClient {
 
       const path = `${paths.people.oasys.answers({ crn })}${queryString ? `?${queryString}` : ''}`
 
-      response = (await this.restClient.get({ path })) as Cas1OASysGroup
+      response = await this.restClient.get<Cas1OASysGroup>({ path })
     }
 
     return response
@@ -124,10 +114,10 @@ export default class PersonClient {
 
   async spaceBookings(crn: string, includeCancelled: boolean = true): Promise<Array<Cas1SpaceBookingShortSummary>> {
     const query = includeCancelled ? { includeCancelled: 'true' } : {}
-    return (await this.restClient.get({
+    return this.restClient.get<Array<Cas1SpaceBookingShortSummary>>({
       path: paths.people.spaceBookings({ crn }),
       query,
-    })) as Array<Cas1SpaceBookingShortSummary>
+    })
   }
 
   async bookingDetails(crn: string): Promise<BookingDetails> {

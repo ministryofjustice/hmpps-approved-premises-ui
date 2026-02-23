@@ -75,9 +75,9 @@ export default class TaskClient {
   }
 
   async createAllocation(applicationId: string, userId: User['id'], taskType: Task['taskType']): Promise<Reallocation> {
-    return (await this.restClient.post({
+    return this.restClient.post<Reallocation>({
       path: paths.tasks.allocations.create({ id: applicationId, taskType }),
       data: { userId },
-    })) as Reallocation
+    })
   }
 }

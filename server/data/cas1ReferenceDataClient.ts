@@ -12,18 +12,18 @@ export default class Cas1ReferenceDataClient {
   }
 
   async getReferenceData(type: string): Promise<Array<Cas1ReferenceData>> {
-    return (await this.restClient.get({ path: paths.cas1ReferenceData({ type }) })) as Array<Cas1ReferenceData>
+    return this.restClient.get<Array<Cas1ReferenceData>>({ path: paths.cas1ReferenceData({ type }) })
   }
 
   async getCruManagementAreas(): Promise<Array<Cas1CruManagementArea>> {
-    return (await this.restClient.get({
+    return this.restClient.get<Array<Cas1CruManagementArea>>({
       path: paths.cas1ReferenceData({ type: 'cru-management-areas' }),
-    })) as Array<Cas1CruManagementArea>
+    })
   }
 
   async getOutOfServiceBedReasons(): Promise<Array<Cas1OutOfServiceBedReason>> {
-    return (await this.restClient.get({
+    return this.restClient.get<Array<Cas1OutOfServiceBedReason>>({
       path: paths.cas1ReferenceData({ type: 'out-of-service-bed-reasons' }),
-    })) as Array<Cas1OutOfServiceBedReason>
+    })
   }
 }
