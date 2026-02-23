@@ -18,7 +18,6 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'future_manager',
   'ap_area_manager',
   'user_manager',
-  'change_request_dev',
   'janitor',
 ]
 
@@ -31,6 +30,7 @@ export const unusedRoles = [
   'workflow_manager',
   'cru_member_find_and_book_beta',
   'cru_member_enable_out_of_service_beds',
+  'change_request_dev',
   'manage_resident',
 ] as const
 
@@ -90,10 +90,6 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   user_manager: {
     label: 'User manager',
     hint: 'Add, update and disable users',
-  },
-  change_request_dev: {
-    label: 'Change request development',
-    hint: 'For digital team use only',
   },
   janitor: {
     label: 'Janitor',

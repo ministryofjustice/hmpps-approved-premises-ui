@@ -55,10 +55,7 @@ export const services = () => {
   const applicationService = new ApplicationService(applicationClientBuilder)
   const assessmentService = new AssessmentService(assessmentClientBuilder)
   const taskService = new TaskService(taskClientBuilder)
-  const placementRequestService = new PlacementRequestService(
-    placementRequestClientBuilder,
-    cas1ReferenceDataClientBuilder,
-  )
+  const placementRequestService = new PlacementRequestService(placementRequestClientBuilder)
   const placementApplicationService = new PlacementApplicationService(placementApplicationClientBuilder)
   const spaceSearchService = new SpaceSearchService(bedClientBuilder)
   const reportService = new ReportService(reportClientBuilder)

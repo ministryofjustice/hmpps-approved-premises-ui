@@ -4,7 +4,6 @@ import {
   ApOccupancyViewController,
   ArrivalsController,
   BedsController,
-  ChangesController,
   DeparturesController,
   KeyworkerController,
   NonArrivalsController,
@@ -12,11 +11,10 @@ import {
   OutOfServiceBedsController,
   PlacementController,
   PremisesController,
-  TransfersController,
   UpdateOutOfServiceBedsController,
-  PlacementAppealController,
   LocalRestrictionsController,
   ResidentProfileController,
+  ChangesController,
 } from '../controllers/manage'
 import manageRoutes from './manage'
 import { type Controllers } from '../controllers'
@@ -25,7 +23,6 @@ import actions from './utils'
 import paths from '../paths/manage'
 import CancellationsController from '../controllers/manage/cancellationsController'
 import RedirectController from '../controllers/redirectController'
-import PlannedTransfersController from '../controllers/manage/premises/changeRequests/plannedTransferController'
 import OccupancyViewController from '../controllers/match/placementRequests/occupancyViewController'
 
 jest.mock('./utils')
@@ -51,12 +48,9 @@ describe('manage routes', () => {
   const redirectController: DeepMocked<RedirectController> = createMock<RedirectController>({})
   const keyworkerController: DeepMocked<KeyworkerController> = createMock<KeyworkerController>({})
   const apOccupancyViewController: DeepMocked<ApOccupancyViewController> = createMock<ApOccupancyViewController>({})
-  const changesController: DeepMocked<ChangesController> = createMock<ChangesController>({})
-  const transfersController: DeepMocked<TransfersController> = createMock<TransfersController>({})
-  const placementAppealController: DeepMocked<PlacementAppealController> = createMock<PlacementAppealController>({})
-  const plannedTransferController: DeepMocked<PlannedTransfersController> = createMock<PlannedTransfersController>()
   const occupancyViewController: DeepMocked<OccupancyViewController> = createMock<OccupancyViewController>({})
   const residentProfileController: DeepMocked<ResidentProfileController> = createMock<ResidentProfileController>()
+  const changesController: DeepMocked<ChangesController> = createMock<ChangesController>({})
 
   const controllers: DeepMocked<Controllers> = createMock<Controllers>({
     bedsController,
@@ -73,12 +67,9 @@ describe('manage routes', () => {
     placementController,
     keyworkerController,
     apOccupancyViewController,
-    changesController,
-    transfersController,
-    placementAppealController,
-    plannedTransferController,
     occupancyViewController,
     residentProfileController,
+    changesController,
   })
   const services: DeepMocked<Services> = createMock<Services>({})
 
@@ -211,75 +202,5 @@ describe('manage routes', () => {
       auditEvent: 'NEW_DEPARTURE',
       allowedPermissions: ['cas1_space_booking_record_departure'],
     })
-  })
-
-  it('should allow users with permission cas1_placement_appeal_create to create a placement appeal', () => {
-    manageRoutes(controllers, router, services)
-
-    expect(getSpy).toHaveBeenCalledWith(paths.premises.placements.appeal.new.pattern, placementAppealController.new(), {
-      auditEvent: 'PLACEMENT_APPEAL_NEW',
-      allowedPermissions: ['cas1_placement_appeal_create'],
-    })
-    expect(postSpy).toHaveBeenCalledWith(
-      paths.premises.placements.appeal.new.pattern,
-      placementAppealController.newSave(),
-      {
-        auditEvent: 'PLACEMENT_APPEAL_SAVE',
-        allowedPermissions: ['cas1_placement_appeal_create'],
-      },
-    )
-    expect(getSpy).toHaveBeenCalledWith(
-      paths.premises.placements.appeal.confirm.pattern,
-      placementAppealController.confirm(),
-      {
-        auditEvent: 'PLACEMENT_APPEAL_CONFIRM',
-        allowedPermissions: ['cas1_placement_appeal_create'],
-      },
-    )
-    expect(postSpy).toHaveBeenCalledWith(
-      paths.premises.placements.appeal.confirm.pattern,
-      placementAppealController.create(),
-      {
-        auditEvent: 'PLACEMENT_APPEAL_CREATE',
-        allowedPermissions: ['cas1_placement_appeal_create'],
-      },
-    )
-  })
-
-  it('should allow users with permission cas1_transfer_create to create a planned transfer change request', () => {
-    manageRoutes(controllers, router, services)
-
-    expect(getSpy).toHaveBeenCalledWith(
-      paths.premises.placements.transfers.plannedDetails.pattern,
-      plannedTransferController.details(),
-      {
-        auditEvent: 'TRANSFER_REQUEST_PLANNED_DETAILS',
-        allowedPermissions: ['cas1_transfer_create'],
-      },
-    )
-    expect(postSpy).toHaveBeenCalledWith(
-      paths.premises.placements.transfers.plannedDetails.pattern,
-      plannedTransferController.detailsSave(),
-      {
-        auditEvent: 'TRANSFER_REQUEST_PLANNED_DETAILS_SAVE',
-        allowedPermissions: ['cas1_transfer_create'],
-      },
-    )
-    expect(getSpy).toHaveBeenCalledWith(
-      paths.premises.placements.transfers.plannedConfirm.pattern,
-      plannedTransferController.confirm(),
-      {
-        auditEvent: 'TRANSFER_REQUEST_PLANNED_CONFIRM',
-        allowedPermissions: ['cas1_transfer_create'],
-      },
-    )
-    expect(postSpy).toHaveBeenCalledWith(
-      paths.premises.placements.transfers.plannedConfirm.pattern,
-      plannedTransferController.create(),
-      {
-        auditEvent: 'TRANSFER_REQUEST_PLANNED_CREATE',
-        allowedPermissions: ['cas1_transfer_create'],
-      },
-    )
   })
 })

@@ -13,7 +13,6 @@ import {
 import { placementRequestSummaryList } from '../../../utils/placementRequests/placementRequestSummaryList'
 import { placementsSummaries } from '../../../utils/placementRequests/placementSummaryList'
 import { adminIdentityBar } from '../../../utils/placementRequests'
-import { changeRequestBanners } from '../../../utils/placementRequests/changeRequestsUtils'
 import { placementRadioItems, placementRequestKeyDetails } from '../../../utils/placementRequests/utils'
 import adminPaths from '../../../paths/admin'
 import managePaths from '../../../paths/manage'
@@ -73,11 +72,6 @@ describe('PlacementRequestsController', () => {
         placementRequest,
         placementRequestSummaryList: placementRequestSummaryList(placementRequest),
         placements: placementsSummaries(placementRequest),
-        changeRequestBanners: changeRequestBanners(
-          placementRequest.id,
-          placementRequest.openChangeRequests,
-          response.locals.user,
-        ),
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
     })

@@ -62,7 +62,6 @@ const userRoles: Record<RoleInUse, string> = {
   future_manager: 'Future manager',
   ap_area_manager: 'AP area manager',
   user_manager: 'User manager',
-  change_request_dev: 'Change request development',
   janitor: 'Janitor',
 }
 

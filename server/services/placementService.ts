@@ -1,9 +1,7 @@
 import {
-  Cas1ApprovedPlacementAppeal,
   Cas1AssignKeyWorker,
   Cas1NewArrival,
   Cas1NewDeparture,
-  Cas1NewEmergencyTransfer,
   Cas1NewSpaceBookingCancellation,
   Cas1NonArrival,
   Cas1SpaceBooking,
@@ -105,27 +103,5 @@ export default class PlacementService {
     const placementClient = this.placementClientFactory(token)
 
     return placementClient.cancel(premisesId, placementId, cancellation)
-  }
-
-  async createEmergencyTransfer(
-    token: string,
-    premisesId: string,
-    placementId: string,
-    newEmergencyTransfer: Cas1NewEmergencyTransfer,
-  ) {
-    const placementClient = this.placementClientFactory(token)
-
-    return placementClient.createEmergencyTransfer(premisesId, placementId, newEmergencyTransfer)
-  }
-
-  async approvePlacementAppeal(
-    token: string,
-    premisesId: string,
-    placementId: string,
-    approvedPlacementAppeal: Cas1ApprovedPlacementAppeal,
-  ) {
-    const placementClient = this.placementClientFactory(token)
-
-    return placementClient.approvePlacementAppeal(premisesId, placementId, approvedPlacementAppeal)
   }
 }
