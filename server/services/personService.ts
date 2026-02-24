@@ -2,6 +2,7 @@ import type { Response } from 'express'
 import type {
   ActiveOffence,
   Adjudication,
+  BookingDetails,
   Cas1OASysGroup,
   Cas1OASysGroupName,
   Cas1OASysMetadata,
@@ -105,5 +106,9 @@ export default class PersonService {
     includeCancelled: boolean = true,
   ): Promise<Array<Cas1SpaceBookingShortSummary>> {
     return this.personClientFactory(token).spaceBookings(crn, includeCancelled)
+  }
+
+  async getBookingDetails(token: string, crn: string): Promise<BookingDetails> {
+    return this.personClientFactory(token).bookingDetails(crn)
   }
 }

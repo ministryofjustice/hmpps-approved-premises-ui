@@ -17,6 +17,7 @@ import { SummaryListWithCard, TextItem } from '@approved-premises/ui'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 import * as residentUtils from '../../../../server/utils/resident'
+import { mentalHealthCards } from '../../../../server/utils/resident/healthUtils'
 
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
@@ -26,7 +27,6 @@ import { personDetailsCardList } from '../../../../server/utils/resident/persona
 import { AND, THEN, WHEN } from '../../../helpers'
 import { SubmittedDocumentRenderer } from '../../../../server/utils/forms/submittedDocumentRenderer'
 import { detailedStatus } from '../../../../server/utils/placements/status'
-import { mentalHealthCards } from '../../../../server/utils/resident/healthUtils'
 
 export default class ResidentProfilePage extends Page {
   constructor(
@@ -135,6 +135,10 @@ export default class ResidentProfilePage extends Page {
     cards.forEach(card => {
       this.shouldShowCard(card)
     })
+  }
+
+  shouldShowSmokingStatus() {
+    cy.get('.govuk-summary-card__title').contains('Smoker or vaper').should('exist')
   }
 
   shouldShowOffencesInformation(

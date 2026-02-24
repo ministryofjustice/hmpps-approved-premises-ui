@@ -178,6 +178,7 @@ export default {
     spaceBookings: cas1Person.path('space-bookings'),
     licenceDetails: cas1Person.path('licence-details'),
     csraSummaries: cas1Person.path('csra-summaries'),
+    bookingDetails: person.path('booking-details'),
   },
   users: {
     index: cas1Users,

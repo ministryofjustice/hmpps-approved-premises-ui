@@ -1,7 +1,18 @@
 import { PersonAcctAlert } from '@approved-premises/api'
 import { render } from 'nunjucks'
-import { acctAlertFactory, cas1OasysGroupFactory, cas1SpaceBookingFactory } from '../../testutils/factories'
-import { healthDetailsCards, healthSideNavigation, mentalHealthCards } from './healthUtils'
+import {
+  acctAlertFactory,
+  bookingDetailsFactory,
+  cas1OasysGroupFactory,
+  cas1SpaceBookingFactory,
+} from '../../testutils/factories'
+import {
+  getSmokingStatus,
+  healthDetailsCards,
+  healthSideNavigation,
+  mentalHealthCards,
+  smokingStatusMapping,
+} from './healthUtils'
 import { DateFormats } from '../dateUtils'
 import { oasysMetadataRow, tableRow } from './riskUtils'
 import { loadingErrorMessage } from '.'
@@ -42,7 +53,7 @@ describe('healthUtils', () => {
     it('should render error card for recent assessment (FM-286)', () => {
       const supportingInformation = cas1OasysGroupFactory.supportingInformation().build()
 
-      const result = healthDetailsCards(supportingInformation, 'success')
+      const result = healthDetailsCards(supportingInformation, 'success', null)
 
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', { html: 'Imported from OASys' })
@@ -58,7 +69,7 @@ describe('healthUtils', () => {
         .supportingInformation()
         .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
 
-      const result = healthDetailsCards(supportingInformation, 'success')
+      const result = healthDetailsCards(supportingInformation, 'success', null)
 
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', { html: 'Imported from OASys' })
@@ -66,6 +77,53 @@ describe('healthUtils', () => {
       expect(result[1].html).toMatchStringIgnoringWhitespace(
         `${oasysMetadataRow('13.1', 'OASys supporting information', supportingInformation)}Nunjucks template partials/detailsBlock.njk`,
       )
+    })
+
+    it('should include smoking card when booking details has smoking status', () => {
+      const supportingInformation = cas1OasysGroupFactory
+        .supportingInformation()
+        .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
+      const bookingDetails = bookingDetailsFactory.build({
+        profileInformation: [{ type: 'SMOKE', resultValue: 'SMOKER_YES' }],
+      })
+
+      const result = healthDetailsCards(supportingInformation, 'success', bookingDetails, 'success')
+
+      expect(result).toHaveLength(3)
+      expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
+      expect(result[2]).toEqual({
+        card: { title: { text: 'Smoker or vaper' } },
+        rows: [{ key: { text: 'Smoker or vaper' }, value: { text: 'Smoker' } }],
+      })
+    })
+
+    it('should include error card when booking details fetch fails', () => {
+      const supportingInformation = cas1OasysGroupFactory
+        .supportingInformation()
+        .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
+
+      const result = healthDetailsCards(supportingInformation, 'success', null, 'failure')
+
+      expect(result).toHaveLength(3)
+      expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
+      expect(result[2].html).toMatchStringIgnoringWhitespace(
+        loadingErrorMessage({ result: 'failure', item: 'smoking status', source: 'Digital Prison Service (DPS)' }),
+      )
+    })
+
+    it('should include error card when no booking details', () => {
+      const supportingInformation = cas1OasysGroupFactory
+        .supportingInformation()
+        .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
+
+      const result = healthDetailsCards(supportingInformation, 'success', null, 'success')
+
+      expect(result).toHaveLength(3)
+      expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
+      expect(result[2]).toEqual({
+        card: { title: { text: 'Smoker or vaper' } },
+        html: '<p class="govuk-hint">Not entered in Digital Prison Service (DPS)</p>',
+      })
     })
   })
 
@@ -139,5 +197,14 @@ describe('healthUtils', () => {
     expect(result[8].html).toMatchStringIgnoringWhitespace(
       loadingErrorMessage({ result: 'failure', item: 'ACCT alerts', source: 'Digital Prison Service' }),
     )
+  })
+
+  describe('getSmokingStatus', () => {
+    it.each(Object.entries(smokingStatusMapping))('should return "%s" for %s', (resultValue, expected) => {
+      const bookingDetails = bookingDetailsFactory.build({
+        profileInformation: [{ type: 'SMOKE', resultValue }],
+      })
+      expect(getSmokingStatus(bookingDetails)).toBe(expected)
+    })
   })
 })
