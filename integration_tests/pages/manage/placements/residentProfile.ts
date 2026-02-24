@@ -2,7 +2,6 @@ import {
   ActiveOffence,
   Adjudication,
   ApprovedPremisesApplication,
-  BookingDetails,
   Cas1OASysGroup,
   Cas1SpaceBooking,
   Cas1SpaceBookingShortSummary,
@@ -18,7 +17,7 @@ import { SummaryListWithCard, TextItem } from '@approved-premises/ui'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 import * as residentUtils from '../../../../server/utils/resident'
-import { smokingStatusMapping, mentalHealthCards } from '../../../../server/utils/resident/healthUtils'
+import { mentalHealthCards } from '../../../../server/utils/resident/healthUtils'
 
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
@@ -138,21 +137,8 @@ export default class ResidentProfilePage extends Page {
     })
   }
 
-  shouldShowSmokingStatus(bookingDetails: BookingDetails) {
-    const smokingInfo = bookingDetails.profileInformation?.find(info => info.type === 'SMOKE')
-    const expectedStatus = smokingInfo?.resultValue
-      ? smokingStatusMapping[smokingInfo.resultValue] || smokingInfo.resultValue
-      : null
-
-    if (expectedStatus) {
-      cy.get('.govuk-summary-card__title')
-        .contains('Smoker or vaper')
-        .parents('.govuk-summary-card')
-        .within(() => {
-          cy.get('.govuk-summary-list__key').contains('Smoker or vaper').should('exist')
-          cy.get('.govuk-summary-list__value').contains(expectedStatus).should('exist')
-        })
-    }
+  shouldShowSmokingStatus() {
+    cy.get('.govuk-summary-card__title').contains('Smoker or vaper').should('exist')
   }
 
   shouldShowOffencesInformation(

@@ -4,7 +4,7 @@ import type { BookingDetails } from '@approved-premises/api'
 import { smokingStatusMapping } from '../../utils/resident/healthUtils'
 
 export default Factory.define<BookingDetails>(() => ({
-  bookingId: faker.number.int({ min: 0, max: 100000 }),
+  bookingId: faker.number.int({ min: 1, max: 100000 }),
   offenderNo: faker.string.alphanumeric(7).toUpperCase(),
   profileInformation: [
     {

@@ -7,14 +7,19 @@ import { ApiOutcome, settlePromisesWithOutcomes } from '../utils'
 export const healthTabController = async ({ personService, token, crn }: TabControllerParameters): Promise<TabData> => {
   const {
     values: [supportingInformation, bookingDetails],
-    outcomes: [supportingInformationOutcome],
+    outcomes: [supportingInformationOutcome, bookingDetailsOutcome],
   }: { values: [Cas1OASysGroup, BookingDetails]; outcomes: Array<ApiOutcome> } = await settlePromisesWithOutcomes([
     personService.getOasysAnswers(token, crn, 'supportingInformation', [13]),
     personService.getBookingDetails(token, crn),
   ])
   return {
     subHeading: 'Health and disability',
-    cardList: healthDetailsCards(supportingInformation, supportingInformationOutcome, bookingDetails),
+    cardList: healthDetailsCards(
+      supportingInformation,
+      supportingInformationOutcome,
+      bookingDetails,
+      bookingDetailsOutcome,
+    ),
   }
 }
 

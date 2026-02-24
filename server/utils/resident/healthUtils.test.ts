@@ -78,6 +78,53 @@ describe('healthUtils', () => {
         `${oasysMetadataRow('13.1', 'OASys supporting information', supportingInformation)}Nunjucks template partials/detailsBlock.njk`,
       )
     })
+
+    it('should include smoking card when booking details has smoking status', () => {
+      const supportingInformation = cas1OasysGroupFactory
+        .supportingInformation()
+        .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
+      const bookingDetails = bookingDetailsFactory.build({
+        profileInformation: [{ type: 'SMOKE', resultValue: 'SMOKER_YES' }],
+      })
+
+      const result = healthDetailsCards(supportingInformation, 'success', bookingDetails, 'success')
+
+      expect(result).toHaveLength(3)
+      expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
+      expect(result[2]).toEqual({
+        card: { title: { text: 'Smoker or vaper' } },
+        rows: [{ key: { text: 'Smoker or vaper' }, value: { text: 'Smoker' } }],
+      })
+    })
+
+    it('should include error card when booking details fetch fails', () => {
+      const supportingInformation = cas1OasysGroupFactory
+        .supportingInformation()
+        .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
+
+      const result = healthDetailsCards(supportingInformation, 'success', null, 'failure')
+
+      expect(result).toHaveLength(3)
+      expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
+      expect(result[2].html).toMatchStringIgnoringWhitespace(
+        loadingErrorMessage({ result: 'failure', item: 'smoking status', source: 'Digital Prison Service (DPS)' }),
+      )
+    })
+
+    it('should include error card when no booking details', () => {
+      const supportingInformation = cas1OasysGroupFactory
+        .supportingInformation()
+        .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
+
+      const result = healthDetailsCards(supportingInformation, 'success', null, 'success')
+
+      expect(result).toHaveLength(3)
+      expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
+      expect(result[2]).toEqual({
+        card: { title: { text: 'Smoker or vaper' } },
+        html: '<p class="govuk-hint">Not entered in Digital Prison Service (DPS)</p>',
+      })
+    })
   })
 
   describe('mentalHealthCards', () => {

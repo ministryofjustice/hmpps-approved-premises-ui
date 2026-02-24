@@ -38,31 +38,50 @@ export const healthDetailsCards = (
   supportingInformation: Cas1OASysGroup,
   outcome: ApiOutcome,
   bookingDetails: BookingDetails | null = null,
+  bookingDetailsOutcome?: ApiOutcome,
 ) => {
   const cards = [card({ html: insetText('Imported from OASys') })]
 
-  const smokingCard = getSmokingStatus(bookingDetails)
-    ? card({
-        title: 'Smoker or vaper',
-        rows: [summaryListItem('Smoker or vaper', getSmokingStatus(bookingDetails))],
-      })
-    : null
+  const smokingStatus = getSmokingStatus(bookingDetails)
+  let smokingCard
+
+  if (smokingStatus) {
+    smokingCard = card({
+      title: 'Smoker or vaper',
+      rows: [summaryListItem('Smoker or vaper', smokingStatus)],
+    })
+  } else if (bookingDetailsOutcome && bookingDetailsOutcome !== 'success') {
+    smokingCard = card({
+      title: 'Smoker or vaper',
+      html: loadingErrorMessage({
+        result: bookingDetailsOutcome,
+        item: 'smoking status',
+        source: 'Digital Prison Service (DPS)',
+      }),
+    })
+  } else {
+    smokingCard = card({
+      title: 'Smoker or vaper',
+      html: '<p class="govuk-hint">Not entered in Digital Prison Service (DPS)</p>',
+    })
+  }
 
   const assessentIso = supportingInformation?.assessmentMetadata?.dateCompleted
+  let healthCards
   if (assessentIso && assessentIso > '2025-04-09T18:00') {
     const definition = oasysQuestionDetailsByNumber['13.1']
-    const healthCards = cards.concat(
+    healthCards = cards.concat(
       card({
         title: definition.label,
         html: `<p>We cannot load general health - any physical or mental health conditions right now.</p>
 <p>Go to OASys to check if any general health details have been entered.</p>`,
       }),
     )
-    return smokingCard ? healthCards.concat(smokingCard) : healthCards
+  } else {
+    healthCards = cards.concat(summaryCards(['13.1'], supportingInformation, outcome))
   }
 
-  const healthCards = cards.concat(summaryCards(['13.1'], supportingInformation, outcome))
-  return smokingCard ? healthCards.concat(smokingCard) : healthCards
+  return healthCards.concat(smokingCard)
 }
 
 export const mentalHealthCards = ({

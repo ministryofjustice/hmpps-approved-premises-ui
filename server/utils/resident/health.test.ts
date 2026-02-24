@@ -46,7 +46,7 @@ describe('Health tab', () => {
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Health and disability' })
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [13])
       expect(personService.getBookingDetails).toHaveBeenCalledWith(token, crn)
-      expect(healthDetailsCards).toHaveBeenCalledWith(supportingInformation, 'success', bookingDetails)
+      expect(healthDetailsCards).toHaveBeenCalledWith(supportingInformation, 'success', bookingDetails, 'success')
     })
   })
 

@@ -108,7 +108,7 @@ context('ResidentProfile', () => {
       page.shouldHaveActiveSideNav(`Health and disability`)
 
       AND('I should see the smoking status card')
-      page.shouldShowSmokingStatus(bookingDetails)
+      page.shouldShowSmokingStatus()
 
       WHEN('I select the Mental health subtab')
       page.clickSideNav('Mental health')
