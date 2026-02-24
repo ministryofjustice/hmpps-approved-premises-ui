@@ -40,37 +40,12 @@ export const healthDetailsCards = (
   bookingDetails: BookingDetails | null = null,
   bookingDetailsOutcome?: ApiOutcome,
 ) => {
-  const cards = [card({ html: insetText('Imported from OASys') })]
-
-  const smokingStatus = getSmokingStatus(bookingDetails)
-  let smokingCard
-
-  if (smokingStatus) {
-    smokingCard = card({
-      title: 'Smoker or vaper',
-      rows: [summaryListItem('Smoker or vaper', smokingStatus)],
-    })
-  } else if (bookingDetailsOutcome && bookingDetailsOutcome !== 'success') {
-    smokingCard = card({
-      title: 'Smoker or vaper',
-      html: loadingErrorMessage({
-        result: bookingDetailsOutcome,
-        item: 'smoking status',
-        source: 'Digital Prison Service (DPS)',
-      }),
-    })
-  } else {
-    smokingCard = card({
-      title: 'Smoker or vaper',
-      html: '<p class="govuk-hint">Not entered in Digital Prison Service (DPS)</p>',
-    })
-  }
+  let cards = [card({ html: insetText('Imported from OASys') })]
 
   const assessentIso = supportingInformation?.assessmentMetadata?.dateCompleted
-  let healthCards
   if (assessentIso && assessentIso > '2025-04-09T18:00') {
     const definition = oasysQuestionDetailsByNumber['13.1']
-    healthCards = cards.concat(
+    cards = cards.concat(
       card({
         title: definition.label,
         html: `<p>We cannot load general health - any physical or mental health conditions right now.</p>
@@ -78,10 +53,22 @@ export const healthDetailsCards = (
       }),
     )
   } else {
-    healthCards = cards.concat(summaryCards(['13.1'], supportingInformation, outcome))
+    cards = cards.concat(summaryCards(['13.1'], supportingInformation, outcome))
   }
 
-  return healthCards.concat(smokingCard)
+  const source = 'Digital Prison Service (DPS)'
+  const smokingStatus = getSmokingStatus(bookingDetails)
+  const smokingError = loadingErrorMessage({ result: bookingDetailsOutcome, item: 'smoking status', source })
+
+  cards = cards.concat(
+    card({
+      title: 'Smoker or vaper',
+      rows: smokingStatus ? [summaryListItem('Smoker or vaper', smokingStatus)] : undefined,
+      html: !smokingStatus ? smokingError || `<p class="govuk-hint">Not entered in ${source}</p>` : undefined,
+    }),
+  )
+
+  return cards
 }
 
 export const mentalHealthCards = ({
