@@ -37,11 +37,11 @@ export default class UserClient {
   }
 
   async getUser(id: string): Promise<User> {
-    return (await this.restClient.get({ path: paths.users.show({ id }) })) as User
+    return this.restClient.get<User>({ path: paths.users.show({ id }) })
   }
 
   async getUserProfile(): Promise<Cas1ProfileResponse> {
-    return (await this.restClient.get({ path: paths.users.profile({}) })) as Cas1ProfileResponse
+    return this.restClient.get<Cas1ProfileResponse>({ path: paths.users.profile({}) })
   }
 
   async getUsersSummaries(filters: UsersSearchParams = { page: 1 }): Promise<PaginatedResponse<UserSummary>> {
@@ -75,7 +75,7 @@ export default class UserClient {
     const roles = filters.roles ? filters.roles.join(',') : undefined
     const qualifications = filters.qualifications ? filters.qualifications.join(',') : undefined
 
-    return this.restClient.getPaginatedResponse({
+    return this.restClient.getPaginatedResponse<User>({
       path: paths.users.index({}),
       page: page.toString(),
       query: { nameOrEmail, cruManagementAreaId, roles, qualifications, sortBy, sortDirection },
@@ -83,18 +83,18 @@ export default class UserClient {
   }
 
   async updateUser(userId: string, data: Cas1UpdateUser): Promise<User> {
-    return (await this.restClient.put({
+    return this.restClient.put<User>({
       path: paths.users.update({ id: userId }),
       data,
-    })) as User
+    })
   }
 
   search(name: string): Promise<Array<User>> {
-    return this.restClient.get({ path: paths.users.search({}), query: { name } }) as Promise<Array<User>>
+    return this.restClient.get<Array<User>>({ path: paths.users.search({}), query: { name } })
   }
 
   searchDelius(deliusUsername: string): Promise<User> {
-    return this.restClient.get({ path: paths.users.searchDelius({}), query: { name: deliusUsername } }) as Promise<User>
+    return this.restClient.get<User>({ path: paths.users.searchDelius({}), query: { name: deliusUsername } })
   }
 
   async delete(id: string): Promise<void> {

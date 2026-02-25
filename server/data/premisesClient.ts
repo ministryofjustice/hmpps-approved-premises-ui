@@ -30,24 +30,24 @@ export default class PremisesClient {
   }
 
   async allCas1(filters: PremisesFilters): Promise<Array<Cas1PremisesBasicSummary>> {
-    return (await this.restClient.get({
+    return this.restClient.get<Array<Cas1PremisesBasicSummary>>({
       path: paths.premises.index({}),
       query: { ...filters },
-    })) as Array<Cas1PremisesBasicSummary>
+    })
   }
 
   async find(id: string): Promise<Cas1Premises> {
-    return (await this.restClient.get({ path: paths.premises.show({ premisesId: id }) })) as Cas1Premises
+    return this.restClient.get<Cas1Premises>({ path: paths.premises.show({ premisesId: id }) })
   }
 
   async getBeds(premisesId: string): Promise<Array<Cas1PremisesBedSummary>> {
-    return (await this.restClient.get({
+    return this.restClient.get<Array<Cas1PremisesBedSummary>>({
       path: paths.premises.beds.index({ premisesId }),
-    })) as Array<Cas1PremisesBedSummary>
+    })
   }
 
   async getBed(premisesId: string, bedId: string): Promise<Cas1BedDetail> {
-    return (await this.restClient.get({ path: paths.premises.beds.show({ premisesId, bedId }) })) as Cas1BedDetail
+    return this.restClient.get<Cas1BedDetail>({ path: paths.premises.beds.show({ premisesId, bedId }) })
   }
 
   async getCapacity(
@@ -56,17 +56,17 @@ export default class PremisesClient {
     endDate: string,
     excludeSpaceBookingId?: string,
   ): Promise<Cas1PremiseCapacity> {
-    return (await this.restClient.get({
+    return this.restClient.get<Cas1PremiseCapacity>({
       path: paths.premises.capacity({ premisesId }),
       query: { startDate, endDate, excludeSpaceBookingId },
-    })) as Cas1PremiseCapacity
+    })
   }
 
   async getMultipleCapacity(params: Cas1NationalOccupancyParameters): Promise<Cas1NationalOccupancy> {
-    return (await this.restClient.post({
+    return this.restClient.post<Cas1NationalOccupancy>({
       path: paths.premises.nationalCapacity({}),
       data: params,
-    })) as Cas1NationalOccupancy
+    })
   }
 
   async getDaySummary(args: {
@@ -77,14 +77,14 @@ export default class PremisesClient {
     bookingsSortBy?: Cas1SpaceBookingDaySummarySortField
   }): Promise<Cas1PremisesDaySummary> {
     const { premisesId, date, bookingsSortDirection, bookingsSortBy, bookingsCriteriaFilter } = args
-    return (await this.restClient.get({
+    return this.restClient.get<Cas1PremisesDaySummary>({
       path: paths.premises.daySummary({ premisesId, date }),
       query: {
         bookingsSortDirection,
         bookingsSortBy,
         bookingsCriteriaFilter: bookingsCriteriaFilter?.join(','),
       },
-    })) as Cas1PremisesDaySummary
+    })
   }
 
   async getPlacements(args: {
@@ -106,15 +106,15 @@ export default class PremisesClient {
   }
 
   async getPlacement(args: { premisesId: string; placementId: string }): Promise<Cas1SpaceBooking> {
-    return (await this.restClient.get({
+    return this.restClient.get<Cas1SpaceBooking>({
       path: paths.premises.placements.show(args),
-    })) as Cas1SpaceBooking
+    })
   }
 
   async getCurrentKeyworkers(premisesId: string): Promise<Array<Cas1CurrentKeyWorker>> {
-    return (await this.restClient.get({
+    return this.restClient.get<Array<Cas1CurrentKeyWorker>>({
       path: paths.premises.currentKeyworkers({ premisesId }),
-    })) as Array<Cas1CurrentKeyWorker>
+    })
   }
 
   async getOccupancyReport(response: Response): Promise<void> {

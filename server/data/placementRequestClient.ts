@@ -72,30 +72,24 @@ export default class PlacementRequestClient {
     })
   }
 
-  async createBooking(
-    placementRequestId: string,
-    newPlacementRequestBooking: NewPlacementRequestBooking,
-  ): Promise<NewPlacementRequestBookingConfirmation> {
-    return (await this.restClient.post({
+  async createBooking(placementRequestId: string, newPlacementRequestBooking: NewPlacementRequestBooking) {
+    return this.restClient.post<NewPlacementRequestBookingConfirmation>({
       path: paths.placementRequests.booking({ placementRequestId }),
       data: newPlacementRequestBooking,
-    })) as Promise<NewPlacementRequestBookingConfirmation>
+    })
   }
 
-  async bookingNotMade(placementRequestId: string, data: NewBookingNotMade): Promise<BookingNotMade> {
-    return (await this.restClient.post({
+  async bookingNotMade(placementRequestId: string, data: NewBookingNotMade) {
+    return this.restClient.post<BookingNotMade>({
       path: paths.placementRequests.bookingNotMade({ placementRequestId }),
       data,
-    })) as Promise<BookingNotMade>
+    })
   }
 
-  async withdraw(
-    placementRequestId: string,
-    reason: WithdrawPlacementRequestReason,
-  ): Promise<Cas1PlacementRequestDetail> {
-    return (await this.restClient.post({
+  async withdraw(placementRequestId: string, reason: WithdrawPlacementRequestReason) {
+    return this.restClient.post<Cas1PlacementRequestDetail>({
       path: paths.placementRequests.withdrawal.create({ placementRequestId }),
       data: { reason },
-    })) as Promise<Cas1PlacementRequestDetail>
+    })
   }
 }

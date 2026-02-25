@@ -12,22 +12,22 @@ export default class ReferenceDataClient {
   }
 
   async getReferenceData(type: string): Promise<Array<ReferenceData>> {
-    return (await this.restClient.get({ path: paths.referenceData({ type }) })) as Array<ReferenceData>
+    return this.restClient.get<Array<ReferenceData>>({ path: paths.referenceData({ type }) })
   }
 
   async getProbationRegions(): Promise<Array<ProbationRegion>> {
-    return (await this.restClient.get({
+    return this.restClient.get<Array<ProbationRegion>>({
       path: paths.referenceData({ type: 'probation-regions' }),
-    })) as Array<ProbationRegion>
+    })
   }
 
   async getApAreas(): Promise<Array<ApArea>> {
-    return (await this.restClient.get({ path: paths.referenceData({ type: 'ap-areas' }) })) as Array<ApArea>
+    return this.restClient.get<Array<ApArea>>({ path: paths.referenceData({ type: 'ap-areas' }) })
   }
 
   async getNonArrivalReasons(): Promise<Array<NonArrivalReason>> {
-    return (await this.restClient.get({
+    return this.restClient.get<Array<NonArrivalReason>>({
       path: paths.referenceData({ type: 'non-arrival-reasons' }),
-    })) as Array<NonArrivalReason>
+    })
   }
 }

@@ -11,15 +11,15 @@ export default class AppealClient {
   }
 
   async find(applicationId: string, appealId: string): Promise<Appeal> {
-    return (await this.restClient.get({
+    return this.restClient.get<Appeal>({
       path: paths.applications.appeals.show({ id: applicationId, appealId }),
-    })) as Appeal
+    })
   }
 
   async create(applicationId: string, appeal: NewAppeal): Promise<Appeal> {
-    return (await this.restClient.post({
+    return this.restClient.post<Appeal>({
       path: paths.applications.appeals.create({ id: applicationId }),
       data: appeal,
-    })) as Appeal
+    })
   }
 }
