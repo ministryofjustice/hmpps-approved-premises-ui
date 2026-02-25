@@ -74,8 +74,11 @@ export default class RelevantDates implements TasklistPage {
   }
 
   previous() {
-    if (this.application.data?.['basic-information']?.['exception-details']) {
-      return 'exception-details'
+    if (this.application.data?.['basic-information']?.transgender?.transgenderOrHasTransgenderHistory === 'yes') {
+      if (this.application.data?.['basic-information']?.['complex-case-board']?.reviewRequired === 'yes') {
+        return 'board-taken-place'
+      }
+      return 'complex-case-board'
     }
     return 'transgender'
   }

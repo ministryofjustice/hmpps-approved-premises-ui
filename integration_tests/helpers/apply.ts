@@ -33,6 +33,7 @@ import {
 } from '../../server/testutils/factories'
 import { documentsFromApplication } from '../../server/utils/assessments/documentUtils'
 import oasysStubs from '../../server/data/stubs/oasysStubs.json'
+import { AND, GIVEN, THEN, WHEN } from './index'
 
 export default class ApplyHelper {
   pages = {
@@ -110,11 +111,11 @@ export default class ApplyHelper {
   }
 
   enterCrnDetails() {
-    // Given I visit the start page
+    GIVEN('I visit the start page')
     const startPage = ApplyPages.StartPage.visit()
     startPage.startApplication()
 
-    // And I complete the first step
+    AND('I complete the first step')
     const crnPage = new ApplyPages.EnterCRNPage()
     crnPage.enterCrn(this.person.crn)
     crnPage.clickSubmit()
@@ -123,24 +124,24 @@ export default class ApplyHelper {
   startApplication(selectedOffence: ActiveOffence = this.offences[0]) {
     this.enterCrnDetails()
 
-    // And I see the person on the confirmation page
+    AND('I see the person on the confirmation page')
     const confirmDetailsPage = new ApplyPages.ConfirmDetailsPage(this.person as FullPerson)
     confirmDetailsPage.shouldShowPersonDetails(this.person as FullPerson)
 
-    // And I confirm the person is who I expect to see
+    AND('I confirm the person is who I expect to see')
     confirmDetailsPage.clickSaveAndContinue()
 
-    // Then I should be forwarded to select an offence
+    THEN('I should be forwarded to select an offence')
     const selectOffencePage = Page.verifyOnPage(ApplyPages.SelectOffencePage, this.person, this.offences)
     selectOffencePage.shouldDisplayOffences()
 
-    // When I select an offence
+    WHEN('I select an offence')
     selectOffencePage.selectOffence(selectedOffence)
 
-    // And I click submit
+    AND('I click submit')
     selectOffencePage.clickSubmit()
 
-    // Then the API should have created the application with my selected offence
+    THEN('the API should have created the application with my selected offence')
     cy.task('verifyApplicationCreate').then(requests => {
       expect(requests).to.have.length(1)
 
@@ -220,7 +221,7 @@ export default class ApplyHelper {
   }
 
   private stubApplicationEndpoints() {
-    // Given I can create an application
+    GIVEN('I can create an application')
     cy.task('stubJourney', this.application)
   }
 
@@ -240,7 +241,7 @@ export default class ApplyHelper {
   }
 
   stubOasysEndpoints(excludeSection = false, hasApplicableAssessment = true) {
-    // And there are OASys sections in the db
+    AND('there are OASys sections in the db')
 
     this.otherOasysSections = [
       { section: 3, name: 'emotional' },
@@ -286,7 +287,7 @@ export default class ApplyHelper {
   }
 
   private stubPrisonCaseNoteEndpoints() {
-    // And there is prison case notes for the person in the DB
+    AND('there is prison case notes for the person in the DB')
     const prisonCaseNote1 = prisonCaseNotesFactory.build({
       authorName: 'Denise Collins',
       id: 'a30173ca-061f-42c9-a1a2-28c70b282d3f',
@@ -366,7 +367,7 @@ export default class ApplyHelper {
   }
 
   stubDocumentEndpoints(documents?: Array<Document>) {
-    // And there are documents in the database
+    AND('there are documents in the database')
     this.selectedDocuments = documentsFromApplication(this.application)
     this.documents = documents || [this.selectedDocuments, documentFactory.buildList(4)].flat()
 
@@ -375,7 +376,7 @@ export default class ApplyHelper {
       cy.task('stubPersonDocument', { person: this.person, document })
     })
 
-    // And the application exists in the database
+    AND('the application exists in the database')
     cy.task('stubApplicationSubmit', { application: this.application })
   }
 
@@ -448,6 +449,10 @@ export default class ApplyHelper {
     transgenderPage.completeForm()
     transgenderPage.clickSubmit()
 
+    const maleApPage = new ApplyPages.MaleApPage(this.application)
+    maleApPage.completeForm()
+    maleApPage.clickSubmit()
+
     const complexCaseBoardPage = new ApplyPages.ComplexCaseBoard(this.application)
     complexCaseBoardPage.completeForm()
     complexCaseBoardPage.clickSubmit()
@@ -455,10 +460,6 @@ export default class ApplyHelper {
     const boardTakenPlacePage = new ApplyPages.BoardTakenPlacePage(this.application)
     boardTakenPlacePage.completeForm()
     boardTakenPlacePage.clickSubmit()
-
-    const maleApPage = new ApplyPages.MaleApPage(this.application)
-    maleApPage.completeForm()
-    maleApPage.clickSubmit()
 
     const relevantDatesPage = new ApplyPages.RelevantDatesPage(this.application)
     relevantDatesPage.completeForm()
@@ -505,141 +506,141 @@ export default class ApplyHelper {
       placementPurposePage,
     ]
 
-    // Then I should be redirected to the task list
+    THEN('I should be redirected to the task list')
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
-    // And the task should be marked as completed
+    AND('the task should be marked as completed')
     tasklistPage.shouldShowTaskStatus('basic-information', 'Completed')
 
-    // And the next task should be marked as not started
+    AND('the next task should be marked as not started')
     tasklistPage.shouldShowTaskStatus('type-of-ap', 'Not started')
     tasklistPage.shouldNotShowSubmitComponents()
 
-    // And the risk widgets should be visible
+    AND('the risk widgets should be visible')
     if (this.uiRisks) {
       tasklistPage.shouldShowRiskWidgets(this.uiRisks)
     }
   }
 
   completeTypeOfApSection() {
-    // And I should be able to start the next task
+    AND('I should be able to start the next task')
     cy.get('[data-cy-task-name="type-of-ap"]').click()
     Page.verifyOnPage(ApplyPages.ApType, this.application)
 
-    // Given I am on the Type of AP Page
+    GIVEN('I am on the Type of AP Page')
     const apTypePage = new ApplyPages.ApType(this.application)
 
-    // When I complete the form and click submit
+    WHEN('I complete the form and click submit')
     apTypePage.completeForm()
     apTypePage.clickSubmit()
 
-    // Given I am on the PIPE referral page
+    GIVEN('I am on the PIPE referral page')
     const pipeDetailsPage = new ApplyPages.PipeReferralPage(this.application)
 
-    // When I complete the form and click submit
+    WHEN('I complete the form and click submit')
     pipeDetailsPage.completeForm()
     pipeDetailsPage.clickSubmit()
 
-    // Given I am on the PIPE OPD screening page
+    GIVEN('I am on the PIPE OPD screening page')
     const pipeOpdScreeningPage = new ApplyPages.PipeOpdScreening(this.application)
 
-    // When I complete the form and click submit
+    WHEN('I complete the form and click submit')
     pipeOpdScreeningPage.completeForm()
     pipeOpdScreeningPage.clickSubmit()
 
     this.pages.typeOfAp = [apTypePage, pipeDetailsPage, pipeOpdScreeningPage]
 
-    // Then I should be redirected to the task list
+    THEN('I should be redirected to the task list')
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
-    // Then the Type of AP task should show as completed
+    THEN('the Type of AP task should show as completed')
     tasklistPage.shouldShowTaskStatus('type-of-ap', 'Completed')
 
-    // And the OASys import task should show as not started
+    AND('the OASys import task should show as not started')
     tasklistPage.shouldShowTaskStatus('oasys-import', 'Not started')
     tasklistPage.shouldNotShowSubmitComponents()
   }
 
   completeEsapFlow() {
-    // And I should be able to start the next task
+    AND('I should be able to start the next task')
     cy.get('[data-cy-task-name="type-of-ap"]').click()
     Page.verifyOnPage(ApplyPages.ApType, this.application)
 
-    // Given I am on the Type of AP Page
+    GIVEN('I am on the Type of AP Page')
     const typeOfApPage = new ApplyPages.ApType(this.application)
 
-    // When I complete the form and click submit
+    WHEN('I complete the form and click submit')
     typeOfApPage.completeForm()
     typeOfApPage.clickSubmit()
 
-    // Then I should be asked if the person is managed by the national security division
+    THEN('I should be asked if the person is managed by the national security division')
     const isManagedByNationalSecurityDivision = Page.verifyOnPage(ApplyPages.NationalSecurityDivision, this.application)
 
-    // When I answer no to the isManagedByNationalSecurityDivision question
+    WHEN('I answer no to the isManagedByNationalSecurityDivision question')
     isManagedByNationalSecurityDivision.completeForm()
     isManagedByNationalSecurityDivision.clickSubmit()
 
-    // Then I should be asked if there has been an agreement with the Community Head of Public Protection
+    THEN('I should be asked if there has been an agreement with the Community Head of Public Protection')
     const exceptionalCase = Page.verifyOnPage(ApplyPages.EsapExceptionalCase, this.application)
 
-    // When I click yes
+    WHEN('I click yes')
     exceptionalCase.completeForm()
     exceptionalCase.clickSubmit()
 
-    // Then I should be taken to the rest of the Esap flow
+    THEN('I should be taken to the rest of the Esap flow')
     const esapPlacementScreeningPage = Page.verifyOnPage(ApplyPages.EsapPlacementScreening, this.application)
 
-    // When I complete the screening page
+    WHEN('I complete the screening page')
     esapPlacementScreeningPage.completeForm()
     esapPlacementScreeningPage.clickSubmit()
 
-    // Then I should be taken to the Room Searches page
+    THEN('I should be taken to the Room Searches page')
     const roomSearchesPage = Page.verifyOnPage(ApplyPages.EsapRoomSearches, this.application)
 
-    // And I complete the room searches page
+    AND('I complete the room searches page')
     roomSearchesPage.completeForm()
     roomSearchesPage.clickSubmit()
 
-    // Then I should be taken to the CCTV page
+    THEN('I should be taken to the CCTV page')
     const esapCCTVPage = Page.verifyOnPage(ApplyPages.EsapCCTV, this.application)
 
-    // When I complete the CCTV page
+    WHEN('I complete the CCTV page')
     esapCCTVPage.completeForm()
     esapCCTVPage.clickSubmit()
   }
 
   completeIneligibleEsapFlow() {
-    // And I should be able to start the next task
+    AND('I should be able to start the next task')
     cy.get('[data-cy-task-name="type-of-ap"]').click()
     Page.verifyOnPage(ApplyPages.ApType, this.application)
 
-    // Given I am on the Type of AP Page
+    GIVEN('I am on the Type of AP Page')
     const apTypePage = new ApplyPages.ApType(this.application)
 
-    // When I complete the form and click submit
+    WHEN('I complete the form and click submit')
     apTypePage.completeForm()
     apTypePage.clickSubmit()
 
-    // Then I should be asked if the person is managed by the national security division
+    THEN('I should be asked if the person is managed by the national security division')
     const isManagedByNationalSecurityDivision = Page.verifyOnPage(ApplyPages.NationalSecurityDivision, this.application)
 
-    // When I answer no to the isManagedByNationalSecurityDivision question
+    WHEN('I answer no to the isManagedByNationalSecurityDivision question')
     isManagedByNationalSecurityDivision.completeForm()
     isManagedByNationalSecurityDivision.clickSubmit()
 
-    // Then I should be asked if there has been an agreement with the Community Head of Public Protection
+    THEN('I should be asked if there has been an agreement with the Community Head of Public Protection')
     const exceptionalCase = Page.verifyOnPage(ApplyPages.EsapExceptionalCase, this.application)
 
-    // When I choose No
+    WHEN('I choose No')
     exceptionalCase.completeForm()
     exceptionalCase.clickSubmit()
 
-    // Then I should be told that my ESAP application is not valid
+    THEN('I should be told that my ESAP application is not valid')
     const notEligiblePage = Page.verifyOnPage(ApplyPages.EsapNotEligible, this.application)
 
-    // When I click the continue button
+    WHEN('I click the continue button')
     notEligiblePage.clickContinueWithApplication()
 
-    // Then I should be able to choose a different type of AP
+    THEN('I should be able to choose a different type of AP')
     Page.verifyOnPage(ApplyPages.ApType, this.application)
   }
 
@@ -647,7 +648,7 @@ export default class ApplyHelper {
     cy.get('[data-cy-task-name="oasys-import"]').click()
     const optionalOasysImportPage = new ApplyPages.OptionalOasysSectionsPage(this.application, oasysMissing)
 
-    // When I complete the form
+    WHEN('I complete the form')
     if (!oasysMissing) {
       optionalOasysImportPage.completeForm(this.oasysSectionsLinkedToReoffending, this.otherOasysSections)
     }
@@ -710,13 +711,13 @@ export default class ApplyHelper {
       riskToSelfPage,
     ]
 
-    // Then I should be redirected to the task list
+    THEN('I should be redirected to the task list')
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
-    // Then I should be taken back to the tasklist
+    THEN('I should be taken back to the tasklist')
     tasklistPage.shouldShowTaskStatus('oasys-import', 'Completed')
 
-    // And the Risk Management Features task should show as not started
+    AND('the Risk Management Features task should show as not started')
     tasklistPage.shouldShowTaskStatus('risk-management-features', 'Not started')
     tasklistPage.shouldNotShowSubmitComponents()
   }
@@ -727,10 +728,10 @@ export default class ApplyHelper {
   }
 
   completeRiskManagementSection() {
-    // Given I click the 'Add detail about managing risks and needs' task
+    GIVEN(`I click the 'Add detail about managing risks and needs' task`)
     cy.get('[data-cy-task-name="risk-management-features"]').click()
 
-    // When I complete the form
+    WHEN('I complete the form')
     const riskManagementFeaturesPage = new ApplyPages.RiskManagementFeatures(this.application)
     riskManagementFeaturesPage.completeForm()
     riskManagementFeaturesPage.clickSubmit()
@@ -754,16 +755,16 @@ export default class ApplyHelper {
       rehabilitativeInterventionsPage,
     ]
 
-    // Then I should be redirected to the task list
+    THEN('I should be redirected to the task list')
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
-    // And the risk management task should show a completed status
+    AND('the risk management task should show a completed status')
     tasklistPage.shouldShowTaskStatus('risk-management-features', 'Completed')
     tasklistPage.shouldNotShowSubmitComponents()
   }
 
   completePrisonInformationSection(nomisMissing = false) {
-    // And I click the 'Review prison information' task
+    AND(`I click the 'Review prison information' task`)
     cy.get('[data-cy-task-name="prison-information"]').click()
 
     const caseNotesPage = new ApplyPages.CaseNotesPage(this.application, this.selectedPrisonCaseNotes)
@@ -774,10 +775,10 @@ export default class ApplyHelper {
     caseNotesPage.completeForm(nomisMissing)
     caseNotesPage.clickSubmit()
 
-    // Given I click the 'Describe location factors' task
+    GIVEN(`I click the 'Describe location factors' task`)
     cy.get('[data-cy-task-name="location-factors"]').click()
 
-    // When I complete the form
+    WHEN('I complete the form')
     const describeLocationFactorsPage = new ApplyPages.DescribeLocationFactors(this.application)
     describeLocationFactorsPage.completeForm()
     describeLocationFactorsPage.clickSubmit()
@@ -789,19 +790,19 @@ export default class ApplyHelper {
 
     this.pages.locationFactors = [describeLocationFactorsPage, preferredApsPage]
 
-    // Then I should be taken back to the task list
+    THEN('I should be taken back to the task list')
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
-    // And the location factors task should show a completed status
+    AND('the location factors task should show a completed status')
     tasklistPage.shouldShowTaskStatus('location-factors', 'Completed')
     tasklistPage.shouldNotShowSubmitComponents()
   }
 
   private completeAccessAndHealthcareSection() {
-    // Given I click the 'Provide access and healthcare information' task
+    GIVEN(`I click the 'Provide access and healthcare information' task`)
     cy.get('[data-cy-task-name="access-and-healthcare"]').click()
 
-    // When I complete the form
+    WHEN('I complete the form')
     const accessNeedsPage = new ApplyPages.AccessNeedsPage(this.application)
     accessNeedsPage.completeForm()
     accessNeedsPage.clickSubmit()
@@ -830,49 +831,49 @@ export default class ApplyHelper {
       covidPage,
     ]
 
-    // Then I should be taken back to the task list
+    THEN('I should be taken back to the task list')
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
-    // And the access and healthcare task should show a completed status
+    AND('the access and healthcare task should show a completed status')
     tasklistPage.shouldShowTaskStatus('access-and-healthcare', 'Completed')
     tasklistPage.shouldNotShowSubmitComponents()
   }
 
   private completeFurtherConsiderationsSection() {
-    // Given I click the 'Detail further considerations for placement' task
+    GIVEN(`I click the 'Detail further considerations for placement' task`)
     cy.get('[data-cy-task-name="further-considerations"]').click()
 
-    // And I complete the Room Sharing page
+    AND('I complete the Room Sharing page')
     const roomSharingPage = new ApplyPages.RoomSharingPage(this.application)
     roomSharingPage.completeForm()
     roomSharingPage.clickSubmit()
 
-    // And I complete the Vulnerability page
+    AND('I complete the Vulnerability page')
     const vulnerabilityPage = new ApplyPages.VulnerabilityPage(this.application)
     vulnerabilityPage.completeForm()
     vulnerabilityPage.clickSubmit()
 
-    // And I complete the Previous Placements page
+    AND('I complete the Previous Placements page')
     const previousPlacementsPage = new ApplyPages.PreviousPlacements(this.application)
     previousPlacementsPage.completeForm()
     previousPlacementsPage.clickSubmit()
 
-    // And I complete the Catering page
+    AND('I complete the Catering page')
     const cateringPage = new ApplyPages.CateringPage(this.application)
     cateringPage.completeForm()
     cateringPage.clickSubmit()
 
-    // And I complete the Arson page
+    AND('I complete the Arson page')
     const arsonPage = new ApplyPages.ArsonPage(this.application)
     arsonPage.completeForm()
     arsonPage.clickSubmit()
 
-    // And I complete the Additional Circumstances page
+    AND('I complete the Additional Circumstances page')
     const additionalCircumstancesPage = new ApplyPages.AdditionalCircumstancesPage(this.application)
     additionalCircumstancesPage.completeForm()
     additionalCircumstancesPage.clickSubmit()
 
-    // And I complete the Contingency Plan Partners page
+    AND('I complete the Contingency Plan Partners page')
     const contingencyPlanPartnersPage = new ApplyPages.ContingencyPlanPartnersPage(
       this.application,
       this.contingencyPlanPartners,
@@ -882,7 +883,7 @@ export default class ApplyHelper {
 
     this.pages.contingencyPlanPartners = [contingencyPlanPartnersPage]
 
-    // And I complete the Contingency Plan Questions page
+    AND('I complete the Contingency Plan Questions page')
     const contingencyPlanQuestionsPage = new ApplyPages.ContingencyPlanQuestionsPage(
       this.application,
       this.contingencyPlanQuestions,
@@ -907,34 +908,34 @@ export default class ApplyHelper {
       triggerPlanPage,
     ]
 
-    // Then I should be taken back to the task list
+    THEN('I should be taken back to the task list')
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
-    // And the further considerations task should show a completed status
+    AND('the further considerations task should show a completed status')
     tasklistPage.shouldShowTaskStatus('further-considerations', 'Completed')
     tasklistPage.shouldNotShowSubmitComponents()
   }
 
   private completeMoveOnSection() {
-    // Given I click the 'Add move on information' task
+    GIVEN(`I click the 'Add move on information' task`)
     cy.get('[data-cy-task-name="move-on"]').click()
 
-    // And I complete the Placement Duration page
+    AND('I complete the Placement Duration page')
     const placementDurationPage = new ApplyPages.PlacementDurationPage(this.application)
     placementDurationPage.completeForm()
     placementDurationPage.clickSubmit()
 
-    // And I complete the relocation region page
+    AND('I complete the relocation region page')
     const relocationRegion = new ApplyPages.RelocationRegionPage(this.application)
     relocationRegion.completeForm()
     relocationRegion.clickSubmit()
 
-    // And I complete the plans in place page
+    AND('I complete the plans in place page')
     const plansInPlacePage = new ApplyPages.PlansInPlacePage(this.application)
     plansInPlacePage.completeForm()
     plansInPlacePage.clickSubmit()
 
-    // And I complete the type of accommodation page
+    AND('I complete the type of accommodation page')
     const typeOfAccommodationPage = new ApplyPages.TypeOfAccommodationPage(this.application)
     typeOfAccommodationPage.completeForm()
     typeOfAccommodationPage.clickSubmit()
@@ -951,16 +952,16 @@ export default class ApplyHelper {
       foreignNationalPage,
     ]
 
-    // Then I should be taken back to the task list
+    THEN('I should be taken back to the task list')
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
-    // And the move on information task should show a completed status
+    AND('the move on information task should show a completed status')
     tasklistPage.shouldShowTaskStatus('move-on', 'Completed')
     tasklistPage.shouldNotShowSubmitComponents()
   }
 
   private completeDocumentsSection() {
-    // Given I click on the Attach Documents task
+    GIVEN('I click on the Attach Documents task')
     cy.get('[data-cy-task-name="attach-required-documents"]').click()
     const attachDocumentsPage = new ApplyPages.AttachDocumentsPage(
       this.documents,
@@ -968,31 +969,31 @@ export default class ApplyHelper {
       this.application,
     )
 
-    // Then I should be able to download the documents
+    THEN('I should be able to download the documents')
     attachDocumentsPage.shouldBeAbleToDownloadDocuments(this.documents)
 
-    // And I attach the relevant documents
+    AND('I attach the relevant documents')
     attachDocumentsPage.shouldDisplayDocuments()
     attachDocumentsPage.completeForm()
     attachDocumentsPage.clickSubmit()
 
-    // Then I should be taken back to the task list
+    THEN('I should be taken back to the task list')
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
-    // And the Attach Documents task should show a completed status
+    AND('the Attach Documents task should show a completed status')
     tasklistPage.shouldShowTaskStatus('attach-required-documents', 'Completed')
     tasklistPage.shouldNotShowSubmitComponents()
   }
 
   verifyNoDocumentsDisplayed() {
-    // Given I click on the Attach Documents task
+    GIVEN('I click on the Attach Documents task')
     cy.get('[data-cy-task-name="attach-required-documents"]').click()
     const attachDocumentsPage = new ApplyPages.AttachDocumentsPage(
       this.documents,
       this.selectedDocuments,
       this.application,
     )
-    // Then I should be able to see the no documents message
+    THEN('I should be able to see the no documents message')
     attachDocumentsPage.shouldDisplayNoDocuments()
   }
 
@@ -1001,13 +1002,13 @@ export default class ApplyHelper {
   }
 
   private completeCheckYourAnswersSection() {
-    // Given I click the check your answers task
+    GIVEN('I click the check your answers task')
     cy.get('[data-cy-task-name="check-your-answers"]').click()
 
-    // Then I should be on the check your answers page
+    THEN('I should be on the check your answers page')
     const checkYourAnswersPage = new ApplyPages.CheckYourAnswersPage(this.application)
 
-    // And the page should be populated with my answers
+    AND('the page should be populated with my answers')
     checkYourAnswersPage.shouldShowPersonDetails(this.person as FullPerson)
     checkYourAnswersPage.shouldShowBasicInformationAnswers(this.pages.basicInformation)
     checkYourAnswersPage.shouldShowTypeOfApAnswers(this.pages.typeOfAp)
@@ -1024,13 +1025,13 @@ export default class ApplyHelper {
     checkYourAnswersPage.shouldShowAdjudications(this.adjudications)
     checkYourAnswersPage.shouldShowAcctAlerts(this.acctAlerts)
 
-    // When I have checked my answers
+    WHEN('I have checked my answers')
     checkYourAnswersPage.clickSubmit()
 
-    // Then I should be taken back to the task list
+    THEN('I should be taken back to the task list')
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
-    // And the check your answers task should show a completed status
+    AND('the check your answers task should show a completed status')
     tasklistPage.shouldShowTaskStatus('check-your-answers', 'Completed')
   }
 

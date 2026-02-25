@@ -6,14 +6,14 @@ import ApplyPage from './applyPage'
 export default class ComplexCaseBoardPage extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
     super(
-      `Does the person's gender identity require a complex case board to review their application?`,
+      `Does this person require a complex case board?`,
       application,
       'basic-information',
       'complex-case-board',
       paths.applications.pages.show({
         id: application.id,
         task: 'basic-information',
-        page: 'transgender',
+        page: 'male-ap',
       }),
     )
   }
