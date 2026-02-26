@@ -21,9 +21,9 @@ describe('ComplexCaseBoard', () => {
   })
 
   describe('if the answer is no', () => {
-    itShouldHaveNextValue(new ComplexCaseBoard({ reviewRequired: 'no' }), 'sentence-type')
+    itShouldHaveNextValue(new ComplexCaseBoard({ reviewRequired: 'no' }), 'relevant-dates')
   })
-  itShouldHavePreviousValue(new ComplexCaseBoard(body), 'transgender')
+  itShouldHavePreviousValue(new ComplexCaseBoard(body), 'male-ap')
 
   describe('errors', () => {
     it('should return errors when yes/no questions are blank', () => {
@@ -41,7 +41,7 @@ describe('ComplexCaseBoard', () => {
       const page = new ComplexCaseBoard(body)
 
       expect(page.response()).toEqual({
-        "Does the person's gender identity require a complex case board to review their application?": 'Yes',
+        'Does this person require a complex case board?': 'Yes',
       })
     })
   })

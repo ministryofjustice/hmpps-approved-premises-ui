@@ -5,7 +5,7 @@ import TasklistPage from '../../../tasklistPage'
 
 @Page({ name: 'male-ap', bodyProperties: ['shouldPersonBePlacedInMaleAp'] })
 export default class MaleAp implements TasklistPage {
-  question = 'What type of AP has the complex case board agreed to?'
+  question = 'What type of AP does the person need?'
 
   title = this.question
 
@@ -16,11 +16,11 @@ export default class MaleAp implements TasklistPage {
   constructor(public body: { shouldPersonBePlacedInMaleAp: YesOrNo }) {}
 
   previous() {
-    return 'board-taken-place'
+    return 'transgender'
   }
 
   next() {
-    return 'relevant-dates'
+    return 'complex-case-board'
   }
 
   response() {

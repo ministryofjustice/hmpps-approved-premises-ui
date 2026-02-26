@@ -16,8 +16,8 @@ describe('MaleAp', () => {
     })
   })
 
-  itShouldHaveNextValue(new MaleAp(body), 'relevant-dates')
-  itShouldHavePreviousValue(new MaleAp(body), 'board-taken-place')
+  itShouldHaveNextValue(new MaleAp(body), 'complex-case-board')
+  itShouldHavePreviousValue(new MaleAp(body), 'transgender')
 
   describe('errors', () => {
     it('should return errors when no ap type is selected', () => {
@@ -34,7 +34,7 @@ describe('MaleAp', () => {
       const page = new MaleAp(body)
 
       expect(page.response()).toEqual({
-        'What type of AP has the complex case board agreed to?': "Men's AP",
+        'What type of AP does the person need?': "Men's AP",
       })
     })
   })
