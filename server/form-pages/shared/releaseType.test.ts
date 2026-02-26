@@ -57,7 +57,6 @@ describe('ReleaseType', () => {
             'licence',
             'rotl',
             'hdc',
-            'pss',
             'paroleDirectedLicence',
             'reReleasedPostRecall',
             'reReleasedFollowingFixedTermRecall',
