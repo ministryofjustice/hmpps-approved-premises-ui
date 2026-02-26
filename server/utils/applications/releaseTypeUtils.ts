@@ -20,7 +20,6 @@ export type ReleaseTypeLabel = (typeof allReleaseTypes)[ReleaseTypeOption]
 export const standardDeterminateReleaseTypes = pick(allReleaseTypes, [
   'licence',
   'hdc',
-  'pss',
   'rotl',
   'paroleDirectedLicence',
   'reReleasedPostRecall',
