@@ -184,7 +184,7 @@
     "cypress": "^14.0.0",
     "cypress-axe": "^1.6.0",
     "cypress-multi-reporters": "^2.0.0",
-    "esbuild": "^0.25.5",
+    "esbuild": "^0.27.0",
     "esbuild-plugin-clean": "^1.0.1",
     "esbuild-plugin-copy": "^2.1.1",
     "esbuild-plugin-manifest": "^1.0.5",
@@ -210,7 +210,7 @@
     "typescript": "^5.8.3"
   },
   "overrides": {
-    "cross-spawn": "7.0.5",
+    "cross-spawn": "7.0.6",
     "diff": "^8.0.3"
   }
 }
