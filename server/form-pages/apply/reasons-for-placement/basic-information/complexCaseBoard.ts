@@ -6,18 +6,18 @@ import { sentenceCase } from '../../../../utils/utils'
 
 @Page({ name: 'complex-case-board', bodyProperties: ['reviewRequired'] })
 export default class ComplexCaseBoard implements TasklistPage {
-  question = `Does the person's gender identity require a complex case board to review their application?`
+  question = `Does this person require a complex case board?`
 
   title = this.question
 
   constructor(public body: { reviewRequired: YesOrNo }) {}
 
   previous() {
-    return 'transgender'
+    return 'male-ap'
   }
 
   next() {
-    return this.body.reviewRequired === 'yes' ? 'board-taken-place' : 'sentence-type'
+    return this.body.reviewRequired === 'yes' ? 'board-taken-place' : 'relevant-dates'
   }
 
   response() {

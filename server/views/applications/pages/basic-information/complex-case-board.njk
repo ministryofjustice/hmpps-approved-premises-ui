@@ -2,18 +2,19 @@
 
 {% block questions %}
 
-  <h1 class="govuk-heading-l">
+    <h1 class="govuk-heading-l">
 
-    {{ page.title }}
-  </h1>
+        {{ page.title }}
+    </h1>
 
-  <p> A complex case board will determine whether the person requires placement in an Approved Premises (AP) that is different to their legal gender.
-Please see <a href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1148946/transgender-pf.pdf">The Care and Management of Individuals who are Transgender' framework</a> or contact <a href="mailto:HMPPStransgender@justice.gov.uk">HMPPStransgender@justice.gov.uk</a> for further advice</p>
+    <p>Please see <a
+                href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1148946/transgender-pf.pdf">The
+            Care and Management of Individuals who are Transgender' framework</a> or contact <a
+                href="mailto:HMPPStransgender@justice.gov.uk">HMPPStransgender@justice.gov.uk</a> for further advice</p>
 
-  {{
-        formPageRadios({
-            fieldName: 'reviewRequired',
-            items: [
+    {{ formPageRadios({
+        fieldName: 'reviewRequired',
+        items: [
             {
                 value: "yes",
                 text: "Yes"
@@ -22,9 +23,8 @@ Please see <a href="https://assets.publishing.service.gov.uk/government/uploads/
                 value: "no",
                 text: "No"
             }
-            ]
-        },
+        ]
+    },
         fetchContext()
-        )
-    }}
+    ) }}
 {% endblock %}

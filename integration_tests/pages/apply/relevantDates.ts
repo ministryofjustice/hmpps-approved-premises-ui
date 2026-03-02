@@ -10,7 +10,7 @@ export default class RelevantDatesPage extends ApplyPage {
       application,
       'basic-information',
       'relevant-dates',
-      paths.applications.pages.show({ id: application.id, page: 'transgender', task: 'basic-information' }),
+      paths.applications.pages.show({ id: application.id, page: 'board-taken-place', task: 'basic-information' }),
     )
   }
 

@@ -5,12 +5,13 @@ import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import { setup } from './setup'
 import Page from '../../pages/page'
 import TaskListPage from '../../pages/apply/taskListPage'
+import { AND, GIVEN, THEN } from '../../helpers'
 
 context('Apply - ESAP', () => {
   beforeEach(setup)
 
   it('allows completion of the ESAP flow', function test() {
-    // Given I have completed the basic information of a form
+    GIVEN('I have completed the basic information of a form')
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
     const apply = new ApplyHelper(this.application, this.person, this.offences)
 
@@ -46,22 +47,22 @@ context('Apply - ESAP', () => {
 
     apply.setupApplicationStubs(uiRisks)
 
-    // And I start the application
+    AND('I start the application')
     apply.startApplication()
     apply.completeBasicInformation()
 
-    // And I complete the Esap flow
+    AND('I complete the Esap flow')
     apply.completeEsapFlow()
 
-    // Then I should be redirected to the task list
+    THEN('I should be redirected to the task list')
     const tasklistPage = Page.verifyOnPage(TaskListPage)
 
-    // And the type-of-ap task should show as completed
+    AND('the type-of-ap task should show as completed')
     tasklistPage.shouldShowTaskStatus('type-of-ap', 'Completed')
   })
 
   it('Tells me I am ineligible for ESAP', function test() {
-    // Given I have completed the basic information of a form
+    GIVEN('I have completed the basic information of a form')
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
     const apply = new ApplyHelper(this.application, this.person, this.offences)
 
@@ -89,13 +90,13 @@ context('Apply - ESAP', () => {
 
     apply.setupApplicationStubs(uiRisks)
 
-    // And I start the application
+    AND('I start the application')
     apply.startApplication()
     apply.completeBasicInformation()
 
-    // And I complete the Esap flow
+    AND('I complete the Esap flow')
     apply.completeIneligibleEsapFlow()
 
-    // Then I should be told I am ineligible for an ESAP placement
+    THEN('I should be told I am ineligible for an ESAP placement')
   })
 })

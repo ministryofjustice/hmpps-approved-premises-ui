@@ -100,17 +100,38 @@ describe('RelevantDates', () => {
     })
   })
 
-  describe('when the exception-details step was not completed', () => {
+  describe('when the transgender flow was not completed', () => {
     itShouldHavePreviousValue(new RelevantDates({}, application), 'transgender')
   })
 
-  describe('when the exception-details step was completed', () => {
+  describe('when the transgender flow followed without complex case board', () => {
     itShouldHavePreviousValue(
       new RelevantDates(
         {},
-        { ...application, data: { 'basic-information': { 'exception-details': { agreedCaseWithManager: 'yes' } } } },
+        {
+          ...application,
+          data: { 'basic-information': { transgender: { transgenderOrHasTransgenderHistory: 'yes' } } },
+        },
       ),
-      'exception-details',
+      'complex-case-board',
+    )
+  })
+
+  describe('when the transgender flow followed with complex case board', () => {
+    itShouldHavePreviousValue(
+      new RelevantDates(
+        {},
+        {
+          ...application,
+          data: {
+            'basic-information': {
+              transgender: { transgenderOrHasTransgenderHistory: 'yes' },
+              'complex-case-board': { reviewRequired: 'yes' },
+            },
+          },
+        },
+      ),
+      'board-taken-place',
     )
   })
 

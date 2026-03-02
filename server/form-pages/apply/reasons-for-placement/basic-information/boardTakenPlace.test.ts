@@ -16,7 +16,7 @@ describe('BoardTakenPlace', () => {
     })
   })
 
-  itShouldHaveNextValue(new BoardTakenPlace(body), 'male-ap')
+  itShouldHaveNextValue(new BoardTakenPlace(body), 'relevant-dates')
   itShouldHavePreviousValue(new BoardTakenPlace(body), 'complex-case-board')
 
   describe('errors', () => {

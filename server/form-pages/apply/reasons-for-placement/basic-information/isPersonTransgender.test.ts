@@ -17,7 +17,7 @@ describe('IsPersonTransgender', () => {
     })
   })
   describe('if the answer is yes', () => {
-    itShouldHaveNextValue(new IsPersonTransgender(body), 'complex-case-board')
+    itShouldHaveNextValue(new IsPersonTransgender(body), 'male-ap')
   })
 
   describe('if the answer is no', () => {
