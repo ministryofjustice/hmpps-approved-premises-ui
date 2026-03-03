@@ -15,6 +15,8 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'appeals_manager',
   'report_viewer',
   'report_viewer_with_pii',
+  'operational_report_viewer',
+  'management_report_viewer',
   'future_manager',
   'ap_area_manager',
   'user_manager',
@@ -101,7 +103,7 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   },
   management_report_viewer: {
     label: 'Management reports',
-    hint: 'View & download out of service beds PII & Non PII, Daily metrics & overdue placement reports',
+    hint: 'View & download out of service beds PII & non PII, daily metrics, and overdue placement reports',
   },
 }
 
