@@ -95,6 +95,14 @@ export const roleLabelDictionary: RoleLabelDictionary = {
     label: 'Janitor',
     hint: 'For digital team use only',
   },
+  operational_report_viewer: {
+    label: 'Operational reports',
+    hint: 'View & download overdue placements reports',
+  },
+  management_report_viewer: {
+    label: 'Management reports',
+    hint: 'View & download out of service beds PII & Non PII, Daily metrics & overdue placement reports',
+  },
 }
 
 export type AllocationRoleLabelDictionary = { [K in AllocationRole]: RoleLabel }

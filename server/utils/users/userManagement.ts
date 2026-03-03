@@ -63,6 +63,8 @@ const userRoles: Record<RoleInUse, string> = {
   ap_area_manager: 'AP area manager',
   user_manager: 'User manager',
   janitor: 'Janitor',
+  operational_report_viewer: 'Operational reports',
+  management_report_viewer: 'Management reports',
 }
 
 export const userRolesSelectOptions = (
