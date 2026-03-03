@@ -59,6 +59,12 @@ export default class ReleaseType implements TasklistPage {
         value,
         text,
         checked: this.body.releaseType === value,
+        conditional:
+          value === 'pss'
+            ? {
+                html: `<p class="govuk-error-message">Applications will not be authorised for people on PSS where their stay ends after 1st May 2026</p>`,
+              }
+            : undefined,
       }
     })
   }
