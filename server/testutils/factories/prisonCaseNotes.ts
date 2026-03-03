@@ -5,7 +5,7 @@ import type { PrisonCaseNote } from '@approved-premises/api'
 
 import { DateFormats } from '../../utils/dateUtils'
 
-export default Factory.define<PrisonCaseNote>(({ sequence }) => ({
+export default Factory.define<PrisonCaseNote>(() => ({
   authorName: faker.person.fullName(),
   id: faker.string.uuid(),
   createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
@@ -41,5 +41,5 @@ export default Factory.define<PrisonCaseNote>(({ sequence }) => ({
     'Social Care',
     'Observations',
   ]),
-  note: `Note ${sequence}`,
+  note: faker.lorem.paragraph(2),
 }))

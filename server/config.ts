@@ -46,6 +46,7 @@ export interface AuditConfig {
 
 export default {
   https: production,
+  isProduction: production,
   staticResourceCacheDuration: 20,
   flags: {
     maintenanceMode: getFlag('IN_MAINTENANCE_MODE'),

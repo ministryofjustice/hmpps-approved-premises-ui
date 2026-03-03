@@ -13,6 +13,7 @@ import {
   csraSummaryFactory,
   licenceFactory,
   personFactory,
+  prisonCaseNotesFactory,
   risksFactory,
 } from '../../../../server/testutils/factories'
 import ResidentProfilePage from '../../../pages/manage/placements/residentProfile'
@@ -218,6 +219,7 @@ context('ResidentProfile', () => {
       const adjudications = adjudicationFactory.buildList(5)
       const licence = licenceFactory.build()
       const csraSummaries = csraSummaryFactory.buildList(2)
+      const prisonCaseNotes = prisonCaseNotesFactory.buildList(3)
       const { placement, personRisks } = setup()
 
       cy.task('stubPersonOffences', { offences, person: placement.person })
@@ -225,6 +227,7 @@ context('ResidentProfile', () => {
       cy.task('stubAdjudications', { person: placement.person, adjudications })
       cy.task('stubLicence', { person: placement.person, licence })
       cy.task('stubCsra', { person: placement.person, csraSummaries })
+      cy.task('stubPrisonCaseNotes', { person: placement.person, prisonCaseNotes })
       cy.task('stubFindPerson', { person: placement.person })
 
       const page = visitPage({ placement, personRisks }, 'Sentence')
@@ -245,7 +248,7 @@ context('ResidentProfile', () => {
       page.clickSideNav('Prison')
 
       THEN('I should see the prison cards')
-      page.shouldShowPrisonInformation(adjudications, csraSummaries, placement.person)
+      page.shouldShowPrisonInformation(adjudications, csraSummaries, placement.person, prisonCaseNotes)
     })
 
     it('should show the drug and alcohol tab', () => {
