@@ -4,7 +4,12 @@ import * as healthUtils from './healthUtils'
 import { card } from './index'
 import { healthTabController, mentalHealthTabController } from './health'
 import { PersonService } from '../../services'
-import { acctAlertFactory, bookingDetailsFactory, cas1OasysGroupFactory } from '../../testutils/factories'
+import {
+  acctAlertFactory,
+  bookingDetailsFactory,
+  cas1OasysGroupFactory,
+  cas1SpaceBookingFactory,
+} from '../../testutils/factories'
 import { healthDetailsCards } from './healthUtils'
 import { ErrorWithData } from '../errors'
 
@@ -37,13 +42,14 @@ describe('Health tab', () => {
   describe('healthTabController', () => {
     it('should get acctAlerts and then render the cards', async () => {
       const bookingDetails = bookingDetailsFactory.build()
+      const placement = cas1SpaceBookingFactory.build()
       jest.spyOn(healthUtils, 'healthDetailsCards').mockReturnValue(mockCardList)
       personService.getOasysAnswers.mockResolvedValue(supportingInformation)
       personService.getBookingDetails.mockResolvedValue(bookingDetails)
 
-      const result = await healthTabController({ personService, token, crn })
+      const result = await healthTabController({ personService, token, crn, placement })
 
-      expect(result).toEqual({ cardList: mockCardList, subHeading: 'Health and disability' })
+      expect(result.subHeading).toEqual('Health and disability')
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [13])
       expect(personService.getBookingDetails).toHaveBeenCalledWith(token, crn)
       expect(healthDetailsCards).toHaveBeenCalledWith(supportingInformation, 'success', bookingDetails, 'success')

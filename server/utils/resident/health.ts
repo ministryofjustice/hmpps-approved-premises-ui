@@ -1,10 +1,16 @@
-import { BookingDetails, Cas1OASysGroup, PersonAcctAlert } from '@approved-premises/api'
+import { BookingDetails, Cas1OASysGroup, Cas1SpaceBooking, PersonAcctAlert } from '@approved-premises/api'
 import { TabControllerParameters } from './TabControllerParameters'
-import { TabData } from './index'
+import { TabData, card, insetText } from './index'
 import { healthDetailsCards, mentalHealthCards } from './healthUtils'
-import { ApiOutcome, settlePromisesWithOutcomes } from '../utils'
+import { ApiOutcome, linkTo, settlePromisesWithOutcomes } from '../utils'
+import paths from '../../paths/manage'
 
-export const healthTabController = async ({ personService, token, crn }: TabControllerParameters): Promise<TabData> => {
+export const healthTabController = async ({
+  personService,
+  token,
+  crn,
+  placement,
+}: TabControllerParameters & { placement: Cas1SpaceBooking }): Promise<TabData> => {
   const {
     values: [supportingInformation, bookingDetails],
     outcomes: [supportingInformationOutcome, bookingDetailsOutcome],
@@ -12,14 +18,19 @@ export const healthTabController = async ({ personService, token, crn }: TabCont
     personService.getOasysAnswers(token, crn, 'supportingInformation', [13]),
     personService.getBookingDetails(token, crn),
   ])
+
+  const linkCard = card({
+    html: insetText(
+      `Go to the ${linkTo(paths.resident.tabPlacement.application({ crn: placement.person.crn, placementId: placement.id }), { text: 'application and assessment page' })} to check if any access, cultural and healthcare needs were added to the application.`,
+    ),
+  })
+
   return {
     subHeading: 'Health and disability',
-    cardList: healthDetailsCards(
-      supportingInformation,
-      supportingInformationOutcome,
-      bookingDetails,
-      bookingDetailsOutcome,
-    ),
+    cardList: [
+      linkCard,
+      ...healthDetailsCards(supportingInformation, supportingInformationOutcome, bookingDetails, bookingDetailsOutcome),
+    ],
   }
 }
 

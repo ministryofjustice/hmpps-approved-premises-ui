@@ -1,4 +1,5 @@
 import { BookingDetails, Cas1OASysGroup, PersonAcctAlert } from '@approved-premises/api'
+import { SummaryListWithCard } from '@approved-premises/ui'
 import { card, insetText, loadingErrorMessage, ResidentProfileSubTab } from '.'
 import paths from '../../paths/manage'
 import { dateCellNoWrap, textCell } from '../tableUtils'
@@ -40,7 +41,7 @@ export const healthDetailsCards = (
   bookingDetails: BookingDetails | null = null,
   bookingDetailsOutcome?: ApiOutcome,
 ) => {
-  let cards = [card({ html: insetText('Imported from OASys') })]
+  let cards: Array<SummaryListWithCard> = []
 
   const assessentIso = supportingInformation?.assessmentMetadata?.dateCompleted
   if (assessentIso && assessentIso > '2025-04-09T18:00') {
