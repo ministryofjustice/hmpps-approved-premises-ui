@@ -1,4 +1,5 @@
 import { createMock } from '@golevelup/ts-jest'
+import { render } from 'nunjucks'
 import { Cas1OASysGroupName } from '@approved-premises/api'
 import * as healthUtils from './healthUtils'
 import { card } from './index'
@@ -13,6 +14,8 @@ import {
 import { healthDetailsCards } from './healthUtils'
 import { ErrorWithData } from '../errors'
 
+jest.mock('nunjucks')
+
 const mockCardList = [card({ title: 'mock card' })]
 const personService = createMock<PersonService>({})
 const token = 'token'
@@ -24,6 +27,7 @@ const riskToSelf = cas1OasysGroupFactory.riskToSelf().build()
 
 describe('Health tab', () => {
   beforeEach(() => {
+    ;(render as jest.Mock).mockImplementation((templatePath: string) => `Nunjucks template ${templatePath}`)
     personService.getOasysAnswers.mockImplementation(async (_, __, group: Cas1OASysGroupName) => {
       switch (group) {
         case 'riskToSelf':
