@@ -100,12 +100,12 @@ context('ResidentProfile', () => {
 
       const page = visitPage({ placement, personRisks })
 
-      WHEN('I click the Health tab')
-      page.clickTab('Health')
+      WHEN('I click the Health and wellbeing tab')
+      page.clickTab('Health and wellbeing')
 
       THEN('I should see the Health details section')
-      page.shouldHaveActiveTab('Health')
-      page.shouldHaveActiveSideNav(`Health and disability`)
+      page.shouldHaveActiveTab('Health and wellbeing')
+      page.shouldHaveActiveSideNav(`Health and wellbeing`)
 
       AND('I should see the smoking status card')
       page.shouldShowSmokingStatus()
