@@ -123,7 +123,6 @@ const availabilityRow = (name: string, available: number, booked: number, hideEm
 export const daySummaryRows = (
   capacity: Cas1PremiseCapacityForDay,
   roomCharacteristics: Array<Cas1SpaceBookingCharacteristic> = null,
-  characteristicsMode: 'singleRow' | 'doubleRow' | 'none' = 'none',
 ) => {
   const { totalBedCount, bookingCount, availableBedCount, characteristicAvailability } = capacity
 
@@ -134,34 +133,18 @@ export const daySummaryRows = (
     summaryListItem('Available spaces', String(availableBedCount - bookingCount)),
   ]
 
-  if (characteristicsMode === 'doubleRow')
-    rows.push({ key: { html: '<div class="govuk-!-static-padding-top-5"></div>' }, value: null })
-
-  if (characteristicsMode !== 'none')
-    characteristicAvailability.forEach(({ characteristic, availableBedsCount, bookingsCount }) => {
-      if (!roomCharacteristics || roomCharacteristics.includes(characteristic)) {
-        if (characteristicsMode === 'singleRow') {
-          rows.push(
-            availabilityRow(
-              placementCriteriaLabels[characteristic],
-              availableBedsCount,
-              bookingsCount,
-              !roomCharacteristics,
-            ),
-          )
-        }
-
-        if (characteristicsMode === 'doubleRow') {
-          rows.push(summaryListItem(`${placementCriteriaLabels[characteristic]} capacity`, String(availableBedsCount)))
-          rows.push(
-            summaryListItem(
-              `${placementCriteriaLabels[characteristic]} available`,
-              String(availableBedsCount - bookingsCount),
-            ),
-          )
-        }
-      }
-    })
+  characteristicAvailability.forEach(({ characteristic, availableBedsCount, bookingsCount }) => {
+    if (!roomCharacteristics || roomCharacteristics.includes(characteristic)) {
+      rows.push(
+        availabilityRow(
+          placementCriteriaLabels[characteristic],
+          availableBedsCount,
+          bookingsCount,
+          !roomCharacteristics,
+        ),
+      )
+    }
+  })
 
   return { rows }
 }

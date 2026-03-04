@@ -31,7 +31,7 @@ export default class DayAvailabilityPage extends Page {
     cy.get('strong').should('contain.text', title)
     cy.get('p').should('contain.text', detail)
 
-    const summaryList = daySummaryRows(this.dayCapacity, this.criteria, 'singleRow')
+    const summaryList = daySummaryRows(this.dayCapacity, this.criteria)
     const summaryRows = summaryList.rows.filter(({ value }) => value)
     this.shouldContainSummaryListItems(summaryRows)
     cy.get('table')

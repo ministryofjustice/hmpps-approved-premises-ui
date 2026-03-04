@@ -131,7 +131,7 @@ export default class ApOccupancyViewController {
         backLink: getPageBackLink(paths.premises.placements.show.pattern, req, [paths.premises.occupancy.view.pattern]),
         previousDayLink: getDayLink(daySummary.previousDate),
         nextDayLink: getDayLink(daySummary.nextDate),
-        daySummaryRows: daySummaryRows(dayCapacity, null, 'none'),
+        daySummaryRows: daySummaryRows(dayCapacity),
         daySummaryText: generateDaySummaryText(dayCapacity),
         ...tableCaptions(daySummary),
         placementTableHeader: tableHeader<PlacementColumnField>(placementColumnMap, sortBy, sortDirection, hrefPrefix),
