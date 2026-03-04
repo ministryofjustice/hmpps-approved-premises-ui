@@ -54,27 +54,58 @@ export const reportInputLabels = {
 
 export type ReportType = (keyof typeof reportInputLabels)[number]
 
-export const unusedReports = [] as Array<string>
+export const unusedReports: Array<string> = []
 
-export const piiReports = [
+export const piiReports: Array<string> = [
   'applicationsV2WithPii',
   'outOfServiceBedsWithPii',
   'requestsForPlacementWithPii',
   'placementMatchingOutcomesV2WithPii',
   'placementsWithPii',
-] as Array<string>
+]
+
+export const operationalReports: Array<string> = ['overduePlacements']
+
+export const managementReports: Array<string> = [
+  'outOfServiceBeds',
+  'outOfServiceBedsWithPii',
+  'dailyMetrics',
+  'overduePlacements',
+]
 
 export const reportOptions = (user: UserDetails): Array<{ value: string; text: string; hint: { text: string } }> => {
+  const enabledReports = getEnabledReports(user)
+
   return Object.entries(reportInputLabels)
-    .filter(([reportName]) => {
-      return !unusedReports.includes(reportName)
-    })
-    .filter(([reportName]) => {
-      return !piiReports.includes(reportName) || hasPermission(user, ['cas1_reports_view_with_pii'])
-    })
+    .filter(([reportName]) => !unusedReports.includes(reportName))
+    .filter(([reportName]) => enabledReports.includes(reportName))
     .map(([reportName, reportLabel]) => ({
       value: reportName,
       text: reportLabel.text,
       hint: { text: reportLabel.hint },
     }))
+}
+
+const getEnabledReports = (user: UserDetails): Array<string> => {
+  const allReports = Object.keys(reportInputLabels)
+
+  if (hasPermission(user, ['cas1_reports_view_with_pii'])) {
+    return allReports
+  }
+
+  if (hasPermission(user, ['cas1_reports_view'])) {
+    return allReports.filter(reportName => !piiReports.includes(reportName))
+  }
+
+  let enabledReports: Array<string> = []
+
+  if (hasPermission(user, ['cas1_management_reports_view'])) {
+    enabledReports = enabledReports.concat(managementReports)
+  }
+
+  if (hasPermission(user, ['cas1_operational_reports_view'])) {
+    enabledReports = enabledReports.concat(operationalReports)
+  }
+
+  return enabledReports
 }
