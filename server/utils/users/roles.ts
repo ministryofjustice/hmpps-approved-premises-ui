@@ -74,11 +74,11 @@ export const roleLabelDictionary: RoleLabelDictionary = {
     hint: 'Assign to CRU Members who are not in the Find and Book Beta.',
   },
   report_viewer: {
-    label: 'Report viewer without PII',
+    label: 'All reports excluding PII',
     hint: 'View and download reports, excluding those with personally identifiable information',
   },
   report_viewer_with_pii: {
-    label: 'Report viewer with PII',
+    label: 'All reports including PII',
     hint: 'View and download reports, including those with personally identifiable information',
   },
   future_manager: {
