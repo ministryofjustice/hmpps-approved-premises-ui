@@ -12,6 +12,7 @@ export const healthTabController = async ({ personService, token, crn }: TabCont
     personService.getOasysAnswers(token, crn, 'supportingInformation', [13]),
     personService.getBookingDetails(token, crn),
   ])
+
   return {
     subHeading: 'Health and disability',
     cardList: healthDetailsCards(
