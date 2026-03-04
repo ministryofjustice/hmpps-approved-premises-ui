@@ -105,7 +105,7 @@ context('ResidentProfile', () => {
 
       THEN('I should see the Health details section')
       page.shouldHaveActiveTab('Health and wellbeing')
-      page.shouldHaveActiveSideNav(`Health and wellbeing`)
+      page.shouldHaveActiveSideNav(`Health and disability`)
 
       AND('I should see the smoking status card')
       page.shouldShowSmokingStatus()

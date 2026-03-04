@@ -18,7 +18,7 @@ export const healthTabController = async ({
     personService.getBookingDetails(token, crn),
   ])
   return {
-    subHeading: 'Health and wellbeing',
+    subHeading: 'Health and disability',
     cardList: healthDetailsCards(
       supportingInformation,
       supportingInformationOutcome,

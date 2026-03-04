@@ -22,7 +22,7 @@ export const healthSideNavigation = (subTab: ResidentProfileSubTab, crn: string,
   const basePath = paths.resident.tabHealth
   return [
     {
-      text: 'Health and wellbeing',
+      text: 'Health and disability',
       href: basePath.healthDetails({ crn, placementId }),
       active: subTab === 'healthDetails',
     },

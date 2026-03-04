@@ -38,7 +38,7 @@ describe('healthUtils', () => {
         {
           active: true,
           href: `${basePath}healthDetails`,
-          text: 'Health and wellbeing',
+          text: 'Health and disability',
         },
         {
           active: false,

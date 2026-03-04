@@ -49,7 +49,7 @@ describe('Health tab', () => {
 
       const result = await healthTabController({ personService, token, crn, placement })
 
-      expect(result).toEqual({ cardList: mockCardList, subHeading: 'Health and wellbeing' })
+      expect(result).toEqual({ cardList: mockCardList, subHeading: 'Health and disability' })
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [13])
       expect(personService.getBookingDetails).toHaveBeenCalledWith(token, crn)
       expect(healthDetailsCards).toHaveBeenCalledWith(
