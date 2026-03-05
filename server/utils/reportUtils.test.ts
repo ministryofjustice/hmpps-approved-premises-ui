@@ -4,7 +4,7 @@ import { userDetailsFactory } from '../testutils/factories'
 describe('reportUtils', () => {
   describe('reportOptions', () => {
     it('should return a list of report options, excluding pii by default', () => {
-      const user = userDetailsFactory.build({ permissions: [] })
+      const user = userDetailsFactory.build({ permissions: ['cas1_reports_view'] })
       expect(reportOptions(user)).toEqual([
         {
           value: 'outOfServiceBeds',
@@ -138,6 +138,55 @@ describe('reportUtils', () => {
           text: 'Raw Placement Report (PII)',
           hint: {
             text: 'Includes additional columns of PII data.',
+          },
+        },
+        {
+          value: 'overduePlacements',
+          text: 'Overdue Placements',
+          hint: {
+            text: 'Placements where the expected arrival or departure date falls within the requested date range, and there is an overdue arrival or departure.',
+          },
+        },
+      ])
+    })
+
+    it('should return a list of operational report options', () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_operational_reports_view'] })
+
+      expect(reportOptions(user)).toEqual([
+        {
+          value: 'overduePlacements',
+          text: 'Overdue Placements',
+          hint: {
+            text: 'Placements where the expected arrival or departure date falls within the requested date range, and there is an overdue arrival or departure.',
+          },
+        },
+      ])
+    })
+
+    it('should return a list of management report options', () => {
+      const user = userDetailsFactory.build({ permissions: ['cas1_management_reports_view'] })
+
+      expect(reportOptions(user)).toEqual([
+        {
+          value: 'outOfServiceBeds',
+          text: 'Out of service beds',
+          hint: {
+            text: 'A report of all out of service beds within the requested date range and how long they were unavailable for.',
+          },
+        },
+        {
+          value: 'outOfServiceBedsWithPii',
+          text: 'Out of service beds (PII)',
+          hint: {
+            text: 'Includes additional columns of PII data.',
+          },
+        },
+        {
+          value: 'dailyMetrics',
+          text: 'Daily metrics',
+          hint: {
+            text: 'Counts of key actions across the service grouped by day.',
           },
         },
         {

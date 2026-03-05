@@ -7,15 +7,14 @@ import { ApiOutcome } from '../utils'
 import { summaryListItem } from '../formUtils'
 
 export const smokingStatusMapping: Record<string, string> = {
-  SMOKER_YES: 'Smoker',
-  SMOKER_NO: 'Non-smoker',
-  SMOKER_VAPER: 'Vaper',
+  Yes: 'Smoker',
+  No: 'Does not smoke or vape',
+  'Vaper/NRT Only': 'Vaper or uses nicotine replacement therapy (NRT)',
 }
 
-export const getSmokingStatus = (bookingDetails: BookingDetails | null): string | null => {
-  const smokingInfo = bookingDetails?.profileInformation?.find(info => info.type === 'SMOKE')
-  const value = smokingInfo?.resultValue
-  return value ? smokingStatusMapping[value] || value : null
+export const getSmokingStatus = (bookingDetails: BookingDetails): string => {
+  const smokingInfo = bookingDetails?.profileInformation?.find(info => info.type === 'SMOKE')?.resultValue
+  return smokingStatusMapping[smokingInfo] || smokingInfo
 }
 
 export const healthSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
@@ -67,7 +66,6 @@ export const healthDetailsCards = (
       html: !smokingStatus ? smokingError || `<p class="govuk-hint">Not entered in ${source}</p>` : undefined,
     }),
   )
-
   return cards
 }
 
