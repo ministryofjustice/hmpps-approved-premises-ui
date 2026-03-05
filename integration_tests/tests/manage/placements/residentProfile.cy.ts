@@ -107,6 +107,9 @@ context('ResidentProfile', () => {
       page.shouldHaveActiveTab('Health and wellbeing')
       page.shouldHaveActiveSideNav(`Health and disability`)
 
+      AND('I should see the link to application and assessment page')
+      page.shouldShowApplicationLink(placement)
+
       AND('I should see the smoking status card')
       page.shouldShowSmokingStatus()
 

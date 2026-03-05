@@ -42,10 +42,7 @@ export const healthDetailsCards = (
   crn?: string,
   placementId?: string,
 ) => {
-  const linkText =
-    crn && placementId
-      ? `Go to the ${linkTo(paths.resident.tabPlacement.application({ crn, placementId }), { text: 'application and assessment page' })} to check if any access, cultural and healthcare needs were added to the application.`
-      : 'Imported from OASys'
+  const linkText = `Go to the ${linkTo(paths.resident.tabPlacement.application({ crn, placementId }), { text: 'application and assessment page' })} to check if any access, cultural and healthcare needs were added to the application.`
 
   let cards = [card({ html: insetText(linkText) })]
 

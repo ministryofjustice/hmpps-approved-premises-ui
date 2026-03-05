@@ -141,6 +141,17 @@ export default class ResidentProfilePage extends Page {
     cy.get('.govuk-summary-card__title').contains('Smoker or vaper').should('exist')
   }
 
+  shouldShowApplicationLink(placement: Cas1SpaceBooking) {
+    const applicationPageLink = paths.resident.tabPlacement.application({
+      crn: placement.person.crn,
+      placementId: placement.id,
+    })
+
+    cy.get('.govuk-inset-text a')
+      .should('have.text', 'application and assessment page')
+      .should('have.attr', 'href', applicationPageLink)
+  }
+
   shouldShowOffencesInformation(
     offences: Array<ActiveOffence>,
     oasysOffenceDetails: Cas1OASysGroup,
