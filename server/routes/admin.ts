@@ -98,7 +98,12 @@ export default function routes(controllers: Controllers, router: Router, service
 
   get(paths.admin.reports.new.pattern, reportsController.new(), {
     auditEvent: 'ADMIN_ACCESS_REPORTS_SECTION',
-    allowedPermissions: ['cas1_reports_view'],
+    allowedPermissions: [
+      'cas1_reports_view',
+      'cas1_reports_view_with_pii',
+      'cas1_operational_reports_view',
+      'cas1_management_reports_view',
+    ],
   })
 
   post(paths.admin.reports.create.pattern, reportsController.create(), {
@@ -109,7 +114,12 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'ADMIN_GENERATE_LOST_BEDS_REPORT_ERROR',
       },
     ],
-    allowedPermissions: ['cas1_reports_view'],
+    allowedPermissions: [
+      'cas1_reports_view',
+      'cas1_reports_view_with_pii',
+      'cas1_operational_reports_view',
+      'cas1_management_reports_view',
+    ],
   })
 
   get(paths.admin.userManagement.index.pattern, userManagementController.index(), {
