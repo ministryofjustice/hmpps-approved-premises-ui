@@ -323,4 +323,17 @@ export default {
         jsonBody: args.bookingDetails,
       },
     }),
+
+  stubBookingDetails404: (args: { person: Person }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.people.bookingDetails({ crn: args.person.crn }),
+      },
+      response: {
+        status: 404,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { status: 404 },
+      },
+    }),
 }

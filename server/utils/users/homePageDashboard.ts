@@ -94,7 +94,12 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.cruDashboard)
   }
 
-  if (hasPermission(user, ['cas1_reports_view'])) {
+  if (
+    hasPermission(user, ['cas1_reports_view']) ||
+    hasPermission(user, ['cas1_reports_view_with_pii']) ||
+    hasPermission(user, ['cas1_operational_reports_view']) ||
+    hasPermission(user, ['cas1_management_reports_view'])
+  ) {
     items.push(sections.reports)
   }
 
