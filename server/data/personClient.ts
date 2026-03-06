@@ -1,4 +1,4 @@
-import type { Response } from 'express'
+import { Response } from 'express'
 
 import type {
   ActiveOffence,
@@ -15,6 +15,7 @@ import type {
   PersonAcctAlert,
   PersonRisks,
   PrisonCaseNote,
+  CaseDetail,
 } from '@approved-premises/api'
 
 import RestClient from './restClient'
@@ -122,5 +123,9 @@ export default class PersonClient {
 
   async bookingDetails(crn: string): Promise<BookingDetails> {
     return this.restClient.get<BookingDetails>({ path: paths.people.bookingDetails({ crn }) })
+  }
+
+  async caseDetail(crn: string): Promise<CaseDetail> {
+    return this.restClient.get<CaseDetail>({ path: paths.people.caseDetail({ crn }) })
   }
 }

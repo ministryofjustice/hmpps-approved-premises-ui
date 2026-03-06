@@ -10,8 +10,9 @@ import {
   AdditionalCondition,
   StandardCondition,
   BespokeCondition,
-  Cas1SpaceBooking,
   PrisonCaseNote,
+  CaseDetail,
+  Offence,
 } from '@approved-premises/api'
 import { subYears } from 'date-fns'
 import { SummaryListWithCard, Table, TableRow } from '@approved-premises/ui'
@@ -24,7 +25,6 @@ import {
   csraClassificationMapping,
   insetText,
   loadingErrorMessage,
-  ndeliusDeeplink,
   ResidentProfileSubTab,
 } from './index'
 
@@ -45,25 +45,24 @@ export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: strin
 }
 
 const getOffenceDescriptions = (
-  offence: ActiveOffence,
+  offence: ActiveOffence | Offence,
 ): { mainCategoryDescription: string; subCategoryDescription: string } => {
   const { mainCategoryDescription, subCategoryDescription: sub } = offence || {}
   return { mainCategoryDescription, subCategoryDescription: mainCategoryDescription === sub ? '' : sub }
 }
 
-export const offenceCards = (
-  offences: Array<ActiveOffence>,
-  offencesOutcome: ApiOutcome,
-): Array<SummaryListWithCard> => {
+export const offenceCards = (caseDetail: CaseDetail, caseDetailOutcome: ApiOutcome): Array<SummaryListWithCard> => {
   const title = 'Offence details'
-  const fullOutcome = offencesOutcome === 'success' && !offences?.length ? 'notFound' : offencesOutcome
+
+  const fullOutcome = caseDetailOutcome === 'success' && !caseDetail?.offences?.length ? 'notFound' : caseDetailOutcome
 
   const errorMessage = loadingErrorMessage({ result: fullOutcome, item: 'offence', source: 'NDelius' })
   if (errorMessage) return [card({ title, html: errorMessage })]
 
-  const mainOffence: ActiveOffence = offences.find(({ mainOffence: isMain }) => isMain) || offences[0]
+  const { offences } = caseDetail
+  const mainOffence: Offence = offences.find(({ main: isMain }) => isMain) || offences[0]
 
-  const { offenceId, deliusEventNumber, offenceDate } = mainOffence
+  const { id, eventNumber, date } = mainOffence
   const { mainCategoryDescription, subCategoryDescription } = getOffenceDescriptions(mainOffence)
   return [
     card({
@@ -71,9 +70,9 @@ export const offenceCards = (
       rows: [
         summaryListItem('Offence type', mainCategoryDescription),
         summaryListItem('Sub-category', subCategoryDescription),
-        summaryListItem('Date of offence', offenceDate, 'date'),
-        summaryListItem('Offence ID', offenceId),
-        summaryListItem('NDelius Event number', deliusEventNumber),
+        summaryListItem('Date of offence', date, 'date'),
+        summaryListItem('Offence ID', id),
+        summaryListItem('NDelius Event number', eventNumber),
       ],
     }),
     card({
@@ -90,33 +89,38 @@ export const offenceCards = (
   ]
 }
 
-export const additionalOffencesRows = (offences: Array<ActiveOffence>, mainOffence: ActiveOffence): Array<TableRow> =>
+export const additionalOffencesRows = (offences: Array<Offence>, mainOffence: Offence): Array<TableRow> =>
   offences
-    .map((offence: ActiveOffence) => {
+    .sort((a, b) => (a.date > b.date ? -1 : 1))
+    .map(offence => {
       const { mainCategoryDescription, subCategoryDescription } = getOffenceDescriptions(offence)
       return (
         offence !== mainOffence && [
           textCell(mainCategoryDescription),
           textCell(subCategoryDescription),
-          offence.offenceDate ? dateCell(offence.offenceDate) : textCell(''),
+          offence.date ? dateCell(offence.date) : textCell(''),
         ]
       )
     })
     .filter(Boolean)
 
-export const sentenceCards = (placement: Cas1SpaceBooking) => {
-  const link = ndeliusDeeplink({
-    crn: placement.person.crn,
-    text: 'View event list on NDelius (opens in a new tab)',
-    component: 'EventsList',
-  })
-  return [
-    card({
-      html: `<h2 class="govuk-heading-m">Sentence</h2>${insetText(
-        `<p>We cannot display sentence details from NDelius yet.</p><p>You can view this information in the event details. The event number is ${placement.deliusEventNumber}</p>${link}`,
-      )}`,
-    }),
-  ]
+export const sentenceCards = (caseDetail: CaseDetail, caseDetailOutcome: ApiOutcome) => {
+  const errorMessage = loadingErrorMessage({ result: caseDetailOutcome, item: 'sentence', source: 'NDelius' })
+  const title = 'Sentence'
+  return !errorMessage
+    ? caseDetail.sentences.map(({ typeDescription, startDate, endDate, eventNumber }) =>
+        card({
+          title,
+          rows: [
+            summaryListItem('Sentence type', typeDescription),
+            summaryListItem('Sentence length', DateFormats.durationBetweenDates(startDate, endDate).ui),
+            summaryListItem('Sentence start date', startDate, 'date'),
+            summaryListItem('Sentence end date', endDate, 'date'),
+            summaryListItem('NDelius event number', eventNumber),
+          ],
+        }),
+      )
+    : [card({ title, html: errorMessage })]
 }
 
 export const oasysOffenceCards = (oasysAnswers: Cas1OASysGroup, callResult: ApiOutcome): Array<SummaryListWithCard> => [
@@ -124,18 +128,19 @@ export const oasysOffenceCards = (oasysAnswers: Cas1OASysGroup, callResult: ApiO
 ]
 
 export const offencesTabCards = ({
-  offences,
+  caseDetail,
+  caseDetailOutcome,
   oasysAnswers,
-  offencesOutcome,
   oasysOutcome,
 }: {
-  offences: Array<ActiveOffence>
+  caseDetail: CaseDetail
   oasysAnswers: Cas1OASysGroup
-  offencesOutcome: ApiOutcome
   oasysOutcome: ApiOutcome
+  caseDetailOutcome: ApiOutcome
 }): Array<SummaryListWithCard> => [
-  ...offenceCards(offences, offencesOutcome),
+  ...offenceCards(caseDetail, caseDetailOutcome),
   ...oasysOffenceCards(oasysAnswers, oasysOutcome),
+  ...sentenceCards(caseDetail, caseDetailOutcome),
 ]
 
 export const licenseCards = (licence: Licence, licenceResult: ApiOutcome): Array<SummaryListWithCard> => {
