@@ -55,6 +55,8 @@ const userRoles: Record<RoleInUse, string> = {
   cru_member: 'CRU member',
   report_viewer: 'Report viewer',
   report_viewer_with_pii: 'Report viewer with PII',
+  operational_report_viewer: 'Operational reports',
+  management_report_viewer: 'Management reports',
   excluded_from_assess_allocation: 'Excluded from assess allocation',
   excluded_from_match_allocation: 'Excluded from match allocation',
   excluded_from_placement_application_allocation: 'Excluded from placement application allocation',
@@ -63,8 +65,6 @@ const userRoles: Record<RoleInUse, string> = {
   ap_area_manager: 'AP area manager',
   user_manager: 'User manager',
   janitor: 'Janitor',
-  operational_report_viewer: 'Operational reports',
-  management_report_viewer: 'Management reports',
 }
 
 export const userRolesSelectOptions = (

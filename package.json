@@ -152,7 +152,7 @@
     "source-map-support": "^0.5.21",
     "static-path": "^0.0.4",
     "superagent": "^9.0.0",
-    "underscore": "^1.13.7",
+    "underscore": "^1.13.8",
     "url-value-parser": "^2.2.0"
   },
   "devDependencies": {

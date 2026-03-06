@@ -8,8 +8,8 @@ export type Qualification = (typeof qualifications)[number]
 export const roles = [
   'Assessor',
   'Appeals manager',
-  'Report viewer without PII',
-  'Report viewer with PII',
+  'All reports excluding PII',
+  'All reports including PII',
   'Future manager',
   'User manager',
   'Stop assessment allocations',

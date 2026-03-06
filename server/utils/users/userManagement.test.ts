@@ -111,6 +111,8 @@ describe('userManagement', () => {
         { selected: false, text: 'CRU member', value: 'cru_member' },
         { selected: false, text: 'Report viewer', value: 'report_viewer' },
         { selected: false, text: 'Report viewer with PII', value: 'report_viewer_with_pii' },
+        { selected: false, text: 'Operational reports', value: 'operational_report_viewer' },
+        { selected: false, text: 'Management reports', value: 'management_report_viewer' },
         { selected: false, text: 'Excluded from assess allocation', value: 'excluded_from_assess_allocation' },
         { selected: false, text: 'Excluded from match allocation', value: 'excluded_from_match_allocation' },
         {
@@ -123,8 +125,6 @@ describe('userManagement', () => {
         { selected: false, text: 'AP area manager', value: 'ap_area_manager' },
         { selected: false, text: 'User manager', value: 'user_manager' },
         { selected: false, text: 'Janitor', value: 'janitor' },
-        { selected: false, text: 'Operational reports', value: 'operational_report_viewer' },
-        { selected: false, text: 'Management reports', value: 'management_report_viewer' },
       ])
     })
 
@@ -135,6 +135,8 @@ describe('userManagement', () => {
         { selected: false, text: 'CRU member', value: 'cru_member' },
         { selected: false, text: 'Report viewer', value: 'report_viewer' },
         { selected: false, text: 'Report viewer with PII', value: 'report_viewer_with_pii' },
+        { selected: false, text: 'Operational reports', value: 'operational_report_viewer' },
+        { selected: false, text: 'Management reports', value: 'management_report_viewer' },
         { selected: false, text: 'Excluded from assess allocation', value: 'excluded_from_assess_allocation' },
         { selected: false, text: 'Excluded from match allocation', value: 'excluded_from_match_allocation' },
         {
@@ -147,8 +149,6 @@ describe('userManagement', () => {
         { selected: false, text: 'AP area manager', value: 'ap_area_manager' },
         { selected: false, text: 'User manager', value: 'user_manager' },
         { selected: false, text: 'Janitor', value: 'janitor' },
-        { selected: false, text: 'Operational reports', value: 'operational_report_viewer' },
-        { selected: false, text: 'Management reports', value: 'management_report_viewer' },
       ])
     })
   })

@@ -274,6 +274,7 @@ context('ResidentProfile', () => {
       cy.task('stubAdjudications404', { person: placement.person })
       cy.task('stubPersonOffences404', { person: placement.person })
       cy.task('stubCsra404', { person: placement.person })
+      cy.task('stubBookingDetails404', { person: placement.person })
 
       const page = visitPage({ placement, personRisks })
 
@@ -297,6 +298,12 @@ context('ResidentProfile', () => {
       page.shouldHaveActiveSideNav('Prison')
 
       cy.contains('No adjudication information found in Digital Prison Service')
+
+      WHEN('I select the health tab')
+      page.clickTab('Health')
+      THEN('"No information" messages should be shown')
+      cy.contains('No OASys supporting information information found in OASys')
+      cy.contains('No smoking status information found in Digital Prison Service (DPS)')
     })
 
     it('should not allow access to the page if user lacks permission', () => {

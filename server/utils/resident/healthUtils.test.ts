@@ -82,7 +82,7 @@ describe('healthUtils', () => {
         .supportingInformation()
         .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
       const bookingDetails = bookingDetailsFactory.build({
-        profileInformation: [{ type: 'SMOKE', resultValue: 'SMOKER_YES' }],
+        profileInformation: [{ type: 'SMOKE', resultValue: 'Yes' }],
       })
 
       const result = healthDetailsCards(supportingInformation, 'success', bookingDetails, 'success', crn, placement.id)
@@ -198,11 +198,20 @@ describe('healthUtils', () => {
   })
 
   describe('getSmokingStatus', () => {
-    it.each(Object.entries(smokingStatusMapping))('should return "%s" for %s', (resultValue, expected) => {
+    it.each([...Object.entries(smokingStatusMapping), ['unknown', 'unknown']])(
+      'if value is "%s", it should return %s',
+      (resultValue, expected) => {
+        const bookingDetails = bookingDetailsFactory.build({
+          profileInformation: [{ type: 'SMOKE', resultValue }],
+        })
+        expect(getSmokingStatus(bookingDetails)).toBe(expected)
+      },
+    )
+    it('should return undefined if no smoke profile row', () => {
       const bookingDetails = bookingDetailsFactory.build({
-        profileInformation: [{ type: 'SMOKE', resultValue }],
+        profileInformation: [{ type: 'NOTSMOKE', resultValue: 'resultValue' }],
       })
-      expect(getSmokingStatus(bookingDetails)).toBe(expected)
+      expect(getSmokingStatus(bookingDetails)).toBe(undefined)
     })
   })
 })
