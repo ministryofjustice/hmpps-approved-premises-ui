@@ -4,7 +4,12 @@ import { TabData } from './index'
 import { healthDetailsCards, mentalHealthCards } from './healthUtils'
 import { ApiOutcome, settlePromisesWithOutcomes } from '../utils'
 
-export const healthTabController = async ({ personService, token, crn }: TabControllerParameters): Promise<TabData> => {
+export const healthTabController = async ({
+  personService,
+  token,
+  crn,
+  placement,
+}: TabControllerParameters): Promise<TabData> => {
   const {
     values: [supportingInformation, bookingDetails],
     outcomes: [supportingInformationOutcome, bookingDetailsOutcome],
@@ -20,6 +25,8 @@ export const healthTabController = async ({ personService, token, crn }: TabCont
       supportingInformationOutcome,
       bookingDetails,
       bookingDetailsOutcome,
+      crn,
+      placement?.id,
     ),
   }
 }

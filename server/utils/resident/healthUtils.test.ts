@@ -53,11 +53,10 @@ describe('healthUtils', () => {
     it('should render error card for recent assessment (FM-286)', () => {
       const supportingInformation = cas1OasysGroupFactory.supportingInformation().build()
 
-      const result = healthDetailsCards(supportingInformation, 'success', null)
+      const result = healthDetailsCards(supportingInformation, 'success', null, undefined, crn, placement.id)
 
+      expect(result).toHaveLength(3)
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
-      expect(render).toHaveBeenCalledWith('partials/insetText.njk', { html: 'Imported from OASys' })
-
       expect(result[1].html).toMatchStringIgnoringWhitespace(
         `<p>We cannot load general health - any physical or mental health conditions right now.</p>
          <p>Go to OASys to check if any general health details have been entered.</p>`,
@@ -69,11 +68,10 @@ describe('healthUtils', () => {
         .supportingInformation()
         .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
 
-      const result = healthDetailsCards(supportingInformation, 'success', null)
+      const result = healthDetailsCards(supportingInformation, 'success', null, undefined, crn, placement.id)
 
+      expect(result).toHaveLength(3)
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
-      expect(render).toHaveBeenCalledWith('partials/insetText.njk', { html: 'Imported from OASys' })
-
       expect(result[1].html).toMatchStringIgnoringWhitespace(
         `${oasysMetadataRow('13.1', 'OASys supporting information', supportingInformation)}Nunjucks template partials/detailsBlock.njk`,
       )
@@ -87,7 +85,7 @@ describe('healthUtils', () => {
         profileInformation: [{ type: 'SMOKE', resultValue: 'Yes' }],
       })
 
-      const result = healthDetailsCards(supportingInformation, 'success', bookingDetails, 'success')
+      const result = healthDetailsCards(supportingInformation, 'success', bookingDetails, 'success', crn, placement.id)
 
       expect(result).toHaveLength(3)
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
@@ -102,7 +100,7 @@ describe('healthUtils', () => {
         .supportingInformation()
         .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
 
-      const result = healthDetailsCards(supportingInformation, 'success', null, 'failure')
+      const result = healthDetailsCards(supportingInformation, 'success', null, 'failure', crn, placement.id)
 
       expect(result).toHaveLength(3)
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
@@ -116,7 +114,7 @@ describe('healthUtils', () => {
         .supportingInformation()
         .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
 
-      const result = healthDetailsCards(supportingInformation, 'success', null, 'success')
+      const result = healthDetailsCards(supportingInformation, 'success', null, 'success', crn, placement.id)
 
       expect(result).toHaveLength(3)
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })

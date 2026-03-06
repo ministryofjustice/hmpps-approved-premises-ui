@@ -4,7 +4,12 @@ import * as healthUtils from './healthUtils'
 import { card } from './index'
 import { healthTabController, mentalHealthTabController } from './health'
 import { PersonService } from '../../services'
-import { acctAlertFactory, bookingDetailsFactory, cas1OasysGroupFactory } from '../../testutils/factories'
+import {
+  acctAlertFactory,
+  bookingDetailsFactory,
+  cas1OasysGroupFactory,
+  cas1SpaceBookingFactory,
+} from '../../testutils/factories'
 import { healthDetailsCards } from './healthUtils'
 import { ErrorWithData } from '../errors'
 
@@ -12,6 +17,7 @@ const mockCardList = [card({ title: 'mock card' })]
 const personService = createMock<PersonService>({})
 const token = 'token'
 const crn = 'crn'
+const placement = cas1SpaceBookingFactory.build({ person: { crn } })
 
 const personAcctAlerts = acctAlertFactory.buildList(10)
 const supportingInformation = cas1OasysGroupFactory.supportingInformation().build()
@@ -41,12 +47,19 @@ describe('Health tab', () => {
       personService.getOasysAnswers.mockResolvedValue(supportingInformation)
       personService.getBookingDetails.mockResolvedValue(bookingDetails)
 
-      const result = await healthTabController({ personService, token, crn })
+      const result = await healthTabController({ personService, token, crn, placement })
 
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Health and disability' })
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [13])
       expect(personService.getBookingDetails).toHaveBeenCalledWith(token, crn)
-      expect(healthDetailsCards).toHaveBeenCalledWith(supportingInformation, 'success', bookingDetails, 'success')
+      expect(healthDetailsCards).toHaveBeenCalledWith(
+        supportingInformation,
+        'success',
+        bookingDetails,
+        'success',
+        crn,
+        placement.id,
+      )
     })
   })
 
