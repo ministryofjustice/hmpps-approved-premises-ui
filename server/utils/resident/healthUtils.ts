@@ -3,7 +3,7 @@ import { card, insetText, loadingErrorMessage, ResidentProfileSubTab } from '.'
 import paths from '../../paths/manage'
 import { dateCellNoWrap, textCell } from '../tableUtils'
 import { oasysQuestionDetailsByNumber, summaryCards, tableRow } from './riskUtils'
-import { ApiOutcome } from '../utils'
+import { ApiOutcome, linkTo } from '../utils'
 import { summaryListItem } from '../formUtils'
 
 export const smokingStatusMapping: Record<string, string> = {
@@ -38,8 +38,12 @@ export const healthDetailsCards = (
   outcome: ApiOutcome,
   bookingDetails: BookingDetails | null = null,
   bookingDetailsOutcome?: ApiOutcome,
+  crn?: string,
+  placementId?: string,
 ) => {
-  let cards = [card({ html: insetText('Imported from OASys') })]
+  const linkText = `Go to the ${linkTo(paths.resident.tabPlacement.application({ crn, placementId }), { text: 'application and assessment page' })} to check if any access, cultural and healthcare needs were added to the application.`
+
+  let cards = [card({ html: insetText(linkText) })]
 
   const assessentIso = supportingInformation?.assessmentMetadata?.dateCompleted
   if (assessentIso && assessentIso > '2025-04-09T18:00') {
