@@ -34,7 +34,7 @@ describe('residentsUtils', () => {
         {
           active: false,
           href: `${baseUrl}health/healthDetails`,
-          text: 'Health',
+          text: 'Health and wellbeing',
         },
         {
           active: true,

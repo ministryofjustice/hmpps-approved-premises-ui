@@ -77,7 +77,7 @@ export const tabLabels: Record<
   { label: string; disableRestricted?: boolean; disableOffline?: boolean }
 > = {
   personal: { label: 'Personal details' },
-  health: { label: 'Health' },
+  health: { label: 'Health and wellbeing' },
   placement: { label: 'Placement' },
   risk: { label: 'Risk' },
   sentence: { label: 'Sentence' },
