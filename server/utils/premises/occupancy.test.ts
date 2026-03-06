@@ -176,10 +176,6 @@ describe('apOccupancy utils', () => {
   })
 
   describe('daySummaryRows', () => {
-    const emptyRow = {
-      key: { html: `<div class="govuk-!-static-padding-top-5"></div>` },
-      value: null as { text: string },
-    }
     const dayCapacity = cas1PremiseCapacityForDayFactory.build({
       date: '2025-02-02',
       totalBedCount: 20,
@@ -216,22 +212,8 @@ describe('apOccupancy utils', () => {
     ]
 
     it('should generate a list of day summary rows when no criteria are provided', () => {
-      expect(daySummaryRows(dayCapacity)).toEqual({
+      expect(daySummaryRows(dayCapacity, [])).toEqual({
         rows: totalsBlock,
-      })
-    })
-
-    it('should generate a list of day summary rows including criteria', () => {
-      const expected = [
-        ...totalsBlock,
-        emptyRow,
-        { key: { text: 'En-suite bathroom capacity' }, value: { text: '1' } },
-        { key: { text: 'En-suite bathroom available' }, value: { text: '-1' } },
-        { key: { text: 'Step-free access capacity' }, value: { text: '1' } },
-        { key: { text: 'Step-free access available' }, value: { text: '0' } },
-      ]
-      expect(daySummaryRows(dayCapacity, ['hasEnSuite', 'isStepFreeDesignated'], 'doubleRow')).toEqual({
-        rows: expected,
       })
     })
 
@@ -257,7 +239,7 @@ describe('apOccupancy utils', () => {
           },
         },
       ]
-      expect(daySummaryRows(dayCapacity, ['hasEnSuite', 'isStepFreeDesignated', 'isSingle'], 'singleRow')).toEqual({
+      expect(daySummaryRows(dayCapacity, ['hasEnSuite', 'isStepFreeDesignated', 'isSingle'])).toEqual({
         rows: expected,
       })
     })

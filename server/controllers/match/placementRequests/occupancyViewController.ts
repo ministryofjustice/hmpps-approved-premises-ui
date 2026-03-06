@@ -312,7 +312,7 @@ export default class {
         pageHeading: DateFormats.isoDateToUIDate(date),
         contextKeyDetails: keyDetails,
         dayAvailabilityStatus: dayAvailabilityStatusMap[status],
-        daySummaryRows: daySummaryRows(dayCapacity, filteredCriteria, 'singleRow'),
+        daySummaryRows: daySummaryRows(dayCapacity, filteredCriteria),
         premises,
         previousDayLink: getDayLink(daySummary.previousDate),
         nextDayLink: getDayLink(daySummary.nextDate),

@@ -559,7 +559,7 @@ describe('OccupancyViewController', () => {
         contextKeyDetails: keyDetails,
         backLink: '/backlink',
         dayAvailabilityStatus: dayAvailabilityStatusMap[expectedStatus],
-        daySummaryRows: daySummaryRows(dayCapacity, [], 'singleRow'),
+        daySummaryRows: daySummaryRows(dayCapacity, []),
         premises,
         nextDayLink: `${pathPrefix}/2025-03-24`,
         previousDayLink: `${pathPrefix}/2025-03-22`,
@@ -627,7 +627,7 @@ describe('OccupancyViewController', () => {
         expect(response.render).toHaveBeenCalledWith('manage/premises/occupancy/dayView', {
           ...defaultRenderParameters,
           dayAvailabilityStatus: dayAvailabilityStatusMap[expectedFilteredStatus],
-          daySummaryRows: daySummaryRows(dayCapacity, criteria, 'singleRow'),
+          daySummaryRows: daySummaryRows(dayCapacity, criteria),
           nextDayLink: `${pathPrefix}/2025-03-24?${expectedQueryString}`,
           previousDayLink: `${pathPrefix}/2025-03-22?${expectedQueryString}`,
           placementTableHeader: tableHeader<PlacementColumnField>(
