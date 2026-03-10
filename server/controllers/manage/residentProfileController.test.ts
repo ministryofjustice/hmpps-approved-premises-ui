@@ -1,7 +1,7 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { NextFunction, Request, Response } from 'express'
 
-import { Cas1SpaceBooking, Person, PersonRisks } from '@approved-premises/api'
+import { Cas1SpaceBooking, CaseDetail, Person } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { placementSideNavigation } from '../../utils/resident/placement'
 import { personalSideNavigation } from '../../utils/resident/personalUtils'
@@ -13,9 +13,9 @@ import paths from '../../paths/manage'
 import ResidentProfileController from './residentProfileController'
 import {
   cas1SpaceBookingFactory,
+  caseDetailFactory,
   personFactory,
   restrictedPersonFactory,
-  risksFactory,
 } from '../../testutils/factories'
 import { TabData, card, getResidentHeader, ResidentProfileTab, residentTabItems, tabLabels } from '../../utils/resident'
 import * as riskTabUtils from '../../utils/resident/risk'
@@ -46,10 +46,10 @@ describe('residentProfileController', () => {
 
   const setUp = ({ person = personFactory.build({ crn }) }: { person?: Person } = {}) => {
     const placement = cas1SpaceBookingFactory.upcoming().build({ person })
-    const personRisks = risksFactory.build()
+    const caseDetail = caseDetailFactory.build()
 
     placementService.getPlacement.mockResolvedValue(placement)
-    personService.riskProfile.mockResolvedValue(personRisks)
+    personService.getCaseDetail.mockResolvedValue(caseDetail)
 
     const response: DeepMocked<Response> = createMock<Response>({ locals: { user } })
     const request: DeepMocked<Request> = createMock<Request>({
@@ -59,7 +59,7 @@ describe('residentProfileController', () => {
       session: {},
     })
 
-    return { placement, personRisks, request, response }
+    return { placement, caseDetail, request, response }
   }
 
   const tabData: TabData = {
@@ -71,7 +71,7 @@ describe('residentProfileController', () => {
       }),
     ],
   }
-  const renderParameters = (placement: Cas1SpaceBooking, personRisks: PersonRisks, tab: ResidentProfileTab) => ({
+  const renderParameters = (placement: Cas1SpaceBooking, caseDetail: CaseDetail, tab: ResidentProfileTab) => ({
     placement,
     backLink: paths.premises.show({ premisesId: placement.premises.id }),
     activeTab: tab,
@@ -80,7 +80,7 @@ describe('residentProfileController', () => {
     pageHeading: tabLabels[tab].label,
     user,
     actions: [] as Array<never>,
-    resident: getResidentHeader(placement, personRisks),
+    resident: getResidentHeader(placement, caseDetail),
   })
 
   describe('show', () => {
@@ -89,7 +89,7 @@ describe('residentProfileController', () => {
     })
 
     it('should render the Manage resident page on the personal -> personal details tab', async () => {
-      const { request, response, placement, personRisks } = setUp()
+      const { request, response, placement, caseDetail } = setUp()
 
       const tabController = jest.spyOn(personalTabUtils, 'personalDetailsTabController').mockResolvedValue(tabData)
 
@@ -98,7 +98,7 @@ describe('residentProfileController', () => {
       expect(response.render.mock.calls[0]).toEqual([
         'manage/resident/residentProfile',
         {
-          ...renderParameters(placement, personRisks, 'personal'),
+          ...renderParameters(placement, caseDetail, 'personal'),
           sideNavigation: personalSideNavigation('personalDetails', crn, placement.id),
           ...tabData,
         },
@@ -107,7 +107,7 @@ describe('residentProfileController', () => {
       expect(tabController).toBeCalledWith(
         expect.objectContaining({
           crn,
-          personRisks,
+          caseDetail,
           personService,
           token,
           placement,
@@ -116,7 +116,7 @@ describe('residentProfileController', () => {
     })
 
     it('should render the Sentence -> Offence tab', async () => {
-      const { request, response, placement, personRisks } = setUp()
+      const { request, response, placement, caseDetail } = setUp()
 
       const tabController = jest.spyOn(sentenceTabUtils, 'sentenceOffencesTabController').mockResolvedValue(tabData)
 
@@ -125,7 +125,7 @@ describe('residentProfileController', () => {
       expect(response.render.mock.calls[0]).toEqual([
         'manage/resident/residentProfile',
         {
-          ...renderParameters(placement, personRisks, 'sentence'),
+          ...renderParameters(placement, caseDetail, 'sentence'),
           subHeading: 'Offence',
           tabItems: residentTabItems(placement, 'sentence'),
           sideNavigation: sentenceSideNavigation('offence', crn, placement.id),
@@ -134,14 +134,14 @@ describe('residentProfileController', () => {
       ])
 
       expect(tabController).toHaveBeenCalledWith(
-        expect.objectContaining({ crn, personRisks, personService, token, placement }),
+        expect.objectContaining({ crn, caseDetail, personService, token, placement }),
       )
 
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
     })
 
     it('should render the Risk tab', async () => {
-      const { request, response, placement, personRisks } = setUp()
+      const { request, response, placement, caseDetail } = setUp()
 
       const tabController = jest.spyOn(riskTabUtils, 'riskTabController').mockResolvedValue(tabData)
 
@@ -151,7 +151,7 @@ describe('residentProfileController', () => {
         'manage/resident/residentProfile',
         {
           sideNavigation: riskSideNavigation('riskDetails', crn, placement.id),
-          ...renderParameters(placement, personRisks, 'risk'),
+          ...renderParameters(placement, caseDetail, 'risk'),
           ...tabData,
         },
       ])
@@ -160,14 +160,14 @@ describe('residentProfileController', () => {
     })
 
     it('should render the placement details tab', async () => {
-      const { request, response, placement, personRisks } = setUp()
+      const { request, response, placement, caseDetail } = setUp()
 
       const detailsController = jest.spyOn(placementTabUtils, 'placementTabController').mockReturnValue(tabData)
 
       await residentProfileController.show('placement', 'placementDetails')(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('manage/resident/residentProfile', {
-        ...renderParameters(placement, personRisks, 'placement'),
+        ...renderParameters(placement, caseDetail, 'placement'),
         sideNavigation: placementSideNavigation('placementDetails', crn, placement),
         ...tabData,
       })
@@ -212,29 +212,22 @@ describe('residentProfileController', () => {
     })
 
     it('should render the Manage resident page with the residents banner', async () => {
-      const { request, response, placement, personRisks } = setUp()
+      const { request, response, placement, caseDetail } = setUp()
 
       await residentProfileController.show()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'manage/resident/residentProfile',
         expect.objectContaining({
-          resident: getResidentHeader(placement, personRisks),
+          resident: getResidentHeader(placement, caseDetail),
         }),
       )
     })
 
-    it('should render the page if the risk data API call fails', async () => {
-      const errorPersonRisks = {
-        roshRisks: { status: 'error' },
-        mappa: { status: 'error' },
-        flags: { status: 'error' },
-        tier: { status: 'error' },
-      } as PersonRisks
-
+    it('should render the page if the case details API call fails', async () => {
       const { request, response, placement } = setUp()
 
-      personService.riskProfile.mockImplementation(async () => {
+      personService.getCaseDetail.mockImplementation(async () => {
         throw new ErrorWithData({ status: 404 })
       })
 
@@ -243,7 +236,7 @@ describe('residentProfileController', () => {
       expect(response.render).toHaveBeenCalledWith(
         'manage/resident/residentProfile',
         expect.objectContaining({
-          resident: getResidentHeader(placement, errorPersonRisks),
+          resident: getResidentHeader(placement, undefined),
         }),
       )
     })

@@ -1,6 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 import { TabItem } from '@approved-premises/ui'
-import { Cas1SpaceBooking, PersonRisks } from '@approved-premises/api'
+import { Cas1SpaceBooking, CaseDetail } from '@approved-premises/api'
 import { ApplicationService, AssessmentService, PersonService, PlacementService } from '../../services'
 import paths from '../../paths/manage'
 import peoplePaths from '../../paths/people'
@@ -30,7 +30,7 @@ import {
   placementApplicationTabController,
   allApPlacementsTabController,
 } from '../../utils/resident/placement'
-import { settlePromises } from '../../utils/utils'
+import { settlePromisesWithOutcomes } from '../../utils/utils'
 import { healthTabController, mentalHealthTabController } from '../../utils/resident/health'
 import { drugAndAlcoholTabController } from '../../utils/resident/drugAndAlcohol'
 import { healthSideNavigation } from '../../utils/resident/healthUtils'
@@ -55,18 +55,13 @@ export default class ResidentProfileController {
 
       const { user } = res.locals
 
-      const defaultRisks: PersonRisks = {
-        crn,
-        roshRisks: { status: 'error' },
-        mappa: { status: 'error' },
-        flags: { status: 'error' },
-        tier: { status: 'error' },
-      }
-
-      const [placement, personRisks] = await settlePromises<[Cas1SpaceBooking, PersonRisks]>(
-        [this.placementService.getPlacement(token, placementId), this.personService.riskProfile(token, crn)],
-        [undefined, defaultRisks],
-      )
+      const {
+        values: [caseDetail, placement],
+        outcomes: [caseDetailOutcome],
+      } = await settlePromisesWithOutcomes<[CaseDetail, Cas1SpaceBooking]>([
+        this.personService.getCaseDetail(token, crn),
+        this.placementService.getPlacement(token, placementId),
+      ])
 
       if (placement.person.crn !== crn) throw new CrnMismatchError()
 
@@ -85,7 +80,8 @@ export default class ResidentProfileController {
         personService: this.personService,
         crn,
         token,
-        personRisks,
+        caseDetail,
+        caseDetailOutcome,
         placement,
       }
 
@@ -136,7 +132,7 @@ export default class ResidentProfileController {
         user,
         backLink,
         tabItems,
-        resident: getResidentHeader(placement, personRisks),
+        resident: getResidentHeader(placement, caseDetail),
         actions: placementActions ? placementActions[0].items : [],
         activeTab,
         sideNavigation,

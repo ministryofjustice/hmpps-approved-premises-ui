@@ -34,16 +34,16 @@ import { detailedStatus } from '../../../../server/utils/placements/status'
 export default class ResidentProfilePage extends Page {
   constructor(
     private placement: Cas1SpaceBooking,
-    private personRisks: PersonRisks,
+    private caseDetail: CaseDetail,
     title: string,
   ) {
     super(title)
     this.checkPhaseBanner()
   }
 
-  static visit(placement: Cas1SpaceBooking, personRisks: PersonRisks): ResidentProfilePage {
+  static visit(placement: Cas1SpaceBooking, caseDetail: CaseDetail): ResidentProfilePage {
     cy.visit(paths.resident.tabPersonal.personalDetails({ crn: placement.person.crn, placementId: placement.id }))
-    return new ResidentProfilePage(placement, personRisks, 'Personal')
+    return new ResidentProfilePage(placement, caseDetail, 'Personal')
   }
 
   static visitUnauthorised(placement: Cas1SpaceBooking): ResidentProfilePage {
@@ -115,9 +115,8 @@ export default class ResidentProfilePage extends Page {
       this.shouldShowDescription('Arrival', arrivalDate)
       this.shouldShowDescription('Departure', departureDate)
       this.shouldShowDescription('Length of stay', duration)
-      this.shouldShowBadge(`${this.personRisks.roshRisks.value.overallRisk} RoSH`)
-      this.personRisks.flags.value.forEach((flag: string) => {
-        this.shouldShowBadge(flag)
+      this.caseDetail.registrations.forEach(registration => {
+        this.shouldShowBadge(registration.description)
       })
     })
   }

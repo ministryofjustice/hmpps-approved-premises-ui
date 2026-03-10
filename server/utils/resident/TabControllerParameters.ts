@@ -1,7 +1,8 @@
-import { Cas1SpaceBooking, PersonRisks } from '@approved-premises/api'
+import { Cas1SpaceBooking, CaseDetail } from '@approved-premises/api'
 import PersonService from '../../services/personService'
 import ApplicationService from '../../services/applicationService'
 import AssessmentService from '../../services/assessmentService'
+import { ApiOutcome } from '../utils'
 
 export type TabControllerParameters = {
   personService?: PersonService
@@ -9,6 +10,7 @@ export type TabControllerParameters = {
   assessmentService?: AssessmentService
   crn?: string
   token?: string
-  personRisks?: PersonRisks
+  caseDetail?: CaseDetail
+  caseDetailOutcome?: ApiOutcome
   placement?: Cas1SpaceBooking
 }

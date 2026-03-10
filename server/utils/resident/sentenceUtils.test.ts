@@ -19,6 +19,7 @@ import {
   caseDetailFactory,
   csraSummaryFactory,
   licenceFactory,
+  offenceFactory,
   prisonCaseNotesFactory,
 } from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'

@@ -47,7 +47,8 @@ describe('risk tab controller', () => {
             return null
         }
       })
-      const result = await riskTabController({ personService, token, crn, personRisks })
+      personService.riskProfile.mockResolvedValue(personRisks)
+      const result = await riskTabController({ personService, token, crn })
 
       expect(result.subHeading).toEqual('Risk information')
       expect(result.cardList).toHaveLength(16)
@@ -93,8 +94,9 @@ describe('risk tab controller', () => {
         personService.getOasysAnswers.mockImplementation(async () => {
           throw new ErrorWithData({ status: 404 })
         })
+        personService.riskProfile.mockResolvedValue(personRisks)
 
-        const result = await riskTabController({ personService, token, crn, personRisks, placement })
+        const result = await riskTabController({ personService, token, crn, placement })
         expect(result.subHeading).toEqual('Risk information')
 
         expect(result.cardList).toHaveLength(16)
@@ -112,8 +114,9 @@ describe('risk tab controller', () => {
           group: 'roshSummary' as Cas1OASysGroupName,
           assessmentMetadata: { hasApplicableAssessment: false },
         })
+        personService.riskProfile.mockResolvedValue(personRisks)
 
-        const result = await riskTabController({ personService, token, crn, personRisks, placement })
+        const result = await riskTabController({ personService, token, crn, placement })
         expect(result.cardList).toHaveLength(6)
         expect(result.cardList[3].html).toMatchStringIgnoringWhitespace(
           'Nunjucks template components/riskWidgets/rosh-widget/template.njk',

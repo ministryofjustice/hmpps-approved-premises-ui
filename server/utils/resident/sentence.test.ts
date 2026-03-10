@@ -25,6 +25,7 @@ const mockService404 = async () => {
 
 describe('sentenceTabController', () => {
   const placement = cas1SpaceBookingFactory.build()
+  const caseDetail = caseDetailFactory.build()
   const { person } = placement
   const { crn } = person
   const token = 'token'
@@ -32,11 +33,18 @@ describe('sentenceTabController', () => {
   describe('sentenceOffencesTabController', () => {
     it('should render the sentenceOffencesTab card list', async () => {
       const offenceDetails = cas1OasysGroupFactory.offenceDetails().build()
-      const caseDetail = caseDetailFactory.build()
       personService.getOasysAnswers.mockResolvedValue(offenceDetails)
-      personService.getCaseDetail.mockResolvedValue(caseDetail)
 
-      expect(await sentenceOffencesTabController({ personService, token, crn, placement })).toEqual({
+      expect(
+        await sentenceOffencesTabController({
+          personService,
+          token,
+          crn,
+          placement,
+          caseDetail,
+          caseDetailOutcome: 'success',
+        }),
+      ).toEqual({
         subHeading: 'Offence and sentence',
         cardList: [
           ...sentenceUtils.offenceCards(caseDetail, 'success'),
@@ -46,14 +54,22 @@ describe('sentenceTabController', () => {
       })
 
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'offenceDetails')
-      expect(personService.getCaseDetail).toHaveBeenCalledWith(token, crn)
     })
 
     it('should render the sentenceOffencesTab card list if there is no oasys record and no offences', async () => {
       personService.getOasysAnswers.mockImplementation(mockService404)
       personService.getCaseDetail.mockImplementation(mockService404)
 
-      expect(await sentenceOffencesTabController({ personService, token, crn, placement })).toEqual({
+      expect(
+        await sentenceOffencesTabController({
+          personService,
+          token,
+          crn,
+          placement,
+          caseDetail,
+          caseDetailOutcome: 'notFound',
+        }),
+      ).toEqual({
         subHeading: 'Offence and sentence',
         cardList: [
           ...sentenceUtils.offenceCards(undefined, 'notFound'),
@@ -63,7 +79,6 @@ describe('sentenceTabController', () => {
       })
 
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'offenceDetails')
-      expect(personService.getCaseDetail).toHaveBeenCalledWith(token, crn)
     })
   })
 

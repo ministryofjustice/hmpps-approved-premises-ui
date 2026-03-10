@@ -1,5 +1,5 @@
 import { createMock } from '@golevelup/ts-jest'
-import { cas1SpaceBookingFactory, risksFactory } from '../../testutils/factories'
+import { cas1SpaceBookingFactory, caseDetailFactory, risksFactory } from '../../testutils/factories'
 import { contactsTabController, personalDetailsTabController } from './personal'
 import { PersonService } from '../../services'
 import * as personalUtils from './personalUtils'
@@ -9,13 +9,16 @@ import { card } from '.'
 const personService = createMock<PersonService>({})
 const token = 'token'
 const placement = cas1SpaceBookingFactory.build()
+const caseDetail = caseDetailFactory.build()
 const personRisks = risksFactory.build()
+
 const { crn } = placement.person
 
 describe('Personal tab', () => {
   describe('personalDetailsTabController', () => {
     it('should render the personal details tab content', async () => {
       personService.findByCrn.mockResolvedValue(placement.person)
+      personService.riskProfile.mockResolvedValue(personRisks)
       const mockCardList = [card({ title: 'mock card' })]
 
       jest.spyOn(personalUtils, 'personDetailsCardList').mockReturnValue(mockCardList)
@@ -24,8 +27,8 @@ describe('Personal tab', () => {
         personService,
         token,
         crn,
-        personRisks,
         placement,
+        caseDetail,
       })
 
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Personal details' })
