@@ -11,6 +11,7 @@ import {
   StandardCondition,
   BespokeCondition,
   Cas1SpaceBooking,
+  PrisonCaseNote,
 } from '@approved-premises/api'
 import { subYears } from 'date-fns'
 import { SummaryListWithCard, Table, TableRow } from '@approved-premises/ui'
@@ -30,6 +31,9 @@ import {
 import { ApiOutcome, sentenceCase } from '../utils'
 import { dateCell, htmlCell, textCell } from '../tableUtils'
 import { summaryCards } from './riskUtils'
+import { caseNoteResponse } from '../../form-pages/apply/risk-and-need-factors/prison-information/caseNotes'
+import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
+import config from '../../config'
 
 export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   const basePath = paths.resident.tabSentence
@@ -204,22 +208,21 @@ export const csraRows = (csraSummaries: Array<CsraSummary>): Array<TableRow> => 
   const toShow = recent.length ? recent : sorted.slice(0, 1)
   return toShow.map(csra => {
     return [
-      DateFormats.isoDateToUIDate(csra.assessmentDate, { format: 'short' }),
-      csraClassificationMapping[csra.classificationCode as CsraClassification],
-      csra.assessmentComment,
-    ].map(textCell)
+      dateCell(csra.assessmentDate),
+      textCell(csraClassificationMapping[csra.classificationCode as CsraClassification]),
+      textCell(csra.assessmentComment),
+    ]
   })
 }
 
 export const adjudicationRows = (adjudications: Array<Adjudication>): Array<TableRow> => {
-  return adjudications.map(adjudication => {
-    return [
-      DateFormats.isoDateToUIDate(adjudication.reportedAt, { format: 'short' }),
-      adjudication.offenceDescription,
-      sentenceCase(adjudication.finding),
-    ].map(textCell)
+  return adjudications.map(({ reportedAt, offenceDescription, finding }) => {
+    return [dateCell(reportedAt), textCell(offenceDescription), textCell(sentenceCase(finding))]
   })
 }
+
+export const caseNoteBlock = (caseNotes: Array<PrisonCaseNote>): string =>
+  embeddedSummaryListItem(caseNotes.map(caseNoteResponse))
 
 export const prisonCards = ({
   adjudications,
@@ -228,6 +231,8 @@ export const prisonCards = ({
   csraResult,
   person,
   personResult,
+  caseNotes,
+  caseNotesResult,
 }: {
   adjudications: Array<Adjudication>
   adjudicationResult: ApiOutcome
@@ -235,6 +240,8 @@ export const prisonCards = ({
   csraResult: ApiOutcome
   person: Person
   personResult: ApiOutcome
+  caseNotes: Array<PrisonCaseNote>
+  caseNotesResult: ApiOutcome
 }): Array<SummaryListWithCard> => {
   const adjudicationsError = loadingErrorMessage({
     result: adjudicationResult,
@@ -253,6 +260,13 @@ export const prisonCards = ({
     item: 'person',
     source: 'NDelius',
   })
+
+  const caseNotesError = loadingErrorMessage({
+    result: caseNotesResult,
+    item: 'case notes',
+    source: 'Digital Prison Service',
+  })
+
   return [
     card({
       title: 'Prison details',
@@ -285,5 +299,10 @@ export const prisonCards = ({
         : undefined,
       html: adjudicationsError,
     }),
-  ]
+    !config.isProduction &&
+      card({
+        title: 'Prison case notes',
+        html: !caseNotesError ? caseNoteBlock(caseNotes) : caseNotesError,
+      }),
+  ].filter(Boolean)
 }

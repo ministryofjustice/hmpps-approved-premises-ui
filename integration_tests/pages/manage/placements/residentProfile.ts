@@ -11,6 +11,7 @@ import {
   Person,
   PersonAcctAlert,
   PersonRisks,
+  PrisonCaseNote,
   RoshRisks,
 } from '@approved-premises/api'
 import { SummaryListWithCard, TextItem } from '@approved-premises/ui'
@@ -186,14 +187,21 @@ export default class ResidentProfilePage extends Page {
     })
   }
 
-  shouldShowPrisonInformation(adjudications: Array<Adjudication>, csraSummaries: Array<CsraSummary>, person: Person) {
+  shouldShowPrisonInformation(
+    adjudications: Array<Adjudication>,
+    csraSummaries: Array<CsraSummary>,
+    person: Person,
+    caseNotes: Array<PrisonCaseNote>,
+  ) {
     const cards = prisonCards({
       adjudications,
       csraSummaries,
       person,
+      caseNotes,
       adjudicationResult: 'success',
       csraResult: 'success',
       personResult: 'success',
+      caseNotesResult: 'success',
     })
     cards.forEach(card => this.shouldShowCard(card))
   }

@@ -1,4 +1,12 @@
-import { ActiveOffence, Adjudication, Cas1OASysGroup, Licence, CsraSummary, Person } from '@approved-premises/api'
+import {
+  ActiveOffence,
+  Adjudication,
+  Cas1OASysGroup,
+  Licence,
+  CsraSummary,
+  Person,
+  PrisonCaseNote,
+} from '@approved-premises/api'
 import { licenseCards, offencesTabCards, prisonCards, sentenceCards } from './sentenceUtils'
 import { TabControllerParameters } from './TabControllerParameters'
 import { TabData } from '.'
@@ -44,15 +52,25 @@ export const sentencePrisonTabController = async ({
   crn,
 }: TabControllerParameters): Promise<TabData> => {
   const {
-    outcomes: [adjudicationResult, csraResult, personResult],
-    values: [adjudications, csraSummaries, person],
-  } = await settlePromisesWithOutcomes<[Array<Adjudication>, Array<CsraSummary>, Person]>([
+    outcomes: [adjudicationResult, csraResult, personResult, caseNotesResult],
+    values: [adjudications, csraSummaries, person, caseNotes],
+  } = await settlePromisesWithOutcomes<[Array<Adjudication>, Array<CsraSummary>, Person, Array<PrisonCaseNote>]>([
     personService.getAdjudications(token, crn),
     personService.csraSummaries(token, crn),
     personService.findByCrn(token, crn),
+    personService.getPrisonCaseNotes(token, crn),
   ])
   return {
     subHeading: 'Prison',
-    cardList: prisonCards({ adjudications, csraSummaries, person, adjudicationResult, csraResult, personResult }),
+    cardList: prisonCards({
+      adjudications,
+      csraSummaries,
+      person,
+      adjudicationResult,
+      csraResult,
+      personResult,
+      caseNotes,
+      caseNotesResult,
+    }),
   }
 }

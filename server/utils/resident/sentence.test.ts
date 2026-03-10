@@ -9,6 +9,7 @@ import {
   licenceFactory,
   csraSummaryFactory,
   cas1SpaceBookingFactory,
+  prisonCaseNotesFactory,
 } from '../../testutils/factories'
 import * as sentenceUtils from './sentenceUtils'
 import { PersonService } from '../../services'
@@ -82,10 +83,12 @@ describe('sentenceTabController', () => {
     it('should render the prison side-tab', async () => {
       const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
       const csraSummaries = csraSummaryFactory.buildList(3)
+      const caseNotes = prisonCaseNotesFactory.buildList(2)
 
       personService.getAdjudications.mockResolvedValue(adjudications)
       personService.csraSummaries.mockResolvedValue(csraSummaries)
       personService.findByCrn.mockResolvedValue(person)
+      personService.getPrisonCaseNotes.mockResolvedValue(caseNotes)
 
       jest.spyOn(sentenceUtils, 'prisonCards').mockReturnValue([])
 
@@ -97,19 +100,23 @@ describe('sentenceTabController', () => {
         adjudications,
         csraSummaries,
         person,
+        caseNotes,
         adjudicationResult: 'success',
         csraResult: 'success',
         personResult: 'success',
+        caseNotesResult: 'success',
       })
       expect(personService.getAdjudications).toHaveBeenCalledWith(token, crn)
       expect(personService.csraSummaries).toHaveBeenCalledWith(token, crn)
       expect(personService.findByCrn).toHaveBeenCalledWith(token, crn)
+      expect(personService.getPrisonCaseNotes).toHaveBeenCalledWith(token, crn)
     })
 
     it('should render the prison side-tab when adjudication call returns 404', async () => {
       personService.getAdjudications.mockImplementation(mockService404)
       personService.csraSummaries.mockImplementation(mockService404)
       personService.findByCrn.mockImplementation(mockService404)
+      personService.getPrisonCaseNotes.mockImplementation(mockService404)
 
       jest.spyOn(sentenceUtils, 'prisonCards').mockReturnValue([])
 
@@ -122,12 +129,16 @@ describe('sentenceTabController', () => {
         adjudications: undefined,
         csraSummaries: undefined,
         person: undefined,
+        caseNotes: undefined,
         adjudicationResult: 'notFound',
         csraResult: 'notFound',
         personResult: 'notFound',
+        caseNotesResult: 'notFound',
       })
       expect(personService.getAdjudications).toHaveBeenCalledWith(token, crn)
       expect(personService.csraSummaries).toHaveBeenCalledWith(token, crn)
+      expect(personService.findByCrn).toHaveBeenCalledWith(token, crn)
+      expect(personService.getPrisonCaseNotes).toHaveBeenCalledWith(token, crn)
     })
   })
 

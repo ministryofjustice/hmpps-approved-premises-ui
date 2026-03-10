@@ -19,6 +19,7 @@ import {
   cas1SpaceBookingFactory,
   csraSummaryFactory,
   licenceFactory,
+  prisonCaseNotesFactory,
 } from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
 import { sentenceCase } from '../utils'
@@ -31,6 +32,8 @@ import { fullPersonFactory } from '../../testutils/factories/person'
 import { bulletList } from '../formUtils'
 import { oasysMetadataRow } from './riskUtils'
 import * as utils from './index'
+import * as caseNoteFns from '../../form-pages/apply/risk-and-need-factors/prison-information/caseNotes'
+import config from '../../config'
 
 jest.mock('nunjucks')
 
@@ -340,21 +343,100 @@ describe('sentence', () => {
       ])
     })
 
+    it('should render the case notes block', () => {
+      const caseNote = prisonCaseNotesFactory.build({
+        authorName: 'Author name',
+      })
+      jest
+        .spyOn(caseNoteFns, 'caseNoteResponse')
+        .mockImplementation(
+          ({ authorName }) => ({ Author: authorName }) as unknown as ReturnType<typeof caseNoteFns.caseNoteResponse>,
+        )
+      expect(sentenceFns.caseNoteBlock([caseNote]))
+        .toMatchStringIgnoringWhitespace(`<dl class="govuk-summary-list govuk-summary-list--embedded">
+        <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
+          <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">Author</dt>
+          <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">Author name</dd>
+        </div>
+      </dl>`)
+
+      expect(caseNoteFns.caseNoteResponse).toHaveBeenCalledWith(caseNote, 0, [caseNote])
+    })
+
     it('should render the card list for the prison tab', () => {
       const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
       const csraSummaries = csraSummaryFactory.buildList(2)
       const fullPerson = fullPersonFactory.build()
+      const caseNotes = prisonCaseNotesFactory.buildList(2)
 
       jest.spyOn(sentenceFns, 'adjudicationRows').mockReturnValue([])
       jest.spyOn(sentenceFns, 'csraRows').mockReturnValue([])
+      jest.spyOn(sentenceFns, 'caseNoteBlock').mockReturnValue('case notes content')
 
       const result = sentenceFns.prisonCards({
         adjudications,
         csraSummaries,
         person: fullPerson,
+        caseNotes,
         adjudicationResult: 'success',
         csraResult: 'success',
         personResult: 'success',
+        caseNotesResult: 'success',
+      })
+
+      expect(result).toEqual([
+        {
+          card: { title: { text: 'Prison details' } },
+          rows: [{ key: { text: 'Prison name' }, value: { text: fullPerson.prisonName } }],
+        },
+        {
+          card: { title: { text: 'Cell Sharing Risk Assessment (CSRA)' } },
+          table: {
+            head: [
+              { text: 'Date assessed', classes: 'govuk-table__header--nowrap' },
+              { text: 'Classification' },
+              { text: 'Comment' },
+            ],
+            rows: [],
+          },
+        },
+        {
+          card: { title: { text: 'Adjudications' } },
+          table: {
+            head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }],
+            rows: [],
+          },
+        },
+        {
+          card: { title: { text: 'Prison case notes' } },
+          html: 'case notes content',
+        },
+      ])
+      expect(sentenceFns.adjudicationRows).toHaveBeenCalledWith(adjudications)
+      expect(sentenceFns.caseNoteBlock).toHaveBeenCalledWith(caseNotes)
+    })
+
+    it('should exclude case notes in the production environment', () => {
+      const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
+      const csraSummaries = csraSummaryFactory.buildList(2)
+      const fullPerson = fullPersonFactory.build()
+      const caseNotes = prisonCaseNotesFactory.buildList(2)
+
+      config.isProduction = true
+
+      jest.spyOn(sentenceFns, 'adjudicationRows').mockReturnValue([])
+      jest.spyOn(sentenceFns, 'csraRows').mockReturnValue([])
+      jest.spyOn(sentenceFns, 'caseNoteBlock').mockReturnValue('case notes content')
+
+      const result = sentenceFns.prisonCards({
+        adjudications,
+        csraSummaries,
+        person: fullPerson,
+        caseNotes,
+        adjudicationResult: 'success',
+        csraResult: 'success',
+        personResult: 'success',
+        caseNotesResult: 'success',
       })
 
       expect(result).toEqual([
@@ -382,6 +464,7 @@ describe('sentence', () => {
         },
       ])
       expect(sentenceFns.adjudicationRows).toHaveBeenCalledWith(adjudications)
+      expect(sentenceFns.caseNoteBlock).not.toHaveBeenCalled()
     })
   })
 })
