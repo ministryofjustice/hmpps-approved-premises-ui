@@ -33,7 +33,6 @@ import { bulletList } from '../formUtils'
 import { oasysMetadataRow } from './riskUtils'
 import * as utils from './index'
 import * as caseNoteFns from '../../form-pages/apply/risk-and-need-factors/prison-information/caseNotes'
-import MockedFn = jest.MockedFn
 import config from '../../config'
 
 jest.mock('nunjucks')
@@ -361,9 +360,7 @@ describe('sentence', () => {
         </div>
       </dl>`)
 
-      expect((caseNoteFns.caseNoteResponse as MockedFn<typeof caseNoteFns.caseNoteResponse>).mock.lastCall[0]).toEqual(
-        caseNote,
-      )
+      expect(caseNoteFns.caseNoteResponse).toHaveBeenCalledWith(caseNote, 0, [caseNote])
     })
 
     it('should render the card list for the prison tab', () => {
