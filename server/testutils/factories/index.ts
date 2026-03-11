@@ -88,7 +88,6 @@ import { applicationTimelineFactory, cas1TimelineEventFactory, personalTimelineF
 import cas1BedDetailFactory from './cas1BedDetail'
 import cas1NewEmergencyTransferFactory from './cas1NewEmergencyTransfer'
 import cas1ChangeRequestSummaryFactory from './cas1ChangeRequestSummary'
-import cas1NewChangeRequestFactory from './cas1NewChangeRequest'
 import cas1PlacementRequestDetailFactory from './cas1PlacementRequestDetail'
 import cas1PlacementRequestSummaryFactory from './cas1PlacementRequestSummary'
 import oasysQuestionFactory from './oasysQuestion'
@@ -97,8 +96,10 @@ import cas1PremisesLocalRestrictionSummaryFactory from './cas1PremisesLocalRestr
 import cas1PremisesNewLocalRestrictionFactory from './cas1PremisesNewLocalRestriction'
 import cas1RequestedPlacementPeriodFactory from './cas1RequestedPlacementPeriod'
 import cas1CurrentKeyworkerFactory from './cas1CurrentKeyworker'
+import caseDetailFactory from './caseDetail'
 import licenceFactory from './licence'
 import csraSummaryFactory from './csraSummary'
+import offenceFactory from './offence'
 
 export {
   acctAlertFactory,
@@ -137,7 +138,6 @@ export {
   cas1TimelineEventFactory,
   cas1AssignKeyWorkerFactory,
   cas1NewArrivalFactory,
-  cas1NewChangeRequestFactory,
   cas1NewDepartureFactory,
   cas1NewEmergencyTransferFactory,
   cas1NewSpaceBookingCancellationFactory,
@@ -148,6 +148,7 @@ export {
   cas1KeyworkerAllocationFactory,
   cas1UpdateSpaceBookingFactory,
   cas1RequestedPlacementPeriodFactory,
+  caseDetailFactory,
   clarificationNoteFactory,
   contingencyPlanPartnerFactory,
   contingencyPlanQuestionsBodyFactory,
@@ -203,4 +204,5 @@ export {
   cas1CurrentKeyworkerFactory,
   licenceFactory,
   csraSummaryFactory,
+  offenceFactory,
 }

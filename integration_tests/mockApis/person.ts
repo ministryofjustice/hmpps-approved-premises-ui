@@ -10,6 +10,7 @@ import type {
   Cas1OASysSupportingInformationQuestionMetaData,
   Cas1PersonalTimeline,
   Cas1SpaceBookingShortSummary,
+  CaseDetail,
   CsraSummary,
   Document,
   Licence,
@@ -329,6 +330,32 @@ export default {
       request: {
         method: 'GET',
         url: paths.people.bookingDetails({ crn: args.person.crn }),
+      },
+      response: {
+        status: 404,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { status: 404 },
+      },
+    }),
+
+  stubCaseDetail: (args: { person: Person; caseDetail: CaseDetail }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.people.caseDetail({ crn: args.person.crn }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.caseDetail,
+      },
+    }),
+
+  stubCaseDetail404: (args: { person: Person }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.people.caseDetail({ crn: args.person.crn }),
       },
       response: {
         status: 404,

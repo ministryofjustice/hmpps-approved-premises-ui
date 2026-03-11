@@ -1,10 +1,10 @@
 import {
-  ActiveOffence,
   Adjudication,
   ApprovedPremisesApplication,
   Cas1OASysGroup,
   Cas1SpaceBooking,
   Cas1SpaceBookingShortSummary,
+  CaseDetail,
   CsraSummary,
   FullPerson,
   Licence,
@@ -66,6 +66,11 @@ export default class ResidentProfilePage extends Page {
     cy.get('h1').should('contain.text', `CRN: ${placement.person.crn} is restricted`)
   }
 
+  shouldShowCards(cards: Array<SummaryListWithCard>) {
+    cy.get('.govuk-summary-card').should('have.length', cards.length)
+    cards.forEach(card => this.shouldShowCard(card))
+  }
+
   shouldShowCard(card: SummaryListWithCard) {
     const cardTitle = card.card?.title
     const title =
@@ -73,7 +78,7 @@ export default class ResidentProfilePage extends Page {
       ('text' in cardTitle
         ? cardTitle.text
         : new DOMParser().parseFromString(cardTitle.html, 'text/html').body.textContent)
-    cy.log('*****  title', title)
+    cy.log('*****  card title', title)
     if (title?.length) cy.get('.govuk-summary-card__title').contains(title).should('exist')
     cy.get('.govuk-summary-card__title')
       .contains(title)
@@ -153,29 +158,16 @@ export default class ResidentProfilePage extends Page {
       .should('have.attr', 'href', applicationPageLink)
   }
 
-  shouldShowOffencesInformation(
-    offences: Array<ActiveOffence>,
-    oasysOffenceDetails: Cas1OASysGroup,
-    placement: Cas1SpaceBooking,
-  ) {
+  shouldShowOffencesInformation(caseDetail: CaseDetail, oasysOffenceDetails: Cas1OASysGroup) {
     cy.stub(residentUtils, 'detailsBody')
     cy.get('.govuk-summary-card__title').contains('Offence').should('exist')
     const cards = offencesTabCards({
-      offences,
+      caseDetail,
       oasysAnswers: oasysOffenceDetails,
-      offencesOutcome: 'success',
+      caseDetailOutcome: 'success',
       oasysOutcome: 'success',
     })
-    this.shouldShowCard(cards[0])
-    this.shouldShowCard(cards[1])
-    this.shouldShowCard(cards[2])
-    this.shouldShowCard(cards[3])
-    cy.get('h2').should('contain', 'Sentence')
-    cy.get('.govuk-inset-text').should('contain.text', 'We cannot display sentence details from NDelius yet.')
-    cy.get('.govuk-inset-text').should(
-      'contain.text',
-      `You can view this information in the event details. The event number is ${placement.deliusEventNumber}`,
-    )
+    this.shouldShowCards(cards)
   }
 
   shouldShowLicenceInformation(licence: Licence) {

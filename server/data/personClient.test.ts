@@ -17,6 +17,7 @@ import {
   personFactory,
   prisonCaseNotesFactory,
   risksFactory,
+  caseDetailFactory,
 } from '../testutils/factories'
 import paths from '../paths/api'
 
@@ -205,6 +206,7 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
   let personClient: PersonClient
 
   const token = 'test-token'
+  const crn = 'crn'
 
   beforeEach(() => {
     personClient = new PersonClient(token)
@@ -212,7 +214,6 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
 
   describe('oasysMetadata', () => {
     it('should return the importable sections of OASys', async () => {
-      const crn = 'crn'
       const oasysMetadata = cas1OASysMetadataFactory.build()
 
       await provider.addInteraction({
@@ -239,7 +240,6 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
 
   describe('oasysAnswers', () => {
     it('should return the OASys questions and answers for a single group', async () => {
-      const crn = 'crn'
       const optionalSections = [1, 2, 3]
       const group: Cas1OASysGroupName = faker.helpers.arrayElement(['riskToSelf', 'supportingInformation'])
       const oasysGroup = cas1OasysGroupFactory.build()
@@ -273,8 +273,6 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
 
   describe('timeline', () => {
     it('calls the API with CRN', async () => {
-      const crn = 'crn'
-
       await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the timeline for a person',
@@ -296,7 +294,6 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
 
   describe('riskProfile', () => {
     it('calls the API with CRN and retrieves a risk profile', async () => {
-      const crn = 'crn'
       const personRisks = risksFactory.build()
 
       await provider.addInteraction({
@@ -321,7 +318,6 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
 
   describe('licenceDetails', () => {
     it('calls the API with CRN and retrieves a licence', async () => {
-      const crn = 'crn'
       const licence = licenceFactory.build()
 
       await provider.addInteraction({
@@ -346,7 +342,6 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
 
   describe('csraSummaries', () => {
     it('calls the API with CRN and retrieves a list of CSRA summaries', async () => {
-      const crn = 'crn'
       const csraSummaries = csraSummaryFactory.buildList(2)
 
       await provider.addInteraction({
@@ -371,7 +366,6 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
 
   describe('document', () => {
     it('should pipe the document from the API', async () => {
-      const crn = 'crn'
       const documentId = faker.string.uuid()
       const response = createMock<Response>({})
 
@@ -401,8 +395,6 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
     ])(
       'should return space bookings for a person with includeCancelled=$includeCancelled',
       async ({ includeCancelled, query }) => {
-        const crn = 'crn'
-
         await provider.addInteraction({
           state: 'Server is healthy',
           uponReceiving: `A request to get space bookings for a person with includeCancelled=${includeCancelled}`,
@@ -428,7 +420,6 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
 
   describe('bookingDetails', () => {
     it('calls the API with CRN and retrieves booking details', async () => {
-      const crn = 'crn'
       const bookingDetails = bookingDetailsFactory.build()
 
       await provider.addInteraction({
@@ -449,6 +440,30 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
 
       const result = await personClient.bookingDetails(crn)
       expect(result).toEqual(bookingDetails)
+    })
+  })
+
+  describe('caseDetail', () => {
+    it('should return caseDetails for a person', async () => {
+      const caseDetails = caseDetailFactory.build()
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: `A request to the caseDetail for a person`,
+        withRequest: {
+          method: 'GET',
+          path: paths.people.caseDetail({ crn }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: caseDetails,
+        },
+      })
+
+      const result = await personClient.caseDetail(crn)
+      expect(result).toEqual(caseDetails)
     })
   })
 })

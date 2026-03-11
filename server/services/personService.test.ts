@@ -20,6 +20,7 @@ import {
   risksFactory,
   licenceFactory,
   csraSummaryFactory,
+  caseDetailFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/personClient.ts')
@@ -31,6 +32,7 @@ describe('PersonService', () => {
   const service = new PersonService(personClientFactory)
 
   const token = 'SOME_TOKEN'
+  const crn = 'crn'
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -42,24 +44,24 @@ describe('PersonService', () => {
       const person: Person = personFactory.build()
       personClient.search.mockResolvedValue(person)
 
-      const postedPerson = await service.findByCrn(token, 'crn')
+      const postedPerson = await service.findByCrn(token, crn)
 
       expect(postedPerson).toEqual(person)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.search).toHaveBeenCalledWith('crn', false)
+      expect(personClient.search).toHaveBeenCalledWith(crn, false)
     })
 
     it('sends the checkCaseload boolean to the client method if set', async () => {
       const person: Person = personFactory.build()
       personClient.search.mockResolvedValue(person)
 
-      const postedPerson = await service.findByCrn(token, 'crn', true)
+      const postedPerson = await service.findByCrn(token, crn, true)
 
       expect(postedPerson).toEqual(person)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.search).toHaveBeenCalledWith('crn', true)
+      expect(personClient.search).toHaveBeenCalledWith(crn, true)
     })
   })
 
@@ -68,12 +70,12 @@ describe('PersonService', () => {
       const offences = activeOffenceFactory.buildList(2)
       personClient.offences.mockResolvedValue(offences)
 
-      const result = await service.getOffences(token, 'crn')
+      const result = await service.getOffences(token, crn)
 
       expect(result).toEqual(offences)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.offences).toHaveBeenCalledWith('crn')
+      expect(personClient.offences).toHaveBeenCalledWith(crn)
     })
   })
 
@@ -83,12 +85,12 @@ describe('PersonService', () => {
 
       personClient.prisonCaseNotes.mockResolvedValue(prisonCaseNotes)
 
-      const servicePrisonCaseNotes = await service.getPrisonCaseNotes(token, 'crn')
+      const servicePrisonCaseNotes = await service.getPrisonCaseNotes(token, crn)
 
       expect(servicePrisonCaseNotes).toEqual(prisonCaseNotes)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.prisonCaseNotes).toHaveBeenCalledWith('crn')
+      expect(personClient.prisonCaseNotes).toHaveBeenCalledWith(crn)
     })
   })
 
@@ -98,12 +100,12 @@ describe('PersonService', () => {
 
       personClient.adjudications.mockResolvedValue(adjudications)
 
-      const servicePrisonCaseNotes = await service.getAdjudications(token, 'crn')
+      const servicePrisonCaseNotes = await service.getAdjudications(token, crn)
 
       expect(servicePrisonCaseNotes).toEqual(adjudications)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.adjudications).toHaveBeenCalledWith('crn')
+      expect(personClient.adjudications).toHaveBeenCalledWith(crn)
     })
   })
 
@@ -113,12 +115,12 @@ describe('PersonService', () => {
 
       personClient.acctAlerts.mockResolvedValue(acctAlerts)
 
-      const serviceAcctAlerts = await service.getAcctAlerts(token, 'crn')
+      const serviceAcctAlerts = await service.getAcctAlerts(token, crn)
 
       expect(serviceAcctAlerts).toEqual(acctAlerts)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.acctAlerts).toHaveBeenCalledWith('crn')
+      expect(personClient.acctAlerts).toHaveBeenCalledWith(crn)
     })
   })
 
@@ -128,12 +130,12 @@ describe('PersonService', () => {
 
       personClient.oasysMetadata.mockResolvedValue(refOasysMetadata)
 
-      const metadata = await service.getOasysMetadata(token, 'crn')
+      const metadata = await service.getOasysMetadata(token, crn)
 
       expect(metadata).toEqual(refOasysMetadata)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.oasysMetadata).toHaveBeenCalledWith('crn')
+      expect(personClient.oasysMetadata).toHaveBeenCalledWith(crn)
     })
 
     it('on 404 it throws an OasysNotFoundError', async () => {
@@ -142,7 +144,7 @@ describe('PersonService', () => {
         throw err
       })
 
-      const t = () => service.getOasysMetadata(token, 'crn')
+      const t = () => service.getOasysMetadata(token, crn)
 
       await expect(t).rejects.toThrowError(OasysNotFoundError)
       await expect(t).rejects.toThrowError(`Oasys record not found for CRN: crn`)
@@ -155,7 +157,7 @@ describe('PersonService', () => {
       })
 
       try {
-        await service.getOasysMetadata(token, 'crn')
+        await service.getOasysMetadata(token, crn)
       } catch (error) {
         expect(error).toEqual(err)
       }
@@ -167,7 +169,7 @@ describe('PersonService', () => {
         throw genericError
       })
 
-      await expect(() => service.getOasysMetadata(token, 'crn')).rejects.toThrowError(Error)
+      await expect(() => service.getOasysMetadata(token, crn)).rejects.toThrowError(Error)
     })
   })
 
@@ -177,12 +179,12 @@ describe('PersonService', () => {
     it("on success returns the person's OASys answers given their CRN and groupName", async () => {
       personClient.oasysAnswers.mockResolvedValue(oasysGroup)
 
-      const serviceOasysSections = await service.getOasysAnswers(token, 'crn', oasysGroup.group)
+      const serviceOasysSections = await service.getOasysAnswers(token, crn, oasysGroup.group)
 
       expect(serviceOasysSections).toEqual(oasysGroup)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.oasysAnswers).toHaveBeenCalledWith('crn', oasysGroup.group, [])
+      expect(personClient.oasysAnswers).toHaveBeenCalledWith(crn, oasysGroup.group, [])
     })
 
     it('on 404 it throws an OasysNotFoundError', async () => {
@@ -191,7 +193,7 @@ describe('PersonService', () => {
         throw err
       })
 
-      const t = () => service.getOasysAnswers(token, 'crn', oasysGroup.group)
+      const t = () => service.getOasysAnswers(token, crn, oasysGroup.group)
 
       await expect(t).rejects.toThrowError(OasysNotFoundError)
       await expect(t).rejects.toThrowError(`Oasys record not found for CRN: crn`)
@@ -204,7 +206,7 @@ describe('PersonService', () => {
       })
 
       try {
-        await service.getOasysAnswers(token, 'crn', oasysGroup.group)
+        await service.getOasysAnswers(token, crn, oasysGroup.group)
       } catch (error) {
         expect(error).toEqual(err)
       }
@@ -216,7 +218,7 @@ describe('PersonService', () => {
         throw genericError
       })
 
-      await expect(() => service.getOasysAnswers(token, 'crn', oasysGroup.group)).rejects.toThrowError(Error)
+      await expect(() => service.getOasysAnswers(token, crn, oasysGroup.group)).rejects.toThrowError(Error)
     })
   })
 
@@ -225,11 +227,11 @@ describe('PersonService', () => {
       const personRisks = risksFactory.build()
       personClient.riskProfile.mockResolvedValue(personRisks)
 
-      const result = await service.riskProfile(token, 'crn')
+      const result = await service.riskProfile(token, crn)
 
       expect(result).toEqual(personRisks)
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.riskProfile).toHaveBeenCalledWith('crn')
+      expect(personClient.riskProfile).toHaveBeenCalledWith(crn)
     })
   })
 
@@ -238,11 +240,11 @@ describe('PersonService', () => {
       const licence = licenceFactory.build()
       personClient.licenceDetails.mockResolvedValue(licence)
 
-      const result = await service.licenceDetails(token, 'crn')
+      const result = await service.licenceDetails(token, crn)
 
       expect(result).toEqual(licence)
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.licenceDetails).toHaveBeenCalledWith('crn')
+      expect(personClient.licenceDetails).toHaveBeenCalledWith(crn)
     })
   })
 
@@ -252,35 +254,34 @@ describe('PersonService', () => {
 
       personClient.csraSummaries.mockResolvedValue(csraSummaries)
 
-      const result = await service.csraSummaries(token, 'crn')
+      const result = await service.csraSummaries(token, crn)
 
       expect(result).toEqual(csraSummaries)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.csraSummaries).toHaveBeenCalledWith('crn')
+      expect(personClient.csraSummaries).toHaveBeenCalledWith(crn)
     })
   })
 
   describe('getDocument', () => {
     it('pipes the document to the response', async () => {
       const response = createMock<Response>({})
-      await service.getDocument(token, 'crn', 'applicationId', response)
+      await service.getDocument(token, crn, 'applicationId', response)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.document).toHaveBeenCalledWith('crn', 'applicationId', response)
+      expect(personClient.document).toHaveBeenCalledWith(crn, 'applicationId', response)
     })
   })
 
   describe('getTimeline', () => {
     it('calls the client method and retuns the result', async () => {
       const expected = personalTimelineFactory.build()
-      const crn = 'crn'
       when(personClient.timeline).calledWith(crn).mockResolvedValue(expected)
 
       const actual = await service.getTimeline(token, crn)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.timeline).toHaveBeenCalledWith('crn')
+      expect(personClient.timeline).toHaveBeenCalledWith(crn)
       expect(actual).toEqual(expected)
     })
   })
@@ -299,7 +300,6 @@ describe('PersonService', () => {
       },
     ])('$description', async ({ includeCancelledArg, expectedIncludeCancelled }) => {
       const expected = cas1SpaceBookingShortSummaryFactory.buildList(2)
-      const crn = 'crn'
       when(personClient.spaceBookings).calledWith(crn, expectedIncludeCancelled).mockResolvedValue(expected)
 
       const actual = await service.getSpaceBookings(token, crn, includeCancelledArg)
@@ -315,11 +315,23 @@ describe('PersonService', () => {
       const bookingDetails = bookingDetailsFactory.build()
       personClient.bookingDetails.mockResolvedValue(bookingDetails)
 
-      const result = await service.getBookingDetails(token, 'crn')
+      const result = await service.getBookingDetails(token, crn)
 
       expect(result).toEqual(bookingDetails)
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.bookingDetails).toHaveBeenCalledWith('crn')
+      expect(personClient.bookingDetails).toHaveBeenCalledWith(crn)
+    })
+  })
+
+  describe('caseDetail', () => {
+    it('gets the caseDetail for a person', async () => {
+      const caseDetail = caseDetailFactory.build()
+      personClient.caseDetail.mockResolvedValue(caseDetail)
+
+      const result = await service.getCaseDetail(token, crn)
+      expect(result).toEqual(caseDetail)
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.caseDetail).toHaveBeenCalledWith(crn)
     })
   })
 })

@@ -7,19 +7,20 @@ import {
   offenceCards,
   sentenceSideNavigation,
   additionalOffencesRows,
-  offencesTabCards,
   csraRows,
   sentenceCards,
+  offencesTabCards,
 } from './sentenceUtils'
 import * as sentenceFns from './sentenceUtils'
 import {
-  activeOffenceFactory,
   adjudicationFactory,
   cas1OasysGroupFactory,
   cas1SpaceBookingFactory,
+  caseDetailFactory,
   csraSummaryFactory,
   licenceFactory,
   prisonCaseNotesFactory,
+  offenceFactory,
 } from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
 import { sentenceCase } from '../utils'
@@ -29,9 +30,9 @@ import {
   standardConditionFactory,
 } from '../../testutils/factories/licenceConditions'
 import { fullPersonFactory } from '../../testutils/factories/person'
-import { bulletList } from '../formUtils'
+import { bulletList, summaryListItem } from '../formUtils'
 import { oasysMetadataRow } from './riskUtils'
-import * as utils from './index'
+
 import * as caseNoteFns from '../../form-pages/apply/risk-and-need-factors/prison-information/caseNotes'
 import config from '../../config'
 
@@ -41,15 +42,12 @@ const crn = 'S123456'
 
 describe('sentence', () => {
   const placement = cas1SpaceBookingFactory.build()
-  const offences = [
-    ...activeOffenceFactory.buildList(5, { mainOffence: false }),
-    activeOffenceFactory.build({ mainOffence: true }),
-  ]
+  const caseDetail = caseDetailFactory.build()
+  const indexOffence = caseDetail.offences.find(({ main }) => main)
+
   const oasysAnswers = cas1OasysGroupFactory.offenceDetails().build()
   oasysAnswers.answers[0].questionNumber = '2.1'
   oasysAnswers.answers[1].questionNumber = '2.12'
-
-  const indexOffence = offences[5]
 
   beforeEach(() => {
     jest.restoreAllMocks()
@@ -87,7 +85,7 @@ describe('sentence', () => {
     ]
 
     it('should render the offence summary list', () => {
-      expect(offenceCards(offences, 'success')).toEqual([
+      expect(offenceCards(caseDetail, 'success')).toEqual([
         {
           card: { title: { text: 'Offence details' } },
           rows: [
@@ -95,26 +93,26 @@ describe('sentence', () => {
             { key: { text: 'Sub-category' }, value: { text: indexOffence.subCategoryDescription } },
             {
               key: { text: 'Date of offence' },
-              value: { text: DateFormats.isoDateToUIDate(indexOffence.offenceDate) },
+              value: { text: DateFormats.isoDateToUIDate(indexOffence.date) },
             },
-            { key: { text: 'Offence ID' }, value: { text: indexOffence.offenceId } },
-            { key: { text: 'NDelius Event number' }, value: { text: indexOffence.deliusEventNumber } },
+            { key: { text: 'Offence ID' }, value: { text: indexOffence.id } },
+            { key: { text: 'NDelius Event number' }, value: { text: indexOffence.eventNumber } },
           ],
         },
         {
           card: { title: { text: 'Additional offences' } },
           table: {
             head: [{ text: 'Main category' }, { text: 'Sub-category' }, { text: 'Date of offence' }],
-            rows: additionalOffencesRows(offences, indexOffence),
+            rows: additionalOffencesRows(caseDetail.offences, indexOffence),
           },
         },
       ])
     })
 
     it(`should not show duplicated sub-category`, async () => {
-      const offence = activeOffenceFactory.build({ mainOffence: true })
+      const offence = offenceFactory.build({ main: true })
       offence.subCategoryDescription = offence.mainCategoryDescription
-      expect(offenceCards([offence], 'success')[0].rows).toEqual(
+      expect(offenceCards({ ...caseDetail, offences: [offence] }, 'success')[0].rows).toEqual(
         expect.arrayContaining([
           { key: { text: 'Offence type' }, value: { text: offence.mainCategoryDescription } },
           { key: { text: 'Sub-category' }, value: { text: '' } },
@@ -123,15 +121,15 @@ describe('sentence', () => {
     })
 
     it(`should show an empty additional offences card`, async () => {
-      const offence = activeOffenceFactory.build({ mainOffence: true })
+      const offence = offenceFactory.build({ main: true })
       offence.subCategoryDescription = offence.mainCategoryDescription
-      expect(offenceCards([offence], 'success')[1].html).toEqual('No additional offences')
+      expect(offenceCards({ ...caseDetail, offences: [offence] }, 'success')[1].html).toEqual('No additional offences')
     })
 
     it('should handle an empty or undefined offences list, or 404 response', async () => {
-      expect(offenceCards([], 'success')).toEqual(notFoundCard)
+      expect(offenceCards({ ...caseDetail, offences: [] }, 'success')).toEqual(notFoundCard)
       expect(offenceCards(undefined, 'success')).toEqual(notFoundCard)
-      expect(offenceCards(offences, 'notFound')).toEqual(notFoundCard)
+      expect(offenceCards(caseDetail, 'notFound')).toEqual(notFoundCard)
     })
 
     it('should handle a 500 response correctly', async () => {
@@ -146,15 +144,27 @@ describe('sentence', () => {
 
   describe('additionalOffencesRows', () => {
     it('builds rows for the additional offences table', () => {
-      const mainOffence = activeOffenceFactory.build({ mainOffence: true })
-      const additionalOffence = activeOffenceFactory.build({ mainOffence: false })
+      const mainOffence = offenceFactory.build({ main: true })
+      const additionalOffence = offenceFactory.build({ main: false })
       expect(additionalOffencesRows([mainOffence, additionalOffence], mainOffence)).toEqual([
         [
           { text: additionalOffence.mainCategoryDescription },
           { text: additionalOffence.subCategoryDescription },
-          { text: DateFormats.isoDateToUIDate(additionalOffence.offenceDate, { format: 'short' }) },
+          { text: DateFormats.isoDateToUIDate(additionalOffence.date, { format: 'short' }) },
         ],
       ])
+    })
+
+    it('sorts the additional offences by date', () => {
+      const mainOffence = offenceFactory.build({ main: true })
+      const offences = offenceFactory.buildList(5, { main: false })
+
+      const rows = additionalOffencesRows([...offences, mainOffence], mainOffence)
+
+      const firstOffenceDate = offences.reduce((min, row) => (row.date < min ? row.date : min), '9')
+      expect(rows[4][2]).toEqual({ text: DateFormats.isoDateToUIDate(firstOffenceDate, { format: 'short' }) })
+      const lastOffenceDate = offences.reduce((max, row) => (row.date > max ? row.date : max), '0')
+      expect(rows[0][2]).toEqual({ text: DateFormats.isoDateToUIDate(lastOffenceDate, { format: 'short' }) })
     })
   })
 
@@ -191,17 +201,45 @@ describe('sentence', () => {
   })
 
   describe('sentenceCards', () => {
-    it('should render the sentence section with NDelius link', () => {
-      jest.spyOn(utils, 'ndeliusDeeplink')
-      expect(sentenceCards(placement)).toEqual([{ html: '<h2 class="govuk-heading-m">Sentence</h2>rendered-output' }])
-      expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
-        html: `<p>We cannot display sentence details from NDelius yet.</p><p>You can view this information in the event details. The event number is ${placement.deliusEventNumber}</p>`,
-      })
-      expect(utils.ndeliusDeeplink).toHaveBeenCalledWith({
-        component: 'EventsList',
-        crn: placement.person.crn,
-        text: 'View event list on NDelius (opens in a new tab)',
-      })
+    it('should render the sentence section', () => {
+      const sentences = [
+        {
+          typeDescription: 'Type',
+          startDate: '2026-01-01',
+          endDate: '2026-03-10',
+          eventNumber: '5',
+        },
+      ]
+
+      expect(sentenceCards({ ...caseDetail, sentences }, 'success')).toEqual([
+        {
+          card: {
+            title: { text: 'Sentence' },
+          },
+          rows: [
+            summaryListItem('Sentence type', 'Type'),
+            summaryListItem('Sentence length', '9 weeks 5 days'),
+            summaryListItem('Sentence start date', 'Thu 1 Jan 2026'),
+            summaryListItem('Sentence end date', 'Tue 10 Mar 2026'),
+            summaryListItem('NDelius event number', '5'),
+          ],
+        },
+      ])
+    })
+  })
+
+  describe('offencesTabCards', () => {
+    it('should render the offence cards', () => {
+      jest.spyOn(sentenceFns, 'offenceCards').mockReturnValue([])
+      jest.spyOn(sentenceFns, 'oasysOffenceCards').mockReturnValue([])
+      jest.spyOn(sentenceFns, 'sentenceCards').mockReturnValue([])
+
+      expect(
+        offencesTabCards({ caseDetail, oasysAnswers, caseDetailOutcome: 'success', oasysOutcome: 'success' }),
+      ).toEqual([])
+      expect(sentenceFns.offenceCards).toHaveBeenCalledWith(caseDetail, 'success')
+      expect(sentenceFns.oasysOffenceCards).toHaveBeenCalledWith(oasysAnswers, 'success')
+      expect(sentenceFns.sentenceCards).toHaveBeenCalledWith(caseDetail, 'success')
     })
   })
 
@@ -238,19 +276,6 @@ describe('sentence', () => {
       const rows = csraRows(oldAssessments)
       expect(rows).toHaveLength(1)
       expect(rows[0]).toEqual(expectedSummary(oldAssessments.sort(orderByDate)[0]))
-    })
-  })
-
-  describe('offencesTabCards', () => {
-    it('should render the offence cards', () => {
-      jest.spyOn(sentenceFns, 'offenceCards').mockReturnValue([])
-      jest.spyOn(sentenceFns, 'oasysOffenceCards').mockReturnValue([])
-
-      expect(offencesTabCards({ offences, oasysAnswers, offencesOutcome: 'success', oasysOutcome: 'success' })).toEqual(
-        [],
-      )
-      expect(sentenceFns.offenceCards).toHaveBeenCalledWith(offences, 'success')
-      expect(sentenceFns.oasysOffenceCards).toHaveBeenCalledWith(oasysAnswers, 'success')
     })
   })
 
