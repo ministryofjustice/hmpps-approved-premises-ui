@@ -46,7 +46,6 @@ export interface AuditConfig {
 
 export default {
   https: production,
-  isProduction: production,
   staticResourceCacheDuration: 20,
   flags: {
     maintenanceMode: getFlag('IN_MAINTENANCE_MODE'),
@@ -57,6 +56,7 @@ export default {
     ndeliusDeeplink: get('NDELIUS_DEEPLINK', ''),
   },
   environment: process.env.ENVIRONMENT || 'local',
+  isProduction: process.env.ENVIRONMENT === 'prod',
   sentry: {
     dsn: get('SENTRY_DSN', null, requiredInProduction),
   },
