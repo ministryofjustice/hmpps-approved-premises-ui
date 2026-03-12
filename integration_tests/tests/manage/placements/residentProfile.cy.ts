@@ -1,7 +1,6 @@
 import { signIn } from '../../signIn'
 import {
   acctAlertFactory,
-  activeOffenceFactory,
   adjudicationFactory,
   applicationFactory,
   assessmentFactory,
@@ -10,6 +9,7 @@ import {
   cas1PremisesBasicSummaryFactory,
   cas1SpaceBookingFactory,
   cas1SpaceBookingShortSummaryFactory,
+  caseDetailFactory,
   csraSummaryFactory,
   licenceFactory,
   personFactory,
@@ -214,21 +214,22 @@ context('ResidentProfile', () => {
     })
 
     it('should show the sentence tab', () => {
-      const offences = activeOffenceFactory.buildList(3)
+      const caseDetail = caseDetailFactory.build()
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
       const adjudications = adjudicationFactory.buildList(5)
       const licence = licenceFactory.build()
       const csraSummaries = csraSummaryFactory.buildList(2)
       const prisonCaseNotes = prisonCaseNotesFactory.buildList(3)
       const { placement, personRisks } = setup()
+      const { person } = placement
 
-      cy.task('stubPersonOffences', { offences, person: placement.person })
-      cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
-      cy.task('stubAdjudications', { person: placement.person, adjudications })
-      cy.task('stubLicence', { person: placement.person, licence })
-      cy.task('stubCsra', { person: placement.person, csraSummaries })
+      cy.task('stubCaseDetail', { person, caseDetail })
+      cy.task('stubOasysGroup', { person, group: oasysOffenceDetails })
+      cy.task('stubAdjudications', { person, adjudications })
+      cy.task('stubLicence', { person, licence })
+      cy.task('stubCsra', { person, csraSummaries })
       cy.task('stubPrisonCaseNotes', { person: placement.person, prisonCaseNotes })
-      cy.task('stubFindPerson', { person: placement.person })
+      cy.task('stubFindPerson', { person })
 
       const page = visitPage({ placement, personRisks }, 'Sentence')
 
@@ -236,7 +237,7 @@ context('ResidentProfile', () => {
       page.shouldHaveActiveTab('Sentence')
 
       AND('the Offence details information should be shown')
-      page.shouldShowOffencesInformation(offences, oasysOffenceDetails, placement)
+      page.shouldShowOffencesInformation(caseDetail, oasysOffenceDetails)
 
       WHEN('I select the licence side-nav')
       page.clickSideNav('Licence')

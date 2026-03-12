@@ -179,6 +179,7 @@ export default {
     licenceDetails: cas1Person.path('licence-details'),
     csraSummaries: cas1Person.path('csra-summaries'),
     bookingDetails: cas1Person.path('booking-details'),
+    caseDetail: cas1Person.path('case-detail'),
   },
   users: {
     index: cas1Users,

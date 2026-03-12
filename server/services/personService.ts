@@ -14,6 +14,7 @@ import type {
   PersonAcctAlert,
   PersonRisks,
   PrisonCaseNote,
+  CaseDetail,
 } from '@approved-premises/api'
 import { HttpError } from 'http-errors'
 import type { PersonClient, RestClientBuilder } from '../data'
@@ -110,5 +111,9 @@ export default class PersonService {
 
   async getBookingDetails(token: string, crn: string): Promise<BookingDetails> {
     return this.personClientFactory(token).bookingDetails(crn)
+  }
+
+  async getCaseDetail(token: string, crn: string): Promise<CaseDetail> {
+    return this.personClientFactory(token).caseDetail(crn)
   }
 }
