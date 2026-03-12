@@ -2,9 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { NoteDetail } from './NoteDetail';
 export type Registration = {
     code: string;
     description: string;
+    riskNotes?: string;
+    riskNotesDetail: Array<NoteDetail>;
     startDate: string;
 };
 
