@@ -1,10 +1,28 @@
-import { BookingDetails, Cas1OASysGroup, PersonAcctAlert } from '@approved-premises/api'
-import { card, insetText, loadingErrorMessage, ResidentProfileSubTab } from '.'
+import {
+  BookingDetails,
+  Cas1OASysGroup,
+  DietAndAllergyResponse,
+  DietaryItemDto,
+  PersonAcctAlert,
+  ValueWithMetadataListDietaryItemDto,
+  ValueWithMetadataString,
+} from '@approved-premises/api'
+import { SummaryListWithCard } from '@approved-premises/ui'
+import {
+  card,
+  cellMetaData,
+  combineResultAndContent,
+  insetText,
+  loadingErrorMessage,
+  ResidentProfileSubTab,
+  summaryItemNd,
+} from '.'
 import paths from '../../paths/manage'
 import { dateCellNoWrap, textCell } from '../tableUtils'
 import { oasysQuestionDetailsByNumber, summaryCards, tableRow } from './riskUtils'
 import { ApiOutcome, linkTo } from '../utils'
-import { summaryListItem } from '../formUtils'
+import { bulletList, summaryListItem } from '../formUtils'
+import config from '../../config'
 
 export const smokingStatusMapping: Record<string, string> = {
   Yes: 'Smoker',
@@ -33,14 +51,85 @@ export const healthSideNavigation = (subTab: ResidentProfileSubTab, crn: string,
   ]
 }
 
-export const healthDetailsCards = (
-  supportingInformation: Cas1OASysGroup,
-  outcome: ApiOutcome,
-  bookingDetails: BookingDetails | null = null,
-  bookingDetailsOutcome?: ApiOutcome,
-  crn?: string,
-  placementId?: string,
-) => {
+export const listDietItems = (items: Array<DietaryItemDto> = []): string => {
+  const itemsHtml = items.map(
+    ({ value, comment }) =>
+      `${value?.description}${comment?.length ? ` <span class="govuk-body govuk-hint">(${comment})</span>` : ''}`,
+  )
+  if (items?.length > 1) return bulletList(itemsHtml)
+  if (items?.length === 1) return itemsHtml[0]
+  return 'None'
+}
+
+export const getLastUpdated = (
+  metaList: Array<ValueWithMetadataListDietaryItemDto | ValueWithMetadataString>,
+): string => {
+  return metaList.reduce(
+    (last, meta) => (!last || meta?.lastModifiedAt > last ? meta?.lastModifiedAt : last),
+    undefined as string,
+  )
+}
+
+export const dietCard = (dietResponse: DietAndAllergyResponse, result: ApiOutcome): SummaryListWithCard => {
+  const error = loadingErrorMessage(combineResultAndContent(result, dietResponse), 'diet and allergy', 'dps')
+  const { dietAndAllergy: dto = {} } = dietResponse || {}
+  const {
+    cateringInstructions: { value: cateringInstructions } = {},
+    foodAllergies: { value: foodAllergyList } = {},
+    medicalDietaryRequirements: { value: medicalRequirementList } = {},
+    personalisedDietaryRequirements: { value: personalisedDietaryList } = {},
+  } = dto
+
+  const lastModified = getLastUpdated([
+    dto.foodAllergies,
+    dto.personalisedDietaryRequirements,
+    dto.medicalDietaryRequirements,
+    dto.cateringInstructions,
+  ])
+
+  return card({
+    title: 'Diet and food allergies',
+    topHtml: error || cellMetaData('dps', lastModified),
+    rows: !error
+      ? [
+          summaryItemNd('Catering instructions', cateringInstructions, 'textBlock'),
+          summaryListItem('Medical diet', listDietItems(medicalRequirementList), 'html'),
+          summaryListItem('Food allergies', listDietItems(foodAllergyList), 'html'),
+          summaryListItem('Personalised dietary requirements', listDietItems(personalisedDietaryList), 'html'),
+        ]
+      : undefined,
+  })
+}
+
+export const smokerCard = (bookingDetails: BookingDetails, outcome: ApiOutcome): SummaryListWithCard => {
+  const smokingResult = getSmokingStatus(bookingDetails)
+  const smokingError = loadingErrorMessage(combineResultAndContent(outcome, smokingResult), 'smoking status', 'dps')
+  return card({
+    title: 'Smoker or vaper',
+    topHtml: smokingError || cellMetaData('dps'),
+    rows: !smokingError ? [summaryListItem('Smoker or vaper', smokingResult)] : undefined,
+  })
+}
+
+export const healthDetailsCards = ({
+  supportingInformation,
+  supportingInformationOutcome,
+  bookingDetails,
+  bookingDetailsOutcome,
+  dietAndAllergy,
+  dietAndAllergyOutcome,
+  crn,
+  placementId,
+}: {
+  supportingInformation: Cas1OASysGroup
+  supportingInformationOutcome: ApiOutcome
+  bookingDetails: BookingDetails
+  bookingDetailsOutcome: ApiOutcome
+  dietAndAllergy: DietAndAllergyResponse
+  dietAndAllergyOutcome: ApiOutcome
+  crn?: string
+  placementId?: string
+}) => {
   const linkText = `Go to the ${linkTo(paths.resident.tabPlacement.application({ crn, placementId }), { text: 'application and assessment page' })} to check if any access, cultural and healthcare needs were added to the application.`
 
   let cards = [card({ html: insetText(linkText) })]
@@ -56,20 +145,15 @@ export const healthDetailsCards = (
       }),
     )
   } else {
-    cards = cards.concat(summaryCards(['13.1'], supportingInformation, outcome))
+    cards = cards.concat(summaryCards(['13.1'], supportingInformation, supportingInformationOutcome))
   }
 
-  const source = 'Digital Prison Service (DPS)'
-  const smokingStatus = getSmokingStatus(bookingDetails)
-  const smokingError = loadingErrorMessage({ result: bookingDetailsOutcome, item: 'smoking status', source })
-
-  cards = cards.concat(
-    card({
-      title: 'Smoker or vaper',
-      rows: smokingStatus ? [summaryListItem('Smoker or vaper', smokingStatus)] : undefined,
-      html: !smokingStatus ? smokingError || `<p class="govuk-hint">Not entered in ${source}</p>` : undefined,
-    }),
-  )
+  cards = cards
+    .concat([
+      !config.isProduction && dietCard(dietAndAllergy, dietAndAllergyOutcome),
+      smokerCard(bookingDetails, bookingDetailsOutcome),
+    ])
+    .filter(Boolean)
   return cards
 }
 
@@ -102,8 +186,6 @@ export const mentalHealthCards = ({
         dateCellNoWrap(acctAlert.dateExpires),
       ]),
     },
-    html: !personAcctAlerts?.length
-      ? loadingErrorMessage({ result: personAcctAlertsOutcome, item: 'ACCT alerts', source: 'Digital Prison Service' })
-      : undefined,
+    html: !personAcctAlerts?.length ? loadingErrorMessage(personAcctAlertsOutcome, 'ACCT alerts', 'dps') : undefined,
   }),
 ]

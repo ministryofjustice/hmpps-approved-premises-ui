@@ -240,22 +240,38 @@ export const summaryItemNd = (label: string, value: string, renderAs = undefined
   return value ? summaryListItem(label, value, renderAs) : summaryListItem(label, 'Not entered in NDelius', renderAs)
 }
 
-export const loadingErrorMessage = ({
-  result,
-  item,
-  source,
-}: {
-  result: ApiOutcome
-  item: string
-  source: string
-}): string => {
+type Service = 'nDelius' | 'dps' | 'oasys' | 'cvl'
+
+const serviceNames: Record<Service, string> = {
+  nDelius: 'NDelius',
+  dps: 'Digital Prison Service (DPS)',
+  oasys: 'OASys',
+  cvl: 'Create and vary a licence',
+}
+
+export const cellMetaData = (service: Service, lastUpdated?: string) => {
+  const lastUpdatedStr = lastUpdated
+    ? `<p class="govuk-body-m govuk-hint">Last updated: ${DateFormats.isoDateToUIDate(lastUpdated)}</p>`
+    : ''
+  return `<p class="govuk-body-m govuk-hint govuk-!-margin-bottom-2">Imported from ${serviceNames[service]}</p>${lastUpdatedStr}`
+}
+/**
+ * Alters the outcome of a request where there are no data, but the API request was successful.
+ * If the outcome is 'success', it will be returned as 'notFound' if the content is falsy
+ */
+export const combineResultAndContent = (result: ApiOutcome, content: unknown): ApiOutcome => {
+  if (content) return result
+  return result === 'success' ? 'notFound' : result
+}
+
+export const loadingErrorMessage = (result: ApiOutcome, item: string, source: Service): string => {
   switch (result) {
     case 'success':
       return undefined
     case 'notFound':
-      return `No ${item} information found in ${source}`
+      return `No ${item} information found in ${serviceNames[source]}`
     default:
-      return `We cannot load ${item} information right now because ${source} is not available.<br>Try again later`
+      return `We cannot load ${item} information right now because ${serviceNames[source]} is not available.<br>Try again later`
   }
 }
 

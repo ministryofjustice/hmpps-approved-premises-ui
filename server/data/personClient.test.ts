@@ -18,6 +18,7 @@ import {
   prisonCaseNotesFactory,
   risksFactory,
   caseDetailFactory,
+  dietAndAllergyResponseFactory,
 } from '../testutils/factories'
 import paths from '../paths/api'
 
@@ -464,6 +465,30 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
 
       const result = await personClient.caseDetail(crn)
       expect(result).toEqual(caseDetails)
+    })
+  })
+
+  describe('dietAndAllergy', () => {
+    it('should return diet and allergy details for a person', async () => {
+      const dietAndAlleryResponse = dietAndAllergyResponseFactory.build()
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: `A request to the dietAndAllergy for a person`,
+        withRequest: {
+          method: 'GET',
+          path: paths.people.dietAndAllergy({ crn }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: dietAndAlleryResponse,
+        },
+      })
+
+      const result = await personClient.dietAndAllergy(crn)
+      expect(result).toEqual(dietAndAlleryResponse)
     })
   })
 })
