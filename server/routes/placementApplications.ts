@@ -4,15 +4,14 @@ import type { Router } from 'express'
 
 import { TaskNames } from '@approved-premises/ui'
 import type { Controllers } from '../controllers'
-import type { Services } from '../services'
 
 import paths from '../paths/placementApplications'
 import Match from '../form-pages/placement-application'
 
 import actions from './utils'
 
-export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
-  const { get, put, post } = actions(router, services.auditService)
+export default function routes(controllers: Controllers, router: Router): Router {
+  const { get, put, post } = actions(router)
   const { pages } = Match
 
   const {

@@ -2,7 +2,6 @@
 
 import type { Router } from 'express'
 import { TaskNames } from '@approved-premises/ui'
-import type { Services } from '../services'
 import Apply from '../form-pages/apply'
 
 import type { Controllers } from '../controllers'
@@ -10,9 +9,9 @@ import paths from '../paths/apply'
 
 import actions from './utils'
 
-export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
+export default function routes(controllers: Controllers, router: Router): Router {
   const { pages } = Apply
-  const { get, post, put } = actions(router, services.auditService)
+  const { get, post, put } = actions(router)
   const {
     applicationsController,
     appealsController,

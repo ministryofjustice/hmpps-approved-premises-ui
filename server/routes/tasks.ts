@@ -2,13 +2,12 @@
 
 import { Router } from 'express'
 import { Controllers } from '../controllers'
-import type { Services } from '../services'
 
 import paths from '../paths/tasks'
 import actions from './utils'
 
-export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
-  const { get, post } = actions(router, services.auditService)
+export default function routes(controllers: Controllers, router: Router): Router {
+  const { get, post } = actions(router)
 
   const { tasksController, allocationsController } = controllers
 

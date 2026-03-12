@@ -2,13 +2,12 @@
 
 import { Router } from 'express'
 import { Controllers } from '../controllers'
-import type { Services } from '../services'
 
 import paths from '../paths/admin'
 import actions from './utils'
 
-export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
-  const { get, post, put, delete: deleteAction } = actions(router, services.auditService)
+export default function routes(controllers: Controllers, router: Router): Router {
+  const { get, post, put, delete: deleteAction } = actions(router)
 
   const {
     redirectController,
