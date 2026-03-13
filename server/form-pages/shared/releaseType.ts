@@ -10,8 +10,10 @@ import {
   SelectableReleaseTypes,
   SentenceTypeResponse,
   PossibleReleaseTypeOptions,
+  standardDeterminateReleaseTypesWithPss,
 } from '../../utils/applications/releaseTypeUtils'
 import { SessionDataError } from '../../utils/errors'
+import { DateFormats } from '../../utils/dateUtils'
 
 @Page({ name: 'release-type', bodyProperties: ['releaseType'] })
 export default class ReleaseType implements TasklistPage {
@@ -71,6 +73,8 @@ export default class ReleaseType implements TasklistPage {
 
   getReleaseTypes(): PossibleReleaseTypeOptions {
     if (this.sentenceType === 'standardDeterminate') {
+      // TODO: Remove this after 01/05/2026
+      if (DateFormats.dateObjToIsoDate(new Date()) < '2026-05') return standardDeterminateReleaseTypesWithPss
       return standardDeterminateReleaseTypes
     }
     if (this.sentenceType === 'life' || this.sentenceType === 'ipp') {

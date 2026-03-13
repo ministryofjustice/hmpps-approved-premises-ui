@@ -20,12 +20,23 @@ export type ReleaseTypeLabel = (typeof allReleaseTypes)[ReleaseTypeOption]
 export const standardDeterminateReleaseTypes = pick(allReleaseTypes, [
   'licence',
   'hdc',
+  'rotl',
+  'paroleDirectedLicence',
+  'reReleasedPostRecall',
+  'reReleasedFollowingFixedTermRecall',
+])
+
+// TODO: Remove this after 01/05/2026
+export const standardDeterminateReleaseTypesWithPss = pick(allReleaseTypes, [
+  'licence',
+  'hdc',
   'pss',
   'rotl',
   'paroleDirectedLicence',
   'reReleasedPostRecall',
   'reReleasedFollowingFixedTermRecall',
 ])
+
 export const extendedDeterminateReleaseTypes = pick(allReleaseTypes, [
   'rotl',
   'extendedDeterminateLicence',
