@@ -1,8 +1,8 @@
 import { createMock } from '@golevelup/ts-jest'
 import { Request, Response } from 'express'
 import { path } from 'static-path'
+import { auditService } from '@ministryofjustice/hmpps-audit-client'
 import logger from '../../logger'
-import AuditService from '../services/auditService'
 import { auditMiddleware } from './auditMiddleware'
 
 jest.mock('../../logger')
@@ -12,12 +12,15 @@ const requestParams = { param1: 'value-1', param2: 'value-2' }
 const auditEvent = 'SOME_AUDIT_EVENT'
 
 describe('auditMiddleware', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
+    jest.spyOn(auditService, 'sendAuditMessage').mockResolvedValue({} as never)
+  })
+
   it('returns the given request handler when no audit events are specified', async () => {
     const handler = jest.fn()
 
-    const auditService = createMock<AuditService>()
-
-    const auditedhandler = auditMiddleware(handler, auditService)
+    const auditedhandler = auditMiddleware(handler)
 
     expect(auditedhandler).toEqual(handler)
   })
@@ -28,9 +31,7 @@ describe('auditMiddleware', () => {
     const request = createMock<Request>()
     const next = jest.fn()
 
-    const auditService = createMock<AuditService>()
-
-    const auditedhandler = auditMiddleware(handler, auditService, { auditEvent })
+    const auditedhandler = auditMiddleware(handler, { auditEvent })
 
     await auditedhandler(request, response, next)
 
@@ -43,9 +44,7 @@ describe('auditMiddleware', () => {
     const request = createMock<Request>()
     const next = jest.fn()
 
-    const auditService = createMock<AuditService>()
-
-    const auditedhandler = auditMiddleware(handler, auditService, { auditEvent })
+    const auditedhandler = auditMiddleware(handler, { auditEvent })
 
     await auditedhandler(request, response, next)
 
@@ -60,14 +59,18 @@ describe('auditMiddleware', () => {
     const request = createMock<Request>({ params: requestParams })
     const next = jest.fn()
 
-    const auditService = createMock<AuditService>()
-
-    const auditedhandler = auditMiddleware(handler, auditService, { auditEvent })
+    const auditedhandler = auditMiddleware(handler, { auditEvent })
 
     await auditedhandler(request, response, next)
 
     expect(handler).toHaveBeenCalled()
-    expect(auditService.sendAuditMessage).toHaveBeenCalledWith(auditEvent, username, requestParams)
+    expect(auditService.sendAuditMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: auditEvent,
+        who: username,
+        details: '{"param1":"value-1","param2":"value-2"}',
+      }),
+    )
   })
 
   it('returns an audited request handler, that sends an audit message that includes selected request body parameters', async () => {
@@ -79,9 +82,7 @@ describe('auditMiddleware', () => {
     })
     const next = jest.fn()
 
-    const auditService = createMock<AuditService>()
-
-    const auditedhandler = auditMiddleware(handler, auditService, {
+    const auditedhandler = auditMiddleware(handler, {
       auditEvent,
       auditBodyParams: ['bodyParam1', 'bodyParam2'],
     })
@@ -89,11 +90,13 @@ describe('auditMiddleware', () => {
     await auditedhandler(request, response, next)
 
     expect(handler).toHaveBeenCalled()
-    expect(auditService.sendAuditMessage).toHaveBeenCalledWith(auditEvent, username, {
-      ...requestParams,
-      bodyParam1: 'body-value-1',
-      bodyParam2: 'body-value-2',
-    })
+    expect(auditService.sendAuditMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: auditEvent,
+        who: username,
+        details: '{"param1":"value-1","param2":"value-2","bodyParam1":"body-value-1","bodyParam2":"body-value-2"}',
+      }),
+    )
   })
 
   it('ignores empty request body parameters', async () => {
@@ -105,9 +108,7 @@ describe('auditMiddleware', () => {
     })
     const next = jest.fn()
 
-    const auditService = createMock<AuditService>()
-
-    const auditedhandler = auditMiddleware(handler, auditService, {
+    const auditedhandler = auditMiddleware(handler, {
       auditEvent,
       auditBodyParams: ['bodyParam1', 'bodyParam2'],
     })
@@ -115,10 +116,13 @@ describe('auditMiddleware', () => {
     await auditedhandler(request, response, next)
 
     expect(handler).toHaveBeenCalled()
-    expect(auditService.sendAuditMessage).toHaveBeenCalledWith(auditEvent, username, {
-      ...requestParams,
-      bodyParam1: 'body-value-1',
-    })
+    expect(auditService.sendAuditMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: auditEvent,
+        who: username,
+        details: '{"param1":"value-1","param2":"value-2","bodyParam1":"body-value-1"}',
+      }),
+    )
   })
 
   it('includes additional metadata if provided', async () => {
@@ -130,9 +134,7 @@ describe('auditMiddleware', () => {
     })
     const next = jest.fn()
 
-    const auditService = createMock<AuditService>()
-
-    const auditedhandler = auditMiddleware(handler, auditService, {
+    const auditedhandler = auditMiddleware(handler, {
       auditEvent,
       auditBodyParams: ['bodyParam1', 'bodyParam2'],
       additionalMetadata: { foo: 'bar' },
@@ -141,11 +143,13 @@ describe('auditMiddleware', () => {
     await auditedhandler(request, response, next)
 
     expect(handler).toHaveBeenCalled()
-    expect(auditService.sendAuditMessage).toHaveBeenCalledWith(auditEvent, username, {
-      ...requestParams,
-      bodyParam1: 'body-value-1',
-      foo: 'bar',
-    })
+    expect(auditService.sendAuditMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: auditEvent,
+        who: username,
+        details: '{"param1":"value-1","param2":"value-2","bodyParam1":"body-value-1","foo":"bar"}',
+      }),
+    )
   })
 
   it('returns an audited request handler, that sends an audit message based on the redirect destination of the given request handler', async () => {
@@ -161,19 +165,20 @@ describe('auditMiddleware', () => {
     const request = createMock<Request>()
     const next = jest.fn()
 
-    const auditService = createMock<AuditService>()
-
-    const auditedhandler = auditMiddleware(handler, auditService, {
+    const auditedhandler = auditMiddleware(handler, {
       redirectAuditEventSpecs: [{ auditEvent, path: somePath.pattern }],
     })
 
     await auditedhandler(request, response, next)
 
     expect(handler).toHaveBeenCalled()
-    expect(auditService.sendAuditMessage).toHaveBeenCalledWith(auditEvent, username, {
-      premisesId: 'some-premises',
-      roomId: 'some-room',
-    })
+    expect(auditService.sendAuditMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: auditEvent,
+        who: username,
+        details: '{"premisesId":"some-premises","roomId":"some-room"}',
+      }),
+    )
   })
 
   it('sends an audit message only for the first matching RedirectAuditEventSpec', async () => {
@@ -191,9 +196,7 @@ describe('auditMiddleware', () => {
     const request = createMock<Request>()
     const next = jest.fn()
 
-    const auditService = createMock<AuditService>()
-
-    const auditedhandler = auditMiddleware(handler, auditService, {
+    const auditedhandler = auditMiddleware(handler, {
       auditEvent: 'DEFAULT_AUDIT_EVENT',
       redirectAuditEventSpecs: [
         { auditEvent: 'NON_MATCHING_PATH_AUDIT_EVENT', path: nonMatchingPath.pattern },
@@ -205,9 +208,13 @@ describe('auditMiddleware', () => {
     await auditedhandler(request, response, next)
 
     expect(handler).toHaveBeenCalledTimes(1)
-    expect(auditService.sendAuditMessage).toHaveBeenCalledWith('MATCHING_PATH_1_AUDIT_EVENT', username, {
-      premisesId: 'some-premises',
-    })
+    expect(auditService.sendAuditMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: 'MATCHING_PATH_1_AUDIT_EVENT',
+        who: username,
+        details: '{"premisesId":"some-premises"}',
+      }),
+    )
   })
 
   it('sends the default message if the path does not match', async () => {
@@ -225,9 +232,7 @@ describe('auditMiddleware', () => {
     const request = createMock<Request>({ params: requestParams })
     const next = jest.fn()
 
-    const auditService = createMock<AuditService>()
-
-    const auditedhandler = auditMiddleware(handler, auditService, {
+    const auditedhandler = auditMiddleware(handler, {
       auditEvent: 'DEFAULT_AUDIT_EVENT',
       redirectAuditEventSpecs: [
         { auditEvent: 'MATCHING_PATH_1_AUDIT_EVENT', path: matchingPath1.pattern },
@@ -239,6 +244,12 @@ describe('auditMiddleware', () => {
 
     expect(handler).toHaveBeenCalled()
     expect(auditService.sendAuditMessage).toHaveBeenCalled()
-    expect(auditService.sendAuditMessage).toHaveBeenCalledWith('DEFAULT_AUDIT_EVENT', username, requestParams)
+    expect(auditService.sendAuditMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: 'DEFAULT_AUDIT_EVENT',
+        who: username,
+        details: '{"param1":"value-1","param2":"value-2"}',
+      }),
+    )
   })
 })
