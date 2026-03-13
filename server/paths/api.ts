@@ -180,6 +180,7 @@ export default {
     csraSummaries: cas1Person.path('csra-summaries'),
     bookingDetails: cas1Person.path('booking-details'),
     caseDetail: cas1Person.path('case-detail'),
+    dietAndAllergy: cas1Person.path('diet-and-allergy-details'),
   },
   users: {
     index: cas1Users,
