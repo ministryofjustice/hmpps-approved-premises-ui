@@ -123,14 +123,7 @@ export const summaryCards = (
         ? block.answers.find(({ questionNumber }) => questionNumber === qNumber)
         : undefined
       const definition = oasysQuestionDetailsByNumber[qNumber]
-      const error =
-        result &&
-        loadingErrorMessage({
-          result,
-          item: oasysGroupMapping[definition.groupName],
-          source: 'OASys',
-        })
-
+      const error = result && loadingErrorMessage(result, oasysGroupMapping[definition.groupName], 'oasys')
       return (
         (error || question) &&
         card({

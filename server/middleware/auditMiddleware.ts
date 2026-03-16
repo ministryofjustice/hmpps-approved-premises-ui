@@ -1,16 +1,13 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express'
 import { Key, pathToRegexp } from 'path-to-regexp'
+import { auditService } from '@ministryofjustice/hmpps-audit-client'
 import logger from '../../logger'
-import AuditService from '../services/auditService'
 import { MiddlewareSpec } from '../@types/ui'
+import config from '../config'
 
 type RedirectAuditMatcher = { keys: Array<Key>; auditEvent: string; regExp: RegExp }
 
-export const auditMiddleware = (
-  handler: RequestHandler,
-  auditService: AuditService,
-  auditEventSpec?: MiddlewareSpec,
-) => {
+export const auditMiddleware = (handler: RequestHandler, auditEventSpec?: MiddlewareSpec) => {
   if (auditEventSpec) {
     const redirectMatchers: Array<RedirectAuditMatcher> = auditEventSpec.redirectAuditEventSpecs?.map(
       ({ path, auditEvent: redirectAuditEvent }) => {
@@ -21,7 +18,6 @@ export const auditMiddleware = (
 
     return wrapHandler(
       handler,
-      auditService,
       auditEventSpec?.auditEvent,
       auditEventSpec?.auditBodyParams,
       auditEventSpec?.additionalMetadata,
@@ -34,7 +30,6 @@ export const auditMiddleware = (
 const wrapHandler =
   (
     handler: RequestHandler,
-    auditService: AuditService,
     auditEvent: string | undefined,
     auditBodyParams: Array<string> | undefined,
     additionalMetadata: Record<string, string> | undefined,
@@ -68,14 +63,17 @@ const wrapHandler =
     }
 
     if (auditEvent) {
-      await auditService.sendAuditMessage(auditEvent, username, {
+      await sendAuditMessage(auditEvent, username, {
         ...auditDetails(req, auditBodyParams),
         ...additionalMetadata,
       })
     }
 
     if (redirectAuditEvent) {
-      await auditService.sendAuditMessage(redirectAuditEvent, username, { ...redirectParams, ...additionalMetadata })
+      await sendAuditMessage(redirectAuditEvent, username, {
+        ...redirectParams,
+        ...additionalMetadata,
+      })
     }
   }
 
@@ -87,9 +85,30 @@ const auditDetails = (req: Request, auditBodyParams: Array<string> | undefined) 
   return {
     ...req.params,
     ...auditBodyParams.reduce(
-      (previous, current) => (req.body[current] ? { [current]: req.body[current], ...previous } : previous),
+      (previous, current) => (req.body[current] ? { ...previous, [current]: req.body[current] } : previous),
       {},
     ),
+  }
+}
+
+const sendAuditMessage = async (auditEvent: string, username: string, details: Record<string, string>) => {
+  const jsonDetails = JSON.stringify(details)
+
+  const { serviceName, logErrors } = config.apis.audit
+
+  try {
+    logger.info(`Sending audit message ${auditEvent} (${jsonDetails})`)
+    await auditService.sendAuditMessage({
+      action: auditEvent,
+      who: username,
+      service: serviceName,
+      logErrors,
+      details: jsonDetails,
+    })
+  } catch (error) {
+    if (logErrors) {
+      logger.error('Problem sending audit message', error)
+    }
   }
 }
 

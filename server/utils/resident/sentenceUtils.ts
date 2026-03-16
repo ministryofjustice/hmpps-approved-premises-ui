@@ -56,7 +56,7 @@ export const offenceCards = (caseDetail: CaseDetail, caseDetailOutcome: ApiOutco
 
   const fullOutcome = caseDetailOutcome === 'success' && !caseDetail?.offences?.length ? 'notFound' : caseDetailOutcome
 
-  const errorMessage = loadingErrorMessage({ result: fullOutcome, item: 'offence', source: 'NDelius' })
+  const errorMessage = loadingErrorMessage(fullOutcome, 'offence', 'nDelius')
   if (errorMessage) return [card({ title, html: errorMessage })]
 
   const { offences } = caseDetail
@@ -105,7 +105,7 @@ export const additionalOffencesRows = (offences: Array<Offence>, mainOffence: Of
     .filter(Boolean)
 
 export const sentenceCards = (caseDetail: CaseDetail, caseDetailOutcome: ApiOutcome) => {
-  const errorMessage = loadingErrorMessage({ result: caseDetailOutcome, item: 'sentence', source: 'NDelius' })
+  const errorMessage = loadingErrorMessage(caseDetailOutcome, 'sentence', 'nDelius')
   const title = 'Sentence'
   return !errorMessage
     ? caseDetail.sentences.map(({ typeDescription, startDate, endDate, eventNumber }) =>
@@ -144,11 +144,7 @@ export const offencesTabCards = ({
 ]
 
 export const licenseCards = (licence: Licence, licenceResult: ApiOutcome): Array<SummaryListWithCard> => {
-  const errorMessage = loadingErrorMessage({
-    result: licenceResult,
-    item: 'licence',
-    source: 'Create and vary a licence',
-  })
+  const errorMessage = loadingErrorMessage(licenceResult, 'licence', 'cvl')
   if (errorMessage) return [card({ title: 'Licence overview', html: errorMessage })]
 
   const coalesceAdditionalConditions = (conditions: Array<AdditionalCondition>) => {
@@ -248,29 +244,10 @@ export const prisonCards = ({
   caseNotes: Array<PrisonCaseNote>
   caseNotesResult: ApiOutcome
 }): Array<SummaryListWithCard> => {
-  const adjudicationsError = loadingErrorMessage({
-    result: adjudicationResult,
-    item: 'adjudication',
-    source: 'Digital Prison Service',
-  })
-
-  const csraError = loadingErrorMessage({
-    result: csraResult,
-    item: 'CSRA',
-    source: 'Digital Prison Service',
-  })
-
-  const personError = loadingErrorMessage({
-    result: personResult,
-    item: 'person',
-    source: 'NDelius',
-  })
-
-  const caseNotesError = loadingErrorMessage({
-    result: caseNotesResult,
-    item: 'case notes',
-    source: 'Digital Prison Service',
-  })
+  const adjudicationsError = loadingErrorMessage(adjudicationResult, 'adjudication', 'dps')
+  const csraError = loadingErrorMessage(csraResult, 'CSRA', 'dps')
+  const personError = loadingErrorMessage(personResult, 'person', 'nDelius')
+  const caseNotesError = loadingErrorMessage(caseNotesResult, 'case notes', 'dps')
 
   return [
     card({

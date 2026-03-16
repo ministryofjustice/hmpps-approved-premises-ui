@@ -116,4 +116,8 @@ export default class PersonService {
   async getCaseDetail(token: string, crn: string): Promise<CaseDetail> {
     return this.personClientFactory(token).caseDetail(crn)
   }
+
+  async getDietAndAllergyDetails(token: string, crn: string) {
+    return this.personClientFactory(token).dietAndAllergy(crn)
+  }
 }

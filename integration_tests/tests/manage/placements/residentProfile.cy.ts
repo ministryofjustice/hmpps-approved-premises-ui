@@ -11,6 +11,7 @@ import {
   cas1SpaceBookingShortSummaryFactory,
   caseDetailFactory,
   csraSummaryFactory,
+  dietAndAllergyResponseFactory,
   licenceFactory,
   personFactory,
   prisonCaseNotesFactory,
@@ -49,8 +50,6 @@ context('ResidentProfile', () => {
 
       WHEN('I visit the resident profile page')
       const page = ResidentProfilePage.visit(placement, personRisks)
-      THEN('I should see the person information in the header')
-      page.checkHeader()
 
       if (tab) {
         AND(`select the ${tab} tab`)
@@ -67,6 +66,8 @@ context('ResidentProfile', () => {
       const { placement, personRisks } = setup({})
       const page = visitPage({ placement, personRisks })
 
+      THEN('I should see the person information in the header')
+      page.checkHeader()
       THEN('the Personal tab should be selected')
       page.shouldHaveActiveTab('Personal details')
       page.shouldShowPersonalInformation(placement.person, personRisks)
@@ -84,6 +85,7 @@ context('ResidentProfile', () => {
       const oasysSupportingInformation = cas1OasysGroupFactory.supportingInformation().build()
       const riskToSelf = cas1OasysGroupFactory.riskToSelf().build()
       const bookingDetails = bookingDetailsFactory.build()
+      const dietAndAllergyResponse = dietAndAllergyResponseFactory.build()
 
       cy.task('stubAcctAlerts', { person: placement.person, acctAlerts })
       cy.task('stubOasysGroup', { person: placement.person, group: riskToSelf })
@@ -98,6 +100,7 @@ context('ResidentProfile', () => {
         includeOptionalSections: [10],
       })
       cy.task('stubBookingDetails', { person: placement.person, bookingDetails })
+      cy.task('stubDietAndAllergy', { person: placement.person, dietAndAllergyResponse })
 
       const page = visitPage({ placement, personRisks })
 
@@ -111,8 +114,11 @@ context('ResidentProfile', () => {
       AND('I should see the link to application and assessment page')
       page.shouldShowApplicationLink(placement)
 
+      AND('I should see the diet and allergy card')
+      page.shouldShowDietAndAllergyCard(dietAndAllergyResponse)
+
       AND('I should see the smoking status card')
-      page.shouldShowSmokingStatus()
+      page.shouldShowSmokingStatus(bookingDetails)
 
       WHEN('I select the Mental health subtab')
       page.clickSideNav('Mental health')
@@ -279,11 +285,20 @@ context('ResidentProfile', () => {
       cy.task('stubPersonOffences404', { person: placement.person })
       cy.task('stubCsra404', { person: placement.person })
       cy.task('stubBookingDetails404', { person: placement.person })
+      cy.task('stubCaseDetail404', { person: placement.person })
+      cy.task('stubDietAndAllergy404', { person: placement.person })
 
       const page = visitPage({ placement, personRisks })
 
       THEN('The page should render')
       page.shouldHaveActiveTab('Personal details')
+
+      WHEN('I select the health tab')
+      page.clickTab('Health')
+      THEN('"No information" messages should be shown')
+      cy.contains('No OASys supporting information information found in OASys')
+      cy.contains('No diet and allergy information found in Digital Prison Service (DPS)')
+      cy.contains('No smoking status information found in Digital Prison Service (DPS)')
 
       WHEN('I select the risk tab')
       page.clickTab('Risk')
@@ -296,18 +311,14 @@ context('ResidentProfile', () => {
       THEN('The Sentence tab should be selected')
       page.shouldHaveActiveTab('Sentence')
       cy.contains('No offence information found in NDelius')
+      cy.contains('No OASys offence details information found in OASys')
+      cy.contains('No sentence information found in NDelius')
 
       WHEN('I select the prison side-tab')
       page.clickSideNav('Prison')
       page.shouldHaveActiveSideNav('Prison')
 
       cy.contains('No adjudication information found in Digital Prison Service')
-
-      WHEN('I select the health tab')
-      page.clickTab('Health')
-      THEN('"No information" messages should be shown')
-      cy.contains('No OASys supporting information information found in OASys')
-      cy.contains('No smoking status information found in Digital Prison Service (DPS)')
     })
 
     it('should not allow access to the page if user lacks permission', () => {

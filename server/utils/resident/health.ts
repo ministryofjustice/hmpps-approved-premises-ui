@@ -1,4 +1,4 @@
-import { BookingDetails, Cas1OASysGroup, PersonAcctAlert } from '@approved-premises/api'
+import { BookingDetails, Cas1OASysGroup, DietAndAllergyResponse, PersonAcctAlert } from '@approved-premises/api'
 import { TabControllerParameters } from './TabControllerParameters'
 import { TabData } from './index'
 import { healthDetailsCards, mentalHealthCards } from './healthUtils'
@@ -11,23 +11,26 @@ export const healthTabController = async ({
   placement,
 }: TabControllerParameters): Promise<TabData> => {
   const {
-    values: [supportingInformation, bookingDetails],
-    outcomes: [supportingInformationOutcome, bookingDetailsOutcome],
-  }: { values: [Cas1OASysGroup, BookingDetails]; outcomes: Array<ApiOutcome> } = await settlePromisesWithOutcomes([
-    personService.getOasysAnswers(token, crn, 'supportingInformation', [13]),
-    personService.getBookingDetails(token, crn),
-  ])
-
+    values: [supportingInformation, bookingDetails, dietAndAllergy],
+    outcomes: [supportingInformationOutcome, bookingDetailsOutcome, dietAndAllergyOutcome],
+  }: { values: [Cas1OASysGroup, BookingDetails, DietAndAllergyResponse]; outcomes: Array<ApiOutcome> } =
+    await settlePromisesWithOutcomes([
+      personService.getOasysAnswers(token, crn, 'supportingInformation', [13]),
+      personService.getBookingDetails(token, crn),
+      personService.getDietAndAllergyDetails(token, crn),
+    ])
   return {
     subHeading: 'Health and disability',
-    cardList: healthDetailsCards(
+    cardList: healthDetailsCards({
       supportingInformation,
       supportingInformationOutcome,
       bookingDetails,
       bookingDetailsOutcome,
+      dietAndAllergy,
+      dietAndAllergyOutcome,
       crn,
-      placement?.id,
-    ),
+      placementId: placement?.id,
+    }),
   }
 }
 

@@ -3,7 +3,6 @@
 import { Router } from 'express'
 
 import type { Controllers } from '../controllers'
-import type { Services } from '../services'
 
 import actions from './utils'
 import applyRoutes from './apply'
@@ -16,24 +15,24 @@ import adminRoutes from './admin'
 import peopleRoutes from './people'
 import staticRoutes from './static'
 
-export default function routes(controllers: Controllers, services: Partial<Services>): Router {
+export default function routes(controllers: Controllers): Router {
   const router = Router()
 
   const { dashboardController } = controllers
 
-  const { get } = actions(router, services.auditService)
+  const { get } = actions(router)
 
   get('/', dashboardController.index())
 
-  applyRoutes(controllers, router, services)
-  assessRoutes(controllers, router, services)
-  matchRoutes(controllers, router, services)
-  manageRoutes(controllers, router, services)
-  tasksRoutes(controllers, router, services)
-  placementApplicationRoutes(controllers, router, services)
-  adminRoutes(controllers, router, services)
-  peopleRoutes(controllers, router, services)
-  staticRoutes(controllers, router, services)
+  applyRoutes(controllers, router)
+  assessRoutes(controllers, router)
+  matchRoutes(controllers, router)
+  manageRoutes(controllers, router)
+  tasksRoutes(controllers, router)
+  placementApplicationRoutes(controllers, router)
+  adminRoutes(controllers, router)
+  peopleRoutes(controllers, router)
+  staticRoutes(controllers, router)
 
   return router
 }

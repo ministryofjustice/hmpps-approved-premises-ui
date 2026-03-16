@@ -12,6 +12,7 @@ import type {
   Cas1SpaceBookingShortSummary,
   CaseDetail,
   CsraSummary,
+  DietAndAllergyResponse,
   Document,
   Licence,
   Person,
@@ -330,6 +331,32 @@ export default {
       request: {
         method: 'GET',
         url: paths.people.bookingDetails({ crn: args.person.crn }),
+      },
+      response: {
+        status: 404,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { status: 404 },
+      },
+    }),
+
+  stubDietAndAllergy: (args: { person: Person; dietAndAllergyResponse: DietAndAllergyResponse }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.people.dietAndAllergy({ crn: args.person.crn }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.dietAndAllergyResponse,
+      },
+    }),
+
+  stubDietAndAllergy404: (args: { person: Person }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.people.dietAndAllergy({ crn: args.person.crn }),
       },
       response: {
         status: 404,

@@ -21,6 +21,7 @@ import {
   licenceFactory,
   csraSummaryFactory,
   caseDetailFactory,
+  dietAndAllergyResponseFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/personClient.ts')
@@ -332,6 +333,18 @@ describe('PersonService', () => {
       expect(result).toEqual(caseDetail)
       expect(personClientFactory).toHaveBeenCalledWith(token)
       expect(personClient.caseDetail).toHaveBeenCalledWith(crn)
+    })
+  })
+
+  describe('dietAndAllery', () => {
+    it('gets the diet and allery information for a person', async () => {
+      const dietAndAllergyResponse = dietAndAllergyResponseFactory.build()
+      personClient.dietAndAllergy.mockResolvedValue(dietAndAllergyResponse)
+
+      const result = await service.getDietAndAllergyDetails(token, crn)
+      expect(result).toEqual(dietAndAllergyResponse)
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.dietAndAllergy).toHaveBeenCalledWith(crn)
     })
   })
 })

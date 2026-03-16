@@ -16,6 +16,7 @@ import type {
   PersonRisks,
   PrisonCaseNote,
   CaseDetail,
+  DietAndAllergyResponse,
 } from '@approved-premises/api'
 
 import RestClient from './restClient'
@@ -127,5 +128,9 @@ export default class PersonClient {
 
   async caseDetail(crn: string): Promise<CaseDetail> {
     return this.restClient.get<CaseDetail>({ path: paths.people.caseDetail({ crn }) })
+  }
+
+  async dietAndAllergy(crn: string) {
+    return this.restClient.get<DietAndAllergyResponse>({ path: paths.people.dietAndAllergy({ crn }) })
   }
 }

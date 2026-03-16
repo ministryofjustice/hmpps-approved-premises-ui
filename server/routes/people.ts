@@ -3,15 +3,14 @@
 import type { Router } from 'express'
 
 import type { Controllers } from '../controllers'
-import type { Services } from '../services'
 
 import managePaths from '../paths/manage'
 import peoplePaths from '../paths/people'
 
 import actions from './utils'
 
-export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
-  const { get, post } = actions(router, services.auditService)
+export default function routes(controllers: Controllers, router: Router): Router {
+  const { get, post } = actions(router)
 
   const { peopleController, timelineController } = controllers
 

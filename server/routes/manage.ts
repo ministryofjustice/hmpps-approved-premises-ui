@@ -3,14 +3,13 @@
 import type { Router } from 'express'
 
 import type { Controllers } from '../controllers'
-import type { Services } from '../services'
 import paths from '../paths/manage'
 
 import actions from './utils'
 import { TECHNICAL_BANNER_VERSION } from '../controllers/staticController'
 import { hasPermission } from '../utils/users'
 
-export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
+export default function routes(controllers: Controllers, router: Router): Router {
   router.use('/manage', (req, res, next) => {
     res.locals.showTechnicalUpdatesBanner =
       hasPermission(res.locals.user, ['cas1_ap_resident_profile']) &&
@@ -18,7 +17,7 @@ export default function routes(controllers: Controllers, router: Router, service
     next()
   })
 
-  const { get, post } = actions(router, services.auditService)
+  const { get, post } = actions(router)
 
   const {
     premisesController,
