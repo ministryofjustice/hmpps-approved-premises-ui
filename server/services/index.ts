@@ -2,7 +2,6 @@
 
 import { dataAccess } from '../data'
 
-import AuditService from './auditService'
 import UserService from './userService'
 import PremisesService from './premisesService'
 import PlacementService from './placementService'
@@ -19,8 +18,6 @@ import ReportService from './reportService'
 import ApAreaService from './apAreaService'
 import CruManagementAreaService from './cruManagementAreaService'
 import AppealService from './appealService'
-
-import config, { AuditConfig } from '../config'
 
 export const services = () => {
   const {
@@ -43,7 +40,6 @@ export const services = () => {
 
   const appealService = new AppealService(appealClientBuilder)
   const userService = new UserService(userClientBuilder, referenceDataClientBuilder)
-  const auditService = new AuditService(config.apis.audit as AuditConfig)
   const premisesService = new PremisesService(approvedPremisesClientBuilder)
   const placementService = new PlacementService(placementClientBuilder, cas1ReferenceDataClientBuilder)
   const personService = new PersonService(personClient)
@@ -65,7 +61,6 @@ export const services = () => {
   return {
     appealService,
     userService,
-    auditService,
     premisesService,
     placementService,
     personService,

@@ -59,7 +59,7 @@ export default function createApp(controllers: Controllers, services: Services):
     res.locals.successMessages = req.flash('success')
     return next()
   })
-  app.use(routes(controllers, services))
+  app.use(routes(controllers))
   app.use((req, res, next) => next(createError(404, 'Not found')))
 
   if (config.sentry.dsn) {
