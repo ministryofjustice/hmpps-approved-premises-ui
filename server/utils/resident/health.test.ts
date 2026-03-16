@@ -9,6 +9,7 @@ import {
   bookingDetailsFactory,
   cas1OasysGroupFactory,
   cas1SpaceBookingFactory,
+  dietAndAllergyResponseFactory,
 } from '../../testutils/factories'
 import { healthDetailsCards } from './healthUtils'
 import { ErrorWithData } from '../errors'
@@ -43,23 +44,27 @@ describe('Health tab', () => {
   describe('healthTabController', () => {
     it('should get acctAlerts and then render the cards', async () => {
       const bookingDetails = bookingDetailsFactory.build()
+      const dietAndAllergy = dietAndAllergyResponseFactory.build()
       jest.spyOn(healthUtils, 'healthDetailsCards').mockReturnValue(mockCardList)
       personService.getOasysAnswers.mockResolvedValue(supportingInformation)
       personService.getBookingDetails.mockResolvedValue(bookingDetails)
+      personService.getDietAndAllergyDetails.mockResolvedValue(dietAndAllergy)
 
       const result = await healthTabController({ personService, token, crn, placement })
 
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Health and disability' })
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [13])
       expect(personService.getBookingDetails).toHaveBeenCalledWith(token, crn)
-      expect(healthDetailsCards).toHaveBeenCalledWith(
+      expect(healthDetailsCards).toHaveBeenCalledWith({
         supportingInformation,
-        'success',
+        supportingInformationOutcome: 'success',
         bookingDetails,
-        'success',
+        bookingDetailsOutcome: 'success',
+        dietAndAllergy,
+        dietAndAllergyOutcome: 'success',
         crn,
-        placement.id,
-      )
+        placementId: placement.id,
+      })
     })
   })
 

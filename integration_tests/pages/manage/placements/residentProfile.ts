@@ -1,11 +1,13 @@
 import {
   Adjudication,
   ApprovedPremisesApplication,
+  BookingDetails,
   Cas1OASysGroup,
   Cas1SpaceBooking,
   Cas1SpaceBookingShortSummary,
   CaseDetail,
   CsraSummary,
+  DietAndAllergyResponse,
   FullPerson,
   Licence,
   Person,
@@ -18,7 +20,7 @@ import { SummaryListWithCard, TextItem } from '@approved-premises/ui'
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
 import * as residentUtils from '../../../../server/utils/resident'
-import { mentalHealthCards } from '../../../../server/utils/resident/healthUtils'
+import { dietCard, mentalHealthCards, smokerCard } from '../../../../server/utils/resident/healthUtils'
 
 import { DateFormats } from '../../../../server/utils/dateUtils'
 
@@ -143,8 +145,12 @@ export default class ResidentProfilePage extends Page {
     })
   }
 
-  shouldShowSmokingStatus() {
-    cy.get('.govuk-summary-card__title').contains('Smoker or vaper').should('exist')
+  shouldShowDietAndAllergyCard(dietAndAllergyResponse: DietAndAllergyResponse) {
+    this.shouldShowCard(dietCard(dietAndAllergyResponse, 'success'))
+  }
+
+  shouldShowSmokingStatus(bookingDetails: BookingDetails) {
+    this.shouldShowCard(smokerCard(bookingDetails, 'success'))
   }
 
   shouldShowApplicationLink(placement: Cas1SpaceBooking) {

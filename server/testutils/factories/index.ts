@@ -100,6 +100,7 @@ import caseDetailFactory from './caseDetail'
 import licenceFactory from './licence'
 import csraSummaryFactory from './csraSummary'
 import offenceFactory from './offence'
+import dietAndAllergyResponseFactory from './dietAndAllergyResponse'
 
 export {
   acctAlertFactory,
@@ -205,4 +206,5 @@ export {
   licenceFactory,
   csraSummaryFactory,
   offenceFactory,
+  dietAndAllergyResponseFactory,
 }
