@@ -13,6 +13,7 @@ import {
 } from '../../testutils/factories'
 import { healthDetailsCards } from './healthUtils'
 import { ErrorWithData } from '../errors'
+import config from '../../config'
 
 const mockCardList = [card({ title: 'mock card' })]
 const personService = createMock<PersonService>({})
@@ -55,6 +56,7 @@ describe('Health tab', () => {
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Health and disability' })
       expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [13])
       expect(personService.getBookingDetails).toHaveBeenCalledWith(token, crn)
+      expect(personService.getDietAndAllergyDetails).toHaveBeenCalledWith(token, crn)
       expect(healthDetailsCards).toHaveBeenCalledWith({
         supportingInformation,
         supportingInformationOutcome: 'success',
@@ -66,6 +68,20 @@ describe('Health tab', () => {
         placementId: placement.id,
       })
     })
+  })
+  // TODO: remove this test once diet is in production
+  it('should not get diet information in production ', async () => {
+    config.isProduction = true
+
+    jest.spyOn(healthUtils, 'healthDetailsCards').mockReturnValue(mockCardList)
+
+    const result = await healthTabController({ personService, token, crn, placement })
+
+    expect(result).toEqual({ cardList: mockCardList, subHeading: 'Health and disability' })
+    expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [13])
+    expect(personService.getBookingDetails).toHaveBeenCalledWith(token, crn)
+    expect(personService.getDietAndAllergyDetails).not.toHaveBeenCalledWith(token, crn)
+    config.isProduction = false
   })
 
   describe('mentalHealthTabController', () => {

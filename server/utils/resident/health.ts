@@ -3,6 +3,7 @@ import { TabControllerParameters } from './TabControllerParameters'
 import { TabData } from './index'
 import { healthDetailsCards, mentalHealthCards } from './healthUtils'
 import { ApiOutcome, settlePromisesWithOutcomes } from '../utils'
+import config from '../../config'
 
 export const healthTabController = async ({
   personService,
@@ -17,7 +18,7 @@ export const healthTabController = async ({
     await settlePromisesWithOutcomes([
       personService.getOasysAnswers(token, crn, 'supportingInformation', [13]),
       personService.getBookingDetails(token, crn),
-      personService.getDietAndAllergyDetails(token, crn),
+      !config.isProduction ? personService.getDietAndAllergyDetails(token, crn) : null,
     ])
   return {
     subHeading: 'Health and disability',
