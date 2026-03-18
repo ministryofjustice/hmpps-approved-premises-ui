@@ -48,9 +48,13 @@ describe('ReleaseType', () => {
 
   describe('ReleaseType.getReleaseTypes', () => {
     const releaseType = new ReleaseType({}, placementApplicationFactory.build())
-
+    afterEach(() => {
+      jest.useRealTimers()
+    })
     describe('releaseType', () => {
-      it('if the sentence type is "standardDeterminate" then all the items should be shown', () => {
+      it('if the sentence type is "standardDeterminate" and it is before before 01/05/2026 then all the items should be shown including PSS', () => {
+        jest.useFakeTimers()
+        jest.setSystemTime(new Date('2026-04-30'))
         releaseType.sentenceType = 'standardDeterminate'
         expect(releaseType.getReleaseTypes()).toEqual(
           getExpected([
@@ -58,6 +62,22 @@ describe('ReleaseType', () => {
             'rotl',
             'hdc',
             'pss',
+            'paroleDirectedLicence',
+            'reReleasedPostRecall',
+            'reReleasedFollowingFixedTermRecall',
+          ]),
+        )
+      })
+
+      it('if the sentence type is "standardDeterminate" and it is after 01/05/2026 then PSS should not be shown', () => {
+        jest.useFakeTimers()
+        jest.setSystemTime(new Date('2026-05-01'))
+        releaseType.sentenceType = 'standardDeterminate'
+        expect(releaseType.getReleaseTypes()).toEqual(
+          getExpected([
+            'licence',
+            'rotl',
+            'hdc',
             'paroleDirectedLicence',
             'reReleasedPostRecall',
             'reReleasedFollowingFixedTermRecall',
