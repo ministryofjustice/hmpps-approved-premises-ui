@@ -105,6 +105,7 @@ export type { Cas1OverbookingRange } from './models/Cas1OverbookingRange';
 export type { Cas1PersonalTimeline } from './models/Cas1PersonalTimeline';
 export type { Cas1PlacementChangeRequestCreatedPayload } from './models/Cas1PlacementChangeRequestCreatedPayload';
 export type { Cas1PlacementChangeRequestRejectedPayload } from './models/Cas1PlacementChangeRequestRejectedPayload';
+export type { Cas1PlacementHistory } from './models/Cas1PlacementHistory';
 export type { Cas1PlacementRequestDetail } from './models/Cas1PlacementRequestDetail';
 export type { Cas1PlacementRequestSummary } from './models/Cas1PlacementRequestSummary';
 export type { Cas1PremiseCapacity } from './models/Cas1PremiseCapacity';
@@ -221,6 +222,7 @@ export type { NewReferralHistoryUserNote } from './models/NewReferralHistoryUser
 export type { NewWithdrawal } from './models/NewWithdrawal';
 export type { Nonarrival } from './models/Nonarrival';
 export type { NonArrivalReason } from './models/NonArrivalReason';
+export type { NoteDetail } from './models/NoteDetail';
 export type { OASysAssessmentState } from './models/OASysAssessmentState';
 export type { OASysQuestion } from './models/OASysQuestion';
 export type { OASysSections } from './models/OASysSections';

@@ -36,7 +36,7 @@ describe('drugAndAlcoholUtils', () => {
     })
     it('should render blank cards if OASys returns error', () => {
       const result = drugAndAlcoholCards(undefined, 'failure')
-      const errorRts = loadingErrorMessage({ result: 'failure', item: 'OASys supporting information', source: 'OASys' })
+      const errorRts = loadingErrorMessage('failure', 'OASys supporting information', 'oasys')
 
       expect(result[1].html).toMatchStringIgnoringWhitespace(errorRts)
       expect(result[2].html).toMatchStringIgnoringWhitespace(errorRts)

@@ -1,12 +1,15 @@
 import { PersonAcctAlert } from '@approved-premises/api'
 import { render } from 'nunjucks'
+import { faker } from '@faker-js/faker'
 import {
   acctAlertFactory,
   bookingDetailsFactory,
   cas1OasysGroupFactory,
   cas1SpaceBookingFactory,
+  dietAndAllergyResponseFactory,
 } from '../../testutils/factories'
 import {
+  dietCard,
   getSmokingStatus,
   healthDetailsCards,
   healthSideNavigation,
@@ -16,12 +19,19 @@ import {
 import { DateFormats } from '../dateUtils'
 import { oasysMetadataRow, tableRow } from './riskUtils'
 import { loadingErrorMessage } from '.'
+import { ApiOutcome } from '../utils'
+import * as healthUtils from './healthUtils'
+import { bulletList, summaryListItem } from '../formUtils'
+import { dietaryItemDtoFactory } from '../../testutils/factories/dietAndAllergyResponse'
+import config from '../../config'
 
 jest.mock('nunjucks')
 
 describe('healthUtils', () => {
   const placement = cas1SpaceBookingFactory.build()
   const { crn } = placement.person
+
+  const success: ApiOutcome = 'success'
 
   beforeEach(() => {
     ;(render as jest.Mock).mockImplementation(template => `Nunjucks template ${template}`)
@@ -50,17 +60,34 @@ describe('healthUtils', () => {
   })
 
   describe('healthDetailsCards', () => {
+    const defaultArguments = {
+      supportingInformation: cas1OasysGroupFactory.supportingInformation().build(),
+      supportingInformationOutcome: success,
+      bookingDetails: bookingDetailsFactory.build({
+        profileInformation: [{ type: 'SMOKE', resultValue: 'Yes' }],
+      }),
+      bookingDetailsOutcome: success,
+      dietAndAllergy: dietAndAllergyResponseFactory.build(),
+      dietAndAllergyOutcome: success,
+      crn,
+      placementId: placement.id,
+    }
     it('should render error card for recent assessment (FM-286)', () => {
-      const supportingInformation = cas1OasysGroupFactory.supportingInformation().build()
+      const result = healthDetailsCards(defaultArguments)
 
-      const result = healthDetailsCards(supportingInformation, 'success', null, undefined, crn, placement.id)
-
-      expect(result).toHaveLength(3)
+      expect(result).toHaveLength(4)
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
       expect(result[1].html).toMatchStringIgnoringWhitespace(
         `<p>We cannot load general health - any physical or mental health conditions right now.</p>
          <p>Go to OASys to check if any general health details have been entered.</p>`,
       )
+      expect(result[2]).toEqual(expect.objectContaining({ card: { title: { text: 'Diet and food allergies' } } }))
+      expect(result[3]).toEqual({
+        card: { title: { text: 'Smoker or vaper' } },
+        topHtml:
+          '<p class="govuk-body-m govuk-hint govuk-!-margin-bottom-2">Imported from Digital Prison Service (DPS)</p>',
+        rows: [{ key: { text: 'Smoker or vaper' }, value: { text: 'Smoker' } }],
+      })
     })
 
     it('should render the health details cards for a legacy assessment before April 5th 2025', () => {
@@ -68,59 +95,107 @@ describe('healthUtils', () => {
         .supportingInformation()
         .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
 
-      const result = healthDetailsCards(supportingInformation, 'success', null, undefined, crn, placement.id)
+      const result = healthDetailsCards({ ...defaultArguments, supportingInformation })
 
-      expect(result).toHaveLength(3)
-      expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
       expect(result[1].html).toMatchStringIgnoringWhitespace(
         `${oasysMetadataRow('13.1', 'OASys supporting information', supportingInformation)}Nunjucks template partials/detailsBlock.njk`,
       )
     })
 
-    it('should include smoking card when booking details has smoking status', () => {
-      const supportingInformation = cas1OasysGroupFactory
-        .supportingInformation()
-        .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
-      const bookingDetails = bookingDetailsFactory.build({
-        profileInformation: [{ type: 'SMOKE', resultValue: 'Yes' }],
+    describe('diet and allergy', () => {
+      afterEach(() => {
+        jest.restoreAllMocks()
+      })
+      const dietAndAllergyResponse = dietAndAllergyResponseFactory.build()
+
+      it('should render the diet and allergy card', () => {
+        jest.spyOn(healthUtils, 'getLastUpdated').mockReturnValue('2026-03-01')
+        jest.spyOn(healthUtils, 'listDietItems').mockReturnValue('(list)')
+
+        const result = dietCard(dietAndAllergyResponse, 'success')
+
+        expect(result.card).toEqual({ title: { text: 'Diet and food allergies' } })
+        expect(result.topHtml).toEqual(
+          `<p class="govuk-body-m govuk-hint govuk-!-margin-bottom-2">Imported from Digital Prison Service (DPS)</p><p class="govuk-body-m govuk-hint">Last updated: Sun 1 Mar 2026</p>`,
+        )
+        expect(result.rows).toEqual(
+          expect.arrayContaining([
+            summaryListItem('Medical diet', '(list)', 'html'),
+            summaryListItem('Food allergies', '(list)', 'html'),
+            summaryListItem('Personalised dietary requirements', '(list)', 'html'),
+            { key: { text: 'Catering instructions' }, value: { html: expect.anything() } },
+          ]),
+        )
       })
 
-      const result = healthDetailsCards(supportingInformation, 'success', bookingDetails, 'success', crn, placement.id)
+      it('should handle an empty response', () => {
+        const result = dietCard(undefined, 'success')
+        expect(result.topHtml).toEqual('No diet and allergy information found in Digital Prison Service (DPS)')
+      })
 
-      expect(result).toHaveLength(3)
-      expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
-      expect(result[2]).toEqual({
-        card: { title: { text: 'Smoker or vaper' } },
-        rows: [{ key: { text: 'Smoker or vaper' }, value: { text: 'Smoker' } }],
+      it('should handle an error response', () => {
+        const result = dietCard(dietAndAllergyResponse, 'failure')
+        expect(result.topHtml).toEqual(
+          'We cannot load diet and allergy information right now because Digital Prison Service (DPS) is not available.<br>Try again later',
+        )
+      })
+
+      it('should format item lists', () => {
+        const item1 = dietaryItemDtoFactory.build({ comment: undefined, value: { description: 'description 1' } })
+        const item2 = dietaryItemDtoFactory.build({ comment: 'Comment 2', value: { description: 'description 2' } })
+        const expected2 = 'description 2 <span class="govuk-body govuk-hint">(Comment 2)</span>'
+
+        expect(healthUtils.listDietItems([item1])).toEqual('description 1')
+        expect(healthUtils.listDietItems([item2])).toEqual(expected2)
+        expect(healthUtils.listDietItems([item1, item2])).toEqual(bulletList(['description 1', expected2]))
+      })
+
+      it('should find latest lastUpdated date', async () => {
+        const soon = DateFormats.dateObjToIsoDate(faker.date.soon())
+        const response = dietAndAllergyResponseFactory.build({
+          dietAndAllergy: { foodAllergies: { lastModifiedAt: soon } },
+        })
+
+        const result = dietCard(response, 'success')
+        expect(result.topHtml).toEqual(
+          `<p class="govuk-body-m govuk-hint govuk-!-margin-bottom-2">Imported from Digital Prison Service (DPS)</p><p class="govuk-body-m govuk-hint">Last updated: ${DateFormats.isoDateToUIDate(soon)}</p>`,
+        )
+      })
+
+      it('should not show diet and allery in production', () => {
+        config.isProduction = true
+        const result = healthDetailsCards(defaultArguments)
+
+        expect(result).toHaveLength(3)
+        expect(result.map(card => card.card?.title)).not.toContainEqual({ text: 'Diet and food allergies' })
+        config.isProduction = false
       })
     })
 
-    it('should include error card when booking details fetch fails', () => {
-      const supportingInformation = cas1OasysGroupFactory
-        .supportingInformation()
-        .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
+    describe('smoker details', () => {
+      it('should include error card when booking details fetch fails', () => {
+        const result = healthDetailsCards({
+          ...defaultArguments,
+          bookingDetails: undefined,
+          bookingDetailsOutcome: 'failure',
+        })
 
-      const result = healthDetailsCards(supportingInformation, 'success', null, 'failure', crn, placement.id)
+        expect(result[3].topHtml).toMatchStringIgnoringWhitespace(
+          loadingErrorMessage('failure', 'smoking status', 'dps'),
+        )
+      })
 
-      expect(result).toHaveLength(3)
-      expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
-      expect(result[2].html).toMatchStringIgnoringWhitespace(
-        loadingErrorMessage({ result: 'failure', item: 'smoking status', source: 'Digital Prison Service (DPS)' }),
-      )
-    })
+      it('should include error card when no booking details', () => {
+        const result = healthDetailsCards({
+          ...defaultArguments,
+          bookingDetails: undefined,
+          bookingDetailsOutcome: 'success',
+        })
 
-    it('should include error card when no booking details', () => {
-      const supportingInformation = cas1OasysGroupFactory
-        .supportingInformation()
-        .build({ assessmentMetadata: { dateCompleted: '2025-04-01T00:00:00' } })
-
-      const result = healthDetailsCards(supportingInformation, 'success', null, 'success', crn, placement.id)
-
-      expect(result).toHaveLength(3)
-      expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
-      expect(result[2]).toEqual({
-        card: { title: { text: 'Smoker or vaper' } },
-        html: '<p class="govuk-hint">Not entered in Digital Prison Service (DPS)</p>',
+        expect(result[3]).toEqual({
+          card: { title: { text: 'Smoker or vaper' } },
+          topHtml: 'No smoking status information found in Digital Prison Service (DPS)',
+        })
       })
     })
   })
@@ -185,16 +260,14 @@ describe('healthUtils', () => {
       personAcctAlertsOutcome: 'failure',
       supportingInformationOutcome: 'failure',
     })
-    const errorRts = loadingErrorMessage({ result: 'failure', item: 'OASys risk to self', source: 'OASys' })
+    const errorRts = loadingErrorMessage('failure', 'OASys risk to self', 'oasys')
 
     expect(result[1].html).toMatchStringIgnoringWhitespace(errorRts)
     expect(result[6].html).toMatchStringIgnoringWhitespace(errorRts)
     expect(result[7].html).toMatchStringIgnoringWhitespace(
-      loadingErrorMessage({ result: 'failure', item: 'OASys supporting information', source: 'OASys' }),
+      loadingErrorMessage('failure', 'OASys supporting information', 'oasys'),
     )
-    expect(result[8].html).toMatchStringIgnoringWhitespace(
-      loadingErrorMessage({ result: 'failure', item: 'ACCT alerts', source: 'Digital Prison Service' }),
-    )
+    expect(result[8].html).toMatchStringIgnoringWhitespace(loadingErrorMessage('failure', 'ACCT alerts', 'dps'))
   })
 
   describe('getSmokingStatus', () => {

@@ -4,7 +4,16 @@ import { FullPerson, RiskEnvelopeStatus } from '@approved-premises/api'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import { Request } from 'express'
 import { faker } from '@faker-js/faker'
-import { card, detailsBody, getPlacementLink, getResidentHeader, residentTabItems, returnPath } from './index'
+import {
+  card,
+  combineResultAndContent,
+  detailsBody,
+  getPlacementLink,
+  getResidentHeader,
+  loadingErrorMessage,
+  residentTabItems,
+  returnPath,
+} from './index'
 import { cas1SpaceBookingFactory, risksFactory, userFactory } from '../../testutils/factories'
 import { canonicalDates, placementStatusTag } from '../placements'
 import { DateFormats } from '../dateUtils'
@@ -219,6 +228,23 @@ describe('residentsUtils', () => {
         expect(
           getPlacementLink({ request: requestWithPermission, person: restrictedPerson, premisesId, placementId }),
         ).toEqual(legacyUrl)
+      })
+    })
+
+    describe('loadingErrorMessage', () => {
+      it('generates an error message based on the API request outcome', () => {
+        expect(loadingErrorMessage('success', '(item)', 'dps')).toEqual(undefined)
+        expect(loadingErrorMessage('notFound', '(item)', 'dps')).toEqual(
+          'No (item) information found in Digital Prison Service (DPS)',
+        )
+        expect(loadingErrorMessage('failure', '(item)', 'dps')).toEqual(
+          'We cannot load (item) information right now because Digital Prison Service (DPS) is not available.<br>Try again later',
+        )
+      })
+      it('combines an API outcome with the existence of content', () => {
+        expect(combineResultAndContent('success', 'some string')).toEqual('success')
+        expect(combineResultAndContent('success', undefined)).toEqual('notFound')
+        expect(combineResultAndContent('failure', undefined)).toEqual('failure')
       })
     })
   })
