@@ -15,6 +15,7 @@ import {
   licenceFactory,
   personFactory,
   prisonCaseNotesFactory,
+  registrationFactory,
   risksFactory,
 } from '../../../../server/testutils/factories'
 import ResidentProfilePage from '../../../pages/manage/placements/residentProfile'
@@ -191,14 +192,17 @@ context('ResidentProfile', () => {
     })
 
     it('should show the risk tab', () => {
-      const { placement, caseDetail, personRisks } = setup()
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
       const oasysRoshSummary = cas1OasysGroupFactory.roshSummary().build()
       const oasysRiskManagementPlan = cas1OasysGroupFactory.riskManagementPlan().build()
+      const registrations = registrationFactory.buildList(1)
+      const caseDetail = caseDetailFactory.build({ registrations })
+      const { placement } = setup()
 
       cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
       cy.task('stubOasysGroup', { person: placement.person, group: oasysRoshSummary })
       cy.task('stubOasysGroup', { person: placement.person, group: oasysRiskManagementPlan })
+      cy.task('stubCaseDetail', { person: placement.person, caseDetail })
 
       const page = visitPage({ placement, caseDetail }, 'Risk')
 
@@ -212,6 +216,9 @@ context('ResidentProfile', () => {
 
       AND('The Ndelius risk card should be populated')
       page.shouldShowNDeliusRiskCard()
+
+      AND('the NDelius risk flags table should be displayed')
+      page.shouldShowNDeliusRiskFlagsTable(registrations)
 
       AND('The ROSH widget should be populated')
       page.shouldShowRoshWidget(personRisks.roshRisks.value)

@@ -1,5 +1,5 @@
-import { Cas1OASysGroup, Cas1OASysGroupName, OASysQuestion, RoshRisks } from '@approved-premises/api'
-import { SummaryListWithCard } from '@approved-premises/ui'
+import { Cas1OASysGroup, Cas1OASysGroupName, OASysQuestion, Registration, RoshRisks } from '@approved-premises/api'
+import { SummaryListWithCard, TableRow } from '@approved-premises/ui'
 import nunjucks from 'nunjucks'
 import {
   card,
@@ -13,6 +13,7 @@ import {
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { ApiOutcome } from '../utils'
+import { htmlCell, textCell } from '../tableUtils'
 
 export const riskSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   return [
@@ -141,10 +142,30 @@ export const roshWidget = (params: RoshRisks) => {
   return card({ html: nunjucks.render(`components/riskWidgets/rosh-widget/template.njk`, { params }) })
 }
 
-export const ndeliusRiskCard = (crn: string) =>
-  card({
-    html: `${subHeadingH2('NDelius risk flags (registers)')}${insetText(ndeliusDeeplink({ crn, text: 'View risk information in NDelius (opens in a new tab)', component: 'RegisterSummary' }))}`,
+export const registrationRows = (registrations: Array<Registration>): Array<TableRow> => {
+  return registrations.map(registration => {
+    const flagHtml = `<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">${registration.description}</p><p class="govuk-body-s govuk-hint govuk-!-margin-bottom-0">Added on ${DateFormats.isoDateToUIDate(registration.startDate, { format: 'short' })}</p>`
+
+    const notesHtml =
+      registration.riskNotesDetail && registration.riskNotesDetail.length > 0
+        ? registration.riskNotesDetail
+            .map(noteDetail => `<p class="govuk-body govuk-!-margin-bottom-0">${noteDetail.note}</p>`)
+            .join('')
+        : '<p class="govuk-body">Not entered in NDelius</p>'
+
+    return [htmlCell(flagHtml), htmlCell(notesHtml)]
   })
+}
+
+export const ndeliusRiskCard = (crn: string, registrations: Array<Registration>) => {
+  const rows = registrationRows(registrations)
+  return card({
+    topHtml: `${subHeadingH2('NDelius risk flags (registers)')}${insetText(ndeliusDeeplink({ crn, text: 'View risk information in NDelius (opens in a new tab)', component: 'RegisterSummary' }))}`,
+    ...(rows.length
+      ? { table: { head: [textCell('Flag'), textCell('Notes')], rows } }
+      : { html: '<p class="govuk-body">No risk flags</p>' }),
+  })
+}
 
 export const riskOasysCards = ({
   roshSummary,

@@ -10,6 +10,7 @@ export const riskTabController = async ({
   personService,
   token,
   crn,
+  caseDetail,
   placement,
 }: TabControllerParameters): Promise<TabData> => {
   const {
@@ -26,7 +27,7 @@ export const riskTabController = async ({
     subHeading: 'Risk information',
     cardList: [
       card({ html: insetText('Imported from OASys') }),
-      ndeliusRiskCard(crn),
+      ndeliusRiskCard(crn, caseDetail?.registrations),
       card({ html: subHeadingH2('OASys risk assessments') }),
       roshWidget(personRisks.roshRisks?.status?.toLowerCase() === 'retrieved' && personRisks.roshRisks.value),
       card({ html: subHeadingH3('Risk assessment') }),

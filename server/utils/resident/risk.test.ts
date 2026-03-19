@@ -1,7 +1,12 @@
 import { render } from 'nunjucks'
 import { createMock } from '@golevelup/ts-jest'
 import { Cas1OASysGroupName, type OASysQuestion, type RiskEnvelopeStatus } from '@approved-premises/api'
-import { cas1OasysGroupFactory, cas1SpaceBookingFactory, risksFactory } from '../../testutils/factories'
+import {
+  cas1OasysGroupFactory,
+  cas1SpaceBookingFactory,
+  caseDetailFactory,
+  risksFactory,
+} from '../../testutils/factories'
 import { riskTabController } from './risk'
 import { PersonService } from '../../services'
 import { DateFormats } from '../dateUtils'
@@ -23,6 +28,7 @@ describe('risk tab controller', () => {
     const riskManagementPlan = cas1OasysGroupFactory.riskManagementPlan().build()
     const offenceDetails = cas1OasysGroupFactory.offenceDetails().build()
     const supportingInformation = cas1OasysGroupFactory.supportingInformation().build()
+    const caseDetail = caseDetailFactory.build()
     const retrieved: { status: RiskEnvelopeStatus } = { status: 'retrieved' }
     const personRisks = risksFactory.build({
       roshRisks: retrieved,
@@ -48,7 +54,7 @@ describe('risk tab controller', () => {
         }
       })
       personService.riskProfile.mockResolvedValue(personRisks)
-      const result = await riskTabController({ personService, token, crn })
+      const result = await riskTabController({ personService, token, crn, caseDetail })
 
       expect(result.subHeading).toEqual('Risk information')
       expect(result.cardList).toHaveLength(16)
@@ -56,9 +62,7 @@ describe('risk tab controller', () => {
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
         html: `Imported from OASys`,
       })
-      expect(result.cardList[1].html).toMatchStringIgnoringWhitespace(
-        `<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>Nunjucks template partials/insetText.njk`,
-      )
+      expect(result.cardList[1].topHtml).toContain(`<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>`)
       expect(result.cardList[2].html).toMatch(`<h2 class="govuk-heading-m">OASys risk assessments</h2>`)
       expect(result.cardList[3].html).toMatch('Nunjucks template components/riskWidgets/rosh-widget/template.njk')
       expect(render).toHaveBeenCalledWith('components/riskWidgets/rosh-widget/template.njk', {
@@ -96,13 +100,11 @@ describe('risk tab controller', () => {
         })
         personService.riskProfile.mockResolvedValue(personRisks)
 
-        const result = await riskTabController({ personService, token, crn, placement })
+        const result = await riskTabController({ personService, token, crn, caseDetail, placement })
         expect(result.subHeading).toEqual('Risk information')
 
         expect(result.cardList).toHaveLength(16)
-        expect(result.cardList[1].html).toMatchStringIgnoringWhitespace(
-          '<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>Nunjucks template partials/insetText.njk',
-        )
+        expect(result.cardList[1].topHtml).toContain('<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>')
         expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
           html: `<p class="govuk-!-margin-bottom-2">No OASys risk assessment for person added</p><p>Go to the <a href="/manage/resident/crn/placement/${placement.id}/placement/application">application</a> to view risk information for this person.</p>`,
         })
@@ -116,7 +118,7 @@ describe('risk tab controller', () => {
         })
         personService.riskProfile.mockResolvedValue(personRisks)
 
-        const result = await riskTabController({ personService, token, crn, placement })
+        const result = await riskTabController({ personService, token, crn, caseDetail, placement })
         expect(result.cardList).toHaveLength(6)
         expect(result.cardList[3].html).toMatchStringIgnoringWhitespace(
           'Nunjucks template components/riskWidgets/rosh-widget/template.njk',

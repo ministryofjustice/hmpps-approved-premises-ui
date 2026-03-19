@@ -1,6 +1,13 @@
 import { render } from 'nunjucks'
-import { cas1OasysGroupFactory } from '../../testutils/factories'
-import { ndeliusRiskCard, oasysGroupMapping, oasysMetadataRow, roshWidget, summaryCards } from './riskUtils'
+import { cas1OasysGroupFactory, registrationFactory } from '../../testutils/factories'
+import {
+  ndeliusRiskCard,
+  oasysGroupMapping,
+  oasysMetadataRow,
+  registrationRows,
+  roshWidget,
+  summaryCards,
+} from './riskUtils'
 import { roshRisksFactory } from '../../testutils/factories/risks'
 import * as utils from './index'
 
@@ -45,16 +52,16 @@ describe('risk utils', () => {
       jest.spyOn(utils, 'ndeliusDeeplink').mockReturnValue(mockLink)
     })
 
-    it('Should render the risk card with ndelius link', () => {
-      expect(ndeliusRiskCard(crn)).toEqual({
-        html: '<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>Nunjucks template partials/insetText.njk',
-      })
-    })
+    it('Should render the risk card with ndelius link and table', () => {
+      const registrations = registrationFactory.buildList(2)
 
-    it('Should handle no risks', () => {
-      expect(ndeliusRiskCard(crn)).toEqual({
-        html: `<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>Nunjucks template partials/insetText.njk`,
+      const result = ndeliusRiskCard(crn, registrations)
+      expect(result.topHtml).toContain('<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>')
+      expect(result.table).toEqual({
+        head: [{ text: 'Flag' }, { text: 'Notes' }],
+        rows: registrationRows(registrations),
       })
+      expect(result.html).toBeUndefined()
     })
   })
 })
