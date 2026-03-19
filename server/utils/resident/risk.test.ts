@@ -50,7 +50,7 @@ describe('risk tab controller', () => {
       const result = await riskTabController({ personService, token, crn, personRisks })
 
       expect(result.subHeading).toEqual('Risk information')
-      expect(result.cardList).toHaveLength(15)
+      expect(result.cardList).toHaveLength(16)
       expect(result.cardList[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
       expect(render).toHaveBeenCalledWith('partials/insetText.njk', {
         html: `Imported from OASys`,
@@ -76,7 +76,12 @@ describe('risk tab controller', () => {
       expect(result.cardList[10].html).toMatchStringIgnoringWhitespace(
         `${oasysMetadataRow('RM32', 'OASys risk management plan', riskManagementPlan)}Nunjucks template partials/detailsBlock.njk`,
       )
+
       expect(result.cardList[11].html).toMatchStringIgnoringWhitespace(
+        `${oasysMetadataRow('RM34', 'OASys risk management plan', riskManagementPlan)}Nunjucks template partials/detailsBlock.njk`,
+      )
+
+      expect(result.cardList[12].html).toMatchStringIgnoringWhitespace(
         `${oasysMetadataRow('2.4.1', 'OASys offence details', offenceDetails)}Nunjucks template partials/detailsBlock.njk`,
       )
     })
@@ -92,7 +97,7 @@ describe('risk tab controller', () => {
         const result = await riskTabController({ personService, token, crn, personRisks, placement })
         expect(result.subHeading).toEqual('Risk information')
 
-        expect(result.cardList).toHaveLength(15)
+        expect(result.cardList).toHaveLength(16)
         expect(result.cardList[1].html).toMatchStringIgnoringWhitespace(
           '<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>Nunjucks template partials/insetText.njk',
         )
