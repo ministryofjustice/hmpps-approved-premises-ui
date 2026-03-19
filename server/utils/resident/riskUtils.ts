@@ -157,8 +157,8 @@ export const registrationRows = (registrations: Array<Registration>): Array<Tabl
   })
 }
 
-export const ndeliusRiskCard = (crn: string, registrations: Array<Registration>) => {
-  const rows = registrationRows(registrations)
+export const ndeliusRiskCard = (crn: string, registrations: Array<Registration> | undefined) => {
+  const rows = registrationRows(registrations ?? [])
   return card({
     topHtml: `${subHeadingH2('NDelius risk flags (registers)')}${insetText(ndeliusDeeplink({ crn, text: 'View risk information in NDelius (opens in a new tab)', component: 'RegisterSummary' }))}`,
     ...(rows.length
