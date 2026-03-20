@@ -33,23 +33,26 @@ context('ResidentProfile', () => {
         premises: { name: premises.name, id: premises.id },
       })
       const personRisks = risksFactory.build({ roshRisks: { status: 'retrieved' }, flags: { status: 'retrieved' } })
+      const caseDetail = caseDetailFactory.build()
       GIVEN('there is an existing placement and the person has a risk profile')
       cy.task('stubSpaceBookingGetWithoutPremises', placement)
       cy.task('stubSpaceBookingShow', placement)
       cy.task('stubRiskProfile', { person: placement.person, personRisks })
+      cy.task('stubCaseDetail', { person: placement.person, caseDetail })
       cy.task('stubFindPerson', { person: placement.person })
       return {
         placement,
         personRisks,
+        caseDetail,
       }
     }
 
-    const visitPage = ({ placement, personRisks }, tab?: string): ResidentProfilePage => {
+    const visitPage = ({ placement, caseDetail }, tab?: string): ResidentProfilePage => {
       GIVEN(' that I am signed in as a user with access resident profile')
       signIn(['future_manager'])
 
       WHEN('I visit the resident profile page')
-      const page = ResidentProfilePage.visit(placement, personRisks)
+      const page = ResidentProfilePage.visit(placement, caseDetail)
 
       if (tab) {
         AND(`select the ${tab} tab`)
@@ -63,8 +66,8 @@ context('ResidentProfile', () => {
     })
 
     it('should show the personal -> personal details tab', () => {
-      const { placement, personRisks } = setup({})
-      const page = visitPage({ placement, personRisks })
+      const { placement, caseDetail, personRisks } = setup({})
+      const page = visitPage({ placement, caseDetail })
 
       THEN('I should see the person information in the header')
       page.checkHeader()
@@ -80,7 +83,7 @@ context('ResidentProfile', () => {
     })
 
     it('should show the health tab', () => {
-      const { placement, personRisks } = setup({})
+      const { placement, caseDetail } = setup({})
       const acctAlerts = acctAlertFactory.buildList(5)
       const oasysSupportingInformation = cas1OasysGroupFactory.supportingInformation().build()
       const riskToSelf = cas1OasysGroupFactory.riskToSelf().build()
@@ -102,7 +105,7 @@ context('ResidentProfile', () => {
       cy.task('stubBookingDetails', { person: placement.person, bookingDetails })
       cy.task('stubDietAndAllergy', { person: placement.person, dietAndAllergyResponse })
 
-      const page = visitPage({ placement, personRisks })
+      const page = visitPage({ placement, caseDetail })
 
       WHEN('I click the Health and wellbeing tab')
       page.clickTab('Health and wellbeing')
@@ -129,7 +132,7 @@ context('ResidentProfile', () => {
     })
 
     it('should show the placement tab', () => {
-      const { placement, personRisks } = setup()
+      const { placement, caseDetail } = setup()
       const assessment = assessmentFactory.build()
       const application = applicationFactory.completed('accepted').build({
         person: fullPersonFactory.build(),
@@ -152,7 +155,7 @@ context('ResidentProfile', () => {
       signIn(['future_manager'])
 
       WHEN('I visit the resident profile page on the placement tab')
-      const page = ResidentProfilePage.visit(placement, personRisks)
+      const page = ResidentProfilePage.visit(placement, caseDetail)
       page.clickTab('Placement')
 
       THEN('I should see the person information in the header')
@@ -188,7 +191,7 @@ context('ResidentProfile', () => {
     })
 
     it('should show the risk tab', () => {
-      const { placement, personRisks } = setup()
+      const { placement, caseDetail, personRisks } = setup()
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
       const oasysRoshSummary = cas1OasysGroupFactory.roshSummary().build()
       const oasysRiskManagementPlan = cas1OasysGroupFactory.riskManagementPlan().build()
@@ -197,7 +200,7 @@ context('ResidentProfile', () => {
       cy.task('stubOasysGroup', { person: placement.person, group: oasysRoshSummary })
       cy.task('stubOasysGroup', { person: placement.person, group: oasysRiskManagementPlan })
 
-      const page = visitPage({ placement, personRisks }, 'Risk')
+      const page = visitPage({ placement, caseDetail }, 'Risk')
 
       THEN('the Risk tab should be selected')
       page.shouldHaveActiveTab('Risk')
@@ -226,7 +229,7 @@ context('ResidentProfile', () => {
       const licence = licenceFactory.build()
       const csraSummaries = csraSummaryFactory.buildList(2)
       const prisonCaseNotes = prisonCaseNotesFactory.buildList(3)
-      const { placement, personRisks } = setup()
+      const { placement } = setup()
       const { person } = placement
 
       cy.task('stubCaseDetail', { person, caseDetail })
@@ -237,7 +240,7 @@ context('ResidentProfile', () => {
       cy.task('stubPrisonCaseNotes', { person: placement.person, prisonCaseNotes })
       cy.task('stubFindPerson', { person })
 
-      const page = visitPage({ placement, personRisks }, 'Sentence')
+      const page = visitPage({ placement, caseDetail }, 'Sentence')
 
       AND('the Sentence tab should be selected')
       page.shouldHaveActiveTab('Sentence')
@@ -259,7 +262,7 @@ context('ResidentProfile', () => {
     })
 
     it('should show the drug and alcohol tab', () => {
-      const { placement, personRisks } = setup({})
+      const { placement, caseDetail } = setup({})
       const oasysSupportingInformation = cas1OasysGroupFactory.supportingInformation().build()
 
       cy.task('stubOasysGroup', {
@@ -268,7 +271,7 @@ context('ResidentProfile', () => {
         includeOptionalSections: [8, 9],
       })
 
-      const page = visitPage({ placement, personRisks })
+      const page = visitPage({ placement, caseDetail })
 
       WHEN('I click the Drug and alcohol tab')
       page.clickTab('Drug and alcohol')
@@ -279,7 +282,7 @@ context('ResidentProfile', () => {
     })
 
     it('should render the tabs if there are no external data', () => {
-      const { placement, personRisks } = setup()
+      const { placement, caseDetail } = setup()
       cy.task('stubOasysGroup404', { person: placement.person })
       cy.task('stubAdjudications404', { person: placement.person })
       cy.task('stubPersonOffences404', { person: placement.person })
@@ -288,7 +291,7 @@ context('ResidentProfile', () => {
       cy.task('stubCaseDetail404', { person: placement.person })
       cy.task('stubDietAndAllergy404', { person: placement.person })
 
-      const page = visitPage({ placement, personRisks })
+      const page = visitPage({ placement, caseDetail })
 
       THEN('The page should render')
       page.shouldHaveActiveTab('Personal details')
@@ -339,9 +342,9 @@ context('ResidentProfile', () => {
     })
 
     it('should allow the user to access actions and return to the profile page on hitting back', () => {
-      const { placement, personRisks } = setup()
+      const { placement, caseDetail } = setup()
       WHEN('I visit the resident profile page')
-      const page = visitPage({ placement, personRisks }, 'Placement')
+      const page = visitPage({ placement, caseDetail }, 'Placement')
       WHEN('I navigate to record an arrival')
       page.clickAction('Record arrival')
       THEN('The backlink should return me to the resident profile')
@@ -350,9 +353,9 @@ context('ResidentProfile', () => {
 
     it('should show LAO prefixed offender where the user is whitelisted', () => {
       const person = personFactory.build({ isRestricted: true })
-      const { placement, personRisks } = setup({ person })
+      const { placement, caseDetail } = setup({ person })
       WHEN('I visit the resident profile page for an LAO person that I am whitelisted for')
-      visitPage({ placement, personRisks })
+      visitPage({ placement, caseDetail })
       THEN('I should see a prefix before the name')
       cy.get('h2').contains(`LAO: ${person.name}`)
     })

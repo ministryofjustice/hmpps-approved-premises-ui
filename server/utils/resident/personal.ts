@@ -1,4 +1,4 @@
-import { FullPerson, Person } from '@approved-premises/api'
+import { FullPerson, Person, PersonRisks } from '@approved-premises/api'
 import { TabControllerParameters } from './TabControllerParameters'
 import { TabData } from '.'
 import { contactsCardList, personDetailsCardList } from './personalUtils'
@@ -7,9 +7,11 @@ export const personalDetailsTabController = async ({
   personService,
   token,
   crn,
-  personRisks,
 }: TabControllerParameters): Promise<TabData> => {
-  const [person]: [Person] = await Promise.all([personService.findByCrn(token, crn)])
+  const [person, personRisks]: [Person, PersonRisks] = await Promise.all([
+    personService.findByCrn(token, crn),
+    personService.riskProfile(token, crn),
+  ])
 
   return {
     subHeading: 'Personal details',

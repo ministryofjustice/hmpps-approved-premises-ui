@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication, Cas1SpaceBooking, PersonRisks, RiskEnvelopeStatus } from '@approved-premises/api'
+import { ApprovedPremisesApplication, Cas1SpaceBooking, CaseDetail } from '@approved-premises/api'
 import {
   HtmlItem,
   RequestWithSession,
@@ -104,20 +104,20 @@ export const residentTabItems = (placement: Cas1SpaceBooking, activeTab: Residen
   }))
 }
 
-const isRetrieved = (status: RiskEnvelopeStatus) => status.toLowerCase() === 'retrieved'
-
-export function getResidentHeader(placement: Cas1SpaceBooking, personRisks: PersonRisks): ResidentHeader {
+export function getResidentHeader(placement: Cas1SpaceBooking, caseDetail: CaseDetail): ResidentHeader {
   const { arrivalDate, departureDate } = canonicalDates(placement)
-  const {
-    roshRisks: { status: roshStatus, value: roshValue },
-    mappa: { status: mappaStatus, value: mappaValue },
-    flags: { status: flagsStatus, value: flags },
-  } = personRisks
+  const roshCodes = ['RVHR', 'RHRH', 'RMRH', 'RLRH']
+  const mappaCode = 'MAPP'
+  const excludedCodes = [...roshCodes, mappaCode]
+
+  const { registrations } = caseDetail || {}
+  const roshValue = registrations?.find(({ code }) => roshCodes.includes(code))?.description
+  const mappaValue = registrations?.find(({ code }) => code === mappaCode)?.description
 
   const badges: Array<string> = [
-    getBadge(`${isRetrieved(roshStatus) && roshValue?.overallRisk ? roshValue.overallRisk : 'No recent'} RoSH`),
-    isRetrieved(mappaStatus) && getBadge(`${mappaValue?.level} MAPPA`),
-    ...(isRetrieved(flagsStatus) && flags ? flags.map(flag => getBadge(flag)) : []),
+    getBadge(roshValue || 'No RoSH'),
+    mappaValue && getBadge(`${mappaValue} MAPPA`),
+    ...(registrations || []).map(({ code, description }) => !excludedCodes.includes(code) && getBadge(description)),
   ].filter(Boolean)
 
   const attribute = (title: string, description: string): { title: string; description: string } => ({

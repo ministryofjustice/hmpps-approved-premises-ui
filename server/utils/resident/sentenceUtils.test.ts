@@ -19,8 +19,8 @@ import {
   caseDetailFactory,
   csraSummaryFactory,
   licenceFactory,
-  prisonCaseNotesFactory,
   offenceFactory,
+  prisonCaseNotesFactory,
 } from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
 import { sentenceCase } from '../utils'
@@ -32,7 +32,6 @@ import {
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { bulletList, summaryListItem } from '../formUtils'
 import { oasysMetadataRow } from './riskUtils'
-
 import * as caseNoteFns from '../../form-pages/apply/risk-and-need-factors/prison-information/caseNotes'
 import config from '../../config'
 
