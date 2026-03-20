@@ -109,14 +109,14 @@ export function getResidentHeader(placement: Cas1SpaceBooking, caseDetail: CaseD
   const roshCodes = ['RVHR', 'RHRH', 'RMRH', 'RLRH']
   const mappaCode = 'MAPP'
   const excludedCodes = [...roshCodes, mappaCode]
+  const renderCat = (catOrLevel: number): string => `${catOrLevel || '(TO BE DETERMINED)'}`
 
-  const { registrations } = caseDetail || {}
+  const { registrations, mappaDetail } = caseDetail || {}
   const roshValue = registrations?.find(({ code }) => roshCodes.includes(code))?.description
-  const mappaValue = registrations?.find(({ code }) => code === mappaCode)?.description
 
   const badges: Array<string> = [
     getBadge(roshValue || 'No RoSH'),
-    mappaValue && getBadge(`${mappaValue} MAPPA`),
+    mappaDetail && getBadge(`MAPPA CAT ${renderCat(mappaDetail?.category)} LEVEL ${renderCat(mappaDetail?.level)}`),
     ...(registrations || []).map(({ code, description }) => !excludedCodes.includes(code) && getBadge(description)),
   ].filter(Boolean)
 
