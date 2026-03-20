@@ -10,7 +10,7 @@
     {% endif %}
     <div class="profile-banner__content">
         <div class="profile-banner__header govuk-!-margin-bottom-2">
-            <h2 class="govuk-heading-l govuk-!-margin-bottom-0">
+            <h2 id="resident-name" class="govuk-heading-l govuk-!-margin-bottom-0">
                 {{ resident.name }}
                 {% if resident.statusBadge %}
                     {{ resident.statusBadge | safe }}
