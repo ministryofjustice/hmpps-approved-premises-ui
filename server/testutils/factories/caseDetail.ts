@@ -1,5 +1,5 @@
 import { Factory } from 'fishery'
-import { CaseDetail, NoteDetail, Registration } from '@approved-premises/api'
+import { CaseDetail, NoteDetail, PersonalContact, Registration } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import caseSummaryFactory from './caseSummary'
 import offenceFactory from './offence'
@@ -16,6 +16,14 @@ export const registrationFactory = Factory.define<Registration>(({ sequence }) =
   startDate: DateFormats.dateObjToIsoDate(faker.date.past()),
   riskNotes: faker.lorem.sentence(4),
   riskNotesDetail: noteDetail.buildList(3),
+}))
+
+export const personalContact = Factory.define<PersonalContact>(() => ({
+  address: { addressNumber: `${faker.number.int({ min: 1, max: 30 })}` },
+  name: { forename: faker.person.firstName(), middleNames: [], surname: faker.person.lastName() },
+  relationship: faker.string.alphanumeric(),
+  relationshipType: { code: faker.helpers.arrayElement(['R1', 'R2', 'R3']), description: faker.word.words(4) },
+  telephoneNumber: faker.string.numeric({ length: 10 }),
 }))
 
 export default Factory.define<CaseDetail>(() => {
@@ -36,5 +44,6 @@ export default Factory.define<CaseDetail>(() => {
         startDate: DateFormats.dateObjToIsoDate(faker.date.past({ refDate: endDate, years: 5 })),
       },
     ],
+    personalContacts: personalContact.buildList(3),
   }
 })
