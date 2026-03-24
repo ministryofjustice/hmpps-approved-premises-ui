@@ -1,5 +1,5 @@
 import { Factory } from 'fishery'
-import { CaseDetail, MappaDetail, NoteDetail,PersonalContact, Registration } from '@approved-premises/api'
+import { CaseDetail, MappaDetail, NoteDetail, PersonalContact, Registration } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import caseSummaryFactory from './caseSummary'
 import offenceFactory from './offence'
