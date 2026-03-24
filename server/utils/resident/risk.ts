@@ -26,8 +26,8 @@ export const riskTabController = async ({
   return {
     subHeading: 'Risk information',
     cardList: [
-      card({ html: insetText('Imported from OASys') }),
-      ndeliusRiskCard(crn, caseDetail?.registrations),
+      card({ html: insetText('Imported from NDelius and OASys.') }),
+      ...ndeliusRiskCard(crn, caseDetail?.registrations),
       card({ html: subHeadingH2('OASys risk assessments') }),
       roshWidget(personRisks.roshRisks?.status?.toLowerCase() === 'retrieved' && personRisks.roshRisks.value),
       card({ html: subHeadingH3('Risk assessment') }),

@@ -55,13 +55,21 @@ describe('risk utils', () => {
     it('Should render the risk card with ndelius link and table', () => {
       const registrations = registrationFactory.buildList(2)
 
-      const result = ndeliusRiskCard(crn, registrations)
-      expect(result.topHtml).toContain('<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>')
-      expect(result.table).toEqual({
+      const [headingCard, , tableCard] = ndeliusRiskCard(crn, registrations)
+
+      expect(headingCard.html).toContain('<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>')
+
+      expect(tableCard.table).toEqual({
         head: [{ text: 'Flag' }, { text: 'Notes' }],
         rows: registrationRows(registrations),
       })
-      expect(result.html).toBeUndefined()
+      expect(tableCard.html).toBeUndefined()
+      const rows = registrationRows(registrations)
+      expect(rows).toHaveLength(2)
+      expect(rows[0][0]).toMatchObject({
+        html: expect.stringContaining(`<strong>${registrations[0].description}</strong>`),
+        classes: 'govuk-!-width-one-third',
+      })
     })
   })
 })

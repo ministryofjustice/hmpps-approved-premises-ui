@@ -12,7 +12,7 @@ import {
 } from './index'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
-import { ApiOutcome } from '../utils'
+import { ApiOutcome, linebreaksToParagraphs } from '../utils'
 import { htmlCell, textCell } from '../tableUtils'
 
 export const riskSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
@@ -144,27 +144,42 @@ export const roshWidget = (params: RoshRisks) => {
 
 export const registrationRows = (registrations: Array<Registration>): Array<TableRow> => {
   return registrations.map(registration => {
-    const flagHtml = `<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">${registration.description}</p><p class="govuk-body-s govuk-hint govuk-!-margin-bottom-0">Added on ${DateFormats.isoDateToUIDate(registration.startDate, { format: 'short' })}</p>`
+    const dateAdded = registration.startDate
+      ? `<p class="govuk-body-s">Added on ${DateFormats.isoDateToUIDate(registration.startDate, { format: 'short' })}</p>`
+      : ''
+    const flagHtml = `<strong>${registration.description}</strong><br><br>${dateAdded}`
 
     const notesHtml =
       registration.riskNotesDetail && registration.riskNotesDetail.length > 0
-        ? registration.riskNotesDetail
-            .map(noteDetail => `<p class="govuk-body govuk-!-margin-bottom-0">${noteDetail.note}</p>`)
-            .join('')
+        ? registration.riskNotesDetail.map(noteDetail => linebreaksToParagraphs(noteDetail.note)).join('')
         : '<p class="govuk-body">Not entered in NDelius</p>'
 
-    return [htmlCell(flagHtml), htmlCell(notesHtml)]
+    return [{ html: flagHtml, classes: 'govuk-!-width-one-third' }, htmlCell(notesHtml)]
   })
 }
 
 export const ndeliusRiskCard = (crn: string, registrations: Array<Registration> | undefined) => {
   const rows = registrationRows(registrations ?? [])
-  return card({
-    topHtml: `${subHeadingH2('NDelius risk flags (registers)')}${insetText(ndeliusDeeplink({ crn, text: 'View risk information in NDelius (opens in a new tab)', component: 'RegisterSummary' }))}`,
-    ...(rows.length
-      ? { table: { head: [textCell('Flag'), textCell('Notes')], rows } }
-      : { html: '<p class="govuk-body">No risk flags</p>' }),
-  })
+  return [
+    card({
+      html: subHeadingH2('NDelius risk flags (registers)'),
+    }),
+    card({
+      html: insetText(
+        ndeliusDeeplink({
+          crn,
+          text: 'View risk information in NDelius (opens in a new tab).',
+          component: 'RegisterSummary',
+        }),
+      ),
+    }),
+    card({
+      title: 'NDelius risk flags',
+      ...(rows.length
+        ? { table: { head: [textCell('Flag'), textCell('Notes')], rows } }
+        : { html: '<p class="govuk-body">No risk flags</p>' }),
+    }),
+  ]
 }
 
 export const riskOasysCards = ({

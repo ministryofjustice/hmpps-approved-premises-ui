@@ -197,7 +197,7 @@ context('ResidentProfile', () => {
       const oasysRiskManagementPlan = cas1OasysGroupFactory.riskManagementPlan().build()
       const registrations = registrationFactory.buildList(1)
       const caseDetail = caseDetailFactory.build({ registrations })
-      const { placement } = setup()
+      const { placement, personRisks } = setup()
 
       cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
       cy.task('stubOasysGroup', { person: placement.person, group: oasysRoshSummary })
