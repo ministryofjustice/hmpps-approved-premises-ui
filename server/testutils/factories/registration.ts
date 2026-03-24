@@ -19,6 +19,7 @@ export default Factory.define<Registration>(() => ({
     'Risk to Prisoner',
     'Risk to Public',
   ]),
+  riskFlagGroupDescription: faker.helpers.arrayElement(['Cohort', 'Public protection', 'Safeguarding Risks', 'RoSH']),
   riskNotes: faker.lorem.sentence(),
   riskNotesDetail: noteDetailFactory.buildList(faker.number.int({ min: 1, max: 3 })),
   startDate: DateFormats.dateObjToIsoDate(faker.date.past()),

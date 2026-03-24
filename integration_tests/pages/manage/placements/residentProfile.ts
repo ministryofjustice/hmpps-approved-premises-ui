@@ -273,9 +273,7 @@ export default class ResidentProfilePage extends Page {
               .eq(index)
               .within(() => {
                 cy.get('td').eq(0).should('contain.text', registration.description)
-                registration.riskNotesDetail.forEach(noteDetail => {
-                  cy.get('td').eq(1).should('contain.text', noteDetail.note)
-                })
+                cy.get('td').eq(1).should('contain.text', registration.riskNotesDetail[0].note)
               })
           })
         })

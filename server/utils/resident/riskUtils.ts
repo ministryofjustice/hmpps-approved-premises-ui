@@ -144,14 +144,15 @@ export const roshWidget = (params: RoshRisks) => {
 
 export const registrationRows = (registrations: Array<Registration>): Array<TableRow> => {
   return registrations.map(registration => {
+    const riskFlagGroup = registration.riskFlagGroupDescription ? `${registration.riskFlagGroupDescription}<br>` : ''
     const dateAdded = registration.startDate
       ? `<p class="govuk-body-s">Added on ${DateFormats.isoDateToUIDate(registration.startDate, { format: 'short' })}</p>`
       : ''
-    const flagHtml = `<strong>${registration.description}</strong><br><br>${dateAdded}`
+    const flagHtml = `<strong>${registration.description}</strong><br>${riskFlagGroup}<br>${dateAdded}`
 
     const notesHtml =
       registration.riskNotesDetail && registration.riskNotesDetail.length > 0
-        ? registration.riskNotesDetail.map(noteDetail => linebreaksToParagraphs(noteDetail.note)).join('')
+        ? linebreaksToParagraphs(registration.riskNotesDetail[0].note) // As agreed we need only the first (latest) note to render
         : '<p class="govuk-body">Not entered in NDelius</p>'
 
     return [{ html: flagHtml, classes: 'govuk-!-width-one-third' }, htmlCell(notesHtml)]
