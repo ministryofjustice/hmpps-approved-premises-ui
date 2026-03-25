@@ -124,6 +124,9 @@ export default class ResidentProfilePage extends Page {
       this.caseDetail.registrations.forEach(registration => {
         this.shouldShowBadge(registration.description)
       })
+      this.shouldShowBadge(
+        `MAPPA CAT ${this.caseDetail.mappaDetail.category} LEVEL ${this.caseDetail.mappaDetail.level}`,
+      )
     })
   }
 

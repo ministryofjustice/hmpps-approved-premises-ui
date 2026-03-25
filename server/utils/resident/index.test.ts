@@ -21,7 +21,7 @@ import managePaths from '../../paths/manage'
 
 import * as backlinkUtils from '../backlinks'
 import { fullPersonFactory, restrictedPersonFactory } from '../../testutils/factories/person'
-import { registrationFactory } from '../../testutils/factories/caseDetail'
+import { registrationFactory, mappaDetailFactory } from '../../testutils/factories/caseDetail'
 
 jest.mock('nunjucks')
 
@@ -119,9 +119,9 @@ describe('residentsUtils', () => {
       const person = placement.person as FullPerson
       // The API currently returns capitalised strings that contradict the type.
       const caseDetail = caseDetailFactory.build({
+        mappaDetail: mappaDetailFactory.build({ category: 2, level: 1 }),
         registrations: [
           registrationFactory.build({ code: 'RVHR', description: 'Very High RoSH', startDate: undefined }),
-          registrationFactory.build({ code: 'MAPP', description: 'CAT 2 / LEVEL 1', startDate: undefined }),
           registrationFactory.build({ code: 'OTHER', description: 'Other risk', startDate: undefined }),
         ],
       })
@@ -133,7 +133,7 @@ describe('residentsUtils', () => {
         statusBadge: placementStatusTag(placement),
         badges: [
           '<span class="moj-badge moj-badge--black">Very High RoSH</span>',
-          '<span class="moj-badge moj-badge--black">CAT 2 / LEVEL 1 MAPPA</span>',
+          '<span class="moj-badge moj-badge--black">MAPPA CAT 2 LEVEL 1</span>',
           `<span class="moj-badge moj-badge--black">Other risk</span>`,
         ],
 
