@@ -151,7 +151,7 @@ export const registrationRows = (registrations: Array<Registration>): Array<Tabl
     const flagHtml = `<strong>${registration.description}</strong><br>${riskFlagGroup}<br>${dateAdded}`
 
     const notesHtml =
-      registration.riskNotesDetail && registration.riskNotesDetail.length > 0
+      registration.riskNotesDetail.length > 0
         ? linebreaksToParagraphs(registration.riskNotesDetail[0].note) // As agreed we need only the first (latest) note to render
         : '<p class="govuk-body">Not entered in NDelius</p>'
 
