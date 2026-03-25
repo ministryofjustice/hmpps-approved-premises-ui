@@ -1,17 +1,24 @@
 import { SummaryListWithCard } from '@approved-premises/ui'
 import { FullPerson } from '@approved-premises/api'
 import { faker } from '@faker-js/faker/locale/en_GB'
-import { personalSideNavigation, personDetailsCardList } from './personalUtils'
-import { cas1SpaceBookingFactory, risksFactory } from '../../testutils/factories'
+import { contactsCardList, personalSideNavigation, personDetailsCardList } from './personalUtils'
+import { cas1SpaceBookingFactory, caseDetailFactory, risksFactory } from '../../testutils/factories'
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { DateFormats } from '../dateUtils'
 import { PersonStatusTag } from '../people/personStatusTag'
 import { getTierOrBlank } from '../applications/helpers'
 import * as utils from './index'
+import * as contactUtils from './contactUtils'
+import { htmlCell } from '../tableUtils'
+import config from '../../config'
 
 describe('personalUtils', () => {
   const placement = cas1SpaceBookingFactory.build()
   const { crn } = placement.person
+
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
 
   describe('personalSideNavigation', () => {
     it('should return the side navigation for the personal tab', () => {
@@ -91,6 +98,55 @@ describe('personalUtils', () => {
       validatePersonalCard(result[1], person)
       validateNumbersCard(result[2], person)
       validateEqualityCard(result[3], person)
+    })
+  })
+
+  describe('contactsCardList', () => {
+    beforeEach(() => {
+      jest.spyOn(utils, 'insetText').mockImplementation(text => `inset("${text}")`)
+      jest.spyOn(utils, 'ndeliusDeeplink').mockImplementation(({ text, component }) => `${component}:${text}`)
+      jest.spyOn(contactUtils, 'contactCard')
+      jest.spyOn(contactUtils, 'groupContacts').mockReturnValue({ PROF: [], PERS: [], OTH: [] })
+    })
+
+    const caseDetail = caseDetailFactory.build()
+    const nDeliusLink = 'PersonalContacts:View more contact information in NDelius (opens in a new tab).'
+
+    it('should render the personal contacts cards', () => {
+      const result = contactsCardList(caseDetail, 'success', 'crn')
+
+      expect(result).toEqual([
+        {
+          html: `inset("<p>Imported from NDelius</p>${nDeliusLink}")`,
+        },
+        expect.objectContaining(utils.card({ title: 'Professional contacts' })),
+        expect.objectContaining(utils.card({ title: 'Personal contacts' })),
+        expect.objectContaining(utils.card({ title: 'Other contacts' })),
+      ])
+      expect(contactUtils.contactCard).toHaveBeenCalledWith('Professional contacts', [])
+      expect(contactUtils.contactCard).toHaveBeenCalledWith('Personal contacts', [])
+      expect(contactUtils.contactCard).toHaveBeenCalledWith('Other contacts', [])
+      expect(contactUtils.groupContacts).toHaveBeenCalledWith(caseDetail.personalContacts)
+    })
+
+    it('should render on a caseDetails failure', () => {
+      expect(contactsCardList(caseDetail, 'failure', 'crn')).toEqual([
+        htmlCell(
+          `inset("<p>We cannot load contacts information right now because NDelius is not available.<br>Try again later</p>${nDeliusLink}")`,
+        ),
+      ])
+    })
+
+    it('should render original message and link in production', () => {
+      config.isProduction = true
+
+      expect(contactsCardList(caseDetail, 'success', 'crn')).toEqual([
+        {
+          html: `inset("<p>We cannot display personal contacts from NDelius yet. For example, probation practitioner contact details.</p>PersonalContacts:View personal contacts in NDelius (opens in a new tab).")`,
+        },
+      ])
+
+      config.isProduction = false
     })
   })
 })

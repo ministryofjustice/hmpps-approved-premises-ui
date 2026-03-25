@@ -19,9 +19,11 @@ export const personalDetailsTabController = async ({
   }
 }
 
-export const contactsTabController = async ({ crn }: TabControllerParameters): Promise<TabData> => {
-  return {
-    subHeading: 'Contacts',
-    cardList: contactsCardList(crn),
-  }
-}
+export const contactsTabController = async ({
+  crn,
+  caseDetail,
+  caseDetailOutcome,
+}: TabControllerParameters): Promise<TabData> => ({
+  subHeading: 'Contacts',
+  cardList: contactsCardList(caseDetail, caseDetailOutcome, crn),
+})

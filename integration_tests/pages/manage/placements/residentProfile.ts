@@ -26,7 +26,7 @@ import { DateFormats } from '../../../../server/utils/dateUtils'
 
 import { licenseCards, offencesTabCards, prisonCards } from '../../../../server/utils/resident/sentenceUtils'
 import { placementDetailsCards, allApPlacementsTabData } from '../../../../server/utils/resident/placementUtils'
-import { personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
+import { contactsCardList, personDetailsCardList } from '../../../../server/utils/resident/personalUtils'
 import { AND, THEN, WHEN } from '../../../helpers'
 import { SubmittedDocumentRenderer } from '../../../../server/utils/forms/submittedDocumentRenderer'
 import { detailedStatus } from '../../../../server/utils/placements/status'
@@ -81,27 +81,29 @@ export default class ResidentProfilePage extends Page {
         ? cardTitle.text
         : new DOMParser().parseFromString(cardTitle.html, 'text/html').body.textContent)
     cy.log('*****  Checking card:', title)
-    if (title?.length) cy.get('.govuk-summary-card__title').contains(title).should('exist')
-    cy.get('.govuk-summary-card__title')
-      .contains(title)
-      .parents('.govuk-summary-card')
-      .within(() => {
-        if (card.rows) {
-          this.shouldContainSummaryListItems(card.rows)
-        }
-        if (card.table) {
-          cy.get('table:not(.text-table)').within(() => {
-            this.shouldContainTableColumns(card.table.head.map(cell => (cell as TextItem).text))
-            this.shouldContainOrderedTableRows(card.table.rows)
-          })
-        }
-        if (card.html) {
-          cy.get('.govuk-summary-card__content').then($el => {
-            const { actual, expected } = parseHtml($el, card.html)
-            expect(actual).to.contain(expected)
-          })
-        }
-      })
+    if (title?.length) {
+      cy.get('.govuk-summary-card__title').contains(title).should('exist')
+      cy.get('.govuk-summary-card__title')
+        .contains(title)
+        .parents('.govuk-summary-card')
+        .within(() => {
+          if (card.rows) {
+            this.shouldContainSummaryListItems(card.rows)
+          }
+          if (card.table) {
+            cy.get('table:not(.text-table)').within(() => {
+              this.shouldContainTableColumns(card.table.head.map(cell => (cell as TextItem).text))
+              this.shouldContainOrderedTableRows(card.table.rows)
+            })
+          }
+          if (card.html) {
+            cy.get('.govuk-summary-card__content').then($el => {
+              const { actual, expected } = parseHtml($el, card.html)
+              expect(actual).to.contain(expected)
+            })
+          }
+        })
+    }
   }
 
   checkHeader() {
@@ -218,10 +220,10 @@ export default class ResidentProfilePage extends Page {
     cards.forEach(card => this.shouldShowCard(card))
   }
 
-  shouldShowContacts() {
-    cy.contains(
-      'We cannot display personal contacts from NDelius yet. For example, probation practitioner contact details.',
-    )
+  shouldShowContacts(caseDetail: CaseDetail) {
+    cy.contains('Imported from NDelius')
+    const cards = contactsCardList(caseDetail, 'success', 'crn')
+    cards.forEach(card => this.shouldShowCard(card))
   }
 
   shouldShowOasysCards(numbers: Array<string>, group: Cas1OASysGroup, groupName: string) {
