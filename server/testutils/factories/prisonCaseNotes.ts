@@ -41,5 +41,5 @@ export default Factory.define<PrisonCaseNote>(() => ({
     'Social Care',
     'Observations',
   ]),
-  note: faker.lorem.paragraph(2),
+  note: [faker.lorem.paragraph(), faker.lorem.paragraph()].join('\n'),
 }))

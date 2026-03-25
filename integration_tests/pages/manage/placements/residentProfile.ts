@@ -17,7 +17,7 @@ import {
   RoshRisks,
 } from '@approved-premises/api'
 import { SummaryListWithCard, TextItem } from '@approved-premises/ui'
-import Page from '../../page'
+import Page, { parseHtml } from '../../page'
 import paths from '../../../../server/paths/manage'
 import * as residentUtils from '../../../../server/utils/resident'
 import { dietCard, mentalHealthCards, smokerCard } from '../../../../server/utils/resident/healthUtils'
@@ -80,7 +80,7 @@ export default class ResidentProfilePage extends Page {
       ('text' in cardTitle
         ? cardTitle.text
         : new DOMParser().parseFromString(cardTitle.html, 'text/html').body.textContent)
-    cy.log('*****  card title', title)
+    cy.log('*****  Checking card:', title)
     if (title?.length) cy.get('.govuk-summary-card__title').contains(title).should('exist')
     cy.get('.govuk-summary-card__title')
       .contains(title)
@@ -93,6 +93,12 @@ export default class ResidentProfilePage extends Page {
           cy.get('table:not(.text-table)').within(() => {
             this.shouldContainTableColumns(card.table.head.map(cell => (cell as TextItem).text))
             this.shouldContainOrderedTableRows(card.table.rows)
+          })
+        }
+        if (card.html) {
+          cy.get('.govuk-summary-card__content').then($el => {
+            const { actual, expected } = parseHtml($el, card.html)
+            expect(actual).to.contain(expected)
           })
         }
       })
@@ -129,8 +135,8 @@ export default class ResidentProfilePage extends Page {
     riskToSelf: Cas1OASysGroup,
     supportingInformation: Cas1OASysGroup,
   ) {
-    cy.stub(residentUtils, 'insetText')
-    cy.stub(residentUtils, 'detailsBody')
+    cy.stub(residentUtils, 'insetText').returns('')
+    cy.stub(residentUtils, 'detailsBody').returns('')
 
     cy.get('.govuk-inset-text').should('contain.text', 'Imported from Digital Prison Service and OASys')
 
@@ -167,7 +173,7 @@ export default class ResidentProfilePage extends Page {
   }
 
   shouldShowOffencesInformation(caseDetail: CaseDetail, oasysOffenceDetails: Cas1OASysGroup) {
-    cy.stub(residentUtils, 'detailsBody')
+    cy.stub(residentUtils, 'detailsBody').returns('')
     cy.get('.govuk-summary-card__title').contains('Offence').should('exist')
     const cards = offencesTabCards({
       caseDetail,
@@ -179,7 +185,7 @@ export default class ResidentProfilePage extends Page {
   }
 
   shouldShowLicenceInformation(licence: Licence) {
-    cy.stub(residentUtils, 'insetText')
+    cy.stub(residentUtils, 'insetText').returns('')
     const cardList = licenseCards(licence, 'success')
     cy.get('.govuk-inset-text').should('contain.text', 'Imported from Create and vary a licence service.')
     cardList.slice(1).forEach(card => {
