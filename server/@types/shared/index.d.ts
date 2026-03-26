@@ -5,6 +5,7 @@
 
 export type { ActiveOffence } from './models/ActiveOffence';
 export type { AdditionalCondition } from './models/AdditionalCondition';
+export type { Address } from './models/Address';
 export type { Adjudication } from './models/Adjudication';
 export type { AllocatedFilter } from './models/AllocatedFilter';
 export type { ApArea } from './models/ApArea';
@@ -231,6 +232,7 @@ export type { Offence } from './models/Offence';
 export type { OfflineApplication } from './models/OfflineApplication';
 export type { Person } from './models/Person';
 export type { PersonAcctAlert } from './models/PersonAcctAlert';
+export type { PersonalContact } from './models/PersonalContact';
 export type { PersonRisks } from './models/PersonRisks';
 export type { PersonStatus } from './models/PersonStatus';
 export type { PersonSummary } from './models/PersonSummary';
@@ -268,6 +270,7 @@ export type { ReferralHistorySystemNote } from './models/ReferralHistorySystemNo
 export type { ReferralHistoryUserNote } from './models/ReferralHistoryUserNote';
 export type { ReferralRejectionReason } from './models/ReferralRejectionReason';
 export type { Registration } from './models/Registration';
+export type { RelationshipType } from './models/RelationshipType';
 export type { ReleaseTypeOption } from './models/ReleaseTypeOption';
 export type { RequestForPlacement } from './models/RequestForPlacement';
 export type { RequestForPlacementStatus } from './models/RequestForPlacementStatus';

@@ -1,6 +1,6 @@
 import { SummaryListItem } from '@approved-premises/ui'
 import { render } from 'nunjucks'
-import { FullPerson, RiskEnvelopeStatus } from '@approved-premises/api'
+import { FullPerson } from '@approved-premises/api'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import { Request } from 'express'
 import { faker } from '@faker-js/faker'
@@ -14,13 +14,14 @@ import {
   residentTabItems,
   returnPath,
 } from './index'
-import { cas1SpaceBookingFactory, risksFactory, userFactory } from '../../testutils/factories'
+import { cas1SpaceBookingFactory, caseDetailFactory, userFactory } from '../../testutils/factories'
 import { canonicalDates, placementStatusTag } from '../placements'
 import { DateFormats } from '../dateUtils'
 import managePaths from '../../paths/manage'
 
 import * as backlinkUtils from '../backlinks'
 import { fullPersonFactory, restrictedPersonFactory } from '../../testutils/factories/person'
+import { registrationFactory, mappaDetailFactory } from '../../testutils/factories/caseDetail'
 
 jest.mock('nunjucks')
 
@@ -117,21 +118,23 @@ describe('residentsUtils', () => {
     it(`should render the resident header`, () => {
       const person = placement.person as FullPerson
       // The API currently returns capitalised strings that contradict the type.
-      const retrieved = { status: 'Retrieved' } as unknown as { status: RiskEnvelopeStatus }
-      const personRisks = risksFactory.build({
-        roshRisks: { ...retrieved, value: { overallRisk: 'Very High' } },
-        mappa: retrieved,
-        flags: retrieved,
+      const caseDetail = caseDetailFactory.build({
+        mappaDetail: mappaDetailFactory.build({ category: 2, level: 1 }),
+        registrations: [
+          registrationFactory.build({ code: 'RVHR', description: 'Very High RoSH', startDate: undefined }),
+          registrationFactory.build({ code: 'OTHER', description: 'Other risk', startDate: undefined }),
+        ],
       })
+
       const { arrivalDate, departureDate } = canonicalDates(placement)
-      expect(getResidentHeader(placement, personRisks)).toEqual({
+      expect(getResidentHeader(placement, caseDetail)).toEqual({
         name: person.name,
         photoUrl: undefined,
         statusBadge: placementStatusTag(placement),
         badges: [
           '<span class="moj-badge moj-badge--black">Very High RoSH</span>',
-          '<span class="moj-badge moj-badge--black">CAT 2 / LEVEL 1 MAPPA</span>',
-          ...personRisks.flags.value.map(label => `<span class="moj-badge moj-badge--black">${label}</span>`),
+          '<span class="moj-badge moj-badge--black">MAPPA CAT 2 LEVEL 1</span>',
+          `<span class="moj-badge moj-badge--black">Other risk</span>`,
         ],
 
         attributes: [
@@ -147,16 +150,10 @@ describe('residentsUtils', () => {
     })
 
     it(`should render the resident header, even if the risks cannot be retrieved`, () => {
-      const notRetrieved = { status: 'error', value: undefined } as { status: RiskEnvelopeStatus }
-      const personRisks = risksFactory.build({
-        roshRisks: notRetrieved,
-        mappa: notRetrieved,
-        flags: notRetrieved,
-      })
-      expect(getResidentHeader(placement, personRisks)).toEqual(
+      expect(getResidentHeader(placement, undefined)).toEqual(
         expect.objectContaining({
           statusBadge: placementStatusTag(placement),
-          badges: ['<span class="moj-badge moj-badge--black">No recent RoSH</span>'],
+          badges: ['<span class="moj-badge moj-badge--black">No RoSH</span>'],
         }),
       )
     })

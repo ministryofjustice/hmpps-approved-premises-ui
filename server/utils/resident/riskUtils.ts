@@ -163,7 +163,7 @@ export const riskOasysCards = ({
 }): Array<SummaryListWithCard> => {
   return [
     ...summaryCards(['R10.1', 'R10.2'], roshSummary, roshResult),
-    ...summaryCards(['RM30', 'RM31', 'RM32'], riskManagementPlan, rmResult),
+    ...summaryCards(['RM30', 'RM31', 'RM32', 'RM34'], riskManagementPlan, rmResult),
     ...summaryCards(['2.4.1', '2.4.2'], offenceDetails, offenceResult),
     ...summaryCards(['RM33'], riskManagementPlan, rmResult),
     ...summaryCards(['SUM10'], roshSummary, roshResult),

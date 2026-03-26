@@ -1,4 +1,4 @@
-import { Cas1OASysGroup } from '@approved-premises/api'
+import { Cas1OASysGroup, PersonRisks } from '@approved-premises/api'
 import { card, insetText, subHeadingH2, subHeadingH3, TabData } from './index'
 import { DateFormats } from '../dateUtils'
 import { TabControllerParameters } from './TabControllerParameters'
@@ -10,17 +10,18 @@ export const riskTabController = async ({
   personService,
   token,
   crn,
-  personRisks,
   placement,
 }: TabControllerParameters): Promise<TabData> => {
   const {
-    values: [roshSummary, riskManagementPlan, offenceDetails],
+    values: [roshSummary, riskManagementPlan, offenceDetails, personRisks],
     outcomes: [roshResult, rmResult, offenceResult],
-  } = await settlePromisesWithOutcomes<[Cas1OASysGroup, Cas1OASysGroup, Cas1OASysGroup]>([
+  } = await settlePromisesWithOutcomes<[Cas1OASysGroup, Cas1OASysGroup, Cas1OASysGroup, PersonRisks]>([
     personService.getOasysAnswers(token, crn, 'roshSummary'),
     personService.getOasysAnswers(token, crn, 'riskManagementPlan'),
     personService.getOasysAnswers(token, crn, 'offenceDetails'),
+    personService.riskProfile(token, crn),
   ])
+
   return {
     subHeading: 'Risk information',
     cardList: [

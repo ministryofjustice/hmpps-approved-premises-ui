@@ -10,6 +10,7 @@ import {
   csraRows,
   sentenceCards,
   offencesTabCards,
+  renderCaseNote,
 } from './sentenceUtils'
 import * as sentenceFns from './sentenceUtils'
 import {
@@ -19,11 +20,11 @@ import {
   caseDetailFactory,
   csraSummaryFactory,
   licenceFactory,
-  prisonCaseNotesFactory,
   offenceFactory,
+  prisonCaseNotesFactory,
 } from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
-import { sentenceCase } from '../utils'
+import { ApiOutcome, sentenceCase } from '../utils'
 import {
   additionalConditionFactory,
   bespokeConditionFactory,
@@ -32,8 +33,6 @@ import {
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { bulletList, summaryListItem } from '../formUtils'
 import { oasysMetadataRow } from './riskUtils'
-
-import * as caseNoteFns from '../../form-pages/apply/risk-and-need-factors/prison-information/caseNotes'
 import config from '../../config'
 
 jest.mock('nunjucks')
@@ -350,7 +349,7 @@ describe('sentence', () => {
     })
   })
 
-  describe('prisonCards', () => {
+  describe('Prison cards', () => {
     it('should render the adjudications table rows', () => {
       const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
 
@@ -368,128 +367,182 @@ describe('sentence', () => {
       ])
     })
 
-    it('should render the case notes block', () => {
-      const caseNote = prisonCaseNotesFactory.build({
-        authorName: 'Author name',
+    describe('prison case notes', () => {
+      it('should render the case notes list', () => {
+        const caseNote = prisonCaseNotesFactory.build()
+        jest.spyOn(sentenceFns, 'renderCaseNote').mockImplementation(({ occurredAt }) => ({ occurredAt }))
+
+        const result = sentenceFns.caseNoteBlock([caseNote])
+
+        expect(result).toMatch(caseNote.occurredAt)
+        expect(sentenceFns.renderCaseNote).toHaveBeenCalledWith(caseNote, 0, [caseNote])
       })
-      jest
-        .spyOn(caseNoteFns, 'caseNoteResponse')
-        .mockImplementation(
-          ({ authorName }) => ({ Author: authorName }) as unknown as ReturnType<typeof caseNoteFns.caseNoteResponse>,
+
+      it('should render a sensitive caseNote with different dates', () => {
+        const caseNote = prisonCaseNotesFactory.build({
+          occurredAt: '2026-03-10',
+          createdAt: '2026-03-11',
+          sensitive: true,
+        })
+        const result = renderCaseNote(caseNote)
+        expect(result['Date occurred']).toMatch('Tue 10 Mar 2026')
+        expect(result['Date occurred']).toMatch('Sensitive')
+        expect(result['Date created']).toMatch('Wed 11 Mar 2026')
+        expect(result['Type / sub-type']).toMatch(`${caseNote.type} / ${caseNote.subType}`)
+        expect(result.Note).toMatch(caseNote.note)
+      })
+
+      it('should render a non-sensitive caseNote with different dates', () => {
+        const caseNote = prisonCaseNotesFactory.build({
+          occurredAt: '2026-03-10',
+          createdAt: '2026-03-10',
+          sensitive: false,
+        })
+        const result = renderCaseNote(caseNote)
+        expect(result['Date occurred']).toMatch('Tue 10 Mar 2026')
+        expect(result).not.toHaveProperty('Date created')
+        expect(result['Date occurred']).not.toMatch('Sensitive')
+        expect(result['Type / sub-type']).toMatch(`${caseNote.type} / ${caseNote.subType}`)
+        expect(result.Note).toMatch(caseNote.note)
+      })
+    })
+
+    describe('prisonCards', () => {
+      const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
+      const csraSummaries = csraSummaryFactory.buildList(2)
+      const fullPerson = fullPersonFactory.build()
+      const caseNotes = prisonCaseNotesFactory.buildList(2)
+
+      const success: ApiOutcome = 'success'
+      const parameters = {
+        adjudications,
+        csraSummaries,
+        person: fullPerson,
+        caseNotes,
+        adjudicationResult: success,
+        csraResult: success,
+        personResult: success,
+        caseNotesResult: success,
+      }
+
+      beforeEach(() => {
+        jest.spyOn(sentenceFns, 'adjudicationRows').mockReturnValue([])
+        jest.spyOn(sentenceFns, 'csraRows').mockReturnValue([])
+        jest.spyOn(sentenceFns, 'caseNoteBlock').mockReturnValue('case notes content')
+      })
+
+      it('should render the card list for the prison tab', () => {
+        const result = sentenceFns.prisonCards(parameters)
+
+        expect(result).toEqual([
+          {
+            card: { title: { text: 'Prison details' } },
+            rows: [{ key: { text: 'Prison name' }, value: { text: fullPerson.prisonName } }],
+          },
+          {
+            card: { title: { text: 'Cell Sharing Risk Assessment (CSRA)' } },
+            table: {
+              head: [
+                { text: 'Date assessed', classes: 'govuk-table__header--nowrap' },
+                { text: 'Classification' },
+                { text: 'Comment' },
+              ],
+              rows: [],
+            },
+          },
+          {
+            card: { title: { text: 'Adjudications' } },
+            table: {
+              head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }],
+              rows: [],
+            },
+          },
+          {
+            card: { title: { text: 'Prison case notes' } },
+            html: 'case notes content',
+          },
+        ])
+        expect(sentenceFns.adjudicationRows).toHaveBeenCalledWith(adjudications)
+        expect(sentenceFns.caseNoteBlock).toHaveBeenCalledWith(caseNotes)
+      })
+
+      it('should render empty cards for the prison tab', () => {
+        const result = sentenceFns.prisonCards({
+          ...parameters,
+          adjudicationResult: 'notFound',
+          csraResult: 'notFound',
+          personResult: 'notFound',
+          caseNotesResult: 'notFound',
+        })
+
+        expect(result).toEqual([
+          {
+            card: { title: { text: 'Prison details' } },
+            html: 'No person information found in NDelius',
+          },
+          {
+            card: { title: { text: 'Cell Sharing Risk Assessment (CSRA)' } },
+            html: 'No CSRA information found in Digital Prison Service (DPS)',
+          },
+          {
+            card: { title: { text: 'Adjudications' } },
+            html: 'No adjudication information found in Digital Prison Service (DPS)',
+          },
+          {
+            card: { title: { text: 'Prison case notes' } },
+            html: 'No case notes information found in Digital Prison Service (DPS)',
+          },
+        ])
+        expect(sentenceFns.adjudicationRows).not.toHaveBeenCalled()
+        expect(sentenceFns.caseNoteBlock).not.toHaveBeenCalled()
+      })
+
+      it('should filter out system generated prison case notes', () => {
+        const caseNote = prisonCaseNotesFactory.build({ authorName: 'System Generated' })
+        const result = sentenceFns.prisonCards({ ...parameters, caseNotes: [caseNote] })
+        expect(result).toEqual(
+          expect.arrayContaining([
+            {
+              card: { title: { text: 'Prison case notes' } },
+              html: 'No case notes information found in Digital Prison Service (DPS)',
+            },
+          ]),
         )
-      expect(sentenceFns.caseNoteBlock([caseNote]))
-        .toMatchStringIgnoringWhitespace(`<dl class="govuk-summary-list govuk-summary-list--embedded">
-        <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
-          <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">Author</dt>
-          <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">Author name</dd>
-        </div>
-      </dl>`)
-
-      expect(caseNoteFns.caseNoteResponse).toHaveBeenCalledWith(caseNote, 0, [caseNote])
-    })
-
-    it('should render the card list for the prison tab', () => {
-      const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
-      const csraSummaries = csraSummaryFactory.buildList(2)
-      const fullPerson = fullPersonFactory.build()
-      const caseNotes = prisonCaseNotesFactory.buildList(2)
-
-      jest.spyOn(sentenceFns, 'adjudicationRows').mockReturnValue([])
-      jest.spyOn(sentenceFns, 'csraRows').mockReturnValue([])
-      jest.spyOn(sentenceFns, 'caseNoteBlock').mockReturnValue('case notes content')
-
-      const result = sentenceFns.prisonCards({
-        adjudications,
-        csraSummaries,
-        person: fullPerson,
-        caseNotes,
-        adjudicationResult: 'success',
-        csraResult: 'success',
-        personResult: 'success',
-        caseNotesResult: 'success',
+        expect(sentenceFns.caseNoteBlock).not.toHaveBeenCalled()
       })
 
-      expect(result).toEqual([
-        {
-          card: { title: { text: 'Prison details' } },
-          rows: [{ key: { text: 'Prison name' }, value: { text: fullPerson.prisonName } }],
-        },
-        {
-          card: { title: { text: 'Cell Sharing Risk Assessment (CSRA)' } },
-          table: {
-            head: [
-              { text: 'Date assessed', classes: 'govuk-table__header--nowrap' },
-              { text: 'Classification' },
-              { text: 'Comment' },
-            ],
-            rows: [],
+      it('should exclude case notes in the production environment', () => {
+        config.isProduction = true
+
+        const result = sentenceFns.prisonCards(parameters)
+
+        expect(result).toEqual([
+          {
+            card: { title: { text: 'Prison details' } },
+            rows: [{ key: { text: 'Prison name' }, value: { text: fullPerson.prisonName } }],
           },
-        },
-        {
-          card: { title: { text: 'Adjudications' } },
-          table: {
-            head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }],
-            rows: [],
+          {
+            card: { title: { text: 'Cell Sharing Risk Assessment (CSRA)' } },
+            table: {
+              head: [
+                { text: 'Date assessed', classes: 'govuk-table__header--nowrap' },
+                { text: 'Classification' },
+                { text: 'Comment' },
+              ],
+              rows: [],
+            },
           },
-        },
-        {
-          card: { title: { text: 'Prison case notes' } },
-          html: 'case notes content',
-        },
-      ])
-      expect(sentenceFns.adjudicationRows).toHaveBeenCalledWith(adjudications)
-      expect(sentenceFns.caseNoteBlock).toHaveBeenCalledWith(caseNotes)
-    })
-
-    it('should exclude case notes in the production environment', () => {
-      const adjudications: Array<Adjudication> = adjudicationFactory.buildList(2)
-      const csraSummaries = csraSummaryFactory.buildList(2)
-      const fullPerson = fullPersonFactory.build()
-      const caseNotes = prisonCaseNotesFactory.buildList(2)
-
-      config.isProduction = true
-
-      jest.spyOn(sentenceFns, 'adjudicationRows').mockReturnValue([])
-      jest.spyOn(sentenceFns, 'csraRows').mockReturnValue([])
-      jest.spyOn(sentenceFns, 'caseNoteBlock').mockReturnValue('case notes content')
-
-      const result = sentenceFns.prisonCards({
-        adjudications,
-        csraSummaries,
-        person: fullPerson,
-        caseNotes,
-        adjudicationResult: 'success',
-        csraResult: 'success',
-        personResult: 'success',
-        caseNotesResult: 'success',
+          {
+            card: { title: { text: 'Adjudications' } },
+            table: {
+              head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }],
+              rows: [],
+            },
+          },
+        ])
+        expect(sentenceFns.adjudicationRows).toHaveBeenCalledWith(adjudications)
+        expect(sentenceFns.caseNoteBlock).not.toHaveBeenCalled()
       })
-
-      expect(result).toEqual([
-        {
-          card: { title: { text: 'Prison details' } },
-          rows: [{ key: { text: 'Prison name' }, value: { text: fullPerson.prisonName } }],
-        },
-        {
-          card: { title: { text: 'Cell Sharing Risk Assessment (CSRA)' } },
-          table: {
-            head: [
-              { text: 'Date assessed', classes: 'govuk-table__header--nowrap' },
-              { text: 'Classification' },
-              { text: 'Comment' },
-            ],
-            rows: [],
-          },
-        },
-        {
-          card: { title: { text: 'Adjudications' } },
-          table: {
-            head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }],
-            rows: [],
-          },
-        },
-      ])
-      expect(sentenceFns.adjudicationRows).toHaveBeenCalledWith(adjudications)
-      expect(sentenceFns.caseNoteBlock).not.toHaveBeenCalled()
     })
   })
 })

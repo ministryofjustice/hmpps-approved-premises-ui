@@ -21,6 +21,7 @@ import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import {
   card,
+  combineResultAndContent,
   CsraClassification,
   csraClassificationMapping,
   insetText,
@@ -28,10 +29,9 @@ import {
   ResidentProfileSubTab,
 } from './index'
 
-import { ApiOutcome, sentenceCase } from '../utils'
+import { ApiOutcome, objectClean, sentenceCase } from '../utils'
 import { dateCell, htmlCell, textCell } from '../tableUtils'
 import { summaryCards } from './riskUtils'
-import { caseNoteResponse } from '../../form-pages/apply/risk-and-need-factors/prison-information/caseNotes'
 import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
 import config from '../../config'
 
@@ -222,8 +222,21 @@ export const adjudicationRows = (adjudications: Array<Adjudication>): Array<Tabl
   })
 }
 
+const sensitiveBadge = `<span class="moj-badge moj-badge--red govuk-tag--float-right">Sensitive</span>`
+
+export const renderCaseNote = (caseNote: PrisonCaseNote) =>
+  objectClean<Record<string, unknown>>({
+    'Date occurred': `${DateFormats.isoDateToUIDate(caseNote.occurredAt)}${caseNote.sensitive ? sensitiveBadge : ''}`,
+    'Date created':
+      caseNote.createdAt && caseNote.occurredAt !== caseNote.createdAt
+        ? DateFormats.isoDateToUIDate(caseNote.createdAt)
+        : undefined,
+    'Type / sub-type': `${caseNote.type} / ${caseNote.subType}`,
+    Note: `<span class="govuk-body__text-block">${caseNote.note}</span>`,
+  })
+
 export const caseNoteBlock = (caseNotes: Array<PrisonCaseNote>): string =>
-  embeddedSummaryListItem(caseNotes.map(caseNoteResponse))
+  caseNotes?.length ? embeddedSummaryListItem(caseNotes.map(renderCaseNote)) : 'No case notes found'
 
 export const prisonCards = ({
   adjudications,
@@ -247,7 +260,12 @@ export const prisonCards = ({
   const adjudicationsError = loadingErrorMessage(adjudicationResult, 'adjudication', 'dps')
   const csraError = loadingErrorMessage(csraResult, 'CSRA', 'dps')
   const personError = loadingErrorMessage(personResult, 'person', 'nDelius')
-  const caseNotesError = loadingErrorMessage(caseNotesResult, 'case notes', 'dps')
+  const filteredCaseNotes = (caseNotes || []).filter(({ authorName }) => authorName !== 'System Generated')
+  const caseNotesError = loadingErrorMessage(
+    combineResultAndContent(caseNotesResult, filteredCaseNotes.length),
+    'case notes',
+    'dps',
+  )
 
   return [
     card({
@@ -284,7 +302,7 @@ export const prisonCards = ({
     !config.isProduction &&
       card({
         title: 'Prison case notes',
-        html: !caseNotesError ? caseNoteBlock(caseNotes) : caseNotesError,
+        html: !caseNotesError ? caseNoteBlock(filteredCaseNotes) : caseNotesError,
       }),
   ].filter(Boolean)
 }
