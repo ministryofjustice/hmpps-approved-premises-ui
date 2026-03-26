@@ -392,10 +392,10 @@ describe('sentence', () => {
         expect(result.Note).toMatch(caseNote.note)
       })
 
-      it('should render a non-sensitive caseNote with different dates', () => {
+      it('should render a non-sensitive caseNote with the same dates', () => {
         const caseNote = prisonCaseNotesFactory.build({
-          occurredAt: '2026-03-10',
-          createdAt: '2026-03-10',
+          occurredAt: '2026-03-10T12:12:12',
+          createdAt: '2026-03-10T21:21:21',
           sensitive: false,
         })
         const result = renderCaseNote(caseNote)
@@ -498,7 +498,7 @@ describe('sentence', () => {
       })
 
       it('should filter out system generated prison case notes', () => {
-        const caseNote = prisonCaseNotesFactory.build({ authorName: 'System Generated' })
+        const caseNote = prisonCaseNotesFactory.build({ type: 'Alert' })
         const result = sentenceFns.prisonCards({ ...parameters, caseNotes: [caseNote] })
         expect(result).toEqual(
           expect.arrayContaining([
