@@ -263,10 +263,8 @@ export default class ResidentProfilePage extends Page {
   ) {
     cy.contains('h2', 'NDelius risk flags (registers)').should('be.visible')
 
-    cy.get('h2')
-      .contains('NDelius risk flags (registers)')
-      .parent()
-      .parent()
+    cy.contains('h2.govuk-summary-card__title', 'NDelius risk flags')
+      .closest('.govuk-summary-card')
       .within(() => {
         cy.get('table:not(.text-table):not(.rosh-widget__table)').within(() => {
           cy.get('thead th').eq(0).should('contain.text', 'Flag')
