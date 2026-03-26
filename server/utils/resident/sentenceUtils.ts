@@ -228,7 +228,7 @@ export const renderCaseNote = (caseNote: PrisonCaseNote) =>
   objectClean<Record<string, unknown>>({
     'Date occurred': `${DateFormats.isoDateToUIDate(caseNote.occurredAt)}${caseNote.sensitive ? sensitiveBadge : ''}`,
     'Date created':
-      caseNote.createdAt && (caseNote.occurredAt || '').substring(0,10) !== (caseNote.createdAt || '').substring(0,10)
+      caseNote.createdAt && (caseNote.occurredAt || '').substring(0, 10) !== (caseNote.createdAt || '').substring(0, 10)
         ? DateFormats.isoDateToUIDate(caseNote.createdAt)
         : undefined,
     'Type / sub-type': `${caseNote.type} / ${caseNote.subType}`,
