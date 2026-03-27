@@ -22,6 +22,9 @@ generic-service:
     NDELIUS_DEEPLINK: 'https://ndelius.test.probation.service.justice.gov.uk/NDelius-war/delius/JSP/deeplink.xhtml'
     IN_MAINTENANCE_MODE: false
     PLANNED_MAINTENANCE_BANNER: false
+    # required so hmpps-audit-client doesn't raise an error
+    AUDIT_SQS_QUEUE_URL: ""
+    AUDIT_SQS_QUEUE_NAME: ""
 
   allowlist: null
 
