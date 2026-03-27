@@ -228,7 +228,7 @@ export const renderCaseNote = (caseNote: PrisonCaseNote) =>
   objectClean<Record<string, unknown>>({
     'Date occurred': `${DateFormats.isoDateToUIDate(caseNote.occurredAt)}${caseNote.sensitive ? sensitiveBadge : ''}`,
     'Date created':
-      caseNote.createdAt && caseNote.occurredAt !== caseNote.createdAt
+      caseNote.createdAt && (caseNote.occurredAt || '').substring(0, 10) !== (caseNote.createdAt || '').substring(0, 10)
         ? DateFormats.isoDateToUIDate(caseNote.createdAt)
         : undefined,
     'Type / sub-type': `${caseNote.type} / ${caseNote.subType}`,
@@ -260,7 +260,7 @@ export const prisonCards = ({
   const adjudicationsError = loadingErrorMessage(adjudicationResult, 'adjudication', 'dps')
   const csraError = loadingErrorMessage(csraResult, 'CSRA', 'dps')
   const personError = loadingErrorMessage(personResult, 'person', 'nDelius')
-  const filteredCaseNotes = (caseNotes || []).filter(({ authorName }) => authorName !== 'System Generated')
+  const filteredCaseNotes = (caseNotes || []).filter(({ type }) => type !== 'Alert')
   const caseNotesError = loadingErrorMessage(
     combineResultAndContent(caseNotesResult, filteredCaseNotes.length),
     'case notes',
