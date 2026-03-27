@@ -14,6 +14,7 @@ import ResidentProfileController from './residentProfileController'
 import {
   cas1SpaceBookingFactory,
   caseDetailFactory,
+  licenceFactory,
   personFactory,
   restrictedPersonFactory,
 } from '../../testutils/factories'
@@ -47,9 +48,11 @@ describe('residentProfileController', () => {
   const setUp = ({ person = personFactory.build({ crn }) }: { person?: Person } = {}) => {
     const placement = cas1SpaceBookingFactory.upcoming().build({ person })
     const caseDetail = caseDetailFactory.build()
+    const licence = licenceFactory.build()
 
     placementService.getPlacement.mockResolvedValue(placement)
     personService.getCaseDetail.mockResolvedValue(caseDetail)
+    personService.licenceDetails.mockResolvedValue(licence)
 
     const response: DeepMocked<Response> = createMock<Response>({ locals: { user } })
     const request: DeepMocked<Request> = createMock<Request>({
@@ -81,6 +84,7 @@ describe('residentProfileController', () => {
     user,
     actions: [] as Array<never>,
     resident: getResidentHeader(placement, caseDetail),
+    showBackToTopJumpLink: false,
   })
 
   describe('show', () => {
@@ -130,6 +134,7 @@ describe('residentProfileController', () => {
           tabItems: residentTabItems(placement, 'sentence'),
           sideNavigation: sentenceSideNavigation('offence', crn, placement.id),
           ...tabData,
+          showBackToTopJumpLink: true, // sentence -> offence tab should show the "back to top" jump link
         },
       ])
 
@@ -140,7 +145,7 @@ describe('residentProfileController', () => {
       expect(placementService.getPlacement).toHaveBeenCalledWith(token, placement.id)
     })
 
-    it('should render the Risk tab', async () => {
+    it('should render the Risk -> Risk details tab', async () => {
       const { request, response, placement, caseDetail } = setUp()
 
       const tabController = jest.spyOn(riskTabUtils, 'riskTabController').mockResolvedValue(tabData)
@@ -153,6 +158,7 @@ describe('residentProfileController', () => {
           sideNavigation: riskSideNavigation('riskDetails', crn, placement.id),
           ...renderParameters(placement, caseDetail, 'risk'),
           ...tabData,
+          showBackToTopJumpLink: true, // risk -> risk details tab should show the "back to top" jump link
         },
       ])
 

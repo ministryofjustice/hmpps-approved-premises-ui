@@ -13,6 +13,7 @@ import {
   getResidentHeader,
   tabLabels,
   TabData,
+  shouldEnableBackToTopJumpLink,
 } from '../../utils/resident'
 
 import {
@@ -125,6 +126,8 @@ export default class ResidentProfileController {
         paths.premises.show({ premisesId: placement.premises.id }),
       )
 
+      const showBackToTopJumpLink = shouldEnableBackToTopJumpLink(activeTab, subTab)
+
       return res.render(`manage/resident/residentProfile`, {
         crn,
         placement,
@@ -136,6 +139,7 @@ export default class ResidentProfileController {
         actions: placementActions ? placementActions[0].items : [],
         activeTab,
         sideNavigation,
+        showBackToTopJumpLink,
         ...tabData,
       })
     }

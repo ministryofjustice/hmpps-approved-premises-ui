@@ -294,3 +294,19 @@ export const getPlacementLink = ({
         placementId,
       })
 }
+
+const enabledBackToTopJumpLinkTabs: Record<ResidentProfileTab, Array<ResidentProfileSubTab>> = {
+  health: ['mentalHealth'],
+  placement: ['application'],
+  risk: ['riskDetails'],
+  sentence: ['offence', 'licence', 'prison'],
+  personal: [],
+  drugAndAlcohol: [],
+}
+
+export const shouldEnableBackToTopJumpLink = (
+  activeTab: ResidentProfileTab,
+  subTab: ResidentProfileSubTab,
+): boolean => {
+  return enabledBackToTopJumpLinkTabs[activeTab]?.includes(subTab)
+}
