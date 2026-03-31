@@ -12,6 +12,10 @@ env:
 jobs:
   generate-types:
     runs-on: [ self-hosted, hmpps-github-actions-runner ]
+    permissions:
+      contents: read
+      pull-requests: write
+
     steps:
 
       - name: Check out code
