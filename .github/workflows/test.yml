@@ -131,7 +131,7 @@ jobs:
 
       - name: Determine tests splitting
         id: split-tests
-        run: ./script/split_tests  ${{ strategy.job-index }} ${{ strategy.job-total }}
+        run: bash ./script/split_tests  ${{ strategy.job-index }} ${{ strategy.job-total }}
 
 #        uses: chaosaffe/split-tests@4f1ca766cb93923ca216e02f1aefed20944e313f # V1
 #        id: split-tests
