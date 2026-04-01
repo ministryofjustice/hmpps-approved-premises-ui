@@ -9,7 +9,7 @@ import {
   retrieveQuestionResponseFromFormArtifact,
 } from '../retrieveQuestionResponseFromFormArtifact'
 import { getResponseForPage } from '../applications/getResponseForPage'
-import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
+import { embeddedSummaryListItemCompact } from '../applications/summaryListUtils/embeddedSummaryListItem'
 
 export const mapPageForSummaryList = (
   placementApplication: PlacementApplication,
@@ -54,7 +54,7 @@ const placementApplicationResponsesAsSummaryListItems = (placementApplication: P
         value:
           typeof questions[key] === 'string' || questions[key] instanceof String
             ? { text: questions[key] as string }
-            : { html: embeddedSummaryListItem(questions[key] as Array<Record<string, unknown>>) },
+            : { html: embeddedSummaryListItemCompact(questions[key] as Array<Record<string, unknown>>) },
       })
     })
   })
@@ -75,7 +75,7 @@ export const pageResponsesAsSummaryListItems = (
     const value =
       typeof response[key] === 'string' || response[key] instanceof String
         ? ({ text: response[key] } as TextItem)
-        : ({ html: embeddedSummaryListItem(response[key] as Array<Record<string, unknown>>) } as HtmlItem)
+        : ({ html: embeddedSummaryListItemCompact(response[key] as Array<Record<string, unknown>>) } as HtmlItem)
 
     return summaryListItemForResponse(key, value, 'request-a-placement', pageName, placementApplication, true)
   })

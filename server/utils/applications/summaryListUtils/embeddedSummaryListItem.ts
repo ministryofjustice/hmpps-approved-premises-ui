@@ -1,8 +1,11 @@
-export const embeddedSummaryListItem = (answers: Array<Record<string, unknown>>): string => {
+export const embeddedSummaryListItem = (
+  answers: Array<Record<string, unknown>>,
+  options?: { class: string },
+): string => {
   let response = ''
 
   answers.forEach(answer => {
-    response += '<dl class="govuk-summary-list govuk-summary-list--embedded">'
+    response += `<dl class="govuk-summary-list govuk-summary-list--embedded ${options?.class || ''}">`
     Object.keys(answer).forEach(key => {
       response += `
         <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
@@ -17,6 +20,8 @@ export const embeddedSummaryListItem = (answers: Array<Record<string, unknown>>)
     })
     response += '</dl>'
   })
-
   return response
 }
+
+export const embeddedSummaryListItemCompact = (answers: Array<Record<string, unknown>>): string =>
+  embeddedSummaryListItem(answers, { class: 'govuk-summary-list--small-font' })

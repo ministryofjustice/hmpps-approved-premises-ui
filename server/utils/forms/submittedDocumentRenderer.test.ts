@@ -3,7 +3,7 @@ import { when } from 'jest-when'
 import { FormSection, SummaryListActionItem, TaskNames, UiTask } from '@approved-premises/ui'
 import { applicationFactory, assessmentFactory, documentFactory } from '../../testutils/factories'
 import { SubmittedDocumentRenderer } from './submittedDocumentRenderer'
-import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
+import { embeddedSummaryListItemCompact } from '../applications/summaryListUtils/embeddedSummaryListItem'
 import { linebreaksToParagraphs } from '../utils'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
@@ -247,7 +247,7 @@ describe('Submitted document renderer', () => {
     expect(cards[0].tasks[0].rows[0]).toEqual({
       key: { text: 'Question 1' },
       value: {
-        html: embeddedSummaryListItem([
+        html: embeddedSummaryListItemCompact([
           {
             'Subquestion 1': 'Answer 1',
             'Subquestion 2': 'Answer 2',

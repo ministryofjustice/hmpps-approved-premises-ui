@@ -4,7 +4,7 @@ import Apply from '../../form-pages/apply'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
 import { linebreaksToParagraphs } from '../utils'
-import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
+import { embeddedSummaryListItemCompact } from '../applications/summaryListUtils/embeddedSummaryListItem'
 import Assess from '../../form-pages/assess'
 
 type QuestionResponse = string | Array<Record<string, unknown>>
@@ -86,7 +86,7 @@ export class SubmittedDocumentRenderer {
     const value =
       typeof answer === 'string' || answer instanceof String
         ? { html: linebreaksToParagraphs(answer as string) }
-        : { html: embeddedSummaryListItem(answer) }
+        : { html: embeddedSummaryListItemCompact(answer) }
 
     return {
       key: { text: question },
