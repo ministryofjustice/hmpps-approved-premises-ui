@@ -129,13 +129,9 @@ jobs:
       - name: Build source
         run: npm run build
 
-      - name: Determine tests splitting
-        uses: chaosaffe/split-tests@4f1ca766cb93923ca216e02f1aefed20944e313f # V1
+      - name: Split tests
         id: split-tests
-        with:
-          glob: integration_tests/tests/**/*.cy.ts
-          split-index: ${{ strategy.job-index }}
-          split-total: ${{ strategy.job-total }}
+        run: ./script/split-tests  ${{ strategy.job-index }} ${{ strategy.job-total }}
 
       - name: Run Integration tests
         run: TEST_RUN_ARGS="--spec $(echo ${{ steps.split-tests.outputs.test-suite }} | sed -E 's/ /,/g')" npm run test:integration
