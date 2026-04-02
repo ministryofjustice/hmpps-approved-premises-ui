@@ -15,7 +15,6 @@ import {
   licenceFactory,
   personFactory,
   prisonCaseNotesFactory,
-  registrationFactory,
   risksFactory,
 } from '../../../../server/testutils/factories'
 import ResidentProfilePage from '../../../pages/manage/placements/residentProfile'
@@ -195,8 +194,7 @@ context('ResidentProfile', () => {
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
       const oasysRoshSummary = cas1OasysGroupFactory.roshSummary().build()
       const oasysRiskManagementPlan = cas1OasysGroupFactory.riskManagementPlan().build()
-      const registrations = registrationFactory.buildList(1)
-      const caseDetail = caseDetailFactory.build({ registrations })
+      const caseDetail = caseDetailFactory.build()
       const { placement, personRisks } = setup()
 
       cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
@@ -218,7 +216,7 @@ context('ResidentProfile', () => {
       page.shouldShowNDeliusRiskCard()
 
       AND('the NDelius risk flags table should be displayed')
-      page.shouldShowNDeliusRiskFlagsTable(registrations)
+      page.shouldShowNDeliusRiskFlagsTable(caseDetail.registrations)
 
       AND('The ROSH widget should be populated')
       page.shouldShowRoshWidget(personRisks.roshRisks.value)

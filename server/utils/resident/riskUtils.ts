@@ -12,8 +12,9 @@ import {
 } from './index'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
-import { ApiOutcome, linebreaksToParagraphs } from '../utils'
+import { ApiOutcome } from '../utils'
 import { htmlCell, textCell } from '../tableUtils'
+import config from '../../config'
 
 export const riskSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   return [
@@ -152,14 +153,36 @@ export const registrationRows = (registrations: Array<Registration>): Array<Tabl
 
     const notesHtml =
       registration.riskNotesDetail.length > 0
-        ? linebreaksToParagraphs(registration.riskNotesDetail[0].note) // As agreed we need only the first (latest) note to render
-        : '<p class="govuk-body">Not entered in NDelius</p>'
+        ? `<p class="govuk-body govuk-body__text-block">${registration.riskNotesDetail[0].note}</p>` // As agreed we need only the first (latest) note to render
+        : '<p class="govuk-body">No information in NDelius</p>'
 
     return [{ html: flagHtml, classes: 'govuk-!-width-one-third' }, htmlCell(notesHtml)]
   })
 }
 
-export const ndeliusRiskCard = (crn: string, registrations: Array<Registration> | undefined) => {
+export const ndeliusRiskCards = (
+  crn: string,
+  registrations: Array<Registration> | undefined,
+  caseDetailOutcome?: ApiOutcome,
+) => {
+  // TODO: Risk Flags Feature Flag to be removed once tested!
+  if (!config.flags.ndeliusRiskFlagsEnabled) {
+    return []
+  }
+
+  const errorMessage = caseDetailOutcome && loadingErrorMessage(caseDetailOutcome, 'risk flag', 'nDelius')
+  if (errorMessage) {
+    return [
+      card({
+        html: subHeadingH2('NDelius risk flags (registers)'),
+      }),
+      card({
+        title: 'NDelius risk flags',
+        html: errorMessage,
+      }),
+    ]
+  }
+
   const rows = registrationRows(registrations ?? [])
   return [
     card({

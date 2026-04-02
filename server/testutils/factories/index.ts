@@ -96,12 +96,11 @@ import cas1PremisesLocalRestrictionSummaryFactory from './cas1PremisesLocalRestr
 import cas1PremisesNewLocalRestrictionFactory from './cas1PremisesNewLocalRestriction'
 import cas1RequestedPlacementPeriodFactory from './cas1RequestedPlacementPeriod'
 import cas1CurrentKeyworkerFactory from './cas1CurrentKeyworker'
-import caseDetailFactory from './caseDetail'
+import caseDetailFactory, { registrationFactory } from './caseDetail'
 import licenceFactory from './licence'
 import csraSummaryFactory from './csraSummary'
 import offenceFactory from './offence'
 import dietAndAllergyResponseFactory from './dietAndAllergyResponse'
-import registrationFactory, { noteDetailFactory } from './registration'
 
 export {
   acctAlertFactory,
@@ -209,5 +208,4 @@ export {
   offenceFactory,
   dietAndAllergyResponseFactory,
   registrationFactory,
-  noteDetailFactory,
 }

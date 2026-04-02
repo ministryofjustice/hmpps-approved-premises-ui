@@ -255,7 +255,11 @@ export default class ResidentProfilePage extends Page {
   }
 
   shouldShowNDeliusRiskFlagsTable(
-    registrations: Array<{ description: string; riskNotesDetail: Array<{ note: string }> }>,
+    registrations: Array<{
+      description: string
+      riskNotesDetail: Array<{ note: string }>
+      riskFlagGroupDescription?: string
+    }>,
   ) {
     cy.contains('h2', 'NDelius risk flags (registers)').should('be.visible')
 
@@ -273,6 +277,7 @@ export default class ResidentProfilePage extends Page {
               .eq(index)
               .within(() => {
                 cy.get('td').eq(0).should('contain.text', registration.description)
+                cy.get('td').eq(0).should('contain.text', registration.riskFlagGroupDescription)
                 cy.get('td').eq(1).should('contain.text', registration.riskNotesDetail[0].note)
               })
           })
