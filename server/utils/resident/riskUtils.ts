@@ -171,11 +171,14 @@ export const ndeliusRiskCards = (
   }
 
   const errorMessage = caseDetailOutcome && loadingErrorMessage(caseDetailOutcome, 'risk flag', 'nDelius')
+
+  const headingCard = card({
+    html: subHeadingH2('NDelius risk flags (registers)'),
+  })
+
   if (errorMessage) {
     return [
-      card({
-        html: subHeadingH2('NDelius risk flags (registers)'),
-      }),
+      headingCard,
       card({
         title: 'NDelius risk flags',
         html: errorMessage,
@@ -185,9 +188,7 @@ export const ndeliusRiskCards = (
 
   const rows = registrationRows(registrations ?? [])
   return [
-    card({
-      html: subHeadingH2('NDelius risk flags (registers)'),
-    }),
+    headingCard,
     card({
       html: insetText(
         ndeliusDeeplink({
