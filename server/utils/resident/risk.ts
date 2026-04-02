@@ -2,7 +2,7 @@ import { Cas1OASysGroup, PersonRisks } from '@approved-premises/api'
 import { card, insetText, subHeadingH2, subHeadingH3, TabData } from './index'
 import { DateFormats } from '../dateUtils'
 import { TabControllerParameters } from './TabControllerParameters'
-import { ndeliusRiskCard, riskOasysCards, roshWidget } from './riskUtils'
+import { ndeliusRiskCards, riskOasysCards, roshWidget } from './riskUtils'
 import { linkTo, settlePromisesWithOutcomes } from '../utils'
 import paths from '../../paths/manage'
 
@@ -10,6 +10,8 @@ export const riskTabController = async ({
   personService,
   token,
   crn,
+  caseDetail,
+  caseDetailOutcome,
   placement,
 }: TabControllerParameters): Promise<TabData> => {
   const {
@@ -25,8 +27,8 @@ export const riskTabController = async ({
   return {
     subHeading: 'Risk information',
     cardList: [
-      card({ html: insetText('Imported from OASys') }),
-      ndeliusRiskCard(crn),
+      card({ html: insetText('Imported from NDelius and OASys.') }),
+      ...ndeliusRiskCards(crn, caseDetail?.registrations, caseDetailOutcome),
       card({ html: subHeadingH2('OASys risk assessments') }),
       roshWidget(personRisks.roshRisks?.status?.toLowerCase() === 'retrieved' && personRisks.roshRisks.value),
       card({ html: subHeadingH3('Risk assessment') }),

@@ -1,6 +1,14 @@
 import { render } from 'nunjucks'
-import { cas1OasysGroupFactory } from '../../testutils/factories'
-import { ndeliusRiskCard, oasysGroupMapping, oasysMetadataRow, roshWidget, summaryCards } from './riskUtils'
+import config from '../../config'
+import { cas1OasysGroupFactory, registrationFactory } from '../../testutils/factories'
+import {
+  ndeliusRiskCards,
+  oasysGroupMapping,
+  oasysMetadataRow,
+  registrationRows,
+  roshWidget,
+  summaryCards,
+} from './riskUtils'
 import { roshRisksFactory } from '../../testutils/factories/risks'
 import * as utils from './index'
 
@@ -39,22 +47,60 @@ describe('risk utils', () => {
   })
 
   describe('NDelius risk card', () => {
+    // TODO: Risk Flags Feature Flag to be removed once tested!
     const crn = 'crn'
     const mockLink = 'ndelius link'
     beforeEach(() => {
       jest.spyOn(utils, 'ndeliusDeeplink').mockReturnValue(mockLink)
+      config.flags.ndeliusRiskFlagsEnabled = true
     })
 
-    it('Should render the risk card with ndelius link', () => {
-      expect(ndeliusRiskCard(crn)).toEqual({
-        html: '<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>Nunjucks template partials/insetText.njk',
-      })
+    afterEach(() => {
+      config.flags.ndeliusRiskFlagsEnabled = false
     })
 
-    it('Should handle no risks', () => {
-      expect(ndeliusRiskCard(crn)).toEqual({
-        html: `<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>Nunjucks template partials/insetText.njk`,
+    it('Should render the risk card with ndelius link and table', () => {
+      const registrations = registrationFactory.buildList(2)
+
+      const [headingCard, , tableCard] = ndeliusRiskCards(crn, registrations, 'success')
+
+      expect(headingCard.html).toContain('<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>')
+
+      expect(tableCard.table).toEqual({
+        head: [{ text: 'Flag' }, { text: 'Notes' }],
+        rows: registrationRows(registrations),
       })
+      expect(tableCard.html).toBeUndefined()
+    })
+
+    it('should return registration rows with description and risk flag group', () => {
+      const registrations = registrationFactory.buildList(2)
+
+      const rows = registrationRows(registrations)
+      expect(rows).toHaveLength(2)
+      expect(rows[0][0]).toMatchObject({
+        html: expect.stringContaining(`<strong>${registrations[0].description}</strong>`),
+        classes: 'govuk-!-width-one-third',
+      })
+      expect((rows[0][0] as { html: string }).html).toContain(registrations[0].riskFlagGroupDescription)
+    })
+
+    it('Should render an error card when caseDetail request fails', () => {
+      const result = ndeliusRiskCards(crn, undefined, 'failure')
+
+      expect(result).toHaveLength(2)
+      expect(result[0].html).toContain('<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>')
+      expect((result[1].card.title as { text: string }).text).toEqual('NDelius risk flags')
+      expect(result[1].html).toContain('We cannot load risk flag information right now')
+    })
+
+    it('Should render a not found card when caseDetail returns 404', () => {
+      const result = ndeliusRiskCards(crn, undefined, 'notFound')
+
+      expect(result).toHaveLength(2)
+      expect(result[0].html).toContain('<h2 class="govuk-heading-m">NDelius risk flags (registers)</h2>')
+      expect((result[1].card.title as { text: string }).text).toEqual('NDelius risk flags')
+      expect(result[1].html).toContain('No risk flag information found')
     })
   })
 })

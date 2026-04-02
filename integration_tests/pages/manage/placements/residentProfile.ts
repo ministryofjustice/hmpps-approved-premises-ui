@@ -254,6 +254,35 @@ export default class ResidentProfilePage extends Page {
     cy.contains('NDelius risk flags (registers)')
   }
 
+  shouldShowNDeliusRiskFlagsTable(
+    registrations: Array<{
+      description: string
+      riskNotesDetail: Array<{ note: string }>
+      riskFlagGroupDescription?: string
+    }>,
+  ) {
+    cy.contains('h2', 'NDelius risk flags (registers)').should('be.visible')
+
+    cy.contains('h2.govuk-summary-card__title', 'NDelius risk flags')
+      .closest('.govuk-summary-card')
+      .within(() => {
+        cy.get('table:not(.text-table):not(.rosh-widget__table)').within(() => {
+          cy.get('thead th').eq(0).should('contain.text', 'Flag')
+          cy.get('thead th').eq(1).should('contain.text', 'Notes')
+
+          registrations.forEach((registration, index) => {
+            cy.get('tbody tr')
+              .eq(index)
+              .within(() => {
+                cy.get('td').eq(0).should('contain.text', registration.description)
+                cy.get('td').eq(0).should('contain.text', registration.riskFlagGroupDescription)
+                cy.get('td').eq(1).should('contain.text', registration.riskNotesDetail[0].note)
+              })
+          })
+        })
+      })
+  }
+
   shouldShowRoshWidget(risks: RoshRisks) {
     const mapText = (text: string) => (text === 'Very High' ? 'Very high' : text)
 

@@ -25,6 +25,7 @@ export const registrationFactory = Factory.define<Registration>(({ sequence }) =
   startDate: DateFormats.dateObjToIsoDate(faker.date.past()),
   riskNotes: faker.lorem.sentence(4),
   riskNotesDetail: noteDetail.buildList(3),
+  riskFlagGroupDescription: faker.helpers.arrayElement(['Cohort', 'Public protection', 'Safeguarding Risks', 'RoSH']),
 }))
 
 export const personalContact = Factory.define<PersonalContact>(() => ({
