@@ -14,6 +14,7 @@ import { TasklistAPIError, ValidationError } from './errors'
 import type TaskListPage from '../form-pages/tasklistPage'
 
 import { generateConflictBespokeError } from './outOfServiceBedUtils'
+import { cas1PremisesBasicSummaryFactory } from '../testutils/factories'
 
 jest.mock('../i18n/en/errors.json', () => {
   return {
@@ -235,7 +236,8 @@ describe('fetchErrorsAndUserInput', () => {
   let errorTitle: string
 
   beforeEach(() => {
-    ;(request.flash as jest.Mock).mockImplementation((message: string) => {
+    // @ts-expect-error Doesn't resolve correct function return
+    request.flash.mockImplementation((message: string) => {
       return {
         errors: [errors],
         userInput: [userInput],
