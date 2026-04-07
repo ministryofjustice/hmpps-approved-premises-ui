@@ -235,7 +235,8 @@ describe('fetchErrorsAndUserInput', () => {
   let errorTitle: string
 
   beforeEach(() => {
-    ;(request.flash as jest.Mock).mockImplementation((message: string) => {
+    // @ts-expect-error Doesn't resolve correct function return
+    request.flash.mockImplementation((message: string) => {
       return {
         errors: [errors],
         userInput: [userInput],

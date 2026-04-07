@@ -26,7 +26,7 @@ describe('AppealsController', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    ;(applicationService.findApplication as jest.Mock).mockResolvedValue(application)
+    applicationService.findApplication.mockResolvedValue(application)
   })
 
   describe('new', () => {

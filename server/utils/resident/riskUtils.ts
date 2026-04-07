@@ -1,5 +1,5 @@
-import { Cas1OASysGroup, Cas1OASysGroupName, OASysQuestion, RoshRisks } from '@approved-premises/api'
-import { SummaryListWithCard } from '@approved-premises/ui'
+import { Cas1OASysGroup, Cas1OASysGroupName, OASysQuestion, Registration, RoshRisks } from '@approved-premises/api'
+import { SummaryListWithCard, TableRow } from '@approved-premises/ui'
 import nunjucks from 'nunjucks'
 import {
   card,
@@ -13,6 +13,8 @@ import {
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { ApiOutcome } from '../utils'
+import { htmlCell, textCell } from '../tableUtils'
+import config from '../../config'
 
 export const riskSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   return [
@@ -141,10 +143,69 @@ export const roshWidget = (params: RoshRisks) => {
   return card({ html: nunjucks.render(`components/riskWidgets/rosh-widget/template.njk`, { params }) })
 }
 
-export const ndeliusRiskCard = (crn: string) =>
-  card({
-    html: `${subHeadingH2('NDelius risk flags (registers)')}${insetText(ndeliusDeeplink({ crn, text: 'View risk information in NDelius (opens in a new tab)', component: 'RegisterSummary' }))}`,
+export const registrationRows = (registrations: Array<Registration>): Array<TableRow> => {
+  return registrations.map(registration => {
+    const riskFlagGroup = registration.riskFlagGroupDescription ? `${registration.riskFlagGroupDescription}<br>` : ''
+    const dateAdded = registration.startDate
+      ? `<p class="govuk-body-s">Added on ${DateFormats.isoDateToUIDate(registration.startDate, { format: 'short' })}</p>`
+      : ''
+    const flagHtml = `<strong>${registration.description}</strong><br>${riskFlagGroup}<br>${dateAdded}`
+
+    const notesHtml =
+      registration.riskNotesDetail.length > 0
+        ? `<p class="govuk-body govuk-body__text-block">${registration.riskNotesDetail[0].note}</p>` // As agreed we need only the first (latest) note to render
+        : '<p class="govuk-body">No information in NDelius</p>'
+
+    return [{ html: flagHtml, classes: 'govuk-!-width-one-third' }, htmlCell(notesHtml)]
   })
+}
+
+export const ndeliusRiskCards = (
+  crn: string,
+  registrations: Array<Registration> | undefined,
+  caseDetailOutcome?: ApiOutcome,
+) => {
+  // TODO: Risk Flags Feature Flag to be removed once tested!
+  if (!config.flags.ndeliusRiskFlagsEnabled) {
+    return []
+  }
+
+  const errorMessage = caseDetailOutcome && loadingErrorMessage(caseDetailOutcome, 'risk flag', 'nDelius')
+
+  const headingCard = card({
+    html: subHeadingH2('NDelius risk flags (registers)'),
+  })
+
+  if (errorMessage) {
+    return [
+      headingCard,
+      card({
+        title: 'NDelius risk flags',
+        html: errorMessage,
+      }),
+    ]
+  }
+
+  const rows = registrationRows(registrations ?? [])
+  return [
+    headingCard,
+    card({
+      html: insetText(
+        ndeliusDeeplink({
+          crn,
+          text: 'View risk information in NDelius (opens in a new tab).',
+          component: 'RegisterSummary',
+        }),
+      ),
+    }),
+    card({
+      title: 'NDelius risk flags',
+      ...(rows.length
+        ? { table: { head: [textCell('Flag'), textCell('Notes')], rows } }
+        : { html: '<p class="govuk-body">No risk flags</p>' }),
+    }),
+  ]
+}
 
 export const riskOasysCards = ({
   roshSummary,

@@ -20,6 +20,7 @@ generic-service:
     NDELIUS_DEEPLINK: 'https://ndelius.probation.service.justice.gov.uk/NDelius-war/delius/JSP/deeplink.xhtml'
     IN_MAINTENANCE_MODE: false
     PLANNED_MAINTENANCE_BANNER: false
+    NDELIUS_RISK_FLAGS_ENABLED: 'true'
 
   namespace_secrets:
     sqs-hmpps-audit-secret:
