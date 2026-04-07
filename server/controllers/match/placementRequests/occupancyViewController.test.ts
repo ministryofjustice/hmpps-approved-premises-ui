@@ -514,10 +514,12 @@ describe('OccupancyViewController', () => {
       premisesService.getDaySummary.mockResolvedValue(premisesDaySummary)
       when(premisesService.getCapacity)
         .calledWith(request.user.token, premises.id, { startDate: date })
+        // @ts-expect-error Resolves function return with never
         .mockResolvedValue(premisesCapacityForDay)
 
       when(premisesService.getCapacity)
         .calledWith(request.user.token, premises.id, { startDate: date, excludeSpaceBookingId: placement.id })
+        // @ts-expect-error Resolves function return with never
         .mockResolvedValue(premisesCapacityForDay)
 
       placementService.getPlacement.mockResolvedValue(placement)

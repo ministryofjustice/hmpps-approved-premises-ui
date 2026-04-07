@@ -2,7 +2,7 @@ import { PlacementApplication } from '../../@types/shared'
 import paths from '../../paths/placementApplications'
 import { addResponseToFormArtifact } from '../../testutils/addToApplication'
 import { applicationFactory, documentFactory, placementApplicationFactory } from '../../testutils/factories'
-import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
+import { embeddedSummaryListItemCompact } from '../applications/summaryListUtils/embeddedSummaryListItem'
 import { DateFormats } from '../dateUtils'
 import {
   getPageTitle,
@@ -13,7 +13,7 @@ import {
 
 jest.mock('../applications/forPagesInTask')
 
-const datesMarkup = embeddedSummaryListItem([
+const datesMarkup = embeddedSummaryListItemCompact([
   {
     'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date('2023-08-01')),
     'Is the date flexible?': 'Yes',

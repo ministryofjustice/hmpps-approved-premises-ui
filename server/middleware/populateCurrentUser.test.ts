@@ -35,7 +35,7 @@ describe('populateCurrentUser', () => {
   })
 
   it('should populate the current user from the API if the user is not in the session', async () => {
-    ;(userService.getActingUser as jest.Mock).mockResolvedValue(user)
+    userService.getActingUser.mockResolvedValue(user)
 
     const middleware = populateCurrentUser(userService)
 
@@ -50,7 +50,7 @@ describe('populateCurrentUser', () => {
   })
 
   it('should populate the current user from the API if the version hash has changed', async () => {
-    ;(userService.getActingUser as jest.Mock).mockResolvedValue(user)
+    userService.getActingUser.mockResolvedValue(user)
     inMemoryStore.users[user.id] = 'old-version'
     request.session.user = user
 
@@ -82,7 +82,7 @@ describe('populateCurrentUser', () => {
   })
 
   it('should redirect to an autherror if no user is available', async () => {
-    ;(userService.getActingUser as jest.Mock).mockResolvedValue(undefined)
+    userService.getActingUser.mockResolvedValue(undefined)
 
     const middleware = populateCurrentUser(userService)
 
@@ -95,7 +95,7 @@ describe('populateCurrentUser', () => {
 
   it('should redirect to an autherror if the user is inactive', async () => {
     user.active = false
-    ;(userService.getActingUser as jest.Mock).mockResolvedValue(user)
+    userService.getActingUser.mockResolvedValue(user)
 
     const middleware = populateCurrentUser(userService)
 
@@ -109,7 +109,7 @@ describe('populateCurrentUser', () => {
   it('should catch an error when an error is raised', async () => {
     const err = new Error()
 
-    ;(userService.getActingUser as jest.Mock).mockImplementation(() => {
+    userService.getActingUser.mockImplementation(() => {
       throw err
     })
 
@@ -132,7 +132,7 @@ describe('populateCurrentUser', () => {
   })
 
   it('redirects to a specific error page if the user account is missing a staff record', async () => {
-    ;(userService.getActingUser as jest.Mock).mockImplementation(() => {
+    userService.getActingUser.mockImplementation(() => {
       throw new DeliusAccountMissingStaffDetailsError()
     })
 
@@ -145,7 +145,7 @@ describe('populateCurrentUser', () => {
   })
 
   it('redirects to a specific error page if the user account has an unsupported probation region', async () => {
-    ;(userService.getActingUser as jest.Mock).mockImplementation(() => {
+    userService.getActingUser.mockImplementation(() => {
       throw new UnsupportedProbationRegionError()
     })
 

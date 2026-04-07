@@ -80,6 +80,7 @@ describe('keyworkerController', () => {
       const placementWithKeyworker = cas1SpaceBookingFactory.withAssignedKeyworker(assignedKeyworker).build()
       when(premisesService.getPlacement)
         .calledWith({ token, premisesId, placementId: placementWithKeyworker.id })
+        // @ts-expect-error Resolves function return with never
         .mockResolvedValue(placementWithKeyworker)
       request.params.placementId = placementWithKeyworker.id
 

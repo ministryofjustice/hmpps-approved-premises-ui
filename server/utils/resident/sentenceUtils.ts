@@ -33,7 +33,6 @@ import { ApiOutcome, objectClean, sentenceCase } from '../utils'
 import { dateCell, htmlCell, textCell } from '../tableUtils'
 import { summaryCards } from './riskUtils'
 import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
-import config from '../../config'
 
 export const sentenceSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   const basePath = paths.resident.tabSentence
@@ -299,10 +298,9 @@ export const prisonCards = ({
         : undefined,
       html: adjudicationsError,
     }),
-    !config.isProduction &&
-      card({
-        title: 'Prison case notes',
-        html: !caseNotesError ? caseNoteBlock(filteredCaseNotes) : caseNotesError,
-      }),
-  ].filter(Boolean)
+    card({
+      title: 'Prison case notes',
+      html: !caseNotesError ? caseNoteBlock(filteredCaseNotes) : caseNotesError,
+    }),
+  ]
 }

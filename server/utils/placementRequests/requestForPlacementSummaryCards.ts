@@ -7,7 +7,7 @@ import {
 } from '@approved-premises/api'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/apply'
-import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
+import { embeddedSummaryListItemCompact } from '../applications/summaryListUtils/embeddedSummaryListItem'
 import { RequestForPlacementStatusTag } from './statusTag'
 import { sentenceCase } from '../utils'
 
@@ -36,7 +36,7 @@ export class RequestForPlacementSummaryCards {
         const value =
           typeof answer === 'string'
             ? { text: answer }
-            : { html: embeddedSummaryListItem(answer as Array<Record<string, unknown>>) }
+            : { html: embeddedSummaryListItemCompact(answer as Array<Record<string, unknown>>) }
 
         this.rows.push({
           key: {
@@ -61,7 +61,7 @@ export class RequestForPlacementSummaryCards {
     this.rows.push({
       key: { text: 'Placement dates' },
       value: {
-        html: embeddedSummaryListItem([items]),
+        html: embeddedSummaryListItemCompact([items]),
       },
     })
   }

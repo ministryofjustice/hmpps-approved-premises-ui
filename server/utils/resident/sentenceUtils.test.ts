@@ -33,7 +33,6 @@ import {
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { bulletList, summaryListItem } from '../formUtils'
 import { oasysMetadataRow } from './riskUtils'
-import config from '../../config'
 
 jest.mock('nunjucks')
 
@@ -508,39 +507,6 @@ describe('sentence', () => {
             },
           ]),
         )
-        expect(sentenceFns.caseNoteBlock).not.toHaveBeenCalled()
-      })
-
-      it('should exclude case notes in the production environment', () => {
-        config.isProduction = true
-
-        const result = sentenceFns.prisonCards(parameters)
-
-        expect(result).toEqual([
-          {
-            card: { title: { text: 'Prison details' } },
-            rows: [{ key: { text: 'Prison name' }, value: { text: fullPerson.prisonName } }],
-          },
-          {
-            card: { title: { text: 'Cell Sharing Risk Assessment (CSRA)' } },
-            table: {
-              head: [
-                { text: 'Date assessed', classes: 'govuk-table__header--nowrap' },
-                { text: 'Classification' },
-                { text: 'Comment' },
-              ],
-              rows: [],
-            },
-          },
-          {
-            card: { title: { text: 'Adjudications' } },
-            table: {
-              head: [{ text: 'Date created' }, { text: 'Description' }, { text: 'Outcome' }],
-              rows: [],
-            },
-          },
-        ])
-        expect(sentenceFns.adjudicationRows).toHaveBeenCalledWith(adjudications)
         expect(sentenceFns.caseNoteBlock).not.toHaveBeenCalled()
       })
     })
