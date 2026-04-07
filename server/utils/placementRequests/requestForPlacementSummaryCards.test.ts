@@ -7,7 +7,7 @@ import paths from '../../paths/apply'
 import { DateFormats } from '../dateUtils'
 import { RequestForPlacementStatusTag } from './statusTag'
 import { sentenceCase } from '../utils'
-import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
+import { embeddedSummaryListItemCompact } from '../applications/summaryListUtils/embeddedSummaryListItem'
 
 describe('RequestForPlacementSummaryCards', () => {
   const actingUserId = '123'
@@ -80,7 +80,7 @@ describe('RequestForPlacementSummaryCards', () => {
           {
             key: { text: 'Placement dates' },
             value: {
-              html: embeddedSummaryListItem([
+              html: embeddedSummaryListItemCompact([
                 {
                   'Expected arrival': '24 Apr 2024',
                   'Arrival date is flexible': 'Yes',
