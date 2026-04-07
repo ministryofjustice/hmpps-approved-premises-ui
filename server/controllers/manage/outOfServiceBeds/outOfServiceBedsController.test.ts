@@ -211,6 +211,7 @@ describe('OutOfServiceBedsController', () => {
 
       when(outOfServiceBedService.getOutOfServiceBed)
         .calledWith(request.user.token, premisesId, outOfServiceBed.id)
+        // @ts-expect-error mocked fn resolves to never
         .mockResolvedValue(outOfServiceBed)
 
       const req = {
@@ -276,6 +277,7 @@ describe('OutOfServiceBedsController', () => {
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
       const premises = cas1PremisesFactory.build({ name: 'Hope House' })
+      // @ts-expect-error mocked function resolves to never
       when(premisesService.find).calledWith(request.user.token, premisesId).mockResolvedValue(premises)
 
       const req = { ...request, query: { premisesId }, params: { temporality, premisesId } }
@@ -345,8 +347,7 @@ describe('OutOfServiceBedsController', () => {
         sortDirection: 'desc',
       }
 
-      const premises = cas1PremisesBasicSummaryFactory.buildList(3)
-      const allPremises = premises
+      const allPremises = cas1PremisesBasicSummaryFactory.buildList(3)
       premisesService.getCas1All.mockResolvedValue(allPremises)
       apAreaService.getApAreas.mockResolvedValue(apAreas)
 
