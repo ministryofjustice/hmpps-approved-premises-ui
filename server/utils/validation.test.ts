@@ -14,7 +14,6 @@ import { TasklistAPIError, ValidationError } from './errors'
 import type TaskListPage from '../form-pages/tasklistPage'
 
 import { generateConflictBespokeError } from './outOfServiceBedUtils'
-import { cas1PremisesBasicSummaryFactory } from '../testutils/factories'
 
 jest.mock('../i18n/en/errors.json', () => {
   return {
