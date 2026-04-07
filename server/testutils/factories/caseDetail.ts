@@ -1,9 +1,31 @@
 import { Factory } from 'fishery'
-import { CaseDetail, MappaDetail, NoteDetail, PersonalContact, Registration } from '@approved-premises/api'
+import {
+  CaseDetail,
+  MappaDetail,
+  NoteDetail,
+  PersonalContact,
+  Registration,
+  RelationshipType,
+} from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import caseSummaryFactory from './caseSummary'
 import offenceFactory from './offence'
 import { DateFormats } from '../../utils/dateUtils'
+import { contactGroupMapping } from '../../utils/resident/contactUtils'
+
+const relationships = ['Friend', 'Brother', 'Mother', 'Father', 'Partner', 'Solicitor', 'OS']
+const relationshipDescriptions = [
+  'Family member',
+  'Next of kin',
+  'Other personal contact',
+  'Emergency contact',
+  'Solicitor/Lawyer',
+  'Other contact',
+]
+const relationshipTypes: Array<RelationshipType> = Object.keys(contactGroupMapping).map(key => ({
+  code: key,
+  description: faker.helpers.arrayElement(relationshipDescriptions),
+}))
 
 const noteDetail = Factory.define<NoteDetail>(() => ({
   note: faker.lorem.sentence(2),
@@ -28,12 +50,13 @@ export const registrationFactory = Factory.define<Registration>(({ sequence }) =
   riskFlagGroupDescription: faker.helpers.arrayElement(['Cohort', 'Public protection', 'Safeguarding Risks', 'RoSH']),
 }))
 
-export const personalContact = Factory.define<PersonalContact>(() => ({
+export const personalContactFactory = Factory.define<PersonalContact>(() => ({
   address: { addressNumber: `${faker.number.int({ min: 1, max: 30 })}` },
   name: { forename: faker.person.firstName(), middleNames: [], surname: faker.person.lastName() },
-  relationship: faker.string.alphanumeric(),
-  relationshipType: { code: faker.helpers.arrayElement(['R1', 'R2', 'R3']), description: faker.word.words(4) },
-  telephoneNumber: faker.string.numeric({ length: 10 }),
+  relationship: faker.helpers.arrayElement(relationships),
+  relationshipType: faker.helpers.arrayElement(relationshipTypes),
+  telephoneNumber: faker.datatype.boolean() ? faker.string.numeric({ length: 10 }) : undefined,
+  mobileNumber: faker.datatype.boolean() ? faker.string.numeric({ length: 10 }) : undefined,
 }))
 
 export default Factory.define<CaseDetail>(() => {
@@ -53,7 +76,7 @@ export default Factory.define<CaseDetail>(() => {
         startDate: DateFormats.dateObjToIsoDate(faker.date.past({ refDate: endDate, years: 5 })),
       },
     ],
-    personalContacts: personalContact.buildList(3),
+    personalContacts: personalContactFactory.buildList(3),
     mappaDetail: mappaDetailFactory.build(),
   }
 })

@@ -1,8 +1,11 @@
-import { FullPerson, PersonRisks } from '@approved-premises/api'
-import { card, insetText, ndeliusDeeplink, ResidentProfileSubTab, summaryItemNd } from './index'
+import { CaseDetail, FullPerson, PersonRisks } from '@approved-premises/api'
+import { card, insetText, loadingErrorMessage, ndeliusDeeplink, ResidentProfileSubTab, summaryItemNd } from './index'
 import paths from '../../paths/manage'
 import { PersonStatusTag } from '../people/personStatusTag'
 import { getTierOrBlank } from '../applications/helpers'
+import { ApiOutcome } from '../utils'
+import { contactCard, ContactGroup, groupContacts } from './contactUtils'
+import config from '../../config'
 
 export const personalSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   const basePath = paths.resident.tabPersonal
@@ -52,10 +55,39 @@ export const personDetailsCardList = (person: FullPerson, personRisks: PersonRis
   ]
 }
 
-export const contactsCardList = (crn: string) => [
-  card({
-    html: insetText(`<p>We cannot display personal contacts from NDelius yet. For example, probation practitioner contact details.</p>
-${ndeliusDeeplink({ crn, text: 'View personal contacts in NDelius (opens in a new tab).', component: 'PersonalContacts' })}
-`),
-  }),
-]
+export const contactsCardList = (caseDetail: CaseDetail, caseDetailOutcome: ApiOutcome, crn: string) => {
+  const errorMessage = loadingErrorMessage(caseDetailOutcome, 'contacts', 'nDelius')
+  const groupNames: Record<ContactGroup, string> = {
+    PROF: 'Professional contacts',
+    PERS: 'Personal contacts',
+    OTH: 'Other contacts',
+  }
+
+  const groupedContacts = groupContacts(caseDetail?.personalContacts || [])
+  return config.isProduction // TODO: remove once live
+    ? [
+        card({
+          html: insetText(
+            `<p>We cannot display personal contacts from NDelius yet. For example, probation practitioner contact details.</p>${ndeliusDeeplink(
+              { crn, text: 'View personal contacts in NDelius (opens in a new tab).', component: 'PersonalContacts' },
+            )}`,
+          ),
+        }),
+      ]
+    : [
+        card({
+          html: insetText(
+            `<p>${errorMessage || 'Imported from NDelius'}</p>${ndeliusDeeplink({
+              crn,
+              text: 'View more contact information in NDelius (opens in a new tab).',
+              component: 'PersonalContacts',
+            })}`,
+          ),
+        }),
+        ...(!errorMessage
+          ? Object.entries(groupedContacts).map(([group, contacts]) =>
+              contactCard(groupNames[group as ContactGroup], contacts),
+            )
+          : []),
+      ]
+}
