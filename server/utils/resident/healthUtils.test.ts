@@ -23,7 +23,6 @@ import { ApiOutcome } from '../utils'
 import * as healthUtils from './healthUtils'
 import { bulletList, summaryListItem } from '../formUtils'
 import { dietaryItemDtoFactory } from '../../testutils/factories/dietAndAllergyResponse'
-import config from '../../config'
 
 jest.mock('nunjucks')
 
