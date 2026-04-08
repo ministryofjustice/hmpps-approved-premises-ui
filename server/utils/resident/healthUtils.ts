@@ -8,21 +8,12 @@ import {
   ValueWithMetadataString,
 } from '@approved-premises/api'
 import { SummaryListWithCard } from '@approved-premises/ui'
-import {
-  card,
-  cellMetaData,
-  combineResultAndContent,
-  insetText,
-  loadingErrorMessage,
-  ResidentProfileSubTab,
-  summaryItemNd,
-} from '.'
+import { card, cellMetaData, combineResultAndContent, insetText, loadingErrorMessage, ResidentProfileSubTab } from '.'
 import paths from '../../paths/manage'
 import { dateCellNoWrap, textCell } from '../tableUtils'
 import { oasysQuestionDetailsByNumber, summaryCards, tableRow } from './riskUtils'
 import { ApiOutcome, linkTo } from '../utils'
 import { bulletList, summaryListItem } from '../formUtils'
-import config from '../../config'
 
 export const smokingStatusMapping: Record<string, string> = {
   Yes: 'Smoker',
@@ -53,8 +44,7 @@ export const healthSideNavigation = (subTab: ResidentProfileSubTab, crn: string,
 
 export const listDietItems = (items: Array<DietaryItemDto> = []): string => {
   const itemsHtml = items.map(
-    ({ value, comment }) =>
-      `${value?.description}${comment?.length ? ` <span class="govuk-body govuk-hint">(${comment})</span>` : ''}`,
+    ({ value, comment }) => `${value?.description}${comment?.length ? `<span>: ${comment}</span>` : ''}`,
   )
   if (items?.length > 1) return bulletList(itemsHtml)
   if (items?.length === 1) return itemsHtml[0]
@@ -92,10 +82,10 @@ export const dietCard = (dietResponse: DietAndAllergyResponse, result: ApiOutcom
     topHtml: error || cellMetaData('dps', lastModified),
     rows: !error
       ? [
-          summaryItemNd('Catering instructions', cateringInstructions, 'textBlock'),
           summaryListItem('Medical diet', listDietItems(medicalRequirementList), 'html'),
           summaryListItem('Food allergies', listDietItems(foodAllergyList), 'html'),
           summaryListItem('Personalised dietary requirements', listDietItems(personalisedDietaryList), 'html'),
+          summaryListItem('Catering instructions', cateringInstructions || 'None', 'textBlock'),
         ]
       : undefined,
   })
@@ -148,12 +138,10 @@ export const healthDetailsCards = ({
     cards = cards.concat(summaryCards(['13.1'], supportingInformation, supportingInformationOutcome))
   }
 
-  cards = cards
-    .concat([
-      !config.isProduction && dietCard(dietAndAllergy, dietAndAllergyOutcome),
-      smokerCard(bookingDetails, bookingDetailsOutcome),
-    ])
-    .filter(Boolean)
+  cards = cards.concat([
+    dietCard(dietAndAllergy, dietAndAllergyOutcome),
+    smokerCard(bookingDetails, bookingDetailsOutcome),
+  ])
   return cards
 }
 

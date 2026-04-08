@@ -23,7 +23,6 @@ import { ApiOutcome } from '../utils'
 import * as healthUtils from './healthUtils'
 import { bulletList, summaryListItem } from '../formUtils'
 import { dietaryItemDtoFactory } from '../../testutils/factories/dietAndAllergyResponse'
-import config from '../../config'
 
 jest.mock('nunjucks')
 
@@ -143,7 +142,7 @@ describe('healthUtils', () => {
       it('should format item lists', () => {
         const item1 = dietaryItemDtoFactory.build({ comment: undefined, value: { description: 'description 1' } })
         const item2 = dietaryItemDtoFactory.build({ comment: 'Comment 2', value: { description: 'description 2' } })
-        const expected2 = 'description 2 <span class="govuk-body govuk-hint">(Comment 2)</span>'
+        const expected2 = 'description 2<span>: Comment 2</span>'
 
         expect(healthUtils.listDietItems([item1])).toEqual('description 1')
         expect(healthUtils.listDietItems([item2])).toEqual(expected2)
@@ -160,15 +159,6 @@ describe('healthUtils', () => {
         expect(result.topHtml).toEqual(
           `<p class="govuk-body-m govuk-hint govuk-!-margin-bottom-2">Imported from Digital Prison Service (DPS)</p><p class="govuk-body-m govuk-hint">Last updated: ${DateFormats.isoDateToUIDate(soon)}</p>`,
         )
-      })
-
-      it('should not show diet and allery in production', () => {
-        config.isProduction = true
-        const result = healthDetailsCards(defaultArguments)
-
-        expect(result).toHaveLength(3)
-        expect(result.map(card => card.card?.title)).not.toContainEqual({ text: 'Diet and food allergies' })
-        config.isProduction = false
       })
     })
 

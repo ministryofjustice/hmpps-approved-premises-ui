@@ -255,6 +255,7 @@ export const cellMetaData = (service: Service, lastUpdated?: string) => {
     : ''
   return `<p class="govuk-body-m govuk-hint govuk-!-margin-bottom-2">Imported from ${serviceNames[service]}</p>${lastUpdatedStr}`
 }
+
 /**
  * Alters the outcome of a request where there are no data, but the API request was successful.
  * If the outcome is 'success', it will be returned as 'notFound' if the content is falsy
