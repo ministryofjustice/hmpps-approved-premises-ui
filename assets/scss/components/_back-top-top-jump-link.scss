@@ -1,0 +1,18 @@
+@use "govuk-frontend/dist/govuk" as *;
+
+.back-to-top {
+  position: relative;
+  margin-left: govuk-spacing(3);
+  bottom: govuk-spacing(3);
+  height: 0;
+  overflow: visible;
+}
+
+.back-to-top--hidden {
+  display: none;
+}
+
+.back-to-top--fixed {
+  position: fixed;
+  margin-bottom: govuk-spacing(9);
+}

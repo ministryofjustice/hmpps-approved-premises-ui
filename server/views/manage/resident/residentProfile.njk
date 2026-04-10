@@ -5,6 +5,7 @@
 {% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
 {% from "moj/components/side-navigation/macro.njk" import mojSideNavigation %}
 {% from "govuk/components/accordion/macro.njk" import govukAccordion %}
+{% from "components/backToTop/macro.njk" import backToTop %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "govuk-body govuk-!-padding-top-0" %}
@@ -66,16 +67,9 @@
                 {% set cardList = bottomCardList %}
                 {% include "./partials/cardList.njk" %}
             {% endif %}
-
-            {% if showBackToTopJumpLink %}
-                <a class="govuk-link govuk-link--no-visited-state" href="#resident-name">
-                    <svg role="presentation" focusable="false" class="app-back-to-top__icon" xmlns="http://www.w3.org/2000/svg" width="13" height="17" viewBox="0 0 13 17">
-                        <path fill="currentColor" d="M6.5 0L0 6.5 1.4 8l4-4v12.7h2V4l4.3 4L13 6.4z"></path>
-                    </svg>
-                    Back to top
-                </a>
-            {% endif %}
         </div>
+
+        {{ backToTop() }}
     </div>
 
 {% endblock %}
