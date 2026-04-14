@@ -84,7 +84,6 @@ describe('residentProfileController', () => {
     user,
     actions: [] as Array<never>,
     resident: getResidentHeader(placement, caseDetail),
-    showBackToTopJumpLink: false,
   })
 
   describe('show', () => {
@@ -134,7 +133,6 @@ describe('residentProfileController', () => {
           tabItems: residentTabItems(placement, 'sentence'),
           sideNavigation: sentenceSideNavigation('offence', crn, placement.id),
           ...tabData,
-          showBackToTopJumpLink: true, // sentence -> offence tab should show the "back to top" jump link
         },
       ])
 
@@ -158,7 +156,6 @@ describe('residentProfileController', () => {
           sideNavigation: riskSideNavigation('riskDetails', crn, placement.id),
           ...renderParameters(placement, caseDetail, 'risk'),
           ...tabData,
-          showBackToTopJumpLink: true, // risk -> risk details tab should show the "back to top" jump link
         },
       ])
 

@@ -11,11 +11,8 @@ import {
   getPlacementLink,
   getResidentHeader,
   loadingErrorMessage,
-  ResidentProfileSubTab,
-  ResidentProfileTab,
   residentTabItems,
   returnPath,
-  shouldEnableBackToTopJumpLink,
 } from './index'
 import { cas1SpaceBookingFactory, caseDetailFactory, userFactory } from '../../testutils/factories'
 import { canonicalDates, placementStatusTag } from '../placements'
@@ -246,36 +243,6 @@ describe('residentsUtils', () => {
         expect(combineResultAndContent('success', undefined)).toEqual('notFound')
         expect(combineResultAndContent('failure', undefined)).toEqual('failure')
       })
-    })
-
-    describe('shouldEnableBackToTopJumpLink', () => {
-      it.each([
-        ['health', 'mentalHealth'],
-        ['placement', 'application'],
-        ['risk', 'riskDetails'],
-        ['sentence', 'offence'],
-        ['sentence', 'licence'],
-        ['sentence', 'prison'],
-      ])(
-        '%s -> %s should enable the "Back to top" jump link',
-        (activeTab: ResidentProfileTab, subTab: ResidentProfileSubTab) => {
-          expect(shouldEnableBackToTopJumpLink(activeTab, subTab)).toBe(true)
-        },
-      )
-
-      it.each([
-        ['personal', 'personalDetails'],
-        ['personal', 'contacts'],
-        ['health', 'healthDetails'],
-        ['placement', 'placementDetails'],
-        ['placement', 'allApPlacements'],
-        ['drugAndAlcohol', undefined],
-      ])(
-        '%s -> %s should not enable the "Back to top" jump link',
-        (activeTab: ResidentProfileTab, subTab?: ResidentProfileSubTab) => {
-          expect(shouldEnableBackToTopJumpLink(activeTab, subTab)).toBe(false)
-        },
-      )
     })
   })
 })

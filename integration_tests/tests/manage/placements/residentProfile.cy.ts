@@ -253,7 +253,10 @@ context('ResidentProfile', () => {
       AND('the Offence details information should be shown')
       page.shouldShowOffencesInformation(caseDetail, oasysOffenceDetails)
 
-      AND('the "back to top" jump link should be shown')
+      WHEN('I scroll to the bottom of the page')
+      cy.scrollTo('bottom')
+
+      THEN('the "back to top" jump link should be shown')
       page.clickLink('Back to top')
 
       WHEN('I select the licence side-nav')
