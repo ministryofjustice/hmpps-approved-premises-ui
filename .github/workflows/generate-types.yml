@@ -36,6 +36,9 @@ jobs:
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            hmpps-approved-premises-ui
 
       - name: Generate Types
         run: ./script/generate-types  ${{ vars.CAS1_API_SPEC_URL }}
