@@ -151,10 +151,22 @@ export const registrationRows = (registrations: Array<Registration>): Array<Tabl
       : ''
     const flagHtml = `<strong>${registration.description}</strong><br>${riskFlagGroup}<br>${dateAdded}`
 
-    const notesHtml =
-      registration.riskNotesDetail.length > 0
-        ? `<p class="govuk-body govuk-body__text-block">${registration.riskNotesDetail[0].note}</p>` // As agreed we need only the first (latest) note to render
-        : '<p class="govuk-body">No information in NDelius</p>'
+    const isOasysImportedFlag = [
+      'risk to staff',
+      'risk to children',
+      'risk to known adult',
+      'risk to prisoner',
+      'risk to public',
+    ].includes(registration.description.toLowerCase())
+
+    let notesHtml = '<p class="govuk-body">No information in NDelius</p>'
+
+    if (registration.riskNotesDetail.length > 0) {
+      const [{ note }] = registration.riskNotesDetail // As agreed we need only the first (latest) note to render
+      notesHtml = isOasysImportedFlag
+        ? detailsBody(`View full OASys notes for ${registration.description.toLowerCase()}`, note)
+        : `<p class="govuk-body govuk-body__text-block">${note}</p>`
+    }
 
     return [{ html: flagHtml, classes: 'govuk-!-width-one-third' }, htmlCell(notesHtml)]
   })
