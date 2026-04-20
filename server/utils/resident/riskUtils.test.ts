@@ -85,6 +85,20 @@ describe('risk utils', () => {
       expect((rows[0][0] as { html: string }).html).toContain(registrations[0].riskFlagGroupDescription)
     })
 
+    it('should render OASys imported notes in a details block', () => {
+      const registration = registrationFactory.build({
+        description: 'Risk to Staff',
+      })
+
+      const rows = registrationRows([registration])
+
+      expect((rows[0][1] as { html: string }).html).toContain('Nunjucks template partials/detailsBlock.njk')
+      expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', {
+        summaryText: `View full OASys notes for ${registration.description.toLowerCase()}`,
+        text: registration.riskNotesDetail[0].note,
+      })
+    })
+
     it('Should render an error card when caseDetail request fails', () => {
       const result = ndeliusRiskCards(crn, undefined, 'failure')
 
