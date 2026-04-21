@@ -149,16 +149,6 @@ context('Premises occupancy', () => {
       page.shouldHaveSelectText('durationDays', '12 weeks')
       page.datePickerShouldContainDate('startDate', newStartDate)
     })
-
-    it('should not be available in the premises actions menu if the premises does not support space bookings', () => {
-      // Given that I am looking at a premises that does not support space bookings
-      const nonSpaceBookingPremises = cas1PremisesFactory.build({ supportsSpaceBookings: false })
-      cy.task('stubSinglePremises', nonSpaceBookingPremises)
-      // When I visit premises details page
-      const page = PremisesShowPage.visit(nonSpaceBookingPremises)
-      // Then the view spaces action should not be shown
-      page.actionShouldNotExist('View spaces')
-    })
   })
   describe('Without premises view permission', () => {
     it('should not be available if the user lacks premises_view permission', () => {

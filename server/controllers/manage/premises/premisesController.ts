@@ -64,17 +64,15 @@ export default class PremisesController {
       )
 
       const premises = await this.premisesService.find(token, premisesId)
-      const showPlacements = premises.supportsSpaceBookings
 
       let keyworkersSelectOptions: Array<SelectOption>
 
-      if (showPlacements && (activeTab === 'upcoming' || activeTab === 'current')) {
+      if (activeTab === 'upcoming' || activeTab === 'current') {
         const currentKeyworkers = await this.premisesService.getCurrentKeyworkers(token, premisesId)
         keyworkersSelectOptions = keyworkersToSelectOptions(currentKeyworkers, activeTab, keyworker)
       }
 
       const paginatedPlacements =
-        showPlacements &&
         (activeTab !== 'search' || Boolean(crnOrName)) &&
         (await this.premisesService.getPlacements({
           token,
@@ -93,7 +91,6 @@ export default class PremisesController {
         menuActions: premisesActions(res.locals.user, premises),
         premises,
         summaryList: summaryListForPremises(premises),
-        showPlacements,
         activeTab,
         crnOrName,
         keyworker,

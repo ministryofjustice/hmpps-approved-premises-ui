@@ -73,7 +73,6 @@ describe('PremisesController', () => {
       premises: premisesSummary,
       menuActions: premisesActions(user, premisesSummary),
       summaryList: summaryListForPremises(premisesSummary),
-      showPlacements: true,
       activeTab: tab,
       pageNumber: 1,
       totalPages: 1,
@@ -284,25 +283,6 @@ describe('PremisesController', () => {
           crnOrName: 'X123456',
         })
       })
-    })
-
-    it('should not render the list of placements if the premises does not support space bookings', async () => {
-      const premisesSummaryNoSpaceBookings = cas1PremisesFactory.build({ supportsSpaceBookings: false })
-      premisesService.find.mockResolvedValue(premisesSummaryNoSpaceBookings)
-
-      await premisesController.show()(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith(
-        'manage/premises/show',
-        expect.objectContaining({
-          premises: premisesSummaryNoSpaceBookings,
-          showPlacements: false,
-          activeTab: 'current',
-          placementTableRows: [],
-        }),
-      )
-      expect(premisesService.find).toHaveBeenCalledWith(token, premisesId)
-      expect(premisesService.getPlacements).not.toHaveBeenCalled()
     })
   })
 
