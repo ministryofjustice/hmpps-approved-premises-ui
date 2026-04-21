@@ -98,6 +98,16 @@ describe('residentsUtils', () => {
 
         expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', { summaryText: 'summary', text: 'content' })
       })
+
+      it('should pass preview text when provided', () => {
+        detailsBody('summary', 'content', 'preview')
+
+        expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', {
+          summaryText: 'summary',
+          text: 'content',
+          previewText: 'preview',
+        })
+      })
     })
 
     describe('insetText', () => {

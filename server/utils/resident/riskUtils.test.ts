@@ -99,6 +99,26 @@ describe('risk utils', () => {
       })
     })
 
+    it('should show the first line of OASys imported notes before the details block', () => {
+      const registration = registrationFactory.build({
+        description: 'Risk to Prisoner',
+        riskNotesDetail: [
+          {
+            note: 'The OASys assessment of Review on 21/04/2026 identified the Risk to Prisoner to have remained Medium.\nFurther context on the risk note.',
+          },
+        ],
+      })
+
+      registrationRows([registration])
+
+      expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', {
+        summaryText: 'View full OASys notes for risk to prisoner',
+        text: 'Further context on the risk note.',
+        previewText:
+          'The OASys assessment of Review on 21/04/2026 identified the Risk to Prisoner to have remained Medium.',
+      })
+    })
+
     it('Should render an error card when caseDetail request fails', () => {
       const result = ndeliusRiskCards(crn, undefined, 'failure')
 

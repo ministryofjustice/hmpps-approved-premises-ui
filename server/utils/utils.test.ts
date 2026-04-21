@@ -18,6 +18,7 @@ import {
   pluralize,
   removeBlankSummaryListItems,
   resolvePath,
+  splitFirstLineForDetails,
   settlePromises,
   settlePromisesWithOutcomes,
 } from './utils'
@@ -339,6 +340,22 @@ describe('utils', () => {
       expect(linebreaksToParagraphs('foo\r\n\r\nbar')).toEqual(
         '<p class="govuk-body">foo</p><p class="govuk-body">bar</p>',
       )
+    })
+  })
+
+  describe('splitFirstLineForDetails', () => {
+    it('returns preview text and remaining text for multiline input', () => {
+      expect(splitFirstLineForDetails('first line\nsecond line\nthird line')).toEqual({
+        previewText: 'first line',
+        remainingText: 'second line\nthird line',
+      })
+    })
+
+    it('returns no preview text for single line input', () => {
+      expect(splitFirstLineForDetails('single line')).toEqual({
+        previewText: undefined,
+        remainingText: 'single line',
+      })
     })
   })
 

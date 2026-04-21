@@ -12,7 +12,7 @@ import {
 } from './index'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
-import { ApiOutcome } from '../utils'
+import { ApiOutcome, splitFirstLineForDetails } from '../utils'
 import { htmlCell, textCell } from '../tableUtils'
 import config from '../../config'
 
@@ -163,8 +163,9 @@ export const registrationRows = (registrations: Array<Registration>): Array<Tabl
 
     if (registration.riskNotesDetail.length > 0) {
       const [{ note }] = registration.riskNotesDetail // As agreed we need only the first (latest) note to render
+      const { previewText, remainingText } = splitFirstLineForDetails(note)
       notesHtml = isOasysImportedFlag
-        ? detailsBody(`View full OASys notes for ${registration.description.toLowerCase()}`, note)
+        ? detailsBody(`View full OASys notes for ${registration.description.toLowerCase()}`, remainingText, previewText)
         : `<p class="govuk-body govuk-body__text-block">${note}</p>`
     }
 
