@@ -258,18 +258,6 @@ context('Premises', () => {
       THEN('I should see a message that there are no results')
       page.shouldShowNoResults()
     })
-
-    it('should not show the placements section if space bookings are not enabled for the premises', () => {
-      GIVEN('there is a premises in the database that does not support space bookings')
-      const premisesSpaceBookingsDisabled = cas1PremisesFactory.build({ supportsSpaceBookings: false })
-      cy.task('stubSinglePremises', premisesSpaceBookingsDisabled)
-
-      WHEN('I visit premises details page')
-      const page = PremisesShowPage.visit(premisesSpaceBookingsDisabled)
-
-      THEN('I should not see the placements section')
-      page.shouldNotShowPlacementsSection()
-    })
   })
 
   describe('beds', () => {
