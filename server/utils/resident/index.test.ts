@@ -8,6 +8,7 @@ import {
   card,
   combineResultAndContent,
   detailsBody,
+  detailsBodyWithPreview,
   getPlacementLink,
   getResidentHeader,
   loadingErrorMessage,
@@ -106,6 +107,25 @@ describe('residentsUtils', () => {
           summaryText: 'summary',
           text: 'content',
           previewText: 'preview',
+        })
+      })
+
+      it('should split the first line into preview text', () => {
+        detailsBodyWithPreview('summary', 'first line\nsecond line\nthird line')
+
+        expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', {
+          summaryText: 'summary',
+          text: 'second line\nthird line',
+          previewText: 'first line',
+        })
+      })
+
+      it('should not pass preview text for single line content', () => {
+        detailsBodyWithPreview('summary', 'single line')
+
+        expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', {
+          summaryText: 'summary',
+          text: 'single line',
         })
       })
     })

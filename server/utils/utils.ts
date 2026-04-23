@@ -174,20 +174,6 @@ export const makeArrayOfType = <T>(input: unknown): Array<T> => {
 export const numberToOrdinal = (number: number | string): string =>
   ['First', 'Second', 'Third', 'Fourth', 'Fifth'][Number(number)]
 
-/**
- * Splits teext for use with a details component by taking only the first line as preview text
- * and keeps the remaining lines as the expandable content.
- */
-export const splitFirstLineForDetails = (text: string) => {
-  const [previewText, ...remainingLines] = text.split(/\r?\n/)
-  const remainingText = remainingLines.join('\n').trim()
-
-  return {
-    previewText: remainingText ? previewText.trim() : undefined,
-    remainingText: remainingText || text,
-  }
-}
-
 export const linebreaksToParagraphs = (text: string) =>
   `<p class="govuk-body">${(text ?? '')
     .replace(/\r?\n([ \t]*\r?\n)+/g, '</p><p class="govuk-body">')

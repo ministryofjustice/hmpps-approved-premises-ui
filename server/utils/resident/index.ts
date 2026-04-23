@@ -181,6 +181,13 @@ export const detailsBody = (summaryText: string, text: string, previewText?: str
   return nunjucks.render(`partials/detailsBlock.njk`, objectClean({ summaryText, text, previewText }))
 }
 
+export const detailsBodyWithPreview = (summaryText: string, text: string) => {
+  const [previewText, ...remainingLines] = text.split(/\r?\n/)
+  const remainingText = remainingLines.join('\n').trim()
+
+  return detailsBody(summaryText, remainingText || text, remainingText ? previewText.trim() : undefined)
+}
+
 export const insetText = (html: string): string => {
   return nunjucks.render(`partials/insetText.njk`, { html })
 }
