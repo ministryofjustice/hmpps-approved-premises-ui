@@ -5,7 +5,6 @@ import { PersonStatusTag } from '../people/personStatusTag'
 import { getTierOrBlank } from '../applications/helpers'
 import { ApiOutcome } from '../utils'
 import { contactCard, ContactGroup, groupContacts } from './contactUtils'
-import config from '../../config'
 
 export const personalSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   const basePath = paths.resident.tabPersonal
@@ -64,30 +63,20 @@ export const contactsCardList = (caseDetail: CaseDetail, caseDetailOutcome: ApiO
   }
 
   const groupedContacts = groupContacts(caseDetail?.personalContacts || [])
-  return config.isProduction // TODO: remove once live
-    ? [
-        card({
-          html: insetText(
-            `<p>We cannot display personal contacts from NDelius yet. For example, probation practitioner contact details.</p>${ndeliusDeeplink(
-              { crn, text: 'View personal contacts in NDelius (opens in a new tab).', component: 'PersonalContacts' },
-            )}`,
-          ),
-        }),
-      ]
-    : [
-        card({
-          html: insetText(
-            `<p>${errorMessage || 'Imported from NDelius'}</p>${ndeliusDeeplink({
-              crn,
-              text: 'View more contact information in NDelius (opens in a new tab).',
-              component: 'PersonalContacts',
-            })}`,
-          ),
-        }),
-        ...(!errorMessage
-          ? Object.entries(groupedContacts).map(([group, contacts]) =>
-              contactCard(groupNames[group as ContactGroup], contacts),
-            )
-          : []),
-      ]
+  return [
+    card({
+      html: insetText(
+        `<p>${errorMessage || 'Imported from NDelius'}</p>${ndeliusDeeplink({
+          crn,
+          text: 'View more contact information in NDelius (opens in a new tab).',
+          component: 'PersonalContacts',
+        })}`,
+      ),
+    }),
+    ...(!errorMessage
+      ? Object.entries(groupedContacts).map(([group, contacts]) =>
+          contactCard(groupNames[group as ContactGroup], contacts),
+        )
+      : []),
+  ]
 }
