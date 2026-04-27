@@ -190,6 +190,8 @@ export type { FullPerson } from './models/FullPerson';
 export type { FullPersonSummary } from './models/FullPersonSummary';
 export type { GenericAdditionalCondition } from './models/GenericAdditionalCondition';
 export type { GetDlqResult } from './models/GetDlqResult';
+export type { HealthDetailsInner } from './models/HealthDetailsInner';
+export type { HealthIssue } from './models/HealthIssue';
 export type { HmppsSubjectAccessRequestContent } from './models/HmppsSubjectAccessRequestContent';
 export type { InvalidParam } from './models/InvalidParam';
 export type { Ldu } from './models/Ldu';
