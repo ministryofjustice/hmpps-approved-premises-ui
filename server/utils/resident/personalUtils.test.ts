@@ -109,7 +109,7 @@ describe('personalUtils', () => {
     })
 
     const caseDetail = caseDetailFactory.build()
-    const nDeliusLink = 'PersonalContacts:View more contact information in NDelius (opens in a new tab).'
+    const nDeliusLink = 'PersonalContacts:View contact information in NDelius (opens in a new tab).'
 
     it('should render the personal contacts cards', () => {
       const result = contactsCardList(caseDetail, 'success', 'crn')

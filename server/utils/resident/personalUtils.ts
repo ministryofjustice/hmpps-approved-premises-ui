@@ -68,7 +68,7 @@ export const contactsCardList = (caseDetail: CaseDetail, caseDetailOutcome: ApiO
       html: insetText(
         `<p>${errorMessage || 'Imported from NDelius'}</p>${ndeliusDeeplink({
           crn,
-          text: 'View more contact information in NDelius (opens in a new tab).',
+          text: 'View contact information in NDelius (opens in a new tab).',
           component: 'PersonalContacts',
         })}`,
       ),
