@@ -47,6 +47,7 @@ describe('risk utils', () => {
   })
 
   describe('NDelius risk card', () => {
+    // TODO: Risk Flags Feature Flag to be removed once tested!
     const crn = 'crn'
     const mockLink = 'ndelius link'
     beforeEach(() => {

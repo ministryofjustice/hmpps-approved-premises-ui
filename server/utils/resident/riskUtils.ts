@@ -178,6 +178,7 @@ export const ndeliusRiskCards = (
   registrations: Array<Registration> | undefined,
   caseDetailOutcome?: ApiOutcome,
 ) => {
+  // TODO: Risk Flags Feature Flag to be removed once tested!
   if (!config.flags.ndeliusRiskFlagsEnabled) {
     return []
   }

@@ -19,6 +19,7 @@ const personService = createMock<PersonService>({})
 jest.mock('nunjucks')
 
 describe('risk tab controller', () => {
+  // TODO: Risk Flags Feature Flag to be removed once tested!
   beforeEach(() => {
     jest.resetAllMocks()
     config.flags.ndeliusRiskFlagsEnabled = true
