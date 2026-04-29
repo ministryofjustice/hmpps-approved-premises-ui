@@ -1,4 +1,5 @@
 import { render } from 'nunjucks'
+import config from '../../config'
 import { cas1OasysGroupFactory, registrationFactory } from '../../testutils/factories'
 import {
   ndeliusRiskCards,
@@ -50,6 +51,11 @@ describe('risk utils', () => {
     const mockLink = 'ndelius link'
     beforeEach(() => {
       jest.spyOn(utils, 'ndeliusDeeplink').mockReturnValue(mockLink)
+      config.flags.ndeliusRiskFlagsEnabled = true
+    })
+
+    afterEach(() => {
+      config.flags.ndeliusRiskFlagsEnabled = false
     })
 
     it('Should render the risk card with ndelius link and table', () => {

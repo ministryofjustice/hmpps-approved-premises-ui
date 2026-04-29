@@ -12,6 +12,7 @@ import { PersonService } from '../../services'
 import { DateFormats } from '../dateUtils'
 import { oasysMetadataRow } from './riskUtils'
 import { ErrorWithData } from '../errors'
+import config from '../../config'
 
 const personService = createMock<PersonService>({})
 
@@ -20,7 +21,12 @@ jest.mock('nunjucks')
 describe('risk tab controller', () => {
   beforeEach(() => {
     jest.resetAllMocks()
+    config.flags.ndeliusRiskFlagsEnabled = true
     ;(render as jest.Mock).mockImplementation(template => `Nunjucks template ${template}`)
+  })
+
+  afterEach(() => {
+    config.flags.ndeliusRiskFlagsEnabled = false
   })
 
   describe('riskTabController', () => {
