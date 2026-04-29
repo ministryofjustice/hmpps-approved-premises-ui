@@ -15,7 +15,6 @@ import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
 import { ApiOutcome } from '../utils'
 import { htmlCell, textCell } from '../tableUtils'
-import config from '../../config'
 
 export const riskSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   return [
@@ -178,11 +177,6 @@ export const ndeliusRiskCards = (
   registrations: Array<Registration> | undefined,
   caseDetailOutcome?: ApiOutcome,
 ) => {
-  // TODO: Risk Flags Feature Flag to be removed once tested!
-  if (!config.flags.ndeliusRiskFlagsEnabled) {
-    return []
-  }
-
   const errorMessage = caseDetailOutcome && loadingErrorMessage(caseDetailOutcome, 'risk flag', 'nDelius')
 
   const headingCard = card({

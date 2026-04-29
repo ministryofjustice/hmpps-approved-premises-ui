@@ -25,7 +25,6 @@ generic-service:
     # required so hmpps-audit-client doesn't raise an error
     AUDIT_SQS_QUEUE_URL: ""
     AUDIT_SQS_QUEUE_NAME: ""
-    NDELIUS_RISK_FLAGS_ENABLED: 'true'
 
   allowlist: null
 
