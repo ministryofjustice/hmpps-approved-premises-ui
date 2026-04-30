@@ -6,6 +6,7 @@ import {
   format,
   formatDuration,
   formatISO,
+  intervalToDuration,
   isBefore,
   isValid,
   isWeekend,
@@ -239,12 +240,23 @@ export class DateFormats {
     return time ? this.timeFromDate(new Date(`2024-01-01T${time}`)) : ''
   }
 
-  static formatDurationBetweenTwoDates(
-    date1: string,
-    date2: string,
-    options: { format: UiDateFormat } = { format: 'long' },
-  ): string {
+  static formatDatePair(date1: string, date2: string, options: { format: UiDateFormat } = { format: 'long' }): string {
     return `${DateFormats.isoDateToUIDate(date1, { format: options.format })} - ${DateFormats.isoDateToUIDate(date2, { format: options.format })}`
+  }
+
+  static formatDurationBetweenDates(
+    start: string,
+    end: string,
+    showFields: Array<string> = ['years', 'months', 'days'],
+  ): string {
+    if (start > end) return `- ${this.formatDurationBetweenDates(end, start)}`
+    const duration = intervalToDuration({ start, end: `${(end || '').slice(0, 10)}T01:00:00` })
+    return Object.entries(duration)
+      .map(([field, value]) => {
+        return value && showFields.includes(field) ? `${value} ${field.slice(0, -1)}${value > 1 ? 's' : ''}` : ''
+      })
+      .join(' ')
+      .trim()
   }
 
   static isoDateToMonthAndYear(date: string) {
@@ -372,8 +384,8 @@ export const daysToWeeksAndDays = (days: string | number): { days: number; weeks
   }
 }
 
-export const weeksAndDaysToDays = (weeks:number | string,days:number | string):number => {
-  return Number(weeks || 0)*7 + Number(days || 0)
+export const weeksAndDaysToDays = (weeks: number | string, days: number | string): number => {
+  return Number(weeks || 0) * 7 + Number(days || 0)
 }
 
 export const timeIsValid24hrFormat = (time: string): Boolean => {

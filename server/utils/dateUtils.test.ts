@@ -671,3 +671,18 @@ describe('isoDateTimeToIsoTime', () => {
     expect(DateFormats.isoDateTimeToTime(dateStr)).toEqual(expected)
   })
 })
+
+describe('formatDurationBetweenDates', () => {
+  it.each([
+    ['2024-02-01', '2025-02-01', '1 year'],
+    ['2025-01-31', '2025-03-31', '2 months'], // Over sprint DS
+    ['2025-09-30', '2025-11-30', '2 months'], // Over Autumn DS
+    ['2023-01-15', '2025-08-22', '2 years 7 months 7 days'],
+    [undefined, undefined, ''],
+    ['', '', ''],
+    ['2025-05-012', '2024-02-01', '- 1 year 3 months'], // Start after end
+    ['2025-02-01', '2025-02-01', ''], // Dates same
+  ])('formats the duration between dates', (date1, date2, expected) => {
+    expect(DateFormats.formatDurationBetweenDates(date1, date2)).toEqual(expected)
+  })
+})
