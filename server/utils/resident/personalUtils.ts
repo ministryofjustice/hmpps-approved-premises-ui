@@ -5,6 +5,7 @@ import { PersonStatusTag } from '../people/personStatusTag'
 import { getTierOrBlank } from '../applications/helpers'
 import { ApiOutcome } from '../utils'
 import { contactCard, ContactGroup, groupContacts } from './contactUtils'
+import { DateFormats } from '../dateUtils'
 
 export const personalSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
   const basePath = paths.resident.tabPersonal
@@ -33,6 +34,13 @@ export const personDetailsCardList = (person: FullPerson, personRisks: PersonRis
       rows: [
         summaryItemNd('Name', person.name),
         summaryItemNd('Date of birth', person.dateOfBirth, 'date'),
+        summaryItemNd(
+          'Age',
+          person.dateOfBirth &&
+            DateFormats.formatDurationBetweenDates(person.dateOfBirth, DateFormats.dateObjToIsoDate(new Date()), [
+              'years',
+            ]),
+        ),
         summaryItemNd('Status', person.status && new PersonStatusTag(person.status).html(), 'html'),
         summaryItemNd('Nationality', person.nationality),
         summaryItemNd('Tier', getTierOrBlank(personRisks.tier?.value?.level), 'html'),

@@ -203,7 +203,7 @@ describe('sentence', () => {
       const sentences = [
         {
           typeDescription: 'Type',
-          startDate: '2026-01-01',
+          startDate: '2023-01-01',
           endDate: '2026-03-10',
           eventNumber: '5',
         },
@@ -216,8 +216,8 @@ describe('sentence', () => {
           },
           rows: [
             summaryListItem('Sentence type', 'Type'),
-            summaryListItem('Sentence length', '9 weeks 5 days'),
-            summaryListItem('Sentence start date', 'Thu 1 Jan 2026'),
+            summaryListItem('Sentence length', '3 years 2 months 9 days'),
+            summaryListItem('Sentence start date', 'Sun 1 Jan 2023'),
             summaryListItem('Sentence end date', 'Tue 10 Mar 2026'),
             summaryListItem('NDelius event number', '5'),
           ],

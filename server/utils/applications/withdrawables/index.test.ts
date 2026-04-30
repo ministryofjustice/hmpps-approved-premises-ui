@@ -65,18 +65,14 @@ describe('withdrawableTypeRadioOptions', () => {
     const applicationAndAssesRadios = [
       {
         text: paWithdrawable.dates
-          .map(datePeriod =>
-            DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
-          )
+          .map(datePeriod => DateFormats.formatDatePair(datePeriod.startDate, datePeriod.endDate, { format: 'short' }))
           .join(', '),
         checked: true,
         value: paWithdrawable.id,
       },
       {
         text: prWithdrawable.dates
-          .map(datePeriod =>
-            DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
-          )
+          .map(datePeriod => DateFormats.formatDatePair(datePeriod.startDate, datePeriod.endDate, { format: 'short' }))
           .join(', '),
         checked: false,
         hint: {
@@ -113,7 +109,7 @@ describe('withdrawableTypeRadioOptions', () => {
           },
           text: `${placement.premises.name} - ${placementWithdrawable.dates
             .map(datePeriod =>
-              DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
+              DateFormats.formatDatePair(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
             )
             .join(', ')}`,
           value: placementWithdrawable.id,
