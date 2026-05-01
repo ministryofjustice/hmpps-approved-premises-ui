@@ -7,8 +7,15 @@ import { oasysGroupMapping, oasysQuestionMappping } from '../../utils/resident/r
 
 class Cas1OASysGroupFactory extends Factory<Cas1OASysGroup> {
   group(group: Cas1OASysGroupName) {
+    const dateCompleted = DateFormats.dateObjToIsoDateTime(faker.date.recent({ days: 5 }))
+    const dateStarted = DateFormats.dateObjToIsoDateTime(faker.date.recent({ days: 5, refDate: dateCompleted }))
     return this.params({
       group,
+      assessmentMetadata: {
+        dateCompleted,
+        dateStarted,
+        hasApplicableAssessment: true,
+      },
       answers: oasysQuestionMappping[group].map(params => ({ ...params, answer: faker.lorem.paragraph() })),
     })
   }
