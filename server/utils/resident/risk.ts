@@ -1,10 +1,8 @@
 import { Cas1OASysGroup, PersonRisks } from '@approved-premises/api'
-import { card, insetText, subHeadingH2, subHeadingH3, TabData } from './index'
-import { DateFormats } from '../dateUtils'
+import { card, insetText, TabData } from './index'
 import { TabControllerParameters } from './TabControllerParameters'
-import { ndeliusRiskCards, riskOasysCards, roshWidget } from './riskUtils'
-import { linkTo, settlePromisesWithOutcomes } from '../utils'
-import paths from '../../paths/manage'
+import { ndeliusRiskCards, riskOasysCards } from './riskUtils'
+import { settlePromisesWithOutcomes } from '../utils'
 
 export const riskTabController = async ({
   personService,
@@ -23,23 +21,23 @@ export const riskTabController = async ({
     personService.getOasysAnswers(token, crn, 'offenceDetails'),
     personService.riskProfile(token, crn),
   ])
-
+  // roshSummary.assessmentMetadata.hasApplicableAssessment = false
   return {
     subHeading: 'Risk information',
     cardList: [
       card({ html: insetText('Imported from NDelius and OASys.') }),
       ...ndeliusRiskCards(crn, caseDetail?.registrations, caseDetailOutcome),
-      card({ html: subHeadingH2('OASys risk assessments') }),
-      roshWidget(personRisks.roshRisks?.status?.toLowerCase() === 'retrieved' && personRisks.roshRisks.value),
-      card({ html: subHeadingH3('Risk assessment') }),
-      card({
-        html: insetText(
-          roshSummary?.assessmentMetadata?.hasApplicableAssessment
-            ? `Assessment completed on ${DateFormats.isoDateToUIDate(roshSummary?.assessmentMetadata?.dateCompleted)}`
-            : `<p class="govuk-!-margin-bottom-2">No OASys risk assessment for person added</p><p>Go to the ${linkTo(paths.resident.tabPlacement.application({ placementId: placement.id, crn }), { text: 'application' })} to view risk information for this person.</p>`,
-        ),
+      ...riskOasysCards({
+        crn,
+        placement,
+        personRisks,
+        roshSummary,
+        roshResult,
+        riskManagementPlan,
+        rmResult,
+        offenceDetails,
+        offenceResult,
       }),
-      ...riskOasysCards({ roshSummary, roshResult, riskManagementPlan, rmResult, offenceDetails, offenceResult }),
     ],
   }
 }

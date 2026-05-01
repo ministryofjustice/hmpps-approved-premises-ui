@@ -60,6 +60,7 @@ describe('risk tab controller', () => {
             return null
         }
       })
+
       personService.riskProfile.mockResolvedValue(personRisks)
       const result = await riskTabController({ personService, token, crn, caseDetail })
 
@@ -126,11 +127,11 @@ describe('risk tab controller', () => {
         personService.riskProfile.mockResolvedValue(personRisks)
 
         const result = await riskTabController({ personService, token, crn, caseDetail, placement })
-        expect(result.cardList).toHaveLength(8)
+        expect(result.cardList).toHaveLength(6)
         expect(result.cardList[5].html).toMatchStringIgnoringWhitespace(
-          'Nunjucks template components/riskWidgets/rosh-widget/template.njk',
+          '<h3 class="govuk-heading-s">No recent OASys risk assessment available</h3><p>No OASys assessment has been completed in the last 6 months. Check OASys for all assessments.</p>',
         )
-        expect(render).toHaveBeenCalledWith('components/riskWidgets/rosh-widget/template.njk', {
+        expect(render).not.toHaveBeenCalledWith('components/riskWidgets/rosh-widget/template.njk', {
           params: personRisks.roshRisks.value,
         })
       })
