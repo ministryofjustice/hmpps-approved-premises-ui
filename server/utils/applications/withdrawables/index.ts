@@ -93,9 +93,7 @@ export const withdrawableRadioOptions = (
       : {}
     return {
       text: `${premises ? `${premises.name} - ` : ''}${withdrawable.dates
-        .map(datePeriod =>
-          DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
-        )
+        .map(datePeriod => DateFormats.formatDatePair(datePeriod.startDate, datePeriod.endDate, { format: 'short' }))
         .join(', ')}`,
       value: withdrawable.id,
       checked: selectedWithdrawable === withdrawable.id,

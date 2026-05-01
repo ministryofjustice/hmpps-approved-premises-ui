@@ -1,6 +1,7 @@
 import { SummaryListWithCard } from '@approved-premises/ui'
 import { FullPerson } from '@approved-premises/api'
 import { faker } from '@faker-js/faker/locale/en_GB'
+import { addYears } from 'date-fns'
 import { contactsCardList, personalSideNavigation, personDetailsCardList } from './personalUtils'
 import { cas1SpaceBookingFactory, caseDetailFactory, risksFactory } from '../../testutils/factories'
 import { fullPersonFactory } from '../../testutils/factories/person'
@@ -71,16 +72,18 @@ describe('personalUtils', () => {
               text: person.dateOfBirth && DateFormats.isoDateToUIDate(person.dateOfBirth),
             },
           },
+          { key: { text: 'Age' }, value: { text: '32 years' } },
           { key: { text: 'Status' }, value: { html: new PersonStatusTag(person.status).html() } },
           { key: { text: 'Nationality' }, value: { text: person.nationality } },
           { key: { text: 'Tier' }, value: { html: getTierOrBlank(personRisks.tier?.value?.level) } },
         ],
       })
     }
-
+    const dob = addYears(new Date(), -32)
     const person = fullPersonFactory.build({
       ethnicity: faker.helpers.arrayElement(['White', 'Black', 'Asian', 'Mixed']),
       genderIdentity: faker.helpers.arrayElement(['Man', 'Woman']),
+      dateOfBirth: DateFormats.dateObjToIsoDate(dob),
     })
     const personRisks = risksFactory.build()
 

@@ -112,7 +112,7 @@ export const sentenceCards = (caseDetail: CaseDetail, caseDetailOutcome: ApiOutc
           title,
           rows: [
             summaryListItem('Sentence type', typeDescription),
-            summaryListItem('Sentence length', DateFormats.durationBetweenDates(startDate, endDate).ui),
+            summaryListItem('Sentence length', DateFormats.formatDurationBetweenDates(startDate, endDate)),
             summaryListItem('Sentence start date', startDate, 'date'),
             summaryListItem('Sentence end date', endDate, 'date'),
             summaryListItem('NDelius event number', eventNumber),
