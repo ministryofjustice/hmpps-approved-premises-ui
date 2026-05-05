@@ -21,7 +21,6 @@ export const riskTabController = async ({
     personService.getOasysAnswers(token, crn, 'offenceDetails'),
     personService.riskProfile(token, crn),
   ])
-  // roshSummary.assessmentMetadata.hasApplicableAssessment = false
   return {
     subHeading: 'Risk information',
     cardList: [
