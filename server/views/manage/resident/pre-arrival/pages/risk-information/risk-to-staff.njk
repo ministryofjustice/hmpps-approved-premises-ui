@@ -13,9 +13,11 @@
                 isPageHeading: true
             }
         }) %}
-            {{ govukInsetText({
-                text: "This will be added to the risk information page"
-            }) }}
+            {% if journey === 'pre-arrival' %}
+                {{ govukInsetText({
+                    text: "This will be added to the risk information page"
+                }) }}
+            {% endif %}
             <h2 class="govuk-heading-m">Summarise risks to AP staff</h2>
             <p>Give a brief summary of the main risks this person may pose to staff while they are at the Approved
                 Premises.</p>

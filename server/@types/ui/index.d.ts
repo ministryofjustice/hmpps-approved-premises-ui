@@ -69,6 +69,7 @@ export type TaskNames =
   | 'check-your-answers'
   | 'request-a-placement'
   | 'make-a-decision'
+  | 'risk-information'
 
 export type YesOrNoWithDetail<T extends string> = {
   [K in T]: YesOrNo
@@ -90,7 +91,7 @@ export type UiTask = {
 
 export type TaskStatus = 'not_started' | 'in_progress' | 'complete' | 'cannot_start'
 
-export type TaskWithStatus = UiTask & { status: TaskStatus; link?: string; tagHtml?: string }
+export type TaskWithStatus = UiTask & { status: TaskStatus; link?: string; linkHtml?: string; tagHtml?: string }
 
 export type FormSection = {
   title: string
@@ -369,7 +370,7 @@ export type OasysImportArrays = Array<OASysQuestion> | Array<OASysSupportingInfo
 
 export type OasysSummariesSection = { [index: string]: OasysImportArrays }
 
-export type JourneyType = 'applications' | 'assessments' | 'placement-applications' | 'pre-arrival'
+export type JourneyType = 'applications' | 'assessments' | 'placement-applications' | 'pre-arrival' | 'profile'
 
 export type ServiceSection = {
   id: string

@@ -14,7 +14,7 @@
             {{ govukSummaryList({
                 rows: card.rows
             }) }}
-            {% if card.card.actions %}
+            {% if card.card.actions and not card.card.title %}
                 {% for action in card.card.actions.items %}
                     <p class="govuk-!-margin-top-6 govuk-!-margin-bottom-2">
                         <a href="{{ action.href }}">{{ action.text }}</a>

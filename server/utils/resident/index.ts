@@ -2,6 +2,7 @@ import { ApprovedPremisesApplication, Cas1SpaceBooking, CaseDetail } from '@appr
 import {
   HtmlItem,
   RequestWithSession,
+  SummaryListActions,
   SummaryListItem,
   SummaryListWithCard,
   TabItem,
@@ -29,6 +30,7 @@ export type ResidentProfileSubTab =
   | 'allApPlacements'
   | 'application'
   | 'riskDetails'
+  | 'placementRisks'
   | 'offence'
   | 'licence'
   | 'orders'
@@ -152,16 +154,19 @@ export const card = ({
   table,
   html,
   topHtml,
+  actions,
 }: {
   title?: string
   rows?: Array<SummaryListItem>
   table?: Table
   html?: string
   topHtml?: string
+  actions?: SummaryListActions
 }) =>
   objectClean<SummaryListWithCard>({
     card: title && {
       title: { text: title },
+      actions,
     },
     table,
     rows,

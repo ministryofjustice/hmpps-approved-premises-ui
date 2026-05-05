@@ -57,10 +57,11 @@ export const controllers = (services: Services) => {
     services.personService,
     services.applicationService,
     services.assessmentService,
+    services.formDataService,
   )
 
-  const pageController = new PageController(services.placementService, services.formService)
-  const residenceTaskController = new ResidenceTaskController(services.placementService, services.formService)
+  const pageController = new PageController(services.placementService, services.formDataService)
+  const residenceTaskController = new ResidenceTaskController(services.placementService, services.formDataService)
 
   return {
     premisesController,

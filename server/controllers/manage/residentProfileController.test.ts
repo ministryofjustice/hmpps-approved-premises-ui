@@ -6,7 +6,7 @@ import { faker } from '@faker-js/faker'
 import { placementSideNavigation } from '../../utils/resident/placement'
 import { personalSideNavigation } from '../../utils/resident/personalUtils'
 import { sentenceSideNavigation } from '../../utils/resident/sentenceUtils'
-import { ApplicationService, AssessmentService, PersonService, PlacementService } from '../../services'
+import { ApplicationService, AssessmentService, FormDataService, PersonService, PlacementService } from '../../services'
 
 import paths from '../../paths/manage'
 
@@ -37,12 +37,14 @@ describe('residentProfileController', () => {
   const personService = createMock<PersonService>({})
   const applicationService = createMock<ApplicationService>({})
   const assessmentService = createMock<AssessmentService>({})
+  const formDataService = createMock<FormDataService>({})
 
   const residentProfileController = new ResidentProfileController(
     placementService,
     personService,
     applicationService,
     assessmentService,
+    formDataService,
   )
 
   const setUp = ({ person = personFactory.build({ crn }) }: { person?: Person } = {}) => {
@@ -53,6 +55,7 @@ describe('residentProfileController', () => {
     placementService.getPlacement.mockResolvedValue(placement)
     personService.getCaseDetail.mockResolvedValue(caseDetail)
     personService.licenceDetails.mockResolvedValue(licence)
+    formDataService.getFormData.mockResolvedValue({})
 
     const response: DeepMocked<Response> = createMock<Response>({ locals: { user } })
     const request: DeepMocked<Request> = createMock<Request>({
@@ -188,8 +191,7 @@ describe('residentProfileController', () => {
         'cas1_test_experimental_permission',
       ]
 
-      const handler = residentProfileController.show()
-      await handler(request, response, next)
+      await residentProfileController.show()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'manage/resident/residentProfile',

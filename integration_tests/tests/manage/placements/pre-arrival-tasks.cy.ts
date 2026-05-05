@@ -28,6 +28,7 @@ context('Pre-Arrival', () => {
 
     WHEN('I click on option to complete the pre-arrival tasklist')
     page.clickAction('Pre-arrival tasks')
+
     const taskList = new PreArrivalTasklist()
 
     cy.contains('You have completed 0 of 2 sections.')

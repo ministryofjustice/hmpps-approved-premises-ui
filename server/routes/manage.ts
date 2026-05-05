@@ -194,6 +194,10 @@ export default function routes(controllers: Controllers, router: Router): Router
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
   })
+  get(paths.resident.tabRisk.placementRisks.pattern, residentProfileController.show('risk', 'placementRisks'), {
+    auditEvent: 'MANAGE_RESIDENT',
+    allowedPermissions: ['cas1_ap_resident_profile'],
+  })
   get(paths.resident.tabSentence.offence.pattern, residentProfileController.show('sentence', 'offence'), {
     auditEvent: 'MANAGE_RESIDENT',
     allowedPermissions: ['cas1_ap_resident_profile'],
@@ -420,6 +424,7 @@ export default function routes(controllers: Controllers, router: Router): Router
   })
 
   buildTasklistRoutes(router, pages, 'pre-arrival', pageController, ['cas1_test_experimental_permission'])
+  buildTasklistRoutes(router, pages, 'profile', pageController, ['cas1_test_experimental_permission'])
 
   return router
 }

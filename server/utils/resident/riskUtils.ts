@@ -33,6 +33,11 @@ export const riskSideNavigation = (subTab: ResidentProfileSubTab, crn: string, p
       href: paths.resident.tabRisk.riskDetails({ crn, placementId }),
       active: subTab === 'riskDetails',
     },
+    {
+      text: 'Placement risks',
+      href: paths.resident.tabRisk.placementRisks({ crn, placementId }),
+      active: subTab === 'placementRisks',
+    },
   ]
 }
 
