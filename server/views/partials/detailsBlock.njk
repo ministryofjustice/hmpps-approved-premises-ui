@@ -1,6 +1,10 @@
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 
-    {{ govukDetails({
-        summaryText: summaryText,
-        html: text | linebreaksToParagraphs
-    }) }}
+{% if previewText %}
+  <p class="govuk-body govuk-body__text-block">{{ previewText }}</p>
+{% endif %}
+
+{{ govukDetails({
+    summaryText: summaryText,
+    html: text | linebreaksToParagraphs
+}) }}

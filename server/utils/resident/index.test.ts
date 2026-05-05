@@ -8,6 +8,7 @@ import {
   card,
   combineResultAndContent,
   detailsBody,
+  detailsBodyWithPreview,
   getPlacementLink,
   getResidentHeader,
   loadingErrorMessage,
@@ -97,6 +98,35 @@ describe('residentsUtils', () => {
         expect(detailsBody('summary', 'content')).toEqual('render "partials/detailsBlock.njk"')
 
         expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', { summaryText: 'summary', text: 'content' })
+      })
+
+      it('should pass preview text when provided', () => {
+        detailsBody('summary', 'content', 'preview')
+
+        expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', {
+          summaryText: 'summary',
+          text: 'content',
+          previewText: 'preview',
+        })
+      })
+
+      it('should split the first line into preview text', () => {
+        detailsBodyWithPreview('summary', 'first line\nsecond line\nthird line')
+
+        expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', {
+          summaryText: 'summary',
+          text: 'second line\nthird line',
+          previewText: 'first line',
+        })
+      })
+
+      it('should not pass preview text for single line content', () => {
+        detailsBodyWithPreview('summary', 'single line')
+
+        expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', {
+          summaryText: 'summary',
+          text: 'single line',
+        })
       })
     })
 

@@ -1,18 +1,28 @@
-import { Cas1OASysGroup, Cas1OASysGroupName, OASysQuestion, Registration, RoshRisks } from '@approved-premises/api'
+import {
+  Cas1OASysGroup,
+  Cas1OASysGroupName,
+  Cas1SpaceBooking,
+  OASysQuestion,
+  PersonRisks,
+  Registration,
+  RoshRisks,
+} from '@approved-premises/api'
 import { SummaryListWithCard, TableRow } from '@approved-premises/ui'
 import nunjucks from 'nunjucks'
 import {
   card,
   detailsBody,
+  detailsBodyWithPreview,
   insetText,
   loadingErrorMessage,
   ndeliusDeeplink,
   ResidentProfileSubTab,
   subHeadingH2,
+  subHeadingH3,
 } from './index'
 import paths from '../../paths/manage'
 import { DateFormats } from '../dateUtils'
-import { ApiOutcome } from '../utils'
+import { ApiOutcome, linkTo } from '../utils'
 import { htmlCell, textCell } from '../tableUtils'
 import config from '../../config'
 
@@ -151,10 +161,22 @@ export const registrationRows = (registrations: Array<Registration>): Array<Tabl
       : ''
     const flagHtml = `<strong>${registration.description}</strong><br>${riskFlagGroup}<br>${dateAdded}`
 
-    const notesHtml =
-      registration.riskNotesDetail.length > 0
-        ? `<p class="govuk-body govuk-body__text-block">${registration.riskNotesDetail[0].note}</p>` // As agreed we need only the first (latest) note to render
-        : '<p class="govuk-body">No information in NDelius</p>'
+    const isOasysImportedFlag = [
+      'risk to staff',
+      'risk to children',
+      'risk to known adult',
+      'risk to prisoner',
+      'risk to public',
+    ].includes(registration.description.toLowerCase())
+
+    let notesHtml = '<p class="govuk-body">No information in NDelius</p>'
+
+    if (registration.riskNotesDetail.length > 0) {
+      const [{ note }] = registration.riskNotesDetail // As agreed, we need only the first (latest) note to render
+      notesHtml = isOasysImportedFlag
+        ? detailsBodyWithPreview(`View full OASys notes for ${registration.description.toLowerCase()}`, note)
+        : `<p class="govuk-body govuk-body__text-block">${note}</p>`
+    }
 
     return [{ html: flagHtml, classes: 'govuk-!-width-one-third' }, htmlCell(notesHtml)]
   })
@@ -208,6 +230,9 @@ export const ndeliusRiskCards = (
 }
 
 export const riskOasysCards = ({
+  crn,
+  placement,
+  personRisks,
   roshSummary,
   roshResult,
   riskManagementPlan,
@@ -215,6 +240,9 @@ export const riskOasysCards = ({
   offenceDetails,
   offenceResult,
 }: {
+  crn: string
+  placement: Cas1SpaceBooking
+  personRisks: PersonRisks
   roshSummary: Cas1OASysGroup
   roshResult: ApiOutcome
   riskManagementPlan: Cas1OASysGroup
@@ -222,7 +250,25 @@ export const riskOasysCards = ({
   offenceDetails: Cas1OASysGroup
   offenceResult: ApiOutcome
 }): Array<SummaryListWithCard> => {
+  const headingCard = card({ html: subHeadingH2('OASys risk assessments') })
+  if (roshSummary?.assessmentMetadata?.hasApplicableAssessment === false)
+    return [
+      headingCard,
+      card({
+        html: `${subHeadingH3('No recent OASys risk assessment available')}<p>No OASys assessment has been completed in the last 6 months. Check OASys for all assessments.</p>`,
+      }),
+    ]
   return [
+    headingCard,
+    roshWidget(personRisks.roshRisks?.status?.toLowerCase() === 'retrieved' && personRisks.roshRisks.value),
+    card({ html: subHeadingH3('Risk assessment') }),
+    card({
+      html: insetText(
+        roshSummary?.assessmentMetadata?.hasApplicableAssessment
+          ? `Assessment completed on ${DateFormats.isoDateToUIDate(roshSummary?.assessmentMetadata?.dateCompleted)}`
+          : `<p class="govuk-!-margin-bottom-2">No OASys risk assessment for person added</p><p>Go to the ${linkTo(paths.resident.tabPlacement.application({ placementId: placement.id, crn }), { text: 'application' })} to view risk information for this person.</p>`,
+      ),
+    }),
     ...summaryCards(['R10.1', 'R10.2'], roshSummary, roshResult),
     ...summaryCards(['RM30', 'RM31', 'RM32', 'RM34'], riskManagementPlan, rmResult),
     ...summaryCards(['2.4.1', '2.4.2'], offenceDetails, offenceResult),

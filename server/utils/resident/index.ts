@@ -177,8 +177,15 @@ export const subHeadingH3 = (text: string): string => {
   return `<h3 class="govuk-heading-s">${text}</h3>`
 }
 
-export const detailsBody = (summaryText: string, text: string) => {
-  return nunjucks.render(`partials/detailsBlock.njk`, { summaryText, text })
+export const detailsBody = (summaryText: string, text: string, previewText?: string) => {
+  return nunjucks.render(`partials/detailsBlock.njk`, objectClean({ summaryText, text, previewText }))
+}
+
+export const detailsBodyWithPreview = (summaryText: string, text: string) => {
+  const [previewText, ...remainingLines] = text.split(/\r?\n/)
+  const remainingText = remainingLines.join('\n').trim()
+
+  return detailsBody(summaryText, remainingText || text, remainingText ? previewText.trim() : undefined)
 }
 
 export const insetText = (html: string): string => {

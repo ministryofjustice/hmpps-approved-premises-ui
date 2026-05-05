@@ -85,6 +85,40 @@ describe('risk utils', () => {
       expect((rows[0][0] as { html: string }).html).toContain(registrations[0].riskFlagGroupDescription)
     })
 
+    it('should render OASys imported notes in a details block', () => {
+      const registration = registrationFactory.build({
+        description: 'Risk to Staff',
+      })
+
+      const rows = registrationRows([registration])
+
+      expect((rows[0][1] as { html: string }).html).toContain('Nunjucks template partials/detailsBlock.njk')
+      expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', {
+        summaryText: `View full OASys notes for ${registration.description.toLowerCase()}`,
+        text: registration.riskNotesDetail[0].note,
+      })
+    })
+
+    it('should show the first line of OASys imported notes before the details block', () => {
+      const registration = registrationFactory.build({
+        description: 'Risk to Prisoner',
+        riskNotesDetail: [
+          {
+            note: 'The OASys assessment of Review on 21/04/2026 identified the Risk to Prisoner to have remained Medium.\nFurther context on the risk note.',
+          },
+        ],
+      })
+
+      registrationRows([registration])
+
+      expect(render).toHaveBeenCalledWith('partials/detailsBlock.njk', {
+        summaryText: 'View full OASys notes for risk to prisoner',
+        text: 'Further context on the risk note.',
+        previewText:
+          'The OASys assessment of Review on 21/04/2026 identified the Risk to Prisoner to have remained Medium.',
+      })
+    })
+
     it('Should render an error card when caseDetail request fails', () => {
       const result = ndeliusRiskCards(crn, undefined, 'failure')
 

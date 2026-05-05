@@ -10,7 +10,6 @@ import { getTierOrBlank } from '../applications/helpers'
 import * as utils from './index'
 import * as contactUtils from './contactUtils'
 import { htmlCell } from '../tableUtils'
-import config from '../../config'
 
 describe('personalUtils', () => {
   const placement = cas1SpaceBookingFactory.build()
@@ -110,7 +109,7 @@ describe('personalUtils', () => {
     })
 
     const caseDetail = caseDetailFactory.build()
-    const nDeliusLink = 'PersonalContacts:View more contact information in NDelius (opens in a new tab).'
+    const nDeliusLink = 'PersonalContacts:View contact information in NDelius (opens in a new tab).'
 
     it('should render the personal contacts cards', () => {
       const result = contactsCardList(caseDetail, 'success', 'crn')
@@ -135,18 +134,6 @@ describe('personalUtils', () => {
           `inset("<p>We cannot load contacts information right now because NDelius is not available.<br>Try again later</p>${nDeliusLink}")`,
         ),
       ])
-    })
-
-    it('should render original message and link in production', () => {
-      config.isProduction = true
-
-      expect(contactsCardList(caseDetail, 'success', 'crn')).toEqual([
-        {
-          html: `inset("<p>We cannot display personal contacts from NDelius yet. For example, probation practitioner contact details.</p>PersonalContacts:View personal contacts in NDelius (opens in a new tab).")`,
-        },
-      ])
-
-      config.isProduction = false
     })
   })
 })

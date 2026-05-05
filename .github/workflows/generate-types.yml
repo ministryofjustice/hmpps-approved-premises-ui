@@ -20,6 +20,9 @@ jobs:
 
       - name: Check out code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # V6.0.2
+        with:
+          # Repository is specified to run the workflow from the API repository
+          repository: 'ministryofjustice/hmpps-approved-premises-ui'
 
       - name: Setup Node.js environment
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # V6.3.0
@@ -31,8 +34,11 @@ jobs:
         uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
         id: generate-token
         with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            hmpps-approved-premises-ui
 
       - name: Generate Types
         run: ./script/generate-types  ${{ vars.CAS1_API_SPEC_URL }}

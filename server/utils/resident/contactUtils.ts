@@ -38,19 +38,20 @@ export const groupContacts = (contacts: Array<PersonalContact>): Record<ContactG
   )
 
 export const contactCard = (title: string, contacts: Array<PersonalContact>): SummaryListWithCard => {
+  const notEnteredText = 'Not entered in NDelius'
   const contactRow = (contact: PersonalContact): TableRow => {
     const {
       name: { forename, surname },
       mobileNumber,
       telephoneNumber,
     } = contact
+    const telephoneHtml = `${telephoneNumber || ''}${mobileNumber ? `${telephoneNumber ? '<br/>' : ''}${mobileNumber}${telephoneNumber ? ' (mobile)' : ''}` : ''}`
+    const nameText = `${forename || ''} ${surname || ''}`.trim()
     return [
       { text: `${contact.relationshipType?.description}`, attributes: { 'data-code': contact.relationshipType?.code } },
-      textCell(contact.relationship),
-      textCell(`${forename} ${surname}`),
-      htmlCell(
-        `${telephoneNumber || ''}${mobileNumber ? `${telephoneNumber ? '<br/>' : ''}mob: ${mobileNumber}` : ''}`,
-      ),
+      textCell(contact.relationship || notEnteredText),
+      textCell(nameText || notEnteredText),
+      htmlCell(telephoneHtml || notEnteredText),
     ]
   }
   return card({
