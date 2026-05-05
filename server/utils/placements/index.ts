@@ -112,6 +112,19 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
     })
   }
 
+  if (['upcoming', 'arrived'].includes(status) && hasPermission(user, ['cas1_space_booking_record_arrival'])) {
+    // TODO: pre-arrival task permission
+    actionList.push({
+      href: paths.resident.taskList({
+        crn: placement.person.crn,
+        placementId: placement.id,
+        journey: 'pre-arrival',
+      }),
+      classes: 'govuk-button--secondary',
+      text: 'Pre-arrival tasks',
+    })
+  }
+
   return actionList.length ? [{ items: actionList }] : null
 }
 

@@ -25,7 +25,7 @@ const PageConstructor = jest.fn()
 
 jest.mock('../../../utils/validation')
 jest.mock('../../../form-pages/utils')
-jest.mock('../../../utils/assessments/utils', () => {
+jest.mock('../../../form-pages/utils/getPage', () => {
   return {
     getPage: () => PageConstructor,
     assessmentKeyDetails: jest.fn(),
@@ -71,6 +71,7 @@ describe('pagesController', () => {
     it('renders a page', async () => {
       const requestHandler = pagesController.show(someTask, 'some-page')
       await requestHandler(request, response, next)
+
       expect(spyRemapArsonAssessmentData).toHaveBeenCalledWith(assessment.data)
       expect(assessmentService.initializePage).toHaveBeenCalledWith(PageConstructor, assessment, request, {}, {})
       expect(response.render).toHaveBeenCalledWith('assessments/pages/some/view', {

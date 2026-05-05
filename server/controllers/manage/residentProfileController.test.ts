@@ -209,6 +209,11 @@ describe('residentProfileController', () => {
               href: `/manage/premises/${placement.premises.id}/placements/${placement.id}/changes/new`,
               classes: 'govuk-button--secondary',
             },
+            {
+              text: 'Pre-arrival tasks',
+              href: `/manage/resident/${placement.person.crn}/placement/${placement.id}/tasks/pre-arrival`,
+              classes: 'govuk-button--secondary',
+            },
           ],
         }),
       )

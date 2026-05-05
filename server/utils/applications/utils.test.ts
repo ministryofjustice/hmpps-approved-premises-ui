@@ -15,11 +15,9 @@ import {
   applicationFactory,
   cas1ApplicationSummaryFactory,
   applicationTimelineFactory,
-  assessmentFactory,
   cas1TimelineEventFactory,
   personFactory,
   personalTimelineFactory,
-  placementApplicationFactory,
   restrictedPersonFactory,
   tierEnvelopeFactory,
 } from '../../testutils/factories'
@@ -44,7 +42,6 @@ import {
   firstPageOfApplicationJourney,
   getApplicationSummary,
   getApplicationType,
-  getSections,
   isInapplicable,
   isWomensApplication,
   lengthOfStayForUI,
@@ -53,7 +50,6 @@ import {
   mapTimelineUrlsForUi,
   tierQualificationPage,
 } from './utils'
-import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { RestrictedPersonError } from '../errors'
 import { sortHeader } from '../sortHeader'
 import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
@@ -506,38 +502,6 @@ describe('utils', () => {
           ],
         ])
       })
-    })
-  })
-
-  describe('getSections', () => {
-    it('returns Apply sections when given an application', () => {
-      ;(journeyTypeFromArtifact as jest.MockedFunction<typeof journeyTypeFromArtifact>).mockReturnValue('applications')
-
-      const application = applicationFactory.build()
-      const sections = getSections(application)
-
-      expect(sections).toEqual(Apply.sections.slice(0, -1))
-    })
-
-    it('returns Assess sections when given an assessment', () => {
-      ;(journeyTypeFromArtifact as jest.MockedFunction<typeof journeyTypeFromArtifact>).mockReturnValue('assessments')
-
-      const assessment = assessmentFactory.build()
-      const sections = getSections(assessment)
-
-      expect(sections).toEqual(Assess.sections)
-    })
-
-    it('returns PlacementApplication sections when given a placement application', () => {
-      ;(journeyTypeFromArtifact as jest.MockedFunction<typeof journeyTypeFromArtifact>).mockReturnValue(
-        'placement-applications',
-      )
-
-      const placementApplication = placementApplicationFactory.build()
-
-      const sections = getSections(placementApplication)
-
-      expect(sections).toEqual(PlacementRequest.sections)
     })
   })
 

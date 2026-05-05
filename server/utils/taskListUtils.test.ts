@@ -34,7 +34,7 @@ describe('taskListUtils', () => {
       it('should return a link to a task the task can be started', () => {
         task.status = 'in_progress'
 
-        expect(taskLink(task, application)).toEqual(
+        expect(taskLink(task, application, application.data)).toEqual(
           `<a href="${applyPaths.applications.pages.show({
             id: 'some-uuid',
             task: 'second-task',

@@ -16,11 +16,11 @@ import {
 import { UnknownPageError } from '../../../utils/errors'
 import paths from '../../../paths/apply'
 import { viewPath } from '../../../form-pages/utils'
-import { getPage } from '../../../utils/applications/getPage'
+import { getPage } from '../../../form-pages/utils/getPage'
 
 jest.mock('../../../utils/validation')
 jest.mock('../../../form-pages/utils')
-jest.mock('../../../utils/applications/getPage')
+jest.mock('../../../form-pages/utils/getPage')
 jest.mock('../../../form-pages/apply', () => {
   return {
     pages: { 'my-task': {} },

@@ -26,6 +26,7 @@ import spaceSearch from './integration_tests/mockApis/spaces'
 import spaceBookings from './integration_tests/mockApis/spaceBooking'
 import referenceData from './integration_tests/mockApis/referenceData'
 import changeRequests from './integration_tests/mockApis/changeRequests'
+import formData from './integration_tests/mockApis/formData'
 
 export default defineConfig({
   chromeWebSecurity: false,
@@ -61,6 +62,7 @@ export default defineConfig({
         ...reports,
         ...spaceBookings,
         ...referenceData,
+        ...formData,
         stubJourney,
         verifyApiPost,
         verifyApiPatch,

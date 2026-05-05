@@ -35,6 +35,7 @@ import paths from '../../paths/manage'
 import { characteristicsBulletList } from '../characteristicsUtils'
 import * as applicationHelpers from '../applications/helpers'
 import { detailedStatus, statusTextMap } from './status'
+import { fullPersonFactory } from '../../testutils/factories/person'
 
 describe('placementUtils', () => {
   describe('placementStatusHtml', () => {
@@ -86,6 +87,7 @@ describe('placementUtils', () => {
       ],
     })
     const premises = cas1PremisesFactory.build()
+    const person = fullPersonFactory.build()
     const placementId = 'sample_placement_id'
 
     const wrapOptions = (optionList: unknown) => [{ items: optionList }]
@@ -115,13 +117,18 @@ describe('placementUtils', () => {
       href: paths.premises.placements.changes.new({ premisesId: premises.id, placementId }),
       text: 'Change placement',
     }
+    const preArrivalOption = {
+      classes: 'govuk-button--secondary',
+      href: paths.resident.taskList({ placementId, crn: person.crn, journey: 'pre-arrival' }),
+      text: 'Pre-arrival tasks',
+    }
 
     describe('when the placement is in its initial state', () => {
-      const placementInitial = cas1SpaceBookingFactory.upcoming().build({ id: placementId, premises })
+      const placementInitial = cas1SpaceBookingFactory.upcoming().build({ id: placementId, premises, person })
 
       it('should allow arrivals, non-arrivals, assigning a keyworker and changing the placement', () => {
         expect(actions(placementInitial, userDetails)).toEqual(
-          wrapOptions([keyworkerOption, arrivalOption, nonArrivalOption, changePlacementOption]),
+          wrapOptions([keyworkerOption, arrivalOption, nonArrivalOption, changePlacementOption, preArrivalOption]),
         )
       })
 
@@ -141,7 +148,7 @@ describe('placementUtils', () => {
               permissions: ['cas1_space_booking_record_arrival'],
             }),
           ),
-        ).toEqual(wrapOptions([arrivalOption]))
+        ).toEqual(wrapOptions([arrivalOption, preArrivalOption]))
         expect(
           actions(
             placementInitial,
@@ -169,7 +176,7 @@ describe('placementUtils', () => {
     })
 
     describe('when the placement has an arrival recorded, but no departure', () => {
-      const placementAfterArrival = cas1SpaceBookingFactory.current().build({ id: placementId, premises })
+      const placementAfterArrival = cas1SpaceBookingFactory.current().build({ id: placementId, premises, person })
 
       it('should allow nothing if the user does not have the relevant permissions', () => {
         expect(actions(placementAfterArrival, userDetailsFactory.build({ permissions: [] }))).toEqual(null)
@@ -177,7 +184,7 @@ describe('placementUtils', () => {
 
       it('should allow recording a departure, assigning a keyworker, requesting a transfer and changing the placement', () => {
         expect(actions(placementAfterArrival, userDetails)).toEqual([
-          { items: [keyworkerOption, departureOption, changePlacementOption] },
+          { items: [keyworkerOption, departureOption, changePlacementOption, preArrivalOption] },
         ])
       })
 

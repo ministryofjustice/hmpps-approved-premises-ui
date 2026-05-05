@@ -1,6 +1,7 @@
 import { FormArtifact, PageResponse } from '../../@types/ui'
 import { forPagesInTask } from './forPagesInTask'
-import { ApplicationOrAssessmentResponse, getSections } from './utils'
+import { ApplicationOrAssessmentResponse } from './utils'
+import { getSections } from '../../form-pages/utils/getPage'
 
 export const getResponses = (formArtifact: FormArtifact): ApplicationOrAssessmentResponse => {
   const responses: Record<string, Array<PageResponse>> = {}

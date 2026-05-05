@@ -1,10 +1,6 @@
 import type {
   ApplicationType,
-  FormArtifact,
-  FormPages,
-  FormSections,
   GroupedApplications,
-  JourneyType,
   PageResponse,
   RequestWithSession,
   SelectOption,
@@ -30,17 +26,11 @@ import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basi
 import paths from '../../paths/apply'
 
 import placementApplicationPaths from '../../paths/placementApplications'
-import Apply from '../../form-pages/apply'
 import { displayName, isApplicableTier, isFullPerson, PersonAny } from '../personUtils'
 import { DateFormats } from '../dateUtils'
-import Assess from '../../form-pages/assess'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import ExceptionDetails from '../../form-pages/apply/reasons-for-placement/basic-information/exceptionDetails'
-import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
-import PlacementRequest from '../../form-pages/placement-application'
-import isAssessment from '../assessments/isAssessment'
-import getAssessmentSections from '../assessments/getSections'
 import { RestrictedPersonError } from '../errors'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
@@ -179,35 +169,6 @@ export const actionsLink = (application: Cas1ApplicationSummary) => {
 }
 
 export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>
-
-export const getSections = (formArtifact: FormArtifact): FormSections => {
-  const journeyType = journeyTypeFromArtifact(formArtifact)
-
-  switch (journeyType) {
-    case 'applications':
-      return Apply.sections.slice(0, -1)
-    case 'assessments':
-      if (!isAssessment(formArtifact)) throw new Error('Form artifact is not an assessment')
-      return getAssessmentSections(formArtifact)
-    case 'placement-applications':
-      return PlacementRequest.sections
-    default:
-      throw new Error(`Unknown journey type: ${journeyType}`)
-  }
-}
-
-export const journeyPages = (journeyType: JourneyType): FormPages => {
-  switch (journeyType) {
-    case 'applications':
-      return Apply.pages
-    case 'assessments':
-      return Assess.pages
-    case 'placement-applications':
-      return PlacementRequest.pages
-    default:
-      throw new Error(`Unknown journey type: ${journeyType}`)
-  }
-}
 
 const isInapplicable = (application: Application): boolean => {
   const isExceptionalCase = retrieveOptionalQuestionResponseFromFormArtifact(
