@@ -80,7 +80,6 @@ context('Placement Applications', () => {
       const releaseType: ReleaseTypeOption = faker.helpers.arrayElement([
         'licence',
         'hdc',
-        'pss',
         'reReleasedPostRecall',
         'reReleasedFollowingFixedTermRecall',
       ])
