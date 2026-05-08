@@ -1,0 +1,37 @@
+name: 'Split tests'
+description: 'Generates a spec list based on test files, matrix index and total'
+
+inputs:
+  tests_directory:
+    description: 'The directory containing the tests'
+    required: true
+  tests_spec_glob:
+    description: 'The pattern to match test files. Uses the `find -name` syntax.'
+    required: true
+  matrix_index:
+    description: 'The current matrix index'
+    required: true
+  matrix_total:
+    description: 'The total number of matrix indices'
+    required: true
+  separator:
+    description: 'The separator to use between test specs'
+    required: false
+    default: ','
+
+outputs:
+  test-suite:
+    description: 'The comma-separated list of tests to run'
+    value: ${{ steps.split-tests.outputs.test-suite }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: split-tests
+      shell: sh
+      run: |
+        export TESTS="$(find ${{ inputs.tests_directory }} -type f -name "${{ inputs.tests_spec_glob }}" | \
+        awk -v splitTotal=${{ inputs.matrix_total }} -v splitIndex=${{ inputs.matrix_index }} 'NR % splitTotal == splitIndex % splitTotal' | \
+        tr '\n' '${{ inputs.separator }}' | sed 's/${{ inputs.separator }}$//')"
+        
+        echo "test-suite=$TESTS" >> "$GITHUB_OUTPUT"
