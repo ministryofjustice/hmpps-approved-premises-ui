@@ -44,6 +44,25 @@ describe('risk utils', () => {
         )
       })
     })
+
+    it('should render a fallback message when requested and there is no applicable OASys assessment', () => {
+      const group = cas1OasysGroupFactory.offenceDetails().build({
+        answers: [],
+        assessmentMetadata: {
+          dateCompleted: undefined,
+          dateStarted: undefined,
+          hasApplicableAssessment: false,
+        },
+      })
+
+      const result = summaryCards(['2.1', '2.12'], group, 'success', { showUnavailableFromOasys: true })
+
+      expect(result).toHaveLength(2)
+      expect(result[0].card).toEqual({ title: { text: 'Offence analysis' } })
+      expect(result[0].html).toEqual('<p class="govuk-hint">Not available from OASys</p>')
+      expect(result[1].card).toEqual({ title: { text: 'Pattern of offending' } })
+      expect(result[1].html).toEqual('<p class="govuk-hint">Not available from OASys</p>')
+    })
   })
 
   describe('NDelius risk card', () => {

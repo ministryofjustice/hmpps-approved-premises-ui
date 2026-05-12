@@ -11,7 +11,7 @@ import { SummaryListWithCard } from '@approved-premises/ui'
 import { card, cellMetaData, combineResultAndContent, insetText, loadingErrorMessage, ResidentProfileSubTab } from '.'
 import paths from '../../paths/manage'
 import { dateCellNoWrap, textCell } from '../tableUtils'
-import { oasysQuestionDetailsByNumber, summaryCards, tableRow } from './riskUtils'
+import { summaryCards, tableRow } from './riskUtils'
 import { ApiOutcome, linkTo } from '../utils'
 import { bulletList, summaryListItem } from '../formUtils'
 
@@ -124,19 +124,9 @@ export const healthDetailsCards = ({
 
   let cards = [card({ html: insetText(linkText) })]
 
-  const assessentIso = supportingInformation?.assessmentMetadata?.dateCompleted
-  if (assessentIso && assessentIso > '2025-04-09T18:00') {
-    const definition = oasysQuestionDetailsByNumber['13.1']
-    cards = cards.concat(
-      card({
-        title: definition.label,
-        html: `<p>We cannot load general health - any physical or mental health conditions right now.</p>
-<p>Go to OASys to check if any general health details have been entered.</p>`,
-      }),
-    )
-  } else {
-    cards = cards.concat(summaryCards(['13.1'], supportingInformation, supportingInformationOutcome))
-  }
+  cards = cards.concat(
+    summaryCards(['13.1'], supportingInformation, supportingInformationOutcome, { showUnavailableFromOasys: true }),
+  )
 
   cards = cards.concat([
     dietCard(dietAndAllergy, dietAndAllergyOutcome),
@@ -161,8 +151,10 @@ export const mentalHealthCards = ({
   supportingInformationOutcome: ApiOutcome
 }) => [
   card({ html: insetText('Imported from Digital Prison Service and OASys') }),
-  ...summaryCards(['FA62', 'FA63', 'FA64', 'R8.1.1', 'R8.2.1', 'R8.3.1'], riskToSelf, riskToSelfOutcome),
-  ...summaryCards(['10.9'], supportingInformation, supportingInformationOutcome),
+  ...summaryCards(['FA62', 'FA63', 'FA64', 'R8.1.1', 'R8.2.1', 'R8.3.1'], riskToSelf, riskToSelfOutcome, {
+    showUnavailableFromOasys: true,
+  }),
+  ...summaryCards(['10.9'], supportingInformation, supportingInformationOutcome, { showUnavailableFromOasys: true }),
   card({
     title: 'ACCT alerts',
     topHtml: tableRow('Imported from Digital Prison Service'),

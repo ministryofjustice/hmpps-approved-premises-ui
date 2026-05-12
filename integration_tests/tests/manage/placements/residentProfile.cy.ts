@@ -310,7 +310,7 @@ context('ResidentProfile', () => {
       WHEN('I select the health tab')
       page.clickTab('Health')
       THEN('"No information" messages should be shown')
-      cy.contains('No OASys supporting information information found in OASys')
+      cy.contains('Not available from OASys')
       cy.contains('No diet and allergy information found in Digital Prison Service (DPS)')
       cy.contains('No smoking status information found in Digital Prison Service (DPS)')
 
@@ -325,7 +325,7 @@ context('ResidentProfile', () => {
       THEN('The Sentence tab should be selected')
       page.shouldHaveActiveTab('Sentence')
       cy.contains('No offence information found in NDelius')
-      cy.contains('No OASys offence details information found in OASys')
+      cy.contains('Not available from OASys')
       cy.contains('No sentence information found in NDelius')
 
       WHEN('I select the prison side-tab')
