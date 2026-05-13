@@ -5,7 +5,5 @@ import { ApiOutcome } from '../utils'
 
 export const drugAndAlcoholCards = (supportingInformation: Cas1OASysGroup, supportingInformationResult: ApiOutcome) => [
   card({ html: insetText('Imported from OASys') }),
-  ...summaryCards(['8.9', '9.9'], supportingInformation, supportingInformationResult, {
-    showUnavailableFromOasys: true,
-  }),
+  ...summaryCards(['8.9', '9.9'], supportingInformation, supportingInformationResult),
 ]
