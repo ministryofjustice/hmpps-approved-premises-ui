@@ -56,10 +56,6 @@ export const oasysMetadataRow = (qNumber: string, blockName: string, block: Cas1
 
 type OasysGroupDefinition = Array<{ label: string; questionNumber: string }>
 
-type SummaryCardsOptions = {
-  showUnavailableFromOasys?: boolean
-}
-
 const oasysUnavailableMessage = '<p class="govuk-hint">Not available from OASys</p>'
 
 export const oasysGroupMapping: Record<Cas1OASysGroupName, string> = {
@@ -134,7 +130,6 @@ export const summaryCards = (
   questionNumbers: Array<string>,
   block: Cas1OASysGroup,
   result?: ApiOutcome,
-  options: SummaryCardsOptions = {},
 ): Array<SummaryListWithCard> => {
   return questionNumbers
     .map(qNumber => {
@@ -142,19 +137,13 @@ export const summaryCards = (
         ? block.answers.find(({ questionNumber }) => questionNumber === qNumber)
         : undefined
       const definition = oasysQuestionDetailsByNumber[qNumber]
-      const isUnavailableFromOasys =
-        options.showUnavailableFromOasys &&
-        (result === 'notFound' || block?.assessmentMetadata?.hasApplicableAssessment === false)
-      const error =
-        !isUnavailableFromOasys &&
-        result &&
-        loadingErrorMessage(result, oasysGroupMapping[definition.groupName], 'oasys')
+      let error: string | false | undefined =
+        block?.assessmentMetadata?.hasApplicableAssessment === false && oasysUnavailableMessage
+      error = error || (result && loadingErrorMessage(result, oasysGroupMapping[definition.groupName], 'oasys'))
       const html =
         error ||
-        (isUnavailableFromOasys
-          ? oasysUnavailableMessage
-          : question &&
-            `${oasysMetadataRow(qNumber, oasysGroupMapping[definition.groupName], block)}${question.answer ? detailsBody('View information', question.answer) : '<p class="govuk-hint">Not entered in OASys</p>'}`)
+        (question &&
+          `${oasysMetadataRow(qNumber, oasysGroupMapping[definition.groupName], block)}${question.answer ? detailsBody('View information', question.answer) : '<p class="govuk-hint">Not entered in OASys</p>'}`)
 
       return html && card({ title: definition.label, html })
     })

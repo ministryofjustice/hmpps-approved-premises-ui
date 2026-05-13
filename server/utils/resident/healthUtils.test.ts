@@ -76,9 +76,10 @@ describe('healthUtils', () => {
 
       expect(result).toHaveLength(4)
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
-      expect(result[1].html).toMatchStringIgnoringWhitespace(
-        `${oasysMetadataRow('13.1', 'OASys supporting information', defaultArguments.supportingInformation)}Nunjucks template partials/detailsBlock.njk`,
-      )
+      expect(result[1]).toEqual({
+        card: { title: { text: 'General Health - Any physical or mental health conditions' } },
+        html: '<p>We cannot load general health - any physical or mental health conditions right now.</p>\n<p>Go to OASys to check if any general health details have been entered.</p>',
+      })
       expect(result[2]).toEqual(expect.objectContaining({ card: { title: { text: 'Diet and food allergies' } } }))
       expect(result[3]).toEqual({
         card: { title: { text: 'Smoker or vaper' } },
@@ -201,7 +202,7 @@ describe('healthUtils', () => {
         })
       })
 
-      it('should render "Not available from OASys" when there is no OASys data', () => {
+      it('should render a loading error when there is no OASys data', () => {
         const result = healthDetailsCards({
           ...defaultArguments,
           supportingInformation: undefined,
@@ -211,7 +212,7 @@ describe('healthUtils', () => {
         expect(result).toHaveLength(4)
         expect(result[1]).toEqual({
           card: { title: { text: 'General Health - Any physical or mental health conditions' } },
-          html: '<p class="govuk-hint">Not available from OASys</p>',
+          html: loadingErrorMessage('notFound', 'OASys supporting information', 'oasys'),
         })
       })
     })

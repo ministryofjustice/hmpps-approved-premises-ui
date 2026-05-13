@@ -123,7 +123,7 @@ export const sentenceCards = (caseDetail: CaseDetail, caseDetailOutcome: ApiOutc
 }
 
 export const oasysOffenceCards = (oasysAnswers: Cas1OASysGroup, callResult: ApiOutcome): Array<SummaryListWithCard> => [
-  ...summaryCards(['2.1', '2.12'], oasysAnswers, callResult, { showUnavailableFromOasys: true }),
+  ...summaryCards(['2.1', '2.12'], oasysAnswers, callResult),
 ]
 
 export const offencesTabCards = ({

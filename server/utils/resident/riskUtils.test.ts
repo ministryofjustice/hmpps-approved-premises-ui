@@ -55,7 +55,7 @@ describe('risk utils', () => {
         },
       })
 
-      const result = summaryCards(['2.1', '2.12'], group, 'success', { showUnavailableFromOasys: true })
+      const result = summaryCards(['2.1', '2.12'], group, 'success')
 
       expect(result).toHaveLength(2)
       expect(result[0].card).toEqual({ title: { text: 'Offence analysis' } })
