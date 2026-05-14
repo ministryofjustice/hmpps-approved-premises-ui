@@ -76,10 +76,10 @@ describe('healthUtils', () => {
 
       expect(result).toHaveLength(4)
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
-      expect(result[1].html).toMatchStringIgnoringWhitespace(
-        `<p>We cannot load general health - any physical or mental health conditions right now.</p>
-         <p>Go to OASys to check if any general health details have been entered.</p>`,
-      )
+      expect(result[1]).toEqual({
+        card: { title: { text: 'General Health - Any physical or mental health conditions' } },
+        html: '<p>We cannot load general health - any physical or mental health conditions right now.</p>\n<p>Go to OASys to check if any general health details have been entered.</p>',
+      })
       expect(result[2]).toEqual(expect.objectContaining({ card: { title: { text: 'Diet and food allergies' } } }))
       expect(result[3]).toEqual({
         card: { title: { text: 'Smoker or vaper' } },
@@ -185,6 +185,34 @@ describe('healthUtils', () => {
         expect(result[3]).toEqual({
           card: { title: { text: 'Smoker or vaper' } },
           topHtml: 'No smoking status information found in Digital Prison Service (DPS)',
+        })
+      })
+    })
+
+    describe('when OASys data is not available', () => {
+      it('should render "Not available from OASys" when the latest assessment is over 6 months old', () => {
+        const supportingInformation = cas1OasysGroupFactory.supportingInformation().noAssessment().build()
+
+        const result = healthDetailsCards({ ...defaultArguments, supportingInformation })
+
+        expect(result).toHaveLength(4)
+        expect(result[1]).toEqual({
+          card: { title: { text: 'General Health - Any physical or mental health conditions' } },
+          html: '<p class="govuk-hint">Not available from OASys</p>',
+        })
+      })
+
+      it('should render a loading error when there is no OASys data', () => {
+        const result = healthDetailsCards({
+          ...defaultArguments,
+          supportingInformation: undefined,
+          supportingInformationOutcome: 'notFound',
+        })
+
+        expect(result).toHaveLength(4)
+        expect(result[1]).toEqual({
+          card: { title: { text: 'General Health - Any physical or mental health conditions' } },
+          html: loadingErrorMessage('notFound', 'OASys supporting information', 'oasys'),
         })
       })
     })
