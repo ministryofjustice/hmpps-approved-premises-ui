@@ -127,13 +127,13 @@ export const healthDetailsCards = ({
   const assessentIso = supportingInformation?.assessmentMetadata?.dateCompleted
   if (assessentIso && assessentIso > '2025-04-09T18:00') {
     const definition = oasysQuestionDetailsByNumber['13.1']
-    cards = cards.concat(
+    cards = cards.concat([
       card({
         title: definition.label,
         html: `<p>We cannot load general health - any physical or mental health conditions right now.</p>
 <p>Go to OASys to check if any general health details have been entered.</p>`,
       }),
-    )
+    ])
   } else {
     cards = cards.concat(summaryCards(['13.1'], supportingInformation, supportingInformationOutcome))
   }
