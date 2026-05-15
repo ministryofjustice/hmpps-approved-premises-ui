@@ -27,6 +27,7 @@ import applicationDocument from '../../fixtures/applicationDocument.json'
 import paths from '../../../server/paths/assess'
 import { signIn } from '../signIn'
 import { getResponses } from '../../../server/utils/applications/getResponses'
+import { updateApplicationReleaseDate } from '../../helpers'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -39,9 +40,11 @@ context('Assess', () => {
     cy.fixture('applicationData.json').then(applicationData => {
       cy.fixture('assessmentData.json').then(assessmentData => {
         const clarificationNote = clarificationNoteFactory.build({ response: undefined })
+        const adjustedApplicationData = updateApplicationReleaseDate(applicationData)
+
         const assessment = assessmentFactory.build({
           decision: undefined,
-          application: { data: applicationData, person: personFactory.build(), document: applicationDocument },
+          application: { data: adjustedApplicationData, person: personFactory.build(), document: applicationDocument },
           clarificationNotes: [clarificationNote],
         })
 
