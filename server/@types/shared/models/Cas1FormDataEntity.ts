@@ -2,4 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ApplicationOrigin = 'courtBail' | 'prisonBail' | 'homeDetentionCurfew' | 'other';
+export type Cas1FormDataEntity = {
+    id: string;
+    value: string;
+};
+
