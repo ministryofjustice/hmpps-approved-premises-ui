@@ -65,6 +65,7 @@ const userRoles: Record<RoleInUse, string> = {
   ap_area_manager: 'AP area manager',
   user_manager: 'User manager',
   janitor: 'Janitor',
+  experimental: 'Experimental',
 }
 
 export const userRolesSelectOptions = (

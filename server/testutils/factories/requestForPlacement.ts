@@ -14,14 +14,12 @@ export default Factory.define<RequestForPlacement>(() => ({
   placementDates: placementDatesFactory.buildList(faker.number.int({ min: 1, max: 3 })),
   dates: placementDatesFactory.build(),
   status: faker.helpers.arrayElement([
+    'request_unsubmitted',
     'request_rejected',
     'request_submitted',
     'awaiting_match',
     'request_withdrawn',
     'placement_booked',
-    'person_arrived',
-    'person_not_arrived',
-    'person_departed',
   ]),
   type: faker.helpers.arrayElement(['automatic', 'manual']),
   requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
@@ -74,4 +72,5 @@ export default Factory.define<RequestForPlacement>(() => ({
   ]),
   canBeDirectlyWithdrawn: faker.datatype.boolean(),
   placements: cas1SpaceBookingShortSummaryFactory.buildList(faker.number.int({ min: 0, max: 3 })),
+  statusSetDate: faker.date.past().toISOString(),
 }))
