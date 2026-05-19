@@ -31,6 +31,7 @@ export type Cas1SpaceBookingShortSummary = {
     nonArrival?: Cas1SpaceBookingNonArrival;
     premises: NamedId;
     status?: Cas1SpaceBookingStatus;
+    statusSetDate?: string;
     transferReason?: TransferReason;
 };
 
