@@ -39,6 +39,7 @@ export type RequestForPlacement = {
     sentenceType?: SentenceTypeOption;
     situation?: SituationOption;
     status: RequestForPlacementStatus;
+    statusSetDate: string;
     submittedAt?: string;
     type: RequestForPlacementType;
     withdrawalReason?: WithdrawPlacementRequestReason;

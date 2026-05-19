@@ -21,6 +21,7 @@ export const roles: ReadonlyArray<RoleInUse> = [
   'ap_area_manager',
   'user_manager',
   'janitor',
+  'experimental',
 ]
 
 export const unusedRoles = [
@@ -104,6 +105,10 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   management_report_viewer: {
     label: 'Management reports',
     hint: 'View & download out of service beds PII & non PII, daily metrics, and overdue placement reports',
+  },
+  experimental: {
+    label: 'Experimental',
+    hint: 'Enables experimental features',
   },
 }
 
