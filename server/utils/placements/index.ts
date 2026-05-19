@@ -112,7 +112,7 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
     })
   }
 
-  if (['upcoming', 'arrived'].includes(status) && hasPermission(user, ['cas1_space_booking_record_arrival'])) {
+  if (['upcoming', 'arrived'].includes(status) && hasPermission(user, ['cas1_test_experimental_permission'])) {
     // TODO: pre-arrival task permission
     actionList.push({
       href: paths.resident.taskList({

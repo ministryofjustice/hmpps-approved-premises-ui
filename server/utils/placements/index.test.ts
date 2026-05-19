@@ -84,6 +84,7 @@ describe('placementUtils', () => {
         'cas1_space_booking_record_keyworker',
         'cas1_space_booking_record_non_arrival',
         'cas1_space_booking_create',
+        'cas1_test_experimental_permission',
       ],
     })
     const premises = cas1PremisesFactory.build()
@@ -148,7 +149,7 @@ describe('placementUtils', () => {
               permissions: ['cas1_space_booking_record_arrival'],
             }),
           ),
-        ).toEqual(wrapOptions([arrivalOption, preArrivalOption]))
+        ).toEqual(wrapOptions([arrivalOption]))
         expect(
           actions(
             placementInitial,

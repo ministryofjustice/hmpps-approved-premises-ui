@@ -185,6 +185,7 @@ describe('residentProfileController', () => {
         'cas1_space_booking_record_arrival',
         'cas1_space_booking_record_non_arrival',
         'cas1_space_booking_create',
+        'cas1_test_experimental_permission',
       ]
 
       const handler = residentProfileController.show()

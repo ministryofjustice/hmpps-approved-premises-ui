@@ -412,14 +412,14 @@ export default function routes(controllers: Controllers, router: Router): Router
 
   get(paths.resident.show.path('tasks/pre-arrival').pattern, residenceTaskController.show('pre-arrival'), {
     auditEvent: 'TASKLIST_PRE_ARRIVAL',
-    allowedPermissions: ['cas1_ap_resident_profile'],
+    allowedPermissions: ['cas1_test_experimental_permission'],
   })
   post(paths.resident.show.path('tasks/pre-arrival').pattern, residenceTaskController.submit('pre-arrival'), {
     auditEvent: 'SUBMIT_PRE_ARRIVAL',
-    allowedPermissions: ['cas1_ap_resident_profile'],
+    allowedPermissions: ['cas1_test_experimental_permission'],
   })
 
-  buildTasklistRoutes(router, pages, 'pre-arrival', pageController, ['cas1_ap_resident_profile'])
+  buildTasklistRoutes(router, pages, 'pre-arrival', pageController, ['cas1_test_experimental_permission'])
 
   return router
 }

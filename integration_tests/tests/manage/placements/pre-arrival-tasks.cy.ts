@@ -21,14 +21,14 @@ context('Pre-Arrival', () => {
   })
   it('completes the pre-arrival task list', () => {
     GIVEN('I am signed in as an AP staff member')
-    signIn('future_manager')
+    signIn(['future_manager', 'experimental'])
 
     AND('I am on the placement page')
     const page = ResidentProfilePage.visit(placement, caseDetail)
 
     WHEN('I click on option to complete the pre-arrival tasklist')
     page.clickAction('Pre-arrival tasks')
-    const taskList = new PreArrivalTasklist(placement)
+    const taskList = new PreArrivalTasklist()
 
     cy.contains('You have completed 0 of 2 sections.')
 
@@ -49,5 +49,18 @@ context('Pre-Arrival', () => {
 
     THEN('The task is no longer complete')
     cy.contains('You have completed 1 of 2 sections.')
+  })
+
+  it('cannot access the pre-arrival task list without experimetal permission', () => {
+    GIVEN('I am signed in as an AP staff member without experimental permission')
+    signIn(['future_manager'])
+
+    AND('I am on the placement page')
+    const page = ResidentProfilePage.visit(placement, caseDetail)
+
+    WHEN('There is no option to complete the pre-arrival tasklist')
+    page.actionShouldNotExist('Pre-arrival tasks')
+
+    PreArrivalTasklist.visitUnauthorised(placement)
   })
 })

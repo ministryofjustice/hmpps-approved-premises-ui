@@ -2,10 +2,21 @@ import { Cas1SpaceBooking } from '@approved-premises/api'
 import TaskList from '../../../taskListPage'
 
 import { AND, GIVEN, THEN, WHEN } from '../../../../helpers'
+import paths from '../../../../../server/paths/manage'
 
 export default class PreArrivalTasklist extends TaskList {
-  constructor(private placement: Cas1SpaceBooking) {
-    super('Complete Pre-arrival tasks')
+  constructor(title = 'Complete Pre-arrival tasks') {
+    super(title)
+  }
+
+  static visitUnauthorised(placement: Cas1SpaceBooking): PreArrivalTasklist {
+    cy.visit(
+      paths.resident.taskList({ placementId: placement.id, crn: placement.person.crn, journey: 'pre-arrival' }),
+      {
+        failOnStatusCode: false,
+      },
+    )
+    return new PreArrivalTasklist(`Authorisation Error`)
   }
 
   shouldCompleteContactResident(id: string) {
