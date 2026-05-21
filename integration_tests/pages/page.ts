@@ -233,7 +233,9 @@ export default class Page {
 
   completeTextArea(name: string, value: string): void {
     cy.get(`textarea[name="${name}"]`).clear()
-    cy.get(`textarea[name="${name}"]`).type(value)
+    if (value.length) {
+      cy.get(`textarea[name="${name}"]`).type(value)
+    }
   }
 
   completeAutocompleteInput(id: string, optionLabel: string): void {

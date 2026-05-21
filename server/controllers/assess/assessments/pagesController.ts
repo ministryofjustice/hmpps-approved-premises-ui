@@ -2,7 +2,8 @@ import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import createError from 'http-errors'
 
 import { Cas1Assessment, Cas1Assessment as Assessment, Cas1UpdatedClarificationNote } from '@approved-premises/api'
-import { assessmentKeyDetails, getPage } from '../../../utils/assessments/utils'
+import { assessmentKeyDetails } from '../../../utils/assessments/utils'
+import { getPage } from '../../../form-pages/utils/getPage'
 import { AssessmentService } from '../../../services'
 
 import {
@@ -34,8 +35,7 @@ export default class PagesController {
           ...rawAssessment,
           data: remapArsonAssessmentData(rawAssessment.data),
         }
-
-        const Page: TasklistPageInterface = getPage(taskName, pageName)
+        const Page: TasklistPageInterface = getPage(taskName, pageName, 'assessments')
         const page: TasklistPage = await this.assessmentService.initializePage(
           Page,
           assessment,
@@ -114,7 +114,7 @@ export default class PagesController {
     res: Response,
   ) {
     try {
-      const Page: TasklistPageInterface = getPage(taskName, pageName)
+      const Page: TasklistPageInterface = getPage(taskName, pageName, 'assessments')
       const page: TasklistPage = await this.assessmentService.initializePage(Page, assessment, req, this.dataServices)
       await this.assessmentService.save(page, req)
 

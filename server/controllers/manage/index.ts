@@ -17,6 +17,8 @@ import DeparturesController from './premises/placements/departuresController'
 import ChangesController from './premises/placements/changesController'
 import LocalRestrictionsController from './premises/localRestrictionsController'
 import ResidentProfileController from './residentProfileController'
+import PageController from './premises/placements/tasks/pageController'
+import ResidenceTaskController from './premises/placements/tasks/residenceTaskController'
 
 export const controllers = (services: Services) => {
   const premisesController = new PremisesController(services.premisesService, services.cruManagementAreaService)
@@ -57,6 +59,9 @@ export const controllers = (services: Services) => {
     services.assessmentService,
   )
 
+  const pageController = new PageController(services.placementService, services.formService)
+  const residenceTaskController = new ResidenceTaskController(services.placementService, services.formService)
+
   return {
     premisesController,
     arrivalsController,
@@ -73,6 +78,8 @@ export const controllers = (services: Services) => {
     apOccupancyViewController,
     changesController,
     residentProfileController,
+    residenceTaskController,
+    pageController,
   }
 }
 

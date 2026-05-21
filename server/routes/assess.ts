@@ -9,7 +9,7 @@ import Assess from '../form-pages/assess'
 import paths from '../paths/assess'
 
 import actions from './utils'
-import { getPage } from '../utils/assessments/utils'
+import { getPage } from '../form-pages/utils/getPage'
 import PagesController from '../controllers/placementApplications/pagesController'
 
 export default function routes(controllers: Controllers, router: Router): Router {
@@ -40,7 +40,7 @@ export default function routes(controllers: Controllers, router: Router): Router
     Object.keys(pages[taskKey]).forEach((pageKey: string) => {
       const { pattern } = paths.assessments.show.path(`tasks/${taskKey}/pages/${pageKey}`)
 
-      const page = getPage(taskKey, pageKey)
+      const page = getPage(taskKey, pageKey, 'assessments')
       const updateAction: keyof PagesController = Reflect.getMetadata('page:controllerActions:update', page)
 
       get(pattern, assessmentPagesController.show(taskKey, pageKey), {

@@ -38,6 +38,7 @@ const cas1AssessmentsNotes = cas1AssessmentsSingle.path('notes')
 const cas1ReferenceData = cas1Namespace.path('reference-data')
 
 const cas1Profile = cas1Namespace.path('/profile')
+const cas1FormData = cas1Namespace.path('form-data')
 
 // Non-namespaced
 const people = path('/people')
@@ -195,4 +196,5 @@ export default {
   reports: cas1Reports.path(':reportName'),
   cas1ReferenceData: cas1ReferenceData.path(':type'),
   referenceData: referenceData.path(':type'),
+  formData: cas1FormData.path(':id'),
 }

@@ -138,6 +138,8 @@ const paths = {
     tabDrugAndAlcohol: {
       drugAndAlcohol: residentPath.path('drugAndAlcohol'),
     },
+    taskList: residentPath.path('tasks/:journey'),
+    tasks: residentPath.path('tasks/:journey/:task/page/:page'),
   },
   bookings: {
     // In effect deprecated: legacy bookings have been migrated to space bookings. A redirect is now in place.

@@ -12,7 +12,7 @@ import {
 import paths from '../../../paths/apply'
 import { UnknownPageError } from '../../../utils/errors'
 import { viewPath } from '../../../form-pages/utils'
-import { getPage } from '../../../utils/applications/getPage'
+import { getPage } from '../../../form-pages/utils/getPage'
 
 export default class PagesController {
   constructor(

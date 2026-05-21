@@ -185,6 +185,7 @@ describe('residentProfileController', () => {
         'cas1_space_booking_record_arrival',
         'cas1_space_booking_record_non_arrival',
         'cas1_space_booking_create',
+        'cas1_test_experimental_permission',
       ]
 
       const handler = residentProfileController.show()
@@ -207,6 +208,11 @@ describe('residentProfileController', () => {
             {
               text: 'Change placement',
               href: `/manage/premises/${placement.premises.id}/placements/${placement.id}/changes/new`,
+              classes: 'govuk-button--secondary',
+            },
+            {
+              text: 'Pre-arrival tasks',
+              href: `/manage/resident/${placement.person.crn}/placement/${placement.id}/tasks/pre-arrival`,
               classes: 'govuk-button--secondary',
             },
           ],

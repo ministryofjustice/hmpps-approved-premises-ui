@@ -18,6 +18,7 @@ import ReportService from './reportService'
 import ApAreaService from './apAreaService'
 import CruManagementAreaService from './cruManagementAreaService'
 import AppealService from './appealService'
+import FormDataService from './formDataService'
 
 export const services = () => {
   const {
@@ -36,6 +37,7 @@ export const services = () => {
     placementApplicationClientBuilder,
     bedClientBuilder,
     reportClientBuilder,
+    formClientBuilder,
   } = dataAccess()
 
   const appealService = new AppealService(appealClientBuilder)
@@ -57,6 +59,7 @@ export const services = () => {
   const reportService = new ReportService(reportClientBuilder)
   const apAreaService = new ApAreaService(referenceDataClientBuilder)
   const cruManagementAreaService = new CruManagementAreaService(cas1ReferenceDataClientBuilder)
+  const formService = new FormDataService(formClientBuilder)
 
   return {
     appealService,
@@ -75,6 +78,7 @@ export const services = () => {
     reportService,
     apAreaService,
     cruManagementAreaService,
+    formService,
   }
 }
 
@@ -97,4 +101,5 @@ export {
   ReportService,
   ApAreaService,
   CruManagementAreaService,
+  FormDataService,
 }

@@ -1,6 +1,8 @@
+import { TaskNames } from '@approved-premises/ui'
 import { applicationFactory } from '../testutils/factories'
 import TasklistService from './tasklistService'
 import getTaskStatus from '../form-pages/utils/getTaskStatus'
+import { TaskListStatusTag } from '../utils/taskListUtils'
 
 jest.mock('../form-pages/apply', () => {
   return {
@@ -145,17 +147,47 @@ describe('tasklistService', () => {
           sectionNumber: 1,
           title: 'First Section',
           tasks: [
-            { id: 'first-task', title: 'First task', status: 'cannot_start' },
-            { id: 'second-task', title: 'Second task', status: 'cannot_start' },
+            {
+              id: 'first-task',
+              title: 'First task',
+              status: 'cannot_start',
+              link: 'First task',
+              tagHtml: new TaskListStatusTag('cannot_start', 'first-task' as TaskNames).html(),
+            },
+            {
+              id: 'second-task',
+              title: 'Second task',
+              status: 'cannot_start',
+              link: 'Second task',
+              tagHtml: new TaskListStatusTag('cannot_start', 'second-task' as TaskNames).html(),
+            },
           ],
         },
         {
           sectionNumber: 2,
           title: 'Second Section',
           tasks: [
-            { id: 'third-task', title: 'Third task', status: 'cannot_start' },
-            { id: 'fourth-task', title: 'Fourth task', status: 'cannot_start' },
-            { id: 'fifth-task', title: 'Fifth task', status: 'cannot_start' },
+            {
+              id: 'third-task',
+              title: 'Third task',
+              status: 'cannot_start',
+              link: 'Third task',
+              tagHtml: new TaskListStatusTag('cannot_start', 'third-task' as TaskNames).html(),
+            },
+            {
+              id: 'fourth-task',
+              title: 'Fourth task',
+              status: 'cannot_start',
+              link: 'Fourth task',
+              tagHtml: new TaskListStatusTag('cannot_start', 'fourth-task' as TaskNames).html(),
+            },
+            {
+              id: 'fifth-task',
+              title: 'Fifth task',
+              status: 'cannot_start',
+              link: 'Fifth task',
+              tagHtml: new TaskListStatusTag('cannot_start', 'fifth-task' as TaskNames).html(),
+            },
           ],
         },
       ])

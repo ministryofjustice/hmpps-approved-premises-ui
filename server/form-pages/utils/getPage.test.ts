@@ -1,14 +1,18 @@
-import { FormSection, TaskNames, UiTask } from '@approved-premises/ui'
-import Apply from '../../form-pages/apply'
-import Assess from '../../form-pages/assess'
-import PlacementRequest from '../../form-pages/placement-application'
-import { UnknownPageError } from '../errors'
-import { getPage } from './getPage'
+import { FormSection, TaskNames, UiTask } from 'server/@types/ui'
+import Apply from '../apply'
+import Assess from '../assess'
+import PlacementRequest from '../placement-application'
+import { UnknownPageError } from '../../utils/errors'
+import { getPage, getSections } from './getPage'
+import { journeyTypeFromArtifact } from '../../utils/journeyTypeFromArtifact'
+import { applicationFactory, assessmentFactory, placementApplicationFactory } from '../../testutils/factories'
 
 const FirstApplyPage = jest.fn()
 const SecondApplyPage = jest.fn()
 const AssessPage = jest.fn()
 const PlacementRequestPage = jest.fn()
+
+jest.mock('../../utils/journeyTypeFromArtifact')
 
 const applySection1Task1: UiTask = {
   id: 'first-apply-section-task-1' as TaskNames,
@@ -124,5 +128,37 @@ describe('getPage', () => {
     expect(() => {
       getPage('basic-information', 'bar', 'applications')
     }).toThrow(UnknownPageError)
+  })
+})
+
+describe('getSections', () => {
+  it('returns Apply sections when given an application', () => {
+    ;(journeyTypeFromArtifact as jest.MockedFunction<typeof journeyTypeFromArtifact>).mockReturnValue('applications')
+
+    const application = applicationFactory.build()
+    const sections = getSections(application)
+
+    expect(sections).toEqual(Apply.sections.slice(0, -1))
+  })
+
+  it('returns Assess sections when given an assessment', () => {
+    ;(journeyTypeFromArtifact as jest.MockedFunction<typeof journeyTypeFromArtifact>).mockReturnValue('assessments')
+
+    const assessment = assessmentFactory.build()
+    const sections = getSections(assessment)
+
+    expect(sections).toEqual(Assess.sections)
+  })
+
+  it('returns PlacementApplication sections when given a placement application', () => {
+    ;(journeyTypeFromArtifact as jest.MockedFunction<typeof journeyTypeFromArtifact>).mockReturnValue(
+      'placement-applications',
+    )
+
+    const placementApplication = placementApplicationFactory.build()
+
+    const sections = getSections(placementApplication)
+
+    expect(sections).toEqual(PlacementRequest.sections)
   })
 })

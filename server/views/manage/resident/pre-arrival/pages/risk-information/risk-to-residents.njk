@@ -1,0 +1,33 @@
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+    <div class="govuk-form-group">
+
+        {% call govukFieldset({
+            legend: {
+                text: page.question,
+                classes: "govuk-fieldset__legend--l",
+                isPageHeading: true
+            }
+        }) %}
+            {{ govukInsetText({
+                text: "This will be added to the risk information page"
+            }) }}
+            <h2 class="govuk-heading-m">Summarise risks to other AP residents</h2>
+            <p>Give a brief summary of the main risks this person may pose to other residents while they are at the
+                Approved Premises.</p>
+
+            <p>Use relevant information from their profile, including adjudications, prison notes, and any insights from
+                the PP or assessor.</p>
+
+            {{ formPageTextarea({
+                fieldName: "riskToResidentsSummary",
+                type: "textarea"
+            }, fetchContext()) }}
+        {% endcall %}
+    </div>
+
+{% endblock %}

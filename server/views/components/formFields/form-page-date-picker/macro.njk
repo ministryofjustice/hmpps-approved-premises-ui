@@ -1,0 +1,37 @@
+{% from "moj/components/date-picker/macro.njk" import mojDatePicker %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+
+{% macro formPageDatePicker(params, context) %}
+
+    {#- fieldset is false by default -#}
+    {% set hasFieldset = true if params.fieldset else false %}
+
+    {% set innerHtml %}
+    {{
+    mojDatePicker(
+        mergeObjects(
+            params,
+            { id: params.fieldName, name: params.fieldName, errorMessage: context.errors[params.fieldName], value: context[params.fieldName] }
+        )
+    )
+    }}
+    {% endset -%}
+
+    {% if hasFieldset %}
+        {# We override the fieldset's role to 'group' because otherwise JAWS does not
+    announce the description for a fieldset comprised of text inputs, but
+    adding the role to the fieldset always makes the output overly verbose for
+    radio buttons or checkboxes. -#}
+        {{ govukFieldset({
+            describedBy: describedBy,
+            classes: params.fieldset.classes,
+            role: 'group',
+            attributes: params.fieldset.attributes,
+            legend: params.fieldset.legend,
+            html: innerHtml | trim
+        }) | trim | indent(2) }}
+    {% else %}
+        {{ innerHtml | safe | trim }}
+    {% endif %}
+
+{% endmacro %}

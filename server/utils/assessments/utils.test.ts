@@ -8,7 +8,6 @@ import {
   confirmationPageMessage,
   confirmationPageResult,
   formattedArrivalDate,
-  getPage,
   getReviewNavigationItems,
   groupAssessmements,
   assessmentKeyDetails,
@@ -16,7 +15,7 @@ import {
 } from './utils'
 
 import Assess from '../../form-pages/assess'
-import { UnknownPageError } from '../errors'
+
 import {
   acctAlertFactory,
   adjudicationFactory,
@@ -111,19 +110,6 @@ describe('utils', () => {
         requestedFurtherInformation: pendingAssessments,
         awaiting: activeAssessments,
       })
-    })
-  })
-
-  describe('getPage', () => {
-    it('should return a page if it exists', () => {
-      expect(getPage(reviewApplication, 'first')).toEqual(FirstPage)
-      expect(getPage(reviewApplication, 'second')).toEqual(SecondPage)
-    })
-
-    it('should raise an error if the page is not found', async () => {
-      expect(() => {
-        getPage(reviewApplication, 'bar')
-      }).toThrow(UnknownPageError)
     })
   })
 

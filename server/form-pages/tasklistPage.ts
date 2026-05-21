@@ -1,12 +1,12 @@
 /* istanbul ignore file */
 
-import type { DataServices, FormArtifact, PageResponse, TaskListErrors } from '@approved-premises/ui'
+import type { DataServices, PageResponse, TaskData, TaskListErrors } from '@approved-premises/ui'
 
 export interface TasklistPageInterface {
-  new (body: Record<string, unknown>, document?: FormArtifact): TasklistPage
+  new (body: Record<string, unknown>, data?: TaskData): TasklistPage
   initialize?(
     body: Record<string, unknown>,
-    document: FormArtifact,
+    data: TaskData,
     token: string,
     dataServices: Partial<DataServices>,
   ): Promise<TasklistPage>

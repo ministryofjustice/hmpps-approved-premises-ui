@@ -5,9 +5,10 @@ import type { Router } from 'express'
 import type { Controllers } from '../controllers'
 import paths from '../paths/manage'
 
-import actions from './utils'
+import actions, { buildTasklistRoutes } from './utils'
 import { TECHNICAL_BANNER_VERSION } from '../controllers/staticController'
 import { hasPermission } from '../utils/users'
+import PreArrivalTask from '../form-pages/residence/pre-arrival'
 
 export default function routes(controllers: Controllers, router: Router): Router {
   router.use('/manage', (req, res, next) => {
@@ -37,6 +38,8 @@ export default function routes(controllers: Controllers, router: Router): Router
     changesController,
     occupancyViewController,
     residentProfileController,
+    pageController,
+    residenceTaskController,
   } = controllers
 
   // Deprecated paths, redirect to v2 equivalent
@@ -403,6 +406,20 @@ export default function routes(controllers: Controllers, router: Router): Router
     auditEvent: 'LIST_ALL_OUT_OF_SERVICE_BEDS',
     allowedPermissions: ['cas1_view_out_of_service_beds'],
   })
+
+  // Pre-arrivals tasklist
+  const { pages } = PreArrivalTask
+
+  get(paths.resident.show.path('tasks/pre-arrival').pattern, residenceTaskController.show('pre-arrival'), {
+    auditEvent: 'TASKLIST_PRE_ARRIVAL',
+    allowedPermissions: ['cas1_test_experimental_permission'],
+  })
+  post(paths.resident.show.path('tasks/pre-arrival').pattern, residenceTaskController.submit('pre-arrival'), {
+    auditEvent: 'SUBMIT_PRE_ARRIVAL',
+    allowedPermissions: ['cas1_test_experimental_permission'],
+  })
+
+  buildTasklistRoutes(router, pages, 'pre-arrival', pageController, ['cas1_test_experimental_permission'])
 
   return router
 }

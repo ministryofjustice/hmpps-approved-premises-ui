@@ -1,0 +1,67 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+    {% set noContactReason %}
+        {{ formPageTextarea({
+            fieldName: "reasonForNoContact",
+            type: "textarea",
+            label: {
+                text: page.questions['reasonForNoContact'].question
+            },
+            hint: {text:page.questions['reasonForNoContact'].hint}
+        }, fetchContext()) }}
+    {% endset -%}
+
+        {% call govukFieldset({
+            legend: {
+                text: "Pre-arrival contact",
+                classes: "govuk-fieldset__legend--l",
+                isPageHeading: true
+            }
+        }) %}
+            {{govukInsetText({
+                text: "Add details of your first pre-arrival contact with the resident. If you contacted them more than once, add the details to NDelius."
+            })}}
+
+            {{
+            formPageDatePicker(
+                {
+                    fieldName: "contactDate",
+                    fieldset: {
+                    legend: {
+                        text: page.questions['contactDate'].question,
+                        classes: "govuk-fieldset__legend--m"
+                    }
+                },
+                    hint: {
+                        text: page.questions['contactDate'].hint
+                    },
+                    items: dateFieldValues('contactDate', errors)
+                },
+                fetchContext()
+            )
+            }}
+
+            {{ formPageRadios({
+                fieldName: "contactMethod",
+                fieldset: {
+                    legend: {
+                        text: "How did you contact the person?",
+                        classes: "govuk-fieldset__legend--m"
+                    }
+                },
+                items: [    { value: 'email', text: 'Email' },
+                    { text: 'Face to face', value: 'faceToFace' },
+                    { text: 'Letter', value: 'letter' },
+                    { text: 'Phone', value: 'phone' },
+                    { divider: 'or' },
+                    { text: 'I could not contact them' , value:'noContact',
+                        conditional:{
+                        html: noContactReason
+                    }
+                    }
+                ]
+            }, fetchContext()) }}
+        {% endcall %}
+
+{% endblock %}

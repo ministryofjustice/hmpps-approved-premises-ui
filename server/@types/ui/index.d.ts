@@ -90,7 +90,7 @@ export type UiTask = {
 
 export type TaskStatus = 'not_started' | 'in_progress' | 'complete' | 'cannot_start'
 
-export type TaskWithStatus = UiTask & { status: TaskStatus }
+export type TaskWithStatus = UiTask & { status: TaskStatus; link?: string; tagHtml?: string }
 
 export type FormSection = {
   title: string
@@ -369,7 +369,7 @@ export type OasysImportArrays = Array<OASysQuestion> | Array<OASysSupportingInfo
 
 export type OasysSummariesSection = { [index: string]: OasysImportArrays }
 
-export type JourneyType = 'applications' | 'assessments' | 'placement-applications'
+export type JourneyType = 'applications' | 'assessments' | 'placement-applications' | 'pre-arrival'
 
 export type ServiceSection = {
   id: string
@@ -545,6 +545,7 @@ export type MultiPageFormData = {
   transfers?: Record<Cas1SpaceBooking['id'], TransferFormData>
   appeals?: Record<Cas1SpaceBooking[id], AppealFormData>
   nationalSpaceSearch?: Record<string, NationalSpaceSearchFormData>
+  residenceTaskData?: Record<Cas1SpaceBooking['id'], TaskData>
 }
 
 export type ChangeRequestReason =
@@ -592,3 +593,8 @@ export type NewCancellation = {
   otherReason?: string
   reason: string
 }
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export type TaskData = Record<string, any>
+
+export type TasklistStatus = 'submitted' | 'rejected'
