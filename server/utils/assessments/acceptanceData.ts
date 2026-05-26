@@ -39,7 +39,6 @@ export const acceptanceData = (assessment: Assessment): Cas1AssessmentAcceptance
     requirements: placementRequestData(assessment),
     placementDates: placementDates(assessment),
     notes,
-    apType: apTypeFromAssessment(assessment),
     ...timelinessDataFromAssessment(assessment),
   }
 }
