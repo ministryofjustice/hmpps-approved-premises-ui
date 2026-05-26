@@ -108,7 +108,6 @@ export type { Cas1OverbookingRange } from './models/Cas1OverbookingRange';
 export type { Cas1PersonalTimeline } from './models/Cas1PersonalTimeline';
 export type { Cas1PlacementChangeRequestCreatedPayload } from './models/Cas1PlacementChangeRequestCreatedPayload';
 export type { Cas1PlacementChangeRequestRejectedPayload } from './models/Cas1PlacementChangeRequestRejectedPayload';
-export type { Cas1PlacementHistory } from './models/Cas1PlacementHistory';
 export type { Cas1PlacementRequestDetail } from './models/Cas1PlacementRequestDetail';
 export type { Cas1PlacementRequestSummary } from './models/Cas1PlacementRequestSummary';
 export type { Cas1PremiseCapacity } from './models/Cas1PremiseCapacity';
@@ -145,6 +144,7 @@ export type { Cas1SpaceSearchParameters } from './models/Cas1SpaceSearchParamete
 export type { Cas1SpaceSearchResult } from './models/Cas1SpaceSearchResult';
 export type { Cas1SpaceSearchResults } from './models/Cas1SpaceSearchResults';
 export type { Cas1SuitableApplication } from './models/Cas1SuitableApplication';
+export type { Cas1SuitablePremisesDto } from './models/Cas1SuitablePremisesDto';
 export type { Cas1TimelineEvent } from './models/Cas1TimelineEvent';
 export type { Cas1TimelineEventAssociatedUrl } from './models/Cas1TimelineEventAssociatedUrl';
 export type { Cas1TimelineEventContentPayload } from './models/Cas1TimelineEventContentPayload';
@@ -159,6 +159,7 @@ export type { Cas1UpdatedClarificationNote } from './models/Cas1UpdatedClarifica
 export type { Cas1UpdateSpaceBooking } from './models/Cas1UpdateSpaceBooking';
 export type { Cas1UpdateUser } from './models/Cas1UpdateUser';
 export type { Cas1WithdrawPlacementRequest } from './models/Cas1WithdrawPlacementRequest';
+export type { Cas2CohortDto } from './models/Cas2CohortDto';
 export type { Cas2TimelineEvent } from './models/Cas2TimelineEvent';
 export type { Cas2v2Application } from './models/Cas2v2Application';
 export type { Cas2v2Assessment } from './models/Cas2v2Assessment';
