@@ -4,14 +4,23 @@ import getSections from '../utils/assessments/getSections'
 import Apply from '../form-pages/apply'
 import isAssessment from '../utils/assessments/isAssessment'
 import getTaskStatus from '../form-pages/utils/getTaskStatus'
+import { taskLink, TaskListStatusTag } from '../utils/taskListUtils'
 
 export default class TasklistService {
   taskStatuses: Record<string, TaskStatus>
 
   formSections: FormSections
 
-  constructor(applicationOrAssessment: Application | Assessment) {
-    this.formSections = isAssessment(applicationOrAssessment) ? getSections(applicationOrAssessment) : Apply.sections
+  constructor(
+    private readonly applicationOrAssessment: Application | Assessment,
+    sections?: FormSections,
+    private readonly data?: unknown,
+    private readonly taskPathRoot?: string,
+  ) {
+    if (sections) this.formSections = sections
+    else
+      this.formSections = isAssessment(applicationOrAssessment) ? getSections(applicationOrAssessment) : Apply.sections
+
     this.taskStatuses = {}
 
     this.formSections.forEach(section => {
@@ -20,7 +29,11 @@ export default class TasklistService {
         const previousTaskStatus = this.taskStatuses[previousTaskKey]
 
         if (!previousTaskStatus || previousTaskStatus === 'complete') {
-          this.taskStatuses[task.id] = getTaskStatus(task, applicationOrAssessment)
+          this.taskStatuses[task.id] = getTaskStatus(
+            task,
+            applicationOrAssessment,
+            data || applicationOrAssessment?.data,
+          )
         } else {
           this.taskStatuses[task.id] = 'cannot_start'
         }
@@ -41,6 +54,7 @@ export default class TasklistService {
   get sections() {
     return this.formSections.map((s, i) => {
       const tasks = s.tasks.map(t => this.addStatusToTask(t))
+
       return { sectionNumber: i + 1, title: s.title, tasks }
     })
   }
@@ -51,6 +65,10 @@ export default class TasklistService {
   }
 
   addStatusToTask(task: UiTask): TaskWithStatus {
-    return { ...task, status: this.taskStatuses[task.id] }
+    const status = this.taskStatuses[task.id]
+    const withStatus: TaskWithStatus = { ...task, status }
+    const link: string = taskLink(withStatus, this.applicationOrAssessment, this.data, this.taskPathRoot)
+    const tagHtml = new TaskListStatusTag(status, task.id).html()
+    return { ...withStatus, link, tagHtml }
   }
 }

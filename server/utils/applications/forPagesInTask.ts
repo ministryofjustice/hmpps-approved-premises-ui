@@ -1,6 +1,6 @@
 import { FormArtifact, UiTask } from '../../@types/ui'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
-import { getPage } from './getPage'
+import { getPage } from '../../form-pages/utils/getPage'
 import TasklistPage from '../../form-pages/tasklistPage'
 
 export const forPagesInTask = (

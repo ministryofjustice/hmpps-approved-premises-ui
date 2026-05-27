@@ -8,11 +8,12 @@
       {% for task in section.tasks %}
         <li class="app-task-list__item">
           <span class="app-task-list__task-name">
-            {{ TasklistUtils.taskLink(task, applicationOrAssessment) | safe   }}
+            {{ task.link | safe   }}
           </span>
-          {{ taskListStatusTag(task.status, task.id) | safe  }}
+          {{ task.tagHtml | safe  }}
         </li>
       {% endfor %}
     </ul>
   </li>
+
 {% endfor %}

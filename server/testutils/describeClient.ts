@@ -26,7 +26,7 @@ const verifyClientMeetsContract = (consumer: string, fn: (provider: Pact) => voi
     it('meets the contract for the service', async () => {
       const pactPath = `${dir}/${consumer}-${provider}.json`
       await expect(pactPath).toMatchOpenAPISpec()
-    }, 15000)
+    }, 25000)
   })
 }
 

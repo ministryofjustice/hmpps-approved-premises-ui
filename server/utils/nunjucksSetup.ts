@@ -4,7 +4,7 @@ import * as pathModule from 'path'
 import nunjucks from 'nunjucks'
 import express from 'express'
 
-import type { ErrorMessages, TaskStatus as TaskListStatus, UiTask } from '@approved-premises/ui'
+import type { ErrorMessages } from '@approved-premises/ui'
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
@@ -47,7 +47,6 @@ import * as OffenceUtils from './offenceUtils'
 import * as AttachDocumentsUtils from './attachDocumentsUtils'
 import * as OasysImportUtils from './oasysImportUtils'
 import * as CancellationUtils from './cancellationUtils'
-import * as TasklistUtils from './taskListUtils'
 import * as FormUtils from './formUtils'
 import * as UserUtils from './users'
 import * as TaskUtils from './tasks'
@@ -202,9 +201,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('taskStatusTag', function taskStatusTag(status: TaskStatus, options?: StatusTagOptions) {
     return new TaskStatusTag(status, options).html()
   })
-  njkEnv.addGlobal('taskListStatusTag', function taskStatusTag(status: TaskListStatus, id: UiTask['id']) {
-    return new TasklistUtils.TaskListStatusTag(status, id).html()
-  })
   njkEnv.addGlobal('personStatusTag', function personStatusTag(status: PersonStatus, options?: StatusTagOptions) {
     return new PersonStatusTag(status, options).html()
   })
@@ -233,7 +229,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('AttachDocumentsUtils', AttachDocumentsUtils)
   njkEnv.addGlobal('OasysImportUtils', OasysImportUtils)
   njkEnv.addGlobal('CancellationUtils', CancellationUtils)
-  njkEnv.addGlobal('TasklistUtils', TasklistUtils)
   njkEnv.addGlobal('FormUtils', FormUtils)
   njkEnv.addGlobal('UserUtils', UserUtils)
   njkEnv.addGlobal('TaskUtils', TaskUtils)

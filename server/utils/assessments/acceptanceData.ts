@@ -1,5 +1,4 @@
 import {
-  ApType,
   Cas1Assessment as Assessment,
   Cas1AssessmentAcceptance,
   PlacementCriteria,
@@ -39,7 +38,6 @@ export const acceptanceData = (assessment: Assessment): Cas1AssessmentAcceptance
     requirements: placementRequestData(assessment),
     placementDates: placementDates(assessment),
     notes,
-    apType: apTypeFromAssessment(assessment),
     ...timelinessDataFromAssessment(assessment),
   }
 }
@@ -59,11 +57,6 @@ export const placementDates = (assessment: Assessment): PlacementDates | null =>
     expectedArrival: arrivalDate,
     duration: Number(placementDuration),
   }
-}
-
-export const apTypeFromAssessment = (assessment: Assessment): ApType => {
-  const assessApType = retrieveQuestionResponseFromFormArtifact(assessment, MatchingInformation, 'apType')
-  return apType(assessApType)
 }
 
 export const timelinessDataFromAssessment = (

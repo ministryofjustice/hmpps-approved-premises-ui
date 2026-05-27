@@ -1,11 +1,4 @@
-import {
-  GroupedAssessments,
-  KeyDetailsArgs,
-  SummaryListItem,
-  TabItem,
-  TaskNames,
-  UserDetails,
-} from '@approved-premises/ui'
+import { GroupedAssessments, KeyDetailsArgs, SummaryListItem, TabItem, UserDetails } from '@approved-premises/ui'
 
 import {
   Cas1AssessmentStatus,
@@ -13,9 +6,6 @@ import {
   Cas1AssessmentSummary as AssessmentSummary,
   PersonAcctAlert,
 } from '@approved-premises/api'
-import { TasklistPageInterface } from '../../form-pages/tasklistPage'
-import Assess from '../../form-pages/assess'
-import { UnknownPageError } from '../errors'
 import Apply from '../../form-pages/apply'
 import { createQueryString, kebabCase, linkTo } from '../utils'
 import { getApplicationType } from '../applications/utils'
@@ -90,18 +80,6 @@ const allocationSummary = (assessment: Assessment): Array<SummaryListItem> => {
   }
 
   return summary
-}
-
-const getPage = (taskName: TaskNames, pageName: string): TasklistPageInterface => {
-  const pageList = Assess.pages[taskName]
-
-  const Page = pageList[pageName]
-
-  if (!Page) {
-    throw new UnknownPageError(pageName)
-  }
-
-  return Page as TasklistPageInterface
 }
 
 const getReviewNavigationItems = () => {
@@ -223,7 +201,6 @@ export {
   confirmationPageMessage,
   confirmationPageResult,
   formattedArrivalDate,
-  getPage,
   getReviewNavigationItems,
   groupAssessmements,
   rejectionRationaleFromAssessmentResponses,

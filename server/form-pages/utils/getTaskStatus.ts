@@ -1,17 +1,22 @@
-import type { TaskStatus, UiTask } from '@approved-premises/ui'
+import type { TaskData, TaskStatus, UiTask } from '@approved-premises/ui'
 
 import { Cas1Application as Application, Cas1Assessment as Assessment } from '@approved-premises/api'
 import { TasklistPageInterface } from '../tasklistPage'
 
-const getPageData = (applicationOrAssessment: Application | Assessment, taskName: string, pageName: string) => {
-  return applicationOrAssessment.data?.[taskName]?.[pageName]
+const getPageData = (taskData: TaskData, taskName: string, pageName: string) => {
+  return taskData?.[taskName]?.[pageName]
 }
 
-const getTaskStatus = (task: UiTask, applicationOrAssessment: Application | Assessment): TaskStatus => {
+const getTaskStatus = (
+  task: UiTask,
+  applicationOrAssessment: Application | Assessment,
+  data?: TaskData,
+): TaskStatus => {
   // Find the first page that has an answer
-  let pageId = Object.keys(task.pages).find(
-    (pageName: string) => !!getPageData(applicationOrAssessment, task.id, pageName),
-  )
+
+  const taskData = applicationOrAssessment?.data || data
+
+  let pageId = Object.keys(task.pages).find((pageName: string) => !!getPageData(taskData, task.id, pageName))
 
   let status: TaskStatus
 
@@ -29,7 +34,7 @@ const getTaskStatus = (task: UiTask, applicationOrAssessment: Application | Asse
 
     visited.push(pageId)
 
-    const pageData = getPageData(applicationOrAssessment, task.id, pageId)
+    const pageData = getPageData(taskData, task.id, pageId)
 
     // If there's no page data for this page, then we know it's incomplete
     if (!pageData) {
@@ -39,8 +44,7 @@ const getTaskStatus = (task: UiTask, applicationOrAssessment: Application | Asse
 
     // Let's initialize this page
     const Page = task.pages[pageId] as TasklistPageInterface
-    const page = new Page(pageData, applicationOrAssessment)
-
+    const page = new Page(pageData, applicationOrAssessment || { data })
     // Get the errors for this page
     const errors = page.errors()
     // And the next page ID

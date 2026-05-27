@@ -1,0 +1,74 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
+{% from "partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "components/riskWidgets/macro.njk" import widgets %}
+
+{% extends "partials/layout-with-details.njk" %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-width-container">
+
+        <h1 class="govuk-heading-xl">
+            {{ pageHeading }}
+        </h1>
+
+        {{ showErrorSummary(errorSummary) }}
+
+        <h2 class="govuk-heading-s govuk-!-margin-bottom-2" data-cy-status>Task {{ data.status or taskList.status }}</h2>
+        <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ taskList.completeSectionCount }}
+            of {{ (taskList.sections | length) }} sections.</p>
+
+        <form action="{{ formAction }}" method="post">
+
+            <div class="govuk-grid-column-two-thirds">
+                <ol class="app-task-list">
+                    {% include 'partials/taskListItems.njk' %}
+
+                    {#                    {% if taskList.status === 'complete' %} #}
+                    {#                        <li> #}
+                    {#                            <h2 class="app-task-list__section"> #}
+                    {#                                <span class="app-task-list__section-number"> #}
+                    {#                                  {{ (taskList.sections | length) + 1 }}. #}
+                    {#                                </span> #}
+                    {#                                Submit your task #}
+                    {#                            </h2> #}
+
+                    {#                            {{ govukCheckboxes({ #}
+                    {#                                idPrefix: "confirmation", #}
+                    {#                                name: "confirmation", #}
+                    {#                                errorMessage: errors.confirmation, #}
+                    {#                                items: [ #}
+                    {#                                    { #}
+                    {#                                        value: "confirmed", #}
+                    {#                                        text: "I confirm the information provided is complete, accurate and up to date." #}
+                    {#                                    } #}
+                    {#                                ] #}
+                    {#                            }) }} #}
+                    {#                        </li> #}
+                    {#                    {% endif %} #}
+                </ol>
+
+                <div class="govuk-button-group">
+                    {% if taskList.status === 'complete' %}
+                        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                        {{ govukButton({
+                            text: "Confirm and complete",
+                            preventDoubleClick: true
+                        }) }}
+                    {% endif %}
+
+                    <p class="govuk-body">
+                        <a href="{{ backlink }}" class="govuk-link govuk-link--no-visited-state">Save and exit</a>
+                    </p>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    {% endblock %}

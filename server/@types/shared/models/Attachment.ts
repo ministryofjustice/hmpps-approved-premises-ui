@@ -19,7 +19,7 @@ export type Attachment = {
     /**
      * The size of the attachment file in bytes
      */
-    filesize: number;
+    filesize?: number;
     /**
      * The additional headers to use when calling the url for fetching this attachment
      */

@@ -3,7 +3,7 @@ import { HtmlItem, SummaryListItem, TextItem } from '@approved-premises/ui'
 import AdditionalDocuments from '../../form-pages/placement-application/request-a-placement/additionalDocuments'
 import paths from '../../paths/placementApplications'
 import { getDocumentSummaryListItems, summaryListItemForResponse } from '../applications/summaryListUtils'
-import { getPage } from '../applications/getPage'
+import { getPage } from '../../form-pages/utils/getPage'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
