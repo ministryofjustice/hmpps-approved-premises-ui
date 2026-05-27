@@ -524,11 +524,12 @@ describe('placementUtils', () => {
       it('should be returned for a placement in a standard AP', () => {
         const placementStandardAp = cas1SpaceBookingFactory.build({
           characteristics: ['acceptsChildSexOffenders', 'acceptsNonSexualChildOffenders', 'hasEnSuite'],
+          placementRequestApType: 'normal',
         })
 
         expect(requirementsInformation(placementStandardAp)).toEqual({
           rows: [
-            { key: { text: 'AP type' }, value: { text: 'Standard AP' } },
+            { key: { text: 'AP type' }, value: { text: 'Standard (all AP types)' } },
             {
               key: { text: 'AP requirements' },
               value: {
@@ -542,7 +543,8 @@ describe('placementUtils', () => {
 
       it('should be returned for a placement in a specialist AP', () => {
         const placementSpecialistAp = cas1SpaceBookingFactory.build({
-          characteristics: ['isESAP', 'acceptsChildSexOffenders', 'hasEnSuite', 'isWheelchairAccessible'],
+          characteristics: ['acceptsChildSexOffenders', 'hasEnSuite', 'isWheelchairAccessible'],
+          placementRequestApType: 'esap',
         })
 
         expect(requirementsInformation(placementSpecialistAp)).toEqual({
@@ -563,11 +565,12 @@ describe('placementUtils', () => {
       it('should be returned for a placement with no requirements', () => {
         const placementNoRequirements = cas1SpaceBookingFactory.build({
           characteristics: [],
+          placementRequestApType: 'normal',
         })
 
         expect(requirementsInformation(placementNoRequirements)).toEqual({
           rows: [
-            { key: { text: 'AP type' }, value: { text: 'Standard AP' } },
+            { key: { text: 'AP type' }, value: { text: 'Standard (all AP types)' } },
             { key: { text: 'AP requirements' }, value: { html: `<span class="text-grey">None</span>` } },
             { key: { text: 'Room requirements' }, value: { html: `<span class="text-grey">None</span>` } },
           ],

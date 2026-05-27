@@ -13,6 +13,7 @@ import { characteristicsBulletList } from '../characteristicsUtils'
 import { placementStatusTag } from '../placements'
 
 import * as placementUtils from './placementUtils'
+import { apTypeLongLabels } from '../apTypeLabels'
 
 const token = 'token'
 const crn = 'X123456'
@@ -75,7 +76,7 @@ describe('tabController', () => {
             rows: expect.arrayContaining([
               {
                 key: { text: 'AP type' },
-                value: { text: 'Standard AP' },
+                value: { text: apTypeLongLabels[placement.placementRequestApType] },
               },
               {
                 key: { text: 'AP requirements' },
