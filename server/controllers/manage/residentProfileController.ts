@@ -107,7 +107,7 @@ export default class ResidentProfileController {
           if (subTab === 'allApPlacements') tabData = await allApPlacementsTabController(tabParameters)
           break
         case 'risk':
-          sideNavigation = riskSideNavigation(subTab, crn, placement.id)
+          sideNavigation = riskSideNavigation(subTab, crn, placement.id, user)
           if (subTab === 'riskDetails') tabData = await riskTabController(tabParameters)
           if (subTab === 'placementRisks') tabData = await placementRisksController(tabParameters)
           break

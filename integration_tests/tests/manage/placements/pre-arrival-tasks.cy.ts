@@ -9,15 +9,15 @@ context('Pre-Arrival', () => {
   const caseDetail = caseDetailFactory.build()
   const personRisks = risksFactory.build({ roshRisks: { status: 'retrieved' }, flags: { status: 'retrieved' } })
   const formData = {}
-  const formDataId = `${placement.id}-pre-arrival`
+  const journey = `pre-arrival`
 
   beforeEach(() => {
     cy.task('stubSpaceBookingGetWithoutPremises', placement)
     cy.task('stubCaseDetail', { person: placement.person, caseDetail })
     cy.task('stubFindPerson', { person: placement.person })
     cy.task('stubRiskProfile', { person: placement.person, personRisks })
-    cy.task('stubFormDataGet', { id: formDataId, data: formData })
-    cy.task('stubFormDataUpdate', { id: formDataId })
+    cy.task('stubFormDataGet', { placement, journey, data: formData })
+    cy.task('stubFormDataUpdate', { placement, journey })
   })
   it('completes the pre-arrival task list', () => {
     GIVEN('I am signed in as an AP staff member')
@@ -34,19 +34,19 @@ context('Pre-Arrival', () => {
     cy.contains('You have completed 0 of 2 sections.')
 
     WHEN('I complete the contact resident task')
-    taskList.shouldCompleteContactResident(formDataId)
+    taskList.shouldCompleteContactResident(placement, journey)
 
     THEN('The task should show completed')
     cy.contains('You have completed 1 of 2 sections.')
 
     WHEN('I complete the risk information task')
-    taskList.shouldCompleteRinkInformation(formDataId)
+    taskList.shouldCompleteRinkInformation(placement, journey)
 
     THEN('The task is complete')
     cy.contains('You have completed 2 of 2 sections.')
 
     WHEN('I edit a page and use save-and-exit')
-    taskList.shouldUseSaveAndExit(formDataId)
+    taskList.shouldUseSaveAndExit(placement, journey)
 
     THEN('The task is no longer complete')
     cy.contains('You have completed 1 of 2 sections.')

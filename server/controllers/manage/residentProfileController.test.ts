@@ -3,6 +3,7 @@ import type { NextFunction, Request, Response } from 'express'
 
 import { Cas1SpaceBooking, CaseDetail, Person } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
+import { UserDetails } from '@approved-premises/ui'
 import { placementSideNavigation } from '../../utils/resident/placement'
 import { personalSideNavigation } from '../../utils/resident/personalUtils'
 import { sentenceSideNavigation } from '../../utils/resident/sentenceUtils'
@@ -29,7 +30,7 @@ import { riskSideNavigation } from '../../utils/resident/riskUtils'
 describe('residentProfileController', () => {
   const token = 'TEST_TOKEN'
   const crn = 'S123456'
-  const user = { name: 'username' }
+  const user = { name: 'username', permissions: [] } as UserDetails
 
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
@@ -156,7 +157,7 @@ describe('residentProfileController', () => {
       expect(response.render.mock.calls[0]).toEqual([
         'manage/resident/residentProfile',
         {
-          sideNavigation: riskSideNavigation('riskDetails', crn, placement.id),
+          sideNavigation: riskSideNavigation('riskDetails', crn, placement.id, user),
           ...renderParameters(placement, caseDetail, 'risk'),
           ...tabData,
         },

@@ -95,10 +95,10 @@ export default class PageController {
         user: { token },
       } = req
       try {
-        const Page = getPage(taskName, pageName, 'pre-arrival')
-        const placement = await this.placementService.getPlacement(token, placementId)
-
         const taskJourney: JourneyType = taskNamesToJourney[taskName] || journey
+        const Page = getPage(taskName, pageName, taskJourney)
+
+        const placement = await this.placementService.getPlacement(token, placementId)
 
         const data = await this.formDataService.getFormData(token, placementId, journey)
 
@@ -110,7 +110,8 @@ export default class PageController {
           ? await Page.initialize(body, placement, token, undefined)
           : new Page(body, placement)
 
-        if (!saveAndExit) {
+        // Skip validation if the user has hit 'save and exit' AND this is being edited from the tasklist rather than the profile.
+        if (!saveAndExit || journey !== taskJourney) {
           const errors = page.errors()
           if (Object.keys(errors).length) {
             throw new ValidationError<typeof page>(errors)
