@@ -4,13 +4,7 @@ import { mockOptionalQuestionResponse, mockQuestionResponse } from '../../testut
 import MatchingInformation, {
   MatchingInformationBody,
 } from '../../form-pages/assess/matchingInformation/matchingInformationTask/matchingInformation'
-import {
-  acceptanceData,
-  apTypeFromAssessment,
-  criteriaFromMatchingInformation,
-  placementDates,
-  placementRequestData,
-} from './acceptanceData'
+import { acceptanceData, criteriaFromMatchingInformation, placementDates, placementRequestData } from './acceptanceData'
 import { assessmentFactory } from '../../testutils/factories'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
@@ -58,7 +52,6 @@ describe('acceptanceData', () => {
         requirements: placementRequestData(assessment),
         placementDates: placementDates(assessment),
         notes: 'Some notes',
-        apType: apTypeFromAssessment(assessment),
       })
       expect(getResponses).toHaveBeenCalledWith(assessment)
     })
@@ -74,7 +67,6 @@ describe('acceptanceData', () => {
         requirements: placementRequestData(assessment),
         placementDates: placementDates(assessment),
         notes: 'Some notes',
-        apType: apTypeFromAssessment(assessment),
         ...timelinessInformation,
         agreeWithShortNoticeReason: false,
       })
