@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ApprovedPremisesUser } from './ApprovedPremisesUser';
+import type { ApType } from './ApType';
 import type { Cas1ChangeRequestSummary } from './Cas1ChangeRequestSummary';
 import type { Cas1KeyWorkerAllocation } from './Cas1KeyWorkerAllocation';
 import type { Cas1SpaceBookingAction } from './Cas1SpaceBookingAction';
@@ -46,6 +47,7 @@ export type Cas1SpaceBooking = {
     openChangeRequests: Array<Cas1ChangeRequestSummary>;
     otherBookingsInPremisesForCrn: Array<Cas1SpaceBookingDates>;
     person: (FullPerson | RestrictedPerson | UnknownPerson);
+    placementRequestApType?: ApType;
     placementRequestId?: string;
     premises: NamedId;
     requestForPlacementId?: string;

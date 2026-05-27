@@ -5,6 +5,7 @@
 import type { Application } from './Application';
 import type { ApplicationOrigin } from './ApplicationOrigin';
 import type { ApplicationStatus } from './ApplicationStatus';
+import type { Cas2CohortDto } from './Cas2CohortDto';
 import type { Cas2TimelineEvent } from './Cas2TimelineEvent';
 import type { Cas2v2Assessment } from './Cas2v2Assessment';
 import type { Cas2v2User } from './Cas2v2User';
@@ -12,6 +13,7 @@ export type Cas2v2Application = (Application & {
     applicationOrigin?: ApplicationOrigin;
     assessment?: Cas2v2Assessment;
     bailHearingDate?: string;
+    cohort?: Cas2CohortDto;
     createdBy?: Cas2v2User;
     data?: any;
     document?: any;
