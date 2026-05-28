@@ -16,7 +16,7 @@ concurrency:
 jobs:
   helm_lint:
     name: "Helm config linting 🔎"
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/test_helm_lint.yml@8de783c7b6dc61ad8ba384924dc1fe93098d9995 # 2.13.1
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/test_helm_lint.yml@3481c2cefa046f0c700952082dcb21b91d96c348 # v2.14.8
     strategy:
       matrix:
         environments: [ 'development', 'test', 'preprod', 'prod' ]
