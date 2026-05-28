@@ -18,6 +18,7 @@ import {
   yearOptions,
   timeAddLeadingZero,
   isoDateIsValid,
+  datePickerDateIsValid,
 } from './dateUtils'
 
 jest.mock('../data/bankHolidays/bank-holidays.json', () => {
@@ -426,7 +427,7 @@ describe('addBusinessDays', () => {
   })
 })
 
-describe('isoDateExists', () => {
+describe('isoDateIsValid', () => {
   it.each(['2025-01-01', '1999-12-25'])('returns true for the valid date %s', date => {
     expect(isoDateIsValid(date)).toEqual(true)
   })
@@ -435,6 +436,19 @@ describe('isoDateExists', () => {
     'returns false for the invalid date %s',
     date => {
       expect(isoDateIsValid(date)).toEqual(false)
+    },
+  )
+})
+
+describe('datePickerDateIsValid', () => {
+  it.each(['1/1/2025', '25/12/1999', '01/02/2026', '29/2/2020'])('returns true for the valid date %s', date => {
+    expect(datePickerDateIsValid(date)).toEqual(true)
+  })
+
+  it.each(['29/02/2026', '32/01/1999', '16/13/2026', '29/2/2020/', '15/05/202', '', 'not even a date'])(
+    'returns false for the invalid date %s',
+    date => {
+      expect(datePickerDateIsValid(date)).toEqual(false)
     },
   )
 })

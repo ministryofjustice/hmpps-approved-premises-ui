@@ -59,7 +59,7 @@ export const services = () => {
   const reportService = new ReportService(reportClientBuilder)
   const apAreaService = new ApAreaService(referenceDataClientBuilder)
   const cruManagementAreaService = new CruManagementAreaService(cas1ReferenceDataClientBuilder)
-  const formService = new FormDataService(formClientBuilder)
+  const formDataService = new FormDataService(formClientBuilder)
 
   return {
     appealService,
@@ -78,7 +78,7 @@ export const services = () => {
     reportService,
     apAreaService,
     cruManagementAreaService,
-    formService,
+    formDataService,
   }
 }
 

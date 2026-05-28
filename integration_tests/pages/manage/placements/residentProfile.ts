@@ -17,6 +17,7 @@ import {
   RoshRisks,
 } from '@approved-premises/api'
 import { SummaryListWithCard, TextItem } from '@approved-premises/ui'
+import { faker } from '@faker-js/faker'
 import Page, { parseHtml } from '../../page'
 import paths from '../../../../server/paths/manage'
 import * as residentUtils from '../../../../server/utils/resident'
@@ -296,6 +297,70 @@ export default class ResidentProfilePage extends Page {
         [{ text: 'Known adult' }, { text: mapText(risks.riskToKnownAdult) }],
         [{ text: 'Staff' }, { text: mapText(risks.riskToStaff) }],
       ])
+    })
+  }
+
+  shouldShowPlacementRiskWidget(placement: Cas1SpaceBooking, caseDetail: CaseDetail) {
+    const riskToStaffSummary = faker.lorem.paragraph()
+    const riskToResidentsSummary = faker.lorem.paragraph()
+
+    const profileData = {
+      'risk-information': {
+        'risk-to-staff': { riskToStaffSummary },
+        'risk-to-residents': { riskToResidentsSummary },
+      },
+      preArrivalTasksComplete: true,
+    }
+    AND('the widget should show its unpopulated state')
+    cy.get('.govuk-summary-card__content').should(
+      'contain.text',
+      'This information will be available when the pre-arrival tasks are complete.',
+    )
+
+    WHEN('the profile data are populated')
+    cy.task('stubFormDataGet', { placement, journey: 'profile', data: profileData })
+    cy.reload()
+
+    cy.get('.govuk-summary-card').within(() => {
+      THEN('I should see the correct content in the widget')
+      cy.get('.govuk-summary-list__row').eq(0).should('contain.text', riskToStaffSummary)
+      cy.get('.govuk-summary-list__row').eq(1).should('contain.text', riskToResidentsSummary)
+
+      WHEN('I click the change link')
+      this.clickLink('Change')
+    })
+
+    THEN('I am on the Risk to staff edit page')
+    cy.get('h1').contains('Risk to staff')
+    cy.get('textarea').should('contain.text', riskToStaffSummary)
+
+    WHEN('I continue I am on the risk to residents page')
+    this.clickButton('Save and continue')
+    cy.get('h1').contains('Risk to other residents')
+    cy.get('textarea').should('contain.text', riskToResidentsSummary)
+
+    WHEN('I edit the text and click continue')
+    this.completeTextArea('riskToResidentsSummary', 'Edited')
+    this.clickButton('Save and continue')
+    cy.task('stubFormDataFromLastUpdate', { placement, journey: 'profile' })
+
+    AND('I return to the placement risks tab')
+    ResidentProfilePage.visit(placement, caseDetail)
+    this.clickTab('Risk')
+    this.clickSideNav('Placement risks')
+
+    cy.get('.govuk-summary-card').within(() => {
+      THEN('I see that the staff risks have been edited')
+      cy.get('.govuk-summary-list__row').eq(0).should('contain.text', riskToStaffSummary)
+      cy.get('.govuk-summary-list__row').eq(1).should('contain.text', 'Edited')
+
+      AND('The last updated date has been updated')
+      cy.get('.govuk-hint')
+        .should('contain.text', `Last updated on`)
+        .should(
+          'contain.text',
+          DateFormats.isoDateTimeToUIDateTime(new Date().toISOString(), { formatStr: "iiii d MMM y 'at'" }),
+        )
     })
   }
 

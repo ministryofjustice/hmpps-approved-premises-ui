@@ -99,8 +99,8 @@ export class DateFormats {
    * @param isoDate an ISO8601 date string.
    * @returns the date in the to be shown in the UI: "Thu 20 Dec 2012".
    */
-  static isoDateTimeToUIDateTime(isoDate: string) {
-    return format(DateFormats.isoToDateObj(isoDate), 'd MMM y, HH:mm')
+  static isoDateTimeToUIDateTime(isoDate: string, options: { formatStr: string } = { formatStr: 'd MMM y, HH:mm' }) {
+    return format(DateFormats.isoToDateObj(isoDate), options.formatStr)
   }
 
   /**
@@ -297,6 +297,10 @@ export const isoDateIsValid = (date: string) => {
   }
 
   return true
+}
+
+export const datePickerDateIsValid = (dateWithSlashes: string) => {
+  return isoDateIsValid(DateFormats.datepickerInputToIsoString(dateWithSlashes))
 }
 
 export const dateAndTimeInputsAreValidDates = <K extends string | number>(

@@ -38,6 +38,8 @@ export const journeyPages = (journeyType: JourneyType): FormPages => {
       return PlacementRequest.pages
     case 'pre-arrival':
       return PreArrivals.pages
+    case 'profile':
+      return PreArrivals.pages
     default:
       throw new Error(`Unknown journey type: ${journeyType}`)
   }

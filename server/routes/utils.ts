@@ -9,7 +9,6 @@ import applicationAuthMiddleware from '../middleware/applicationAuthMiddleware'
 import { validateMiddleware } from '../middleware/validateMiddleware'
 import { fieldValidators } from './validators'
 import paths from '../paths/manage'
-import { getPage } from '../form-pages/utils/getPage'
 import PagesController from '../controllers/placementApplications/pagesController'
 import PageController from '../controllers/manage/premises/placements/tasks/pageController'
 
@@ -77,7 +76,7 @@ export const buildTasklistRoutes = (
   Object.keys(pages).forEach((taskKey: TaskNames) => {
     Object.keys(pages[taskKey]).forEach((pageKey: string) => {
       const { pattern } = paths.resident.show.path(`tasks/${journey}/${taskKey}/page/${pageKey}`)
-      const page = getPage(taskKey, pageKey, journey)
+      const page = pages[taskKey][pageKey]
       const updateAction: keyof PagesController = Reflect.getMetadata('page:controllerActions:update', page)
 
       get(pattern, pageController.show(taskKey, pageKey, journey), {

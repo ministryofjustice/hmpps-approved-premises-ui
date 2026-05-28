@@ -3,7 +3,7 @@ import { TaskStatus as TaskListStatus, TaskNames, TaskWithStatus } from '../@typ
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import { applicationFactory, assessmentFactory } from '../testutils/factories'
-import { TaskListStatusTag, taskLink } from './taskListUtils'
+import { TaskListStatusTag, taskLinkHtml } from './taskListUtils'
 import { isApplicableTier, isFullPerson } from './personUtils'
 
 jest.mock('./personUtils')
@@ -34,7 +34,7 @@ describe('taskListUtils', () => {
       it('should return a link to a task the task can be started', () => {
         task.status = 'in_progress'
 
-        expect(taskLink(task, application, application.data)).toEqual(
+        expect(taskLinkHtml(task, application, application.data)).toEqual(
           `<a href="${applyPaths.applications.pages.show({
             id: 'some-uuid',
             task: 'second-task',
@@ -47,7 +47,7 @@ describe('taskListUtils', () => {
         task.status = 'in_progress'
         application.data = { 'second-task': { foo: { some: 'response' } } }
 
-        expect(taskLink(task, application)).toEqual(
+        expect(taskLinkHtml(task, application)).toEqual(
           `<a href="${applyPaths.applications.pages.show({
             id: 'some-uuid',
             task: 'second-task',
@@ -56,7 +56,7 @@ describe('taskListUtils', () => {
         )
 
         application.data = { 'second-task': { bar: { some: 'response' } } }
-        expect(taskLink(task, application)).toEqual(
+        expect(taskLinkHtml(task, application)).toEqual(
           `<a href="${applyPaths.applications.pages.show({
             id: 'some-uuid',
             task: 'second-task',
@@ -68,14 +68,14 @@ describe('taskListUtils', () => {
       it('should return the task name when the task cannot be started', () => {
         task.status = 'cannot_start'
 
-        expect(taskLink(task, application)).toEqual(`Second Task`)
+        expect(taskLinkHtml(task, application)).toEqual(`Second Task`)
       })
 
       it('should handle when data is undefined', () => {
         task.status = 'in_progress'
         application.data = undefined
 
-        expect(taskLink(task, application)).toEqual(
+        expect(taskLinkHtml(task, application)).toEqual(
           `<a href="${applyPaths.applications.pages.show({
             id: 'some-uuid',
             task: 'second-task',
@@ -93,7 +93,7 @@ describe('taskListUtils', () => {
         } as TaskWithStatus
         ;(isApplicableTier as jest.MockedFunction<typeof isApplicableTier>).mockReturnValue(false)
 
-        expect(taskLink(basicTask, application)).toEqual(
+        expect(taskLinkHtml(basicTask, application)).toEqual(
           `<a href="${applyPaths.applications.pages.show({
             id: application.id,
             task: 'basic-information',
@@ -109,7 +109,7 @@ describe('taskListUtils', () => {
       it('should return a link to a task the task can be started', () => {
         task.status = 'in_progress'
 
-        expect(taskLink(task, application)).toEqual(
+        expect(taskLinkHtml(task, application)).toEqual(
           `<a href="${assessPaths.assessments.pages.show({
             id: 'some-uuid',
             task: 'second-task',
@@ -121,7 +121,7 @@ describe('taskListUtils', () => {
       it('should return the task name when the task cannot be started', () => {
         task.status = 'cannot_start'
 
-        expect(taskLink(task, application)).toEqual(`Second Task`)
+        expect(taskLinkHtml(task, application)).toEqual(`Second Task`)
       })
     })
   })
