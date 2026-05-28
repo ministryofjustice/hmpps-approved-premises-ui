@@ -13,12 +13,27 @@ import paths from '../../../../../paths/manage'
 import { UnknownPageError, ValidationError } from '../../../../../utils/errors'
 import { viewPath } from '../../../../../form-pages/utils'
 import { getPage } from '../../../../../form-pages/utils/getPage'
+import { getPageBackLink } from '../../../../../utils/backlinks'
+import { DateFormats } from '../../../../../utils/dateUtils'
+
+const taskNamesToJourney: Partial<Record<TaskNames, JourneyType>> = {
+  'risk-information': 'pre-arrival',
+}
 
 export default class PageController {
   constructor(
     private readonly placementService: PlacementService,
-    private readonly formService: FormDataService,
+    private readonly formDataService: FormDataService,
   ) {}
+
+  private backLink({ req, placementId, crn }: { req: Request; placementId: string; crn: string }) {
+    return getPageBackLink(
+      `${paths.resident.show({ placementId, crn })}-task`,
+      req,
+      [paths.resident.tabRisk.placementRisks.pattern],
+      paths.resident.show({ placementId, crn }),
+    )
+  }
 
   show(taskName: TaskNames, pageName: string, journey: JourneyType): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -28,16 +43,12 @@ export default class PageController {
           user: { token },
         } = req
 
-        const Page = getPage(taskName as TaskNames, pageName, journey)
+        const taskJourney: JourneyType = taskNamesToJourney[taskName] || journey
+
+        const Page = getPage(taskName as TaskNames, pageName, taskJourney)
         const placement = await this.placementService.getPlacement(token, placementId)
 
-        let data: TaskData
-        try {
-          const id = `${placementId}-pre-arrival`
-          data = await this.formService.getFormData(token, id)
-        } catch (e) {
-          data = {}
-        }
+        const data = await this.formDataService.getFormData(token, placementId, journey)
 
         const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
@@ -47,12 +58,17 @@ export default class PageController {
           ? await Page.initialize(body, placement, token, undefined)
           : new Page(body, placement)
 
+        const hubPage =
+          journey === taskJourney
+            ? paths.resident.taskList({ placementId, crn, journey })
+            : this.backLink({ req, placementId, crn })
+
         const previous = page.previous()
         const backLink = previous
           ? paths.resident.tasks({ placementId, crn, journey, task: taskName, page: previous })
-          : paths.resident.taskList({ placementId, crn, journey })
+          : hubPage
 
-        res.render(`manage/resident/${viewPath(page, journey)}`, {
+        res.render(`manage/resident/${viewPath(page, taskJourney)}`, {
           backLink,
           formAction: `${paths.resident.tasks({ journey, placementId, task: taskName, page: page.name, crn })}?_method=PUT`,
           errors,
@@ -60,6 +76,7 @@ export default class PageController {
           task: taskName,
           page,
           ...page.body,
+          journey,
         })
       } catch (error) {
         if (error instanceof UnknownPageError) {
@@ -78,16 +95,12 @@ export default class PageController {
         user: { token },
       } = req
       try {
-        const Page = getPage(taskName, pageName, 'pre-arrival')
+        const taskJourney: JourneyType = taskNamesToJourney[taskName] || journey
+        const Page = getPage(taskName, pageName, taskJourney)
+
         const placement = await this.placementService.getPlacement(token, placementId)
 
-        let data
-        const formId = `${placementId}-pre-arrival`
-        try {
-          data = await this.formService.getFormData(token, formId)
-        } catch (e) {
-          data = {}
-        }
+        const data = await this.formDataService.getFormData(token, placementId, journey)
 
         const body = req.body || data[taskName]?.[pageName]
 
@@ -97,23 +110,33 @@ export default class PageController {
           ? await Page.initialize(body, placement, token, undefined)
           : new Page(body, placement)
 
-        if (!saveAndExit) {
+        // Skip validation if the user has hit 'save and exit' AND this is being edited from the tasklist rather than the profile.
+        if (!saveAndExit || journey !== taskJourney) {
           const errors = page.errors()
           if (Object.keys(errors).length) {
             throw new ValidationError<typeof page>(errors)
           }
         }
+        // Only save if data have been changed
+        if (JSON.stringify(page.body) !== JSON.stringify(data[taskName]?.[pageName] || {})) {
+          data[taskName] = data[taskName] || {}
+          data[taskName][pageName] = page.body
+          data[taskName].lastUpdated = DateFormats.dateObjToIsoDateTime(new Date())
 
-        data[taskName] = data[taskName] || {}
-        data[taskName][pageName] = page.body
-
-        await this.formService.updateFormData(token, formId, data)
+          await this.formDataService.updateFormData(token, placementId, journey, data)
+        }
 
         const next = page.next()
+
+        const hubPage =
+          journey === taskJourney
+            ? paths.resident.taskList({ placementId, crn, journey })
+            : this.backLink({ req, placementId, crn })
+
         const redirect: string =
           next && !saveAndExit
-            ? paths.resident.tasks({ journey, placementId, crn, task: taskName, page: page.next() })
-            : paths.resident.taskList({ placementId, crn, journey })
+            ? paths.resident.tasks({ journey, placementId, crn, task: taskName, page: next })
+            : hubPage
 
         res.redirect(redirect)
       } catch (error) {

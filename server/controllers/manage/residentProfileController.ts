@@ -1,7 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
-import { TabItem } from '@approved-premises/ui'
+import { TabItem, TaskData } from '@approved-premises/ui'
 import { Cas1SpaceBooking, CaseDetail } from '@approved-premises/api'
-import { ApplicationService, AssessmentService, PersonService, PlacementService } from '../../services'
+import { ApplicationService, AssessmentService, FormDataService, PersonService, PlacementService } from '../../services'
 import paths from '../../paths/manage'
 import peoplePaths from '../../paths/people'
 
@@ -21,7 +21,7 @@ import {
   sentencePrisonTabController,
 } from '../../utils/resident/sentence'
 import { sentenceSideNavigation } from '../../utils/resident/sentenceUtils'
-import { riskTabController } from '../../utils/resident/risk'
+import { placementRisksController, riskTabController } from '../../utils/resident/risk'
 import { personalSideNavigation } from '../../utils/resident/personalUtils'
 import { contactsTabController, personalDetailsTabController } from '../../utils/resident/personal'
 import {
@@ -44,6 +44,7 @@ export default class ResidentProfileController {
     private readonly personService: PersonService,
     private readonly applicationService: ApplicationService,
     private readonly assessmentService: AssessmentService,
+    private readonly formDataService: FormDataService,
   ) {}
 
   show(activeTab: ResidentProfileTab = 'personal', subTab?: ResidentProfileSubTab): RequestHandler {
@@ -56,11 +57,12 @@ export default class ResidentProfileController {
       const { user } = res.locals
 
       const {
-        values: [caseDetail, placement],
+        values: [caseDetail, placement, profileData],
         outcomes: [caseDetailOutcome],
-      } = await settlePromisesWithOutcomes<[CaseDetail, Cas1SpaceBooking]>([
+      } = await settlePromisesWithOutcomes<[CaseDetail, Cas1SpaceBooking, TaskData]>([
         this.personService.getCaseDetail(token, crn),
         this.placementService.getPlacement(token, placementId),
+        this.formDataService.getFormData(token, placementId, 'profile'),
       ])
 
       if (placement.person.crn !== crn) throw new CrnMismatchError()
@@ -73,16 +75,18 @@ export default class ResidentProfileController {
 
       let tabData: TabData = {}
       let sideNavigation: Array<TabItem>
-      const placementActions = actions(placement, user)
+      const placementActions = actions(placement, user, profileData)
       const tabParameters = {
         applicationService: this.applicationService,
         assessmentService: this.assessmentService,
         personService: this.personService,
+        formDataService: this.formDataService,
         crn,
         token,
         caseDetail,
         caseDetailOutcome,
         placement,
+        profileData,
       }
 
       switch (activeTab) {
@@ -103,8 +107,9 @@ export default class ResidentProfileController {
           if (subTab === 'allApPlacements') tabData = await allApPlacementsTabController(tabParameters)
           break
         case 'risk':
-          sideNavigation = riskSideNavigation(subTab, crn, placement.id)
-          tabData = await riskTabController(tabParameters)
+          sideNavigation = riskSideNavigation(subTab, crn, placement.id, user)
+          if (subTab === 'riskDetails') tabData = await riskTabController(tabParameters)
+          if (subTab === 'placementRisks') tabData = await placementRisksController(tabParameters)
           break
         case 'sentence':
           sideNavigation = sentenceSideNavigation(subTab, crn, placementId)

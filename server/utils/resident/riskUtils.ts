@@ -7,7 +7,7 @@ import {
   Registration,
   RoshRisks,
 } from '@approved-premises/api'
-import { SummaryListWithCard, TableRow } from '@approved-premises/ui'
+import { SummaryListWithCard, TableRow, UserDetails } from '@approved-premises/ui'
 import nunjucks from 'nunjucks'
 import {
   card,
@@ -25,15 +25,26 @@ import { DateFormats } from '../dateUtils'
 import { ApiOutcome, linkTo } from '../utils'
 import { htmlCell, textCell } from '../tableUtils'
 import config from '../../config'
+import { hasPermission } from '../users'
 
-export const riskSideNavigation = (subTab: ResidentProfileSubTab, crn: string, placementId: string) => {
+export const riskSideNavigation = (
+  subTab: ResidentProfileSubTab,
+  crn: string,
+  placementId: string,
+  user: UserDetails,
+) => {
   return [
     {
       text: 'Risk information',
       href: paths.resident.tabRisk.riskDetails({ crn, placementId }),
       active: subTab === 'riskDetails',
     },
-  ]
+    hasPermission(user, ['cas1_test_experimental_permission']) && {
+      text: 'Placement risks',
+      href: paths.resident.tabRisk.placementRisks({ crn, placementId }),
+      active: subTab === 'placementRisks',
+    },
+  ].filter(Boolean)
 }
 
 export const tableRow = (content: string) =>

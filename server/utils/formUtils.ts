@@ -7,6 +7,7 @@ import type {
   RadioItem,
   RadioItemButton,
   SelectOption,
+  SummaryListActions,
   SummaryListItem,
   TextItem,
 } from '@approved-premises/ui'
@@ -192,9 +193,15 @@ const renderSummaryValue = (value: string, renderAs: RenderAs) => {
   }
 }
 
-export const summaryListItem = (label: string, value: string, renderAs: RenderAs = 'text'): SummaryListItem => ({
+export const summaryListItem = (
+  label: string,
+  value: string,
+  renderAs: RenderAs = 'text',
+  actions?: SummaryListActions,
+): SummaryListItem => ({
   key: { text: label },
   value: renderSummaryValue(value, renderAs),
+  actions,
 })
 
 export const summaryListItemNoBlankRows = (

@@ -1,10 +1,11 @@
 import { Cas1Application as Application, Cas1Assessment as Assessment } from '@approved-premises/api'
-import { FormSections, TaskNames, TaskStatus, TaskWithStatus, UiTask } from '@approved-premises/ui'
+import { FormSections, JourneyType, TaskNames, TaskStatus, TaskWithStatus, UiTask } from '@approved-premises/ui'
 import getSections from '../utils/assessments/getSections'
 import Apply from '../form-pages/apply'
+import PreArrival from '../form-pages/residence/pre-arrival'
 import isAssessment from '../utils/assessments/isAssessment'
 import getTaskStatus from '../form-pages/utils/getTaskStatus'
-import { taskLink, TaskListStatusTag } from '../utils/taskListUtils'
+import { taskLink, taskLinkHtml, TaskListStatusTag } from '../utils/taskListUtils'
 
 export default class TasklistService {
   taskStatuses: Record<string, TaskStatus>
@@ -13,13 +14,14 @@ export default class TasklistService {
 
   constructor(
     private readonly applicationOrAssessment: Application | Assessment,
-    sections?: FormSections,
+    journey?: JourneyType,
     private readonly data?: unknown,
     private readonly taskPathRoot?: string,
   ) {
-    if (sections) this.formSections = sections
-    else
-      this.formSections = isAssessment(applicationOrAssessment) ? getSections(applicationOrAssessment) : Apply.sections
+    if (journey === 'pre-arrival') this.formSections = PreArrival.sections
+    if (applicationOrAssessment && isAssessment(applicationOrAssessment))
+      this.formSections = getSections(applicationOrAssessment)
+    if (applicationOrAssessment && !isAssessment(applicationOrAssessment)) this.formSections = Apply.sections
 
     this.taskStatuses = {}
 
@@ -67,8 +69,9 @@ export default class TasklistService {
   addStatusToTask(task: UiTask): TaskWithStatus {
     const status = this.taskStatuses[task.id]
     const withStatus: TaskWithStatus = { ...task, status }
-    const link: string = taskLink(withStatus, this.applicationOrAssessment, this.data, this.taskPathRoot)
+    const linkHtml: string = taskLinkHtml(withStatus, this.applicationOrAssessment, this.taskPathRoot)
+    const link: string = taskLink(withStatus, this.applicationOrAssessment, this.taskPathRoot)
     const tagHtml = new TaskListStatusTag(status, task.id).html()
-    return { ...withStatus, link, tagHtml }
+    return { ...withStatus, link, linkHtml, tagHtml }
   }
 }

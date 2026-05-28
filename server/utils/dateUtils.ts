@@ -6,6 +6,7 @@ import {
   format,
   formatDuration,
   formatISO,
+  intervalToDuration,
   isBefore,
   isValid,
   isWeekend,
@@ -98,8 +99,8 @@ export class DateFormats {
    * @param isoDate an ISO8601 date string.
    * @returns the date in the to be shown in the UI: "Thu 20 Dec 2012".
    */
-  static isoDateTimeToUIDateTime(isoDate: string) {
-    return format(DateFormats.isoToDateObj(isoDate), 'd MMM y, HH:mm')
+  static isoDateTimeToUIDateTime(isoDate: string, options: { formatStr: string } = { formatStr: 'd MMM y, HH:mm' }) {
+    return format(DateFormats.isoToDateObj(isoDate), options.formatStr)
   }
 
   /**
@@ -239,12 +240,23 @@ export class DateFormats {
     return time ? this.timeFromDate(new Date(`2024-01-01T${time}`)) : ''
   }
 
-  static formatDurationBetweenTwoDates(
-    date1: string,
-    date2: string,
-    options: { format: UiDateFormat } = { format: 'long' },
-  ): string {
+  static formatDatePair(date1: string, date2: string, options: { format: UiDateFormat } = { format: 'long' }): string {
     return `${DateFormats.isoDateToUIDate(date1, { format: options.format })} - ${DateFormats.isoDateToUIDate(date2, { format: options.format })}`
+  }
+
+  static formatDurationBetweenDates(
+    start: string,
+    end: string,
+    showFields: Array<string> = ['years', 'months', 'days'],
+  ): string {
+    if (start > end) return `- ${this.formatDurationBetweenDates(end, start)}`
+    const duration = intervalToDuration({ start, end: `${(end || '').slice(0, 10)}T01:00:00` })
+    return Object.entries(duration)
+      .map(([field, value]) => {
+        return value && showFields.includes(field) ? `${value} ${field.slice(0, -1)}${value > 1 ? 's' : ''}` : ''
+      })
+      .join(' ')
+      .trim()
   }
 
   static isoDateToMonthAndYear(date: string) {
@@ -285,6 +297,10 @@ export const isoDateIsValid = (date: string) => {
   }
 
   return true
+}
+
+export const datePickerDateIsValid = (dateWithSlashes: string) => {
+  return isoDateIsValid(DateFormats.datepickerInputToIsoString(dateWithSlashes))
 }
 
 export const dateAndTimeInputsAreValidDates = <K extends string | number>(
@@ -372,8 +388,8 @@ export const daysToWeeksAndDays = (days: string | number): { days: number; weeks
   }
 }
 
-export const weeksAndDaysToDays = (weeks:number | string,days:number | string):number => {
-  return Number(weeks || 0)*7 + Number(days || 0)
+export const weeksAndDaysToDays = (weeks: number | string, days: number | string): number => {
+  return Number(weeks || 0) * 7 + Number(days || 0)
 }
 
 export const timeIsValid24hrFormat = (time: string): Boolean => {

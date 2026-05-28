@@ -1,3 +1,4 @@
+import { ApprovedPremisesUserRole } from '@approved-premises/api'
 import { signIn } from '../../signIn'
 import {
   acctAlertFactory,
@@ -47,9 +48,13 @@ context('ResidentProfile', () => {
       }
     }
 
-    const visitPage = ({ placement, caseDetail }, tab?: string): ResidentProfilePage => {
-      GIVEN(' that I am signed in as a user with access resident profile')
-      signIn(['future_manager'])
+    const visitPage = (
+      { placement, caseDetail },
+      tab?: string,
+      roles: Array<ApprovedPremisesUserRole> = ['future_manager'],
+    ): ResidentProfilePage => {
+      GIVEN(' that I am signed in as a user with access to the resident profile')
+      signIn(roles)
 
       WHEN('I visit the resident profile page')
       const page = ResidentProfilePage.visit(placement, caseDetail)
@@ -206,6 +211,7 @@ context('ResidentProfile', () => {
 
       THEN('the Risk tab should be selected')
       page.shouldHaveActiveTab('Risk')
+      page.shouldHaveActiveSideNav('Risk information')
 
       AND('the OASys meta-data should be shown')
       page.shouldShowInsetText(
@@ -225,6 +231,29 @@ context('ResidentProfile', () => {
       page.shouldShowOasysCards(['R10.1', 'R10.2', 'SUM10'], oasysRoshSummary, 'ROSH summary')
       page.shouldShowOasysCards(['RM30', 'RM31', 'RM32', 'RM33'], oasysRiskManagementPlan, 'OASys risk management plan')
       page.shouldShowOasysCards(['2.4.1', '2.4.2'], oasysOffenceDetails, 'OASys')
+
+      AND('The placement risks tab sidenav should not be shown as it requires experimental permission')
+      cy.get('a').contains('Placement risks').should('not.exist')
+    })
+
+    it('should show the Placement risks subtab', () => {
+      // TODO: This can be moved to the risk tab test once this sub-tab is no longer experimental
+      const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
+      const oasysRoshSummary = cas1OasysGroupFactory.roshSummary().build()
+      const oasysRiskManagementPlan = cas1OasysGroupFactory.riskManagementPlan().build()
+      const caseDetail = caseDetailFactory.build()
+      const { placement } = setup()
+
+      cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
+      cy.task('stubOasysGroup', { person: placement.person, group: oasysRoshSummary })
+      cy.task('stubOasysGroup', { person: placement.person, group: oasysRiskManagementPlan })
+      cy.task('stubCaseDetail', { person: placement.person, caseDetail })
+
+      const page = visitPage({ placement, caseDetail }, 'Risk', ['future_manager', 'experimental'])
+      WHEN('the placement risks subtab is selected')
+      page.clickSideNav('Placement risks')
+
+      page.shouldShowPlacementRiskWidget(placement, caseDetail)
     })
 
     it('should show the sentence tab', () => {

@@ -18,6 +18,7 @@ import {
   yearOptions,
   timeAddLeadingZero,
   isoDateIsValid,
+  datePickerDateIsValid,
 } from './dateUtils'
 
 jest.mock('../data/bankHolidays/bank-holidays.json', () => {
@@ -426,7 +427,7 @@ describe('addBusinessDays', () => {
   })
 })
 
-describe('isoDateExists', () => {
+describe('isoDateIsValid', () => {
   it.each(['2025-01-01', '1999-12-25'])('returns true for the valid date %s', date => {
     expect(isoDateIsValid(date)).toEqual(true)
   })
@@ -435,6 +436,19 @@ describe('isoDateExists', () => {
     'returns false for the invalid date %s',
     date => {
       expect(isoDateIsValid(date)).toEqual(false)
+    },
+  )
+})
+
+describe('datePickerDateIsValid', () => {
+  it.each(['1/1/2025', '25/12/1999', '01/02/2026', '29/2/2020'])('returns true for the valid date %s', date => {
+    expect(datePickerDateIsValid(date)).toEqual(true)
+  })
+
+  it.each(['29/02/2026', '32/01/1999', '16/13/2026', '29/2/2020/', '15/05/202', '', 'not even a date'])(
+    'returns false for the invalid date %s',
+    date => {
+      expect(datePickerDateIsValid(date)).toEqual(false)
     },
   )
 })
@@ -669,5 +683,20 @@ describe('isoDateTimeToIsoTime', () => {
     ['2025-01-01T09:30:00.000Z', '09:30'], // UTC date during GMT
   ])('returns an iso time only from a local iso datetime, %s', (dateStr, expected) => {
     expect(DateFormats.isoDateTimeToTime(dateStr)).toEqual(expected)
+  })
+})
+
+describe('formatDurationBetweenDates', () => {
+  it.each([
+    ['2024-02-01', '2025-02-01', '1 year'],
+    ['2025-01-31', '2025-03-31', '2 months'], // Over sprint DS
+    ['2025-09-30', '2025-11-30', '2 months'], // Over Autumn DS
+    ['2023-01-15', '2025-08-22', '2 years 7 months 7 days'],
+    [undefined, undefined, ''],
+    ['', '', ''],
+    ['2025-05-012', '2024-02-01', '- 1 year 3 months'], // Start after end
+    ['2025-02-01', '2025-02-01', ''], // Dates same
+  ])('formats the duration between dates', (date1, date2, expected) => {
+    expect(DateFormats.formatDurationBetweenDates(date1, date2)).toEqual(expected)
   })
 })

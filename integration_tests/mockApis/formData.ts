@@ -1,14 +1,23 @@
 import { SuperAgentRequest } from 'superagent'
-import { TaskData } from '@approved-premises/ui'
+import { JourneyType, TaskData } from '@approved-premises/ui'
+import { Cas1SpaceBooking } from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 
 export default {
-  stubFormDataGet: ({ id, data }: { id: string; data: TaskData }): SuperAgentRequest => {
+  stubFormDataGet: ({
+    placement,
+    journey,
+    data,
+  }: {
+    placement: Cas1SpaceBooking
+    journey: JourneyType
+    data: TaskData
+  }): SuperAgentRequest => {
     return stubFor({
       request: {
         method: 'GET',
-        url: paths.formData({ id }),
+        url: paths.formData({ id: `${placement.id}-${journey}` }),
       },
       response: {
         status: 200,
@@ -19,18 +28,25 @@ export default {
       },
     })
   },
-  stubFormDataUpdate: ({ id }: { id: string; data: TaskData }): SuperAgentRequest => {
+  stubFormDataUpdate: ({
+    placement,
+    journey,
+  }: {
+    placement: Cas1SpaceBooking
+    journey: JourneyType
+    data: TaskData
+  }): SuperAgentRequest => {
     return stubFor({
       request: {
         method: 'PUT',
-        url: paths.formData({ id }),
+        url: paths.formData({ id: `${placement.id}-${journey}` }),
       },
       response: {
         status: 200,
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        jsonBody: { id },
+        jsonBody: { id: `${placement.id}-${journey}` },
       },
     })
   },
@@ -39,12 +55,20 @@ export default {
    * @param placementApplication provides the id and used as the stub return if there are no previous updates
    * @param update manual update to the data blob
    */
-  stubFormDataFromLastUpdate: async ({ id, defaultData = {} }) => {
+  stubFormDataFromLastUpdate: async ({
+    placement,
+    journey,
+    defaultData = {},
+  }: {
+    placement: Cas1SpaceBooking
+    journey: JourneyType
+    defaultData: TaskData
+  }) => {
     const {
       body: { requests },
     } = await getMatchingRequests({
       method: 'PUT',
-      url: paths.formData({ id }),
+      url: paths.formData({ id: `${placement.id}-${journey}` }),
     })
     const lastPostData = requests.pop()?.body
     const body = lastPostData ? JSON.parse(lastPostData) : defaultData
@@ -55,7 +79,7 @@ export default {
     return stubFor({
       request: {
         method: 'GET',
-        urlPattern: paths.formData({ id }),
+        urlPattern: paths.formData({ id: `${placement.id}-${journey}` }),
       },
       response: {
         status: 200,
