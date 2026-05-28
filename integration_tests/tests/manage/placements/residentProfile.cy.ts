@@ -211,7 +211,7 @@ context('ResidentProfile', () => {
 
       THEN('the Risk tab should be selected')
       page.shouldHaveActiveTab('Risk')
-      page.shouldHaveActiveSideNav(`Risk information`)
+      page.shouldHaveActiveSideNav('Risk information')
 
       AND('the OASys meta-data should be shown')
       page.shouldShowInsetText(

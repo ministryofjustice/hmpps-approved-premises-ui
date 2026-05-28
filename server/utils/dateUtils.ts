@@ -299,6 +299,10 @@ export const isoDateIsValid = (date: string) => {
   return true
 }
 
+export const datePickerDateIsValid = (dateWithSlashes: string) => {
+  return isoDateIsValid(DateFormats.datepickerInputToIsoString(dateWithSlashes))
+}
+
 export const dateAndTimeInputsAreValidDates = <K extends string | number>(
   dateInputObj: ObjectWithDateParts<K>,
   key: K,
