@@ -44,7 +44,8 @@ describe('ResidenceTaskController', () => {
           pageHeading: 'Complete Pre-arrival tasks',
         }),
       )
-      expect(formService.getFormData).toHaveBeenCalledWith(token, 'placement-id-pre-arrival')
+
+      expect(formService.getFormData).toHaveBeenCalledWith(token, 'placement-id', 'pre-arrival')
     })
   })
 
@@ -61,8 +62,8 @@ describe('ResidenceTaskController', () => {
 
       await residenceTasksController.submit(journey)(request, response, next)
 
-      expect(formService.getFormData).toHaveBeenCalledWith(token, 'placement-id-pre-arrival')
-      expect(formService.updateFormData).toHaveBeenCalledWith(token, 'placement-id-pre-arrival', {
+      expect(formService.getFormData).toHaveBeenCalledWith(token, 'placement-id', 'pre-arrival')
+      expect(formService.updateFormData).toHaveBeenCalledWith(token, 'placement-id', 'pre-arrival', {
         status: 'submitted',
         taskData: 'task-data',
       })
@@ -75,7 +76,7 @@ describe('ResidenceTaskController', () => {
 
       await residenceTasksController.submit(journey)(request, response, next)
 
-      expect(formService.getFormData).toHaveBeenCalledWith(token, 'placement-id-pre-arrival')
+      expect(formService.getFormData).toHaveBeenCalledWith(token, 'placement-id', 'pre-arrival')
       expect(formService.updateFormData).not.toHaveBeenCalled()
       expect(request.flash).toHaveBeenCalledWith('errorSummary', [
         { href: '#tasklist', text: 'The tasks are not complete.' },

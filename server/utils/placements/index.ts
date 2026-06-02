@@ -7,7 +7,7 @@ import {
   Cas1SpaceCharacteristic,
   Cas1SpaceBookingShortSummary,
 } from '@approved-premises/api'
-import { RadioItem, SummaryList, TabItem, TableCell, UserDetails } from '@approved-premises/ui'
+import { RadioItem, SummaryList, TabItem, TableCell, TaskData, UserDetails } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
 import { personKeyDetails } from '../applications/helpers'
 import paths from '../../paths/manage'
@@ -58,7 +58,7 @@ export const sortSpaceBookingsByCanonicalArrivalDate = (
   })
 }
 
-export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
+export const actions = (placement: Cas1SpaceBooking, user: UserDetails, profileData?: TaskData) => {
   const actionList = []
   const { status } = placement
 
@@ -112,8 +112,11 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails) => {
     })
   }
 
-  if (['upcoming', 'arrived'].includes(status) && hasPermission(user, ['cas1_test_experimental_permission'])) {
-    // TODO: pre-arrival task permission
+  if (
+    ['upcoming', 'arrived'].includes(status) &&
+    hasPermission(user, ['cas1_test_experimental_permission']) &&
+    !profileData?.preArrivalTasksComplete
+  ) {
     actionList.push({
       href: paths.resident.taskList({
         crn: placement.person.crn,

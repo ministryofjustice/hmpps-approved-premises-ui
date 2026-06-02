@@ -1,4 +1,5 @@
 import { Cas1SpaceBooking } from '@approved-premises/api'
+import { JourneyType } from '@approved-premises/ui'
 import TaskList from '../../../taskListPage'
 
 import { AND, GIVEN, THEN, WHEN } from '../../../../helpers'
@@ -19,7 +20,7 @@ export default class PreArrivalTasklist extends TaskList {
     return new PreArrivalTasklist(`Authorisation Error`)
   }
 
-  shouldCompleteContactResident(id: string) {
+  shouldCompleteContactResident(placement: Cas1SpaceBooking, journey: JourneyType) {
     GIVEN('I am on the task list page and the contact resident task is not started')
     this.shouldShowTaskStatus('contact-resident', 'Not started')
 
@@ -51,7 +52,7 @@ export default class PreArrivalTasklist extends TaskList {
     WHEN('I complete the reason box and submit')
     this.completeTextArea('reasonForNoContact', 'Some reason for not making contact')
     this.clickButton('Save and continue')
-    cy.task('stubFormDataFromLastUpdate', { id })
+    cy.task('stubFormDataFromLastUpdate', { placement, journey })
     cy.reload()
 
     THEN('I should be back on the tasklist')
@@ -65,7 +66,7 @@ export default class PreArrivalTasklist extends TaskList {
     this.checkOnPage()
   }
 
-  shouldCompleteRinkInformation(id: string) {
+  shouldCompleteRinkInformation(placement: Cas1SpaceBooking, journey: JourneyType) {
     GIVEN('I am on the task list page and the risk information task is not started')
     this.shouldShowTaskStatus('risk-information', 'Not started')
 
@@ -86,7 +87,7 @@ export default class PreArrivalTasklist extends TaskList {
     WHEN('I complete the form and submit')
     this.completeTextArea('riskToStaffSummary', 'Some risk to staff')
     this.clickButton('Save and continue')
-    cy.task('stubFormDataFromLastUpdate', { id })
+    cy.task('stubFormDataFromLastUpdate', { placement, journey })
     cy.reload()
 
     THEN('I should be on the risk to residents page')
@@ -113,7 +114,7 @@ export default class PreArrivalTasklist extends TaskList {
     WHEN('I complete the form and submit')
     this.completeTextArea('riskToResidentsSummary', 'Some risk to residents')
     this.clickButton('Save and continue')
-    cy.task('stubFormDataFromLastUpdate', { id })
+    cy.task('stubFormDataFromLastUpdate', { placement, journey })
     cy.reload()
 
     THEN('I am back on the task list page')
@@ -121,7 +122,7 @@ export default class PreArrivalTasklist extends TaskList {
     this.shouldShowTaskStatus('risk-information', 'Completed')
   }
 
-  shouldUseSaveAndExit(id: string) {
+  shouldUseSaveAndExit(placement: Cas1SpaceBooking, journey: JourneyType) {
     GIVEN('The task is complete')
     this.shouldShowTaskStatus('risk-information', 'Complete')
     AND('I go to the first risk information page')
@@ -139,7 +140,7 @@ export default class PreArrivalTasklist extends TaskList {
 
     WHEN('I click save and exit')
     this.clickButton('Save and exit')
-    cy.task('stubFormDataFromLastUpdate', { id })
+    cy.task('stubFormDataFromLastUpdate', { placement, journey })
     cy.reload()
 
     THEN('I am back on the tasklist')

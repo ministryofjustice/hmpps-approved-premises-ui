@@ -166,6 +166,14 @@ describe('placementUtils', () => {
             }),
           ),
         ).toEqual(wrapOptions([changePlacementOption]))
+        expect(
+          actions(
+            placementInitial,
+            userDetailsFactory.build({
+              permissions: ['cas1_test_experimental_permission'],
+            }),
+          ),
+        ).toEqual(wrapOptions([preArrivalOption]))
       })
     })
 
@@ -209,6 +217,30 @@ describe('placementUtils', () => {
             }),
           ),
         ).toEqual([{ items: [changePlacementOption] }])
+      })
+
+      it('should show the pre-arrival tasks if they are not already completed', () => {
+        expect(
+          actions(
+            placementAfterArrival,
+            userDetailsFactory.build({
+              permissions: ['cas1_test_experimental_permission'],
+            }),
+            {},
+          ),
+        ).toEqual([{ items: [preArrivalOption] }])
+      })
+
+      it('should hide the pre-arrival tasks once completed', () => {
+        expect(
+          actions(
+            placementAfterArrival,
+            userDetailsFactory.build({
+              permissions: ['cas1_test_experimental_permission'],
+            }),
+            { preArrivalTasksComplete: true },
+          ),
+        ).toEqual(null)
       })
     })
 

@@ -7,7 +7,6 @@ import TasklistService from '../../../../../services/tasklistService'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../../../utils/validation'
 import managePaths from '../../../../../paths/manage'
 
-import PreArrival from '../../../../../form-pages/residence/pre-arrival'
 import { ValidationError } from '../../../../../utils/errors'
 
 export const tasklistPageHeading = 'Complete Pre-arrival tasks'
@@ -15,7 +14,7 @@ export const tasklistPageHeading = 'Complete Pre-arrival tasks'
 export default class ResidenceTasksController {
   constructor(
     private readonly placementService: PlacementService,
-    private readonly formService: FormDataService,
+    private readonly formDataService: FormDataService,
   ) {}
 
   show(journey: JourneyType): RequestHandler {
@@ -30,19 +29,11 @@ export default class ResidenceTasksController {
         this.placementService.getPlacement(token, placementId),
       ])
 
-      let data
-      try {
-        const id = `${placementId}-${journey}`
-        data = await this.formService.getFormData(token, id)
-      } catch (e) {
-        data = {}
-      }
-
-      const { sections } = PreArrival
+      const data = await this.formDataService.getFormData(token, placementId, journey)
 
       const taskList = new TasklistService(
         undefined,
-        sections,
+        journey,
         data,
         `${managePaths.resident.show({ placementId, crn })}/tasks/${journey}`,
       )
@@ -67,21 +58,28 @@ export default class ResidenceTasksController {
       } = req
 
       try {
-        const formId = `${placementId}-${journey}`
-        const data = await this.formService.getFormData(token, formId)
-
-        const { sections } = PreArrival
+        const data = await this.formDataService.getFormData(token, placementId, journey)
 
         const taskList = new TasklistService(
           undefined,
-          sections,
+          journey,
           data,
           `${managePaths.resident.show({ placementId, crn })}/tasks/${journey}`,
         )
         if (taskList.status !== 'complete') throw new ValidationError({ tasklist: 'The tasks are not complete.' })
 
         const status: TasklistStatus = 'submitted'
-        await this.formService.updateFormData(token, formId, { ...data, status })
+
+        await this.formDataService.updateFormData(token, placementId, journey, { ...data, status })
+
+        // Copy tasklist data to profile blob
+        const profileData = await this.formDataService.getFormData(token, placementId, 'profile')
+        await this.formDataService.updateFormData(token, placementId, 'profile', {
+          ...profileData,
+          ...data,
+          preArrivalTasksComplete: true,
+        })
+
         res.redirect(managePaths.resident.show({ placementId, crn }))
       } catch (error) {
         catchValidationErrorOrPropogate(

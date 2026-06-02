@@ -1,4 +1,4 @@
-import { TaskData } from '@approved-premises/ui'
+import { JourneyType, TaskData } from '@approved-premises/ui'
 import { FormDataClient } from '../data'
 import FormDataService from './formDataService'
 
@@ -12,6 +12,7 @@ describe('formDataService', () => {
   const service = new FormDataService(formDataClientBuilder)
   const token = 'TEST_TOKEN'
   const id = 'ID'
+  const journey: JourneyType = 'profile'
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -22,10 +23,10 @@ describe('formDataService', () => {
     it('should get form data', async () => {
       formDataClient.get.mockResolvedValue(testData)
 
-      const result = await service.getFormData(token, id)
+      const result = await service.getFormData(token, id, journey)
 
       expect(formDataClientBuilder).toHaveBeenCalledWith(token)
-      expect(formDataClient.get).toHaveBeenCalledWith(id)
+      expect(formDataClient.get).toHaveBeenCalledWith('ID-profile')
       expect(result).toEqual(testData)
     })
   })
@@ -34,10 +35,10 @@ describe('formDataService', () => {
     it('should update form data', async () => {
       formDataClient.update.mockResolvedValue({ id })
 
-      const result = await service.updateFormData(token, id, testData)
+      const result = await service.updateFormData(token, id, journey, testData)
 
       expect(formDataClientBuilder).toHaveBeenCalledWith(token)
-      expect(formDataClient.update).toHaveBeenCalledWith(id, testData)
+      expect(formDataClient.update).toHaveBeenCalledWith('ID-profile', testData)
       expect(result).toEqual({ id })
     })
   })

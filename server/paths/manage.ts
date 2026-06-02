@@ -129,6 +129,7 @@ const paths = {
     },
     tabRisk: {
       riskDetails: residentPath.path('risk').path('riskDetails'),
+      placementRisks: residentPath.path('risk').path('placementRisks'),
     },
     tabSentence: {
       offence: residentPath.path('sentence').path('offence'),
