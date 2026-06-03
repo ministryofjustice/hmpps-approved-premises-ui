@@ -6,7 +6,6 @@ import type {
   Cas1OutOfServiceBedCancellation as OutOfServiceBedCancellation,
   Cas1OutOfServiceBedReason,
   Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
-  Premises,
   SortDirection,
   Temporality,
   UpdateCas1OutOfServiceBed as UpdateOutOfServiceBed,
@@ -21,7 +20,7 @@ export default class OutOfServiceBedService {
 
   async createOutOfServiceBed(
     token: string,
-    premisesId: Premises['id'],
+    premisesId: string,
     outOfServiceBed: NewOutOfServiceBed,
   ): Promise<OutOfServiceBed> {
     const outOfServiceBedClient = this.outOfServiceBedClientFactory(token)
@@ -29,11 +28,7 @@ export default class OutOfServiceBedService {
     return outOfServiceBedClient.create(premisesId, outOfServiceBed)
   }
 
-  async getOutOfServiceBed(
-    token: string,
-    premisesId: Premises['id'],
-    id: OutOfServiceBed['id'],
-  ): Promise<OutOfServiceBed> {
+  async getOutOfServiceBed(token: string, premisesId: string, id: OutOfServiceBed['id']): Promise<OutOfServiceBed> {
     const outOfServiceBedClient = this.outOfServiceBedClientFactory(token)
 
     return outOfServiceBedClient.find(premisesId, id)
@@ -42,7 +37,7 @@ export default class OutOfServiceBedService {
   async updateOutOfServiceBed(
     token: string,
     id: OutOfServiceBed['id'],
-    premisesId: Premises['id'],
+    premisesId: string,
     updateOutOfServiceBed: UpdateOutOfServiceBed,
   ): Promise<OutOfServiceBed> {
     const outOfServiceBedClient = this.outOfServiceBedClientFactory(token)
@@ -56,7 +51,7 @@ export default class OutOfServiceBedService {
     return cas1ReferenceDataClient.getOutOfServiceBedReasons()
   }
 
-  async getOutOfServiceBedsForAPremises(token: string, premisesId: Premises['id']): Promise<Array<OutOfServiceBed>> {
+  async getOutOfServiceBedsForAPremises(token: string, premisesId: string): Promise<Array<OutOfServiceBed>> {
     const outOfServiceBedClient = this.outOfServiceBedClientFactory(token)
 
     return outOfServiceBedClient.getAllByPremises(premisesId)
@@ -96,7 +91,7 @@ export default class OutOfServiceBedService {
 
   async cancelOutOfServiceBed(
     token: string,
-    premisesId: Premises['id'],
+    premisesId: string,
     outOfServiceBedId: OutOfServiceBed['id'],
     data: NewOutOfServiceBedCancellation,
   ): Promise<OutOfServiceBedCancellation> {

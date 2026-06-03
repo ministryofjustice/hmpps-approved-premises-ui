@@ -1,6 +1,5 @@
 import {
   ApprovedPremisesApplicationStatus as ApplicationStatus,
-  BookingStatus,
   PersonStatus,
   RequestForPlacementStatus,
   TaskStatus,
@@ -18,7 +17,6 @@ export type StatusTagOptions = {
 type Status =
   | ApplicationStatus
   | TaskStatus
-  | BookingStatus
   | PersonStatus
   | AssessmentStatusForUi
   | TaskListStatus

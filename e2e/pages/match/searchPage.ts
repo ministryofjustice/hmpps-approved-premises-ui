@@ -1,6 +1,5 @@
 import { Page, expect } from '@playwright/test'
 import { MatchBasePage } from './matchBasePage'
-import { Premises } from '../../../server/@types/shared'
 import { ApTypeLabel } from '../../../server/utils/apTypeLabels'
 import { E2EDatesOfPlacement } from '../../steps/assess'
 
@@ -29,7 +28,7 @@ export class SearchPage extends MatchBasePage {
     apType,
     preferredPostcode,
   }: {
-    preferredAps: Array<Premises['name']>
+    preferredAps: Array<string>
     datesOfPlacement: E2EDatesOfPlacement
     duration: string
     apType: ApTypeLabel
@@ -41,7 +40,7 @@ export class SearchPage extends MatchBasePage {
     await this.shouldShowPreferredAps(preferredAps)
   }
 
-  async shouldShowPreferredAps(preferredAps: Array<Premises['name']>) {
+  async shouldShowPreferredAps(preferredAps: Array<string>) {
     return Promise.all(
       preferredAps.map(async (preferredAp, index) => {
         await expect(this.page.getByText(preferredAp, { exact: true }).nth(index)).toBeVisible()

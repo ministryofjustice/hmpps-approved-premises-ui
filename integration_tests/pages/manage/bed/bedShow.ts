@@ -1,4 +1,4 @@
-import { Cas1BedDetail, Cas1Premises, Premises } from '@approved-premises/api'
+import { Cas1BedDetail, Cas1Premises } from '@approved-premises/api'
 
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
@@ -10,7 +10,7 @@ export default class BedShowPage extends Page {
     super(`Bed ${bedName}`)
   }
 
-  static visit(premisesId: Premises['id'], bed: Cas1BedDetail): BedShowPage {
+  static visit(premisesId: string, bed: Cas1BedDetail): BedShowPage {
     cy.visit(paths.premises.beds.show({ premisesId, bedId: bed.id }))
     return new BedShowPage(bed.name)
   }

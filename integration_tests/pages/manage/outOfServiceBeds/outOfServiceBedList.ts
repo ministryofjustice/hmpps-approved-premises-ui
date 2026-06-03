@@ -1,4 +1,4 @@
-import type { Cas1OutOfServiceBed as OutOfServiceBed, Premises, Temporality } from '@approved-premises/api'
+import type { Cas1OutOfServiceBed as OutOfServiceBed, Temporality } from '@approved-premises/api'
 import paths from '../../../../server/paths/manage'
 
 import Page from '../../page'
@@ -8,7 +8,7 @@ export class OutOfServiceBedListPage extends Page {
     super('Manage out of service beds')
   }
 
-  static visit(premisesId: Premises['id'], temporality: Temporality): OutOfServiceBedListPage {
+  static visit(premisesId: string, temporality: Temporality): OutOfServiceBedListPage {
     cy.visit(paths.outOfServiceBeds.premisesIndex({ premisesId, temporality }))
     return new OutOfServiceBedListPage()
   }

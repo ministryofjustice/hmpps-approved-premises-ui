@@ -1,4 +1,5 @@
-import { ApprovedPremises, ApprovedPremisesApplication, Cas1PlacementRequestDetail } from '../../@types/shared'
+import { ApprovedPremises } from '@approved-premises/ui'
+import { ApprovedPremisesApplication, Cas1PlacementRequestDetail } from '../../@types/shared'
 import PreferredAps from '../../form-pages/apply/risk-and-need-factors/location-factors/preferredAps'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 
