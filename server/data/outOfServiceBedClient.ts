@@ -6,7 +6,6 @@ import type {
   Cas1OutOfServiceBed as OutOfServiceBed,
   Cas1OutOfServiceBedCancellation as OutOfServiceBedCancellation,
   Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
-  Premises,
   SortDirection,
   Temporality,
   UpdateCas1OutOfServiceBed as UpdateOutOfServiceBed,
@@ -25,20 +24,20 @@ export default class OutOfServiceBedClient {
     this.restClient = new RestClient('outOfServiceBedClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async create(premisesId: Premises['id'], outOfServiceBed: NewOutOfServiceBed): Promise<OutOfServiceBed> {
+  async create(premisesId: string, outOfServiceBed: NewOutOfServiceBed): Promise<OutOfServiceBed> {
     return this.restClient.post<OutOfServiceBed>({
       path: paths.manage.premises.outOfServiceBeds.create({ premisesId }),
       data: outOfServiceBed,
     })
   }
 
-  async find(premisesId: Premises['id'], id: OutOfServiceBed['id']): Promise<OutOfServiceBed> {
+  async find(premisesId: string, id: OutOfServiceBed['id']): Promise<OutOfServiceBed> {
     return this.restClient.get<OutOfServiceBed>({
       path: paths.manage.premises.outOfServiceBeds.show({ premisesId, id }),
     })
   }
 
-  async getAllByPremises(premisesId: Premises['id']): Promise<Array<OutOfServiceBed>> {
+  async getAllByPremises(premisesId: string): Promise<Array<OutOfServiceBed>> {
     return this.restClient.get<Array<OutOfServiceBed>>({
       path: paths.manage.premises.outOfServiceBeds.premisesIndex({ premisesId }),
     })
@@ -79,7 +78,7 @@ export default class OutOfServiceBedClient {
   async update(
     id: OutOfServiceBed['id'],
     outOfServiceBedData: UpdateOutOfServiceBed,
-    premisesId: Premises['id'],
+    premisesId: string,
   ): Promise<OutOfServiceBed> {
     return this.restClient.put<OutOfServiceBed>({
       path: paths.manage.premises.outOfServiceBeds.update({ id, premisesId }),
@@ -89,7 +88,7 @@ export default class OutOfServiceBedClient {
 
   async cancel(
     id: string,
-    premisesId: Premises['id'],
+    premisesId: string,
     outOfServiceBedData: NewOutOfServiceBedCancellation,
   ): Promise<OutOfServiceBedCancellation> {
     return this.restClient.post<OutOfServiceBedCancellation>({

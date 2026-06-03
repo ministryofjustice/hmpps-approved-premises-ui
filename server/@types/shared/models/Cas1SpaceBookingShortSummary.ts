@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ApprovedPremisesUser } from './ApprovedPremisesUser';
+import type { ApType } from './ApType';
 import type { Cas1KeyWorkerAllocation } from './Cas1KeyWorkerAllocation';
 import type { Cas1SpaceBookingCancellation } from './Cas1SpaceBookingCancellation';
 import type { Cas1SpaceBookingDeparture } from './Cas1SpaceBookingDeparture';
@@ -29,6 +30,7 @@ export type Cas1SpaceBookingShortSummary = {
     isNonArrival?: boolean;
     keyWorkerAllocation?: Cas1KeyWorkerAllocation;
     nonArrival?: Cas1SpaceBookingNonArrival;
+    placementRequestApType?: ApType;
     premises: NamedId;
     status?: Cas1SpaceBookingStatus;
     statusSetDate?: string;

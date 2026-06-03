@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
 import { addDays, addYears } from 'date-fns'
-import { ApprovedPremisesApplication as Application, Premises } from '@approved-premises/api'
+import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
 import { E2EDatesOfPlacement } from './assess'
 import { ListPage, PlacementRequestPage } from '../pages/workflow'
 import { ApTypeLabel } from '../../server/utils/apTypeLabels'
@@ -37,7 +37,7 @@ export const matchAndBookApplication = async ({
   duration: string
   apType: ApTypeLabel
   releaseType: ReleaseTypeLabel
-  preferredAps: Array<Premises['name']>
+  preferredAps: Array<string>
   preferredPostcode: string
 }): Promise<E2EMatchAndBookResult> => {
   // Given I visit the Dashboard

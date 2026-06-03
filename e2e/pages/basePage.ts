@@ -1,5 +1,4 @@
 import { Page, expect } from '@playwright/test'
-import { Premises } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 
 export class BasePage {
@@ -88,7 +87,7 @@ export class BasePage {
     await this.page.getByLabel('Year', { exact: true }).first().fill(year)
   }
 
-  async selectFirstPremises(legend: string): Promise<Premises['name']> {
+  async selectFirstPremises(legend: string): Promise<string> {
     await this.page
       .getByRole('group', { name: legend })
       .getByRole('combobox', { name: 'Select an area' })

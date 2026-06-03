@@ -1,5 +1,4 @@
 import {
-  ApprovedPremises,
   Cas1PlacementRequestDetail,
   Cas1SpaceCharacteristic,
   Cas1SpaceSearchParameters,
@@ -8,6 +7,7 @@ import {
   PlacementCriteria,
 } from '@approved-premises/api'
 import {
+  ApprovedPremises,
   CheckBoxItem,
   RadioItem,
   SpaceSearchApCriteria,

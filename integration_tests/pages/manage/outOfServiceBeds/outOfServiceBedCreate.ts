@@ -1,4 +1,4 @@
-import type { Booking, Cas1OutOfServiceBed as OutOfServiceBed, Premises } from '@approved-premises/api'
+import type { Cas1OutOfServiceBed as OutOfServiceBed } from '@approved-premises/api'
 import { EntityType } from '@approved-premises/ui'
 import paths from '../../../../server/paths/manage'
 
@@ -8,13 +8,13 @@ import BedspaceConflictErrorComponent from '../../../components/bedspaceConflict
 export class OutOfServiceBedCreatePage extends Page {
   private readonly bedspaceConflictErrorComponent: BedspaceConflictErrorComponent
 
-  constructor(premisesId: Premises['id']) {
+  constructor(premisesId: string) {
     super('Mark a bed as out of service')
 
     this.bedspaceConflictErrorComponent = new BedspaceConflictErrorComponent(premisesId, 'lost-bed')
   }
 
-  static visit(premisesId: Premises['id'], bedId: OutOfServiceBed['id']): OutOfServiceBedCreatePage {
+  static visit(premisesId: string, bedId: OutOfServiceBed['id']): OutOfServiceBedCreatePage {
     cy.visit(paths.outOfServiceBeds.new({ premisesId, bedId }))
     return new OutOfServiceBedCreatePage(premisesId)
   }
@@ -40,10 +40,7 @@ export class OutOfServiceBedCreatePage extends Page {
     cy.get('[name="notes"]').type(outOfServiceBed.notes)
   }
 
-  shouldShowDateConflictErrorMessages(
-    conflictingEntity: Booking | OutOfServiceBed,
-    conflictingEntityType: EntityType,
-  ): void {
+  shouldShowDateConflictErrorMessages(conflictingEntity: OutOfServiceBed, conflictingEntityType: EntityType): void {
     this.bedspaceConflictErrorComponent.shouldShowDateConflictErrorMessages(
       ['startDate', 'endDate'],
       conflictingEntity,

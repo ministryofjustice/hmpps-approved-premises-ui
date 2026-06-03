@@ -1,4 +1,4 @@
-import { BookingPremisesSummary, Cas1SpaceBooking, Withdrawable } from '@approved-premises/api'
+import { Cas1SpaceBooking, NamedId, Withdrawable } from '@approved-premises/api'
 import { RadioItem } from '@approved-premises/ui'
 import matchPaths from '../../../paths/match'
 import managePaths from '../../../paths/manage'
@@ -75,11 +75,7 @@ export const withdrawableRadioOptions = (
   selectedWithdrawable?: Withdrawable['id'],
   allBookings: Array<Cas1SpaceBooking> = [],
 ): Array<RadioItem> => {
-  const withDrawableRadioSection = (
-    withdrawable: Withdrawable,
-    premises: BookingPremisesSummary,
-    hintLinkPath: string,
-  ) => {
+  const withDrawableRadioSection = (withdrawable: Withdrawable, premises: NamedId, hintLinkPath: string) => {
     const hint = hintLinkPath
       ? {
           hint: {
