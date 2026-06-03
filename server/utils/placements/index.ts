@@ -4,7 +4,6 @@ import {
   Cas1SpaceBooking,
   Cas1SpaceBookingDates,
   Cas1SpaceBookingSummary,
-  Cas1SpaceCharacteristic,
   Cas1SpaceBookingShortSummary,
 } from '@approved-premises/api'
 import { RadioItem, SummaryList, TabItem, TableCell, TaskData, UserDetails } from '@approved-premises/ui'
@@ -13,18 +12,13 @@ import { personKeyDetails } from '../applications/helpers'
 import paths from '../../paths/manage'
 import { hasPermission } from '../users'
 import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
-import {
-  ApTypeCriteria,
-  apTypeCriteriaLabels,
-  SpecialistApTypeCriteria,
-  specialistApTypeCriteria,
-} from '../placementCriteriaUtils'
 import { filterApLevelCriteria, filterRoomLevelCriteria } from '../match/spaceSearch'
 import { characteristicsBulletList, roomCharacteristicMap } from '../characteristicsUtils'
 import { StatusTagOptions } from '../statusTag'
 import { PlacementStatusTag } from './statusTag'
 import { detailedStatus, statusTextMap } from './status'
 import { htmlCell, textCell } from '../tableUtils'
+import { apTypeLongLabels } from '../apTypeLabels'
 
 const changeRequestStatuses: Record<Cas1ChangeRequestType, string> = {
   placementAppeal: 'Appeal requested',
@@ -231,21 +225,14 @@ export const departureInformation = (placement: Cas1SpaceBooking): SummaryList =
   }
 }
 
-export const requirementsInformation = (
-  placement: Cas1SpaceBooking | { characteristics: Array<Cas1SpaceCharacteristic> },
-): SummaryList => {
+export const requirementsInformation = (placement: Cas1SpaceBooking | Cas1SpaceBookingShortSummary): SummaryList => {
   const requirements = placement.characteristics
-  const apType =
-    apTypeCriteriaLabels[
-      (requirements.find(requirement => specialistApTypeCriteria.includes(requirement as SpecialistApTypeCriteria)) ||
-        'normal') as ApTypeCriteria
-    ]
   const apRequirements = filterApLevelCriteria(requirements)
   const roomRequirements = filterRoomLevelCriteria(requirements)
 
   return {
     rows: [
-      summaryListItem('AP type', apType),
+      summaryListItem('AP type', apTypeLongLabels[placement.placementRequestApType]),
       summaryListItem('AP requirements', characteristicsBulletList(apRequirements), 'html'),
       summaryListItem('Room requirements', characteristicsBulletList(roomRequirements), 'html'),
     ],

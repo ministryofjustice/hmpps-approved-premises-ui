@@ -25,6 +25,7 @@ import cas1ChangeRequestSummary from './cas1ChangeRequestSummary'
 import { placementCriteria } from './cas1PlacementRequestDetail'
 import cas1KeyworkerAllocationFactory from './cas1KeyworkerAllocation'
 import { overallStatusTextMap } from '../../utils/placements/status'
+import { apTypes } from '../../utils/placementCriteriaUtils'
 
 class Cas1SpaceBookingFactory extends Factory<Cas1SpaceBooking> {
   upcoming() {
@@ -145,6 +146,7 @@ export default Cas1SpaceBookingFactory.define(({ params }) => {
     cancellation: undefined as Cas1SpaceBookingCancellation,
     allowedActions: [] as Array<Cas1SpaceBookingAction>,
     openChangeRequests: cas1ChangeRequestSummary.buildList(3),
+    placementRequestApType: faker.helpers.arrayElement(apTypes),
     status: faker.helpers.arrayElement(Object.keys(overallStatusTextMap)) as Cas1SpaceBookingStatus,
   }
 })
