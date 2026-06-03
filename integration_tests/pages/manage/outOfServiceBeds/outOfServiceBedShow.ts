@@ -1,4 +1,4 @@
-import { Cas1BedDetail, Cas1OutOfServiceBed as OutOfServiceBed, Premises } from '@approved-premises/api'
+import { Cas1BedDetail, Cas1OutOfServiceBed as OutOfServiceBed } from '@approved-premises/api'
 import paths from '../../../../server/paths/manage'
 
 import Page from '../../page'
@@ -11,7 +11,7 @@ export class OutOfServiceBedShowPage extends Page {
     super('Out of service bed record')
   }
 
-  static visit(premisesId: Premises['id'], outOfServiceBed: OutOfServiceBed): OutOfServiceBedShowPage {
+  static visit(premisesId: string, outOfServiceBed: OutOfServiceBed): OutOfServiceBedShowPage {
     cy.visit(
       paths.outOfServiceBeds.show({
         premisesId,

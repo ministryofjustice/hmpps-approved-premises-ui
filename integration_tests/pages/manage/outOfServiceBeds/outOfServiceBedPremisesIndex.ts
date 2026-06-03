@@ -1,4 +1,4 @@
-import { ApprovedPremises } from '@approved-premises/api'
+import { ApprovedPremises } from '@approved-premises/ui'
 import paths from '../../../../server/paths/manage'
 
 import Page from '../../page'

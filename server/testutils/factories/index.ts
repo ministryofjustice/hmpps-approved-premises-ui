@@ -11,7 +11,6 @@ import assessmentFactory from './assessment'
 import assessmentSummaryFactory from './cas1AssessmentSummary'
 import bookingDetailsFactory from './bookingDetails'
 import bookingNotMadeFactory from './bookingNotMade'
-import cancellationFactory from './cancellation'
 import clarificationNoteFactory from './clarificationNote'
 import contingencyPlanPartnerFactory from './contingencyPlanPartner'
 import contingencyPlanQuestionsBodyFactory from './contingencyPlanQuestionsBody'
@@ -116,7 +115,6 @@ export {
   assessmentSummaryFactory,
   bookingDetailsFactory,
   bookingNotMadeFactory,
-  cancellationFactory,
   cas1ApprovedPlacementAppealfactory,
   cas1BedDetailFactory,
   cas1ChangeRequestSummaryFactory,

@@ -1,4 +1,4 @@
-import type { Booking, Cas1OutOfServiceBed } from '@approved-premises/api'
+import type { Cas1OutOfServiceBed } from '@approved-premises/api'
 import { EntityType } from '@approved-premises/ui'
 import errorLookups from '../../server/i18n/en/errors.json'
 import Page from '../pages/page'
@@ -13,7 +13,7 @@ export default class BedspaceConflictErrorComponent {
 
   shouldShowDateConflictErrorMessages(
     fields: Array<string>,
-    conflictingEntity: Booking | Cas1OutOfServiceBed,
+    conflictingEntity: Cas1OutOfServiceBed,
     conflictingEntityType: EntityType,
   ): void {
     fields.forEach(field => {
@@ -29,9 +29,9 @@ export default class BedspaceConflictErrorComponent {
     cy.get('.govuk-error-summary a').click()
 
     if (conflictingEntityType === 'booking') {
-      Page.verifyOnPage(PlacementShowPage, [this.premisesId, conflictingEntity as Booking])
+      Page.verifyOnPage(PlacementShowPage, [this.premisesId, conflictingEntity])
     } else {
-      Page.verifyOnPage(OutOfServiceBedShowPage, this.premisesId, conflictingEntity as Cas1OutOfServiceBed)
+      Page.verifyOnPage(OutOfServiceBedShowPage, this.premisesId, conflictingEntity)
     }
 
     cy.go('back')

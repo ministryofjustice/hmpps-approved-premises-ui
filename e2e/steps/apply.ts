@@ -1,7 +1,6 @@
 import { Page, expect } from '@playwright/test'
 
 import { AppealDecision, ApplicationType, TestOptions } from '@approved-premises/e2e'
-import { Premises } from '@approved-premises/api'
 import {
   ApplyPage,
   CRNPage,
@@ -238,7 +237,7 @@ export const completePrisonNotesTask = async (page: Page) => {
 
 export const completeLocationFactorsTask = async (
   page: Page,
-): Promise<{ preferredAps: Array<Premises['name']>; preferredPostcode: string }> => {
+): Promise<{ preferredAps: Array<string>; preferredPostcode: string }> => {
   const preferredPostcode = 'B71'
   const taskListPage = new TasklistPage(page)
   await taskListPage.clickTask('Describe location factors')

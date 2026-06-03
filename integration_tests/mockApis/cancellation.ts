@@ -1,5 +1,5 @@
 import type { SuperAgentRequest } from 'superagent'
-import type { Cancellation } from '@approved-premises/api'
+import { NewCancellation } from '@approved-premises/ui'
 import paths from '../../server/paths/api'
 
 import { stubFor } from './setup'
@@ -13,7 +13,7 @@ export default {
   stubCancellationCreate: (args: {
     premisesId: string
     placementId: string
-    cancellation: Cancellation
+    cancellation: NewCancellation
   }): SuperAgentRequest =>
     stubFor({
       request: {

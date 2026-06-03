@@ -33,6 +33,7 @@ import {
   RoshRisks,
   TransferReason,
   UserQualification,
+  LocalAuthorityArea,
 } from '@approved-premises/api'
 import type { Request } from 'express'
 import { Session } from 'express-session'
@@ -599,3 +600,22 @@ export type NewCancellation = {
 export type TaskData = Record<string, any>
 
 export type TasklistStatus = 'submitted' | 'rejected'
+
+export type ApprovedPremises = {
+  addressLine1: string
+  addressLine2?: string
+  apArea: ApArea
+  availableBedsForToday: number
+  bedCount: number
+  characteristics?: Array<Characteristic>
+  id: string
+  localAuthorityArea?: LocalAuthorityArea
+  name: string
+  notes?: string
+  postcode: string
+  probationRegion: ProbationRegion
+  service: string
+  status: PropertyStatus
+  town?: string
+  apCode: string
+}

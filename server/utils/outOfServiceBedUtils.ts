@@ -5,7 +5,6 @@ import {
   Cas1OutOfServiceBedReason,
   Cas1OutOfServiceBedRevision,
   Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
-  Premises,
   SortDirection,
 } from '@approved-premises/api'
 import {
@@ -107,11 +106,11 @@ export const outOfServiceBedTableRows = (beds: Array<OutOfServiceBed>, premisesI
 
 export const referenceNumberCell = (value: string): TableCell => ({ text: value || 'Not provided' })
 
-export const actionCell = (bed: OutOfServiceBed, premisesId: Premises['id']): TableCell => ({
+export const actionCell = (bed: OutOfServiceBed, premisesId: string): TableCell => ({
   html: bedLink(bed, premisesId),
 })
 
-const bedLink = (bed: OutOfServiceBed, premisesId: Premises['id']): string =>
+const bedLink = (bed: OutOfServiceBed, premisesId: string): string =>
   linkTo(paths.outOfServiceBeds.show({ id: bed.id, bedId: bed.bed.id, premisesId, tab: 'details' }), {
     text: 'View',
     hiddenText: `Out of service bed ${bed.bed.name}`,

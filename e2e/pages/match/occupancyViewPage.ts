@@ -1,11 +1,10 @@
 import { Page, expect } from '@playwright/test'
-import { Premises } from '@approved-premises/api'
 import { MatchBasePage } from './matchBasePage'
 import { E2EDatesOfPlacement } from '../../steps/assess'
 import { ReleaseTypeLabel } from '../../../server/utils/applications/releaseTypeUtils'
 
 export class OccupancyViewPage extends MatchBasePage {
-  static async initialize(page: Page, premisesName: Premises['name']) {
+  static async initialize(page: Page, premisesName: string) {
     await expect(page.locator('h1')).toContainText(`View spaces in ${premisesName}`)
 
     return new OccupancyViewPage(page)
