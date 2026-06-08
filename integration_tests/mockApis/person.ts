@@ -15,6 +15,7 @@ import type {
   DietAndAllergyResponse,
   Document,
   Licence,
+  Cas1OASysAssessmentSuitabilityStrategyDto,
   Person,
   PersonAcctAlert,
   PersonRisks,
@@ -215,12 +216,13 @@ export default {
 
   stubOasysMetadata: (args: {
     person: Person
+    suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto
     oasysMetadata: { supportingInformation: Array<Cas1OASysSupportingInformationQuestionMetaData> }
   }) =>
     stubFor({
       request: {
         method: 'GET',
-        url: paths.people.oasys.metadata({ crn: args.person.crn }),
+        url: `${paths.people.oasys.metadata({ crn: args.person.crn })}?${createQueryString({ suitabilityStrategy: args.suitabilityStrategy })}`,
       },
 
       response: {
@@ -230,11 +232,11 @@ export default {
       },
     }),
 
-  stubOasysMetadata404: (args: { person: Person }) =>
+  stubOasysMetadata404: (args: { person: Person; suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto }) =>
     stubFor({
       request: {
         method: 'GET',
-        url: paths.people.oasys.metadata({ crn: args.person.crn }),
+        url: `${paths.people.oasys.metadata({ crn: args.person.crn })}?${createQueryString({ suitabilityStrategy: args.suitabilityStrategy })}`,
       },
       response: {
         status: 404,

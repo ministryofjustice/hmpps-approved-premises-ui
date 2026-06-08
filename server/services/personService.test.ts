@@ -131,12 +131,12 @@ describe('PersonService', () => {
 
       personClient.oasysMetadata.mockResolvedValue(refOasysMetadata)
 
-      const metadata = await service.getOasysMetadata(token, crn)
+      const metadata = await service.getOasysMetadata(token, crn, 'completed_in_last_six_months')
 
       expect(metadata).toEqual(refOasysMetadata)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.oasysMetadata).toHaveBeenCalledWith(crn)
+      expect(personClient.oasysMetadata).toHaveBeenCalledWith(crn, 'completed_in_last_six_months')
     })
 
     it('on 404 it throws an OasysNotFoundError', async () => {
@@ -145,7 +145,7 @@ describe('PersonService', () => {
         throw err
       })
 
-      const t = () => service.getOasysMetadata(token, crn)
+      const t = () => service.getOasysMetadata(token, crn, 'completed_in_last_six_months')
 
       await expect(t).rejects.toThrowError(OasysNotFoundError)
       await expect(t).rejects.toThrowError(`Oasys record not found for CRN: crn`)
@@ -158,7 +158,7 @@ describe('PersonService', () => {
       })
 
       try {
-        await service.getOasysMetadata(token, crn)
+        await service.getOasysMetadata(token, crn, 'completed_in_last_six_months')
       } catch (error) {
         expect(error).toEqual(err)
       }
@@ -170,7 +170,9 @@ describe('PersonService', () => {
         throw genericError
       })
 
-      await expect(() => service.getOasysMetadata(token, crn)).rejects.toThrowError(Error)
+      await expect(() => service.getOasysMetadata(token, crn, 'completed_in_last_six_months')).rejects.toThrowError(
+        Error,
+      )
     })
   })
 
