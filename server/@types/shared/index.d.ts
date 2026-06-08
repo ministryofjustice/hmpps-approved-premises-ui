@@ -84,6 +84,7 @@ export type { Cas1NewSpaceBooking } from './models/Cas1NewSpaceBooking';
 export type { Cas1NewSpaceBookingCancellation } from './models/Cas1NewSpaceBookingCancellation';
 export type { Cas1NonArrival } from './models/Cas1NonArrival';
 export type { Cas1OASysAssessmentMetadata } from './models/Cas1OASysAssessmentMetadata';
+export type { Cas1OASysAssessmentSuitabilityStrategyDto } from './models/Cas1OASysAssessmentSuitabilityStrategyDto';
 export type { Cas1OASysGroup } from './models/Cas1OASysGroup';
 export type { Cas1OASysGroupName } from './models/Cas1OASysGroupName';
 export type { Cas1OASysMetadata } from './models/Cas1OASysMetadata';
