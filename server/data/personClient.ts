@@ -77,6 +77,7 @@ export default class PersonClient {
   async oasysAnswers(
     crn: string,
     groupName: Cas1OASysGroupName,
+    suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto,
     optionalSections?: Array<number>,
   ): Promise<Cas1OASysGroup> {
     let response: Cas1OASysGroup
@@ -88,7 +89,11 @@ export default class PersonClient {
         assessmentMetadata: oasysStubs.assessmentMetadata,
       }
     } else {
-      const queryString: string = createQueryString({ group: groupName, includeOptionalSections: optionalSections })
+      const queryString: string = createQueryString({
+        group: groupName,
+        suitabilityStrategy,
+        includeOptionalSections: optionalSections,
+      })
 
       const path = `${paths.people.oasys.answers({ crn })}${queryString ? `?${queryString}` : ''}`
 

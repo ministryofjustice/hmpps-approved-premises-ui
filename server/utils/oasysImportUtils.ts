@@ -43,6 +43,7 @@ export const getOasysSection = async <T extends OasysPage>(
       token,
       application.person.crn,
       groupName,
+      'completed_in_last_six_months',
       selectedSections,
     )
     const { hasApplicableAssessment } = oasysGroup.assessmentMetadata

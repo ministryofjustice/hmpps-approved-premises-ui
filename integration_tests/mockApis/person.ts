@@ -245,11 +245,16 @@ export default {
       },
     }),
 
-  stubOasysGroup: (args: { person: Person; group: Cas1OASysGroup; includeOptionalSections: Array<number> }) =>
+  stubOasysGroup: (args: {
+    person: Person
+    group: Cas1OASysGroup
+    suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto
+    includeOptionalSections: Array<number>
+  }) =>
     stubFor({
       request: {
         method: 'GET',
-        url: `${paths.people.oasys.answers({ crn: args.person.crn })}?${createQueryString({ group: args.group.group, includeOptionalSections: args.includeOptionalSections })}`,
+        url: `${paths.people.oasys.answers({ crn: args.person.crn })}?${createQueryString({ group: args.group.group, suitabilityStrategy: args.suitabilityStrategy, includeOptionalSections: args.includeOptionalSections })}`,
       },
       response: {
         status: 200,

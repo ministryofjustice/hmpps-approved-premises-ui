@@ -53,7 +53,7 @@ describe('sentenceTabController', () => {
         ],
       })
 
-      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'offenceDetails')
+      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'offenceDetails', 'allow_all')
     })
 
     it('should render the sentenceOffencesTab card list if there is no oasys record and no offences', async () => {
@@ -78,7 +78,7 @@ describe('sentenceTabController', () => {
         ],
       })
 
-      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'offenceDetails')
+      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'offenceDetails', 'allow_all')
     })
   })
 

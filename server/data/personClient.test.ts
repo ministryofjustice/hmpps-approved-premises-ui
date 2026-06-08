@@ -251,6 +251,10 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
       const optionalSections = [1, 2, 3]
       const group: Cas1OASysGroupName = faker.helpers.arrayElement(['riskToSelf', 'supportingInformation'])
       const oasysGroup = cas1OasysGroupFactory.build()
+      const suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto = faker.helpers.arrayElement([
+        'allow_all',
+        'completed_in_last_six_months',
+      ])
 
       await provider.addInteraction({
         state: 'Server is healthy',
@@ -261,6 +265,7 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
           path: paths.people.oasys.answers({ crn }),
           query: {
             group,
+            suitabilityStrategy,
             includeOptionalSections: optionalSections.map(num => num.toString()),
           },
           headers: {
@@ -273,7 +278,7 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
         },
       })
 
-      const result = await personClient.oasysAnswers(crn, group, optionalSections)
+      const result = await personClient.oasysAnswers(crn, group, suitabilityStrategy, optionalSections)
 
       expect(result).toEqual(oasysGroup)
     })

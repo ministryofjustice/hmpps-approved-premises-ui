@@ -14,7 +14,9 @@ export const sentenceOffencesTabController = async ({
   const {
     outcomes: [oasysOutcome],
     values: [oasysAnswers],
-  } = await settlePromisesWithOutcomes<[Cas1OASysGroup]>([personService.getOasysAnswers(token, crn, 'offenceDetails')])
+  } = await settlePromisesWithOutcomes<[Cas1OASysGroup]>([
+    personService.getOasysAnswers(token, crn, 'offenceDetails', 'allow_all'),
+  ])
   return {
     subHeading: 'Offence and sentence',
     cardList: offencesTabCards({ caseDetail, caseDetailOutcome, oasysAnswers, oasysOutcome }),

@@ -30,7 +30,13 @@ describe('RiskToSelf', () => {
     it('calls the getOasysSections  method on the client with a token and the persons CRN', async () => {
       await RiskToSelf.initialize({}, application, 'some-token', fromPartial({ personService }))
 
-      expect(getOasysGroupMock).toHaveBeenCalledWith('some-token', application.person.crn, 'riskToSelf', [])
+      expect(getOasysGroupMock).toHaveBeenCalledWith(
+        'some-token',
+        application.person.crn,
+        'riskToSelf',
+        'completed_in_last_six_months',
+        [],
+      )
     })
 
     it('adds the riskToSelfSummaries and personRisks to the page object', async () => {

@@ -1,8 +1,9 @@
 import { Response } from 'express'
 import { createMock } from '@golevelup/ts-jest'
-import type { Person } from '@approved-premises/api'
+import type { Cas1OASysAssessmentSuitabilityStrategyDto, Person } from '@approved-premises/api'
 
 import { when } from 'jest-when'
+import { faker } from '@faker-js/faker'
 import { SanitisedError } from '../sanitisedError'
 import PersonService, { OasysNotFoundError } from './personService'
 import PersonClient from '../data/personClient'
@@ -178,16 +179,20 @@ describe('PersonService', () => {
 
   describe('getOasysAnswers', () => {
     const oasysGroup = cas1OasysGroupFactory.build()
+    const suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto = faker.helpers.arrayElement([
+      'allow_all',
+      'completed_in_last_six_months',
+    ])
 
     it("on success returns the person's OASys answers given their CRN and groupName", async () => {
       personClient.oasysAnswers.mockResolvedValue(oasysGroup)
 
-      const serviceOasysSections = await service.getOasysAnswers(token, crn, oasysGroup.group)
+      const serviceOasysSections = await service.getOasysAnswers(token, crn, oasysGroup.group, suitabilityStrategy)
 
       expect(serviceOasysSections).toEqual(oasysGroup)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.oasysAnswers).toHaveBeenCalledWith(crn, oasysGroup.group, [])
+      expect(personClient.oasysAnswers).toHaveBeenCalledWith(crn, oasysGroup.group, suitabilityStrategy, [])
     })
 
     it('on 404 it throws an OasysNotFoundError', async () => {
@@ -196,7 +201,7 @@ describe('PersonService', () => {
         throw err
       })
 
-      const t = () => service.getOasysAnswers(token, crn, oasysGroup.group)
+      const t = () => service.getOasysAnswers(token, crn, oasysGroup.group, suitabilityStrategy)
 
       await expect(t).rejects.toThrowError(OasysNotFoundError)
       await expect(t).rejects.toThrowError(`Oasys record not found for CRN: crn`)
@@ -209,7 +214,7 @@ describe('PersonService', () => {
       })
 
       try {
-        await service.getOasysAnswers(token, crn, oasysGroup.group)
+        await service.getOasysAnswers(token, crn, oasysGroup.group, suitabilityStrategy)
       } catch (error) {
         expect(error).toEqual(err)
       }
@@ -221,7 +226,9 @@ describe('PersonService', () => {
         throw genericError
       })
 
-      await expect(() => service.getOasysAnswers(token, crn, oasysGroup.group)).rejects.toThrowError(Error)
+      await expect(() =>
+        service.getOasysAnswers(token, crn, oasysGroup.group, suitabilityStrategy),
+      ).rejects.toThrowError(Error)
     })
   })
 

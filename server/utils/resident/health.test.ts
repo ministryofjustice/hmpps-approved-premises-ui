@@ -53,7 +53,7 @@ describe('Health tab', () => {
       const result = await healthTabController({ personService, token, crn, placement })
 
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Health and disability' })
-      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [13])
+      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', 'allow_all', [13])
       expect(personService.getBookingDetails).toHaveBeenCalledWith(token, crn)
       expect(healthDetailsCards).toHaveBeenCalledWith({
         supportingInformation,
@@ -88,8 +88,8 @@ describe('Health tab', () => {
 
       expect(result).toEqual({ cardList: mockCardList, subHeading: 'Mental health' })
       expect(personService.getAcctAlerts).toHaveBeenCalledWith(token, crn)
-      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'riskToSelf')
-      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', [10])
+      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'riskToSelf', 'allow_all')
+      expect(personService.getOasysAnswers).toHaveBeenCalledWith(token, crn, 'supportingInformation', 'allow_all', [10])
 
       expect(healthUtils.mentalHealthCards).toHaveBeenCalledWith(successParameters)
     })

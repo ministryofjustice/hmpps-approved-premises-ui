@@ -13,7 +13,7 @@ export const drugAndAlcoholTabController = async ({
     values: [supportingInformation],
     outcomes: [supportingInformationResult],
   } = await settlePromisesWithOutcomes<[Cas1OASysGroup]>([
-    personService.getOasysAnswers(token, crn, 'supportingInformation', [8, 9]),
+    personService.getOasysAnswers(token, crn, 'supportingInformation', 'allow_all', [8, 9]),
   ])
   return { cardList: drugAndAlcoholCards(supportingInformation, supportingInformationResult) }
 }

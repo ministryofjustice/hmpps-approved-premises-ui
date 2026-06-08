@@ -35,7 +35,13 @@ describe('OffenceDetails', () => {
     it('calls the getOasysSections  method on the client with a token and the persons CRN', async () => {
       await OffenceDetails.initialize({}, application, 'some-token', fromPartial({ personService }))
 
-      expect(getOasysAnswersMock).toHaveBeenCalledWith('some-token', application.person.crn, 'offenceDetails', [])
+      expect(getOasysAnswersMock).toHaveBeenCalledWith(
+        'some-token',
+        application.person.crn,
+        'offenceDetails',
+        'completed_in_last_six_months',
+        [],
+      )
     })
 
     it('adds the offenceDetailsSummaries and personRisks to the page object', async () => {

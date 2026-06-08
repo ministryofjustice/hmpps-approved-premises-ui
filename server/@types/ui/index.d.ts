@@ -332,6 +332,7 @@ export type DataServices = Partial<{
       token: string,
       crn: string,
       group: Cas1OASysGroupName,
+      suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto,
       selectedSections?: Array<number>,
     ) => Promise<Cas1OASysGroup>
   }

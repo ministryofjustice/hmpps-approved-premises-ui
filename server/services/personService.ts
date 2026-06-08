@@ -73,11 +73,12 @@ export default class PersonService {
     token: string,
     crn: string,
     group: Cas1OASysGroupName,
+    suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto,
     selectedSections: Array<number> = [],
   ): Promise<Cas1OASysGroup> {
     const personClient = this.personClientFactory(token)
     try {
-      return await personClient.oasysAnswers(crn, group, selectedSections)
+      return await personClient.oasysAnswers(crn, group, suitabilityStrategy, selectedSections)
     } catch (error) {
       if ((error as HttpError)?.data?.status === 404) {
         throw new OasysNotFoundError(`Oasys record not found for CRN: ${crn}`, { status: 404 })
