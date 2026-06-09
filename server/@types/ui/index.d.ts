@@ -34,6 +34,7 @@ import {
   TransferReason,
   UserQualification,
   LocalAuthorityArea,
+  type Cas1OASysAssessmentSuitabilityStrategyDto,
 } from '@approved-premises/api'
 import type { Request } from 'express'
 import { Session } from 'express-session'
@@ -322,11 +323,16 @@ export type DataServices = Partial<{
     getPrisonCaseNotes: (token: string, crn: string) => Promise<Array<PrisonCaseNote>>
     getAdjudications: (token: string, crn: string) => Promise<Array<Adjudication>>
     getAcctAlerts: (token: string, crn: string) => Promise<Array<PersonAcctAlert>>
-    getOasysMetadata: (token: string, crn: string) => Promise<Cas1OASysMetadata>
+    getOasysMetadata: (
+      token: string,
+      crn: string,
+      suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto,
+    ) => Promise<Cas1OASysMetadata>
     getOasysAnswers: (
       token: string,
       crn: string,
       group: Cas1OASysGroupName,
+      suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto,
       selectedSections?: Array<number>,
     ) => Promise<Cas1OASysGroup>
   }

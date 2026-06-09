@@ -96,15 +96,21 @@ context('ResidentProfile', () => {
       const dietAndAllergyResponse = dietAndAllergyResponseFactory.build()
 
       cy.task('stubAcctAlerts', { person: placement.person, acctAlerts })
-      cy.task('stubOasysGroup', { person: placement.person, group: riskToSelf })
+      cy.task('stubOasysGroup', {
+        person: placement.person,
+        suitabilityStrategy: 'allow_all',
+        group: riskToSelf,
+      })
       cy.task('stubOasysGroup', {
         person: placement.person,
         group: oasysSupportingInformation,
+        suitabilityStrategy: 'allow_all',
         includeOptionalSections: [13],
       })
       cy.task('stubOasysGroup', {
         person: placement.person,
         group: oasysSupportingInformation,
+        suitabilityStrategy: 'allow_all',
         includeOptionalSections: [10],
       })
       cy.task('stubBookingDetails', { person: placement.person, bookingDetails })
@@ -202,9 +208,17 @@ context('ResidentProfile', () => {
       const caseDetail = caseDetailFactory.build()
       const { placement, personRisks } = setup()
 
-      cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
-      cy.task('stubOasysGroup', { person: placement.person, group: oasysRoshSummary })
-      cy.task('stubOasysGroup', { person: placement.person, group: oasysRiskManagementPlan })
+      cy.task('stubOasysGroup', {
+        person: placement.person,
+        suitabilityStrategy: 'allow_all',
+        group: oasysOffenceDetails,
+      })
+      cy.task('stubOasysGroup', { person: placement.person, suitabilityStrategy: 'allow_all', group: oasysRoshSummary })
+      cy.task('stubOasysGroup', {
+        person: placement.person,
+        suitabilityStrategy: 'allow_all',
+        group: oasysRiskManagementPlan,
+      })
       cy.task('stubCaseDetail', { person: placement.person, caseDetail })
 
       const page = visitPage({ placement, caseDetail }, 'Risk')
@@ -244,9 +258,17 @@ context('ResidentProfile', () => {
       const caseDetail = caseDetailFactory.build()
       const { placement } = setup()
 
-      cy.task('stubOasysGroup', { person: placement.person, group: oasysOffenceDetails })
-      cy.task('stubOasysGroup', { person: placement.person, group: oasysRoshSummary })
-      cy.task('stubOasysGroup', { person: placement.person, group: oasysRiskManagementPlan })
+      cy.task('stubOasysGroup', {
+        person: placement.person,
+        suitabilityStrategy: 'allow_all',
+        group: oasysOffenceDetails,
+      })
+      cy.task('stubOasysGroup', { person: placement.person, suitabilityStrategy: 'allow_all', group: oasysRoshSummary })
+      cy.task('stubOasysGroup', {
+        person: placement.person,
+        suitabilityStrategy: 'allow_all',
+        group: oasysRiskManagementPlan,
+      })
       cy.task('stubCaseDetail', { person: placement.person, caseDetail })
 
       const page = visitPage({ placement, caseDetail }, 'Risk', ['future_manager', 'experimental'])
@@ -267,7 +289,7 @@ context('ResidentProfile', () => {
       const { person } = placement
 
       cy.task('stubCaseDetail', { person, caseDetail })
-      cy.task('stubOasysGroup', { person, group: oasysOffenceDetails })
+      cy.task('stubOasysGroup', { person, group: oasysOffenceDetails, suitabilityStrategy: 'allow_all' })
       cy.task('stubAdjudications', { person, adjudications })
       cy.task('stubLicence', { person, licence })
       cy.task('stubCsra', { person, csraSummaries })
@@ -308,6 +330,7 @@ context('ResidentProfile', () => {
       cy.task('stubOasysGroup', {
         person: placement.person,
         group: oasysSupportingInformation,
+        suitabilityStrategy: 'allow_all',
         includeOptionalSections: [8, 9],
       })
 

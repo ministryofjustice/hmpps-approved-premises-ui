@@ -1,7 +1,7 @@
 import { Response } from 'express'
 import { createMock } from '@golevelup/ts-jest'
 
-import { Cas1OASysGroupName } from '@approved-premises/api'
+import { Cas1OASysGroupName, type Cas1OASysAssessmentSuitabilityStrategyDto } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import PersonClient from './personClient'
 import config from '../config'
@@ -216,6 +216,10 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
   describe('oasysMetadata', () => {
     it('should return the importable sections of OASys', async () => {
       const oasysMetadata = cas1OASysMetadataFactory.build()
+      const suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto = faker.helpers.arrayElement([
+        'allow_all',
+        'completed_in_last_six_months',
+      ])
 
       await provider.addInteraction({
         state: 'Server is healthy',
@@ -223,6 +227,9 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.people.oasys.metadata({ crn }),
+          query: {
+            suitabilityStrategy,
+          },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -233,7 +240,7 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
         },
       })
 
-      const result = await personClient.oasysMetadata(crn)
+      const result = await personClient.oasysMetadata(crn, suitabilityStrategy)
 
       expect(result).toEqual(oasysMetadata)
     })
@@ -244,6 +251,10 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
       const optionalSections = [1, 2, 3]
       const group: Cas1OASysGroupName = faker.helpers.arrayElement(['riskToSelf', 'supportingInformation'])
       const oasysGroup = cas1OasysGroupFactory.build()
+      const suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto = faker.helpers.arrayElement([
+        'allow_all',
+        'completed_in_last_six_months',
+      ])
 
       await provider.addInteraction({
         state: 'Server is healthy',
@@ -254,6 +265,7 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
           path: paths.people.oasys.answers({ crn }),
           query: {
             group,
+            suitabilityStrategy,
             includeOptionalSections: optionalSections.map(num => num.toString()),
           },
           headers: {
@@ -266,7 +278,7 @@ describeCas1NamespaceClient('cas1PersonClient', provider => {
         },
       })
 
-      const result = await personClient.oasysAnswers(crn, group, optionalSections)
+      const result = await personClient.oasysAnswers(crn, group, suitabilityStrategy, optionalSections)
 
       expect(result).toEqual(oasysGroup)
     })

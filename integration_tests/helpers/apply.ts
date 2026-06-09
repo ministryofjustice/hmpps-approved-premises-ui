@@ -226,7 +226,7 @@ export default class ApplyHelper {
   }
 
   private stubOasys404() {
-    cy.task('stubOasysMetadata404', { person: this.person })
+    cy.task('stubOasysMetadata404', { person: this.person, suitabilityStrategy: 'completed_in_last_six_months' })
     cy.task('stubOasysGroup404', { person: this.person })
 
     this.roshSummaries = oasysStubs.roshSummary
@@ -262,7 +262,11 @@ export default class ApplyHelper {
       ? cas1OASysMetadataFactory.build({ supportingInformation })
       : cas1OASysMetadataFactory.oasysNotPresent().build({ supportingInformation })
 
-    cy.task('stubOasysMetadata', { person: this.person, oasysMetadata })
+    cy.task('stubOasysMetadata', {
+      person: this.person,
+      suitabilityStrategy: 'completed_in_last_six_months',
+      oasysMetadata,
+    })
 
     const metadata = { assessmentMetadata: { hasApplicableAssessment } }
 
@@ -282,7 +286,12 @@ export default class ApplyHelper {
 
     Object.values(oasysSections).forEach((group: Cas1OASysGroup) => {
       const includeOptionalSections = group.group === 'supportingInformation' ? [1, 2, 3, 4] : undefined
-      cy.task('stubOasysGroup', { person: this.person, group, includeOptionalSections })
+      cy.task('stubOasysGroup', {
+        person: this.person,
+        group,
+        suitabilityStrategy: 'completed_in_last_six_months',
+        includeOptionalSections,
+      })
     })
   }
 

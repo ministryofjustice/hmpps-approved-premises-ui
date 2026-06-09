@@ -17,6 +17,7 @@ import type {
   PrisonCaseNote,
   CaseDetail,
   DietAndAllergyResponse,
+  Cas1OASysAssessmentSuitabilityStrategyDto,
 } from '@approved-premises/api'
 
 import RestClient from './restClient'
@@ -63,13 +64,20 @@ export default class PersonClient {
     return this.restClient.get<Array<ActiveOffence>>({ path: paths.people.offences({ crn }) })
   }
 
-  async oasysMetadata(crn: string): Promise<Cas1OASysMetadata> {
-    return this.restClient.get<Cas1OASysMetadata>({ path: paths.people.oasys.metadata({ crn }) })
+  async oasysMetadata(
+    crn: string,
+    suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto,
+  ): Promise<Cas1OASysMetadata> {
+    const queryString: string = createQueryString({ suitabilityStrategy })
+    const path = `${paths.people.oasys.metadata({ crn })}?${queryString}`
+
+    return this.restClient.get<Cas1OASysMetadata>({ path })
   }
 
   async oasysAnswers(
     crn: string,
     groupName: Cas1OASysGroupName,
+    suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto,
     optionalSections?: Array<number>,
   ): Promise<Cas1OASysGroup> {
     let response: Cas1OASysGroup
@@ -81,7 +89,11 @@ export default class PersonClient {
         assessmentMetadata: oasysStubs.assessmentMetadata,
       }
     } else {
-      const queryString: string = createQueryString({ group: groupName, includeOptionalSections: optionalSections })
+      const queryString: string = createQueryString({
+        group: groupName,
+        suitabilityStrategy,
+        includeOptionalSections: optionalSections,
+      })
 
       const path = `${paths.people.oasys.answers({ crn })}${queryString ? `?${queryString}` : ''}`
 

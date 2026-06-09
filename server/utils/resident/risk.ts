@@ -21,9 +21,9 @@ export const riskTabController = async ({
     values: [roshSummary, riskManagementPlan, offenceDetails, personRisks],
     outcomes: [roshResult, rmResult, offenceResult],
   } = await settlePromisesWithOutcomes<[Cas1OASysGroup, Cas1OASysGroup, Cas1OASysGroup, PersonRisks]>([
-    personService.getOasysAnswers(token, crn, 'roshSummary'),
-    personService.getOasysAnswers(token, crn, 'riskManagementPlan'),
-    personService.getOasysAnswers(token, crn, 'offenceDetails'),
+    personService.getOasysAnswers(token, crn, 'roshSummary', 'allow_all'),
+    personService.getOasysAnswers(token, crn, 'riskManagementPlan', 'allow_all'),
+    personService.getOasysAnswers(token, crn, 'offenceDetails', 'allow_all'),
     personService.riskProfile(token, crn),
   ])
   return {

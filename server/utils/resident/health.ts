@@ -15,7 +15,7 @@ export const healthTabController = async ({
     outcomes: [supportingInformationOutcome, bookingDetailsOutcome, dietAndAllergyOutcome],
   }: { values: [Cas1OASysGroup, BookingDetails, DietAndAllergyResponse]; outcomes: Array<ApiOutcome> } =
     await settlePromisesWithOutcomes([
-      personService.getOasysAnswers(token, crn, 'supportingInformation', [13]),
+      personService.getOasysAnswers(token, crn, 'supportingInformation', 'allow_all', [13]),
       personService.getBookingDetails(token, crn),
       personService.getDietAndAllergyDetails(token, crn),
     ])
@@ -45,8 +45,8 @@ export const mentalHealthTabController = async ({
   }: { values: [Array<PersonAcctAlert>, Cas1OASysGroup, Cas1OASysGroup]; outcomes: Array<ApiOutcome> } =
     await settlePromisesWithOutcomes([
       personService.getAcctAlerts(token, crn),
-      personService.getOasysAnswers(token, crn, 'riskToSelf'),
-      personService.getOasysAnswers(token, crn, 'supportingInformation', [10]),
+      personService.getOasysAnswers(token, crn, 'riskToSelf', 'allow_all'),
+      personService.getOasysAnswers(token, crn, 'supportingInformation', 'allow_all', [10]),
     ])
   return {
     subHeading: 'Mental health',

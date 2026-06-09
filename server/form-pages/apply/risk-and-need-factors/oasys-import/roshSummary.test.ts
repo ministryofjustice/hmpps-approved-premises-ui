@@ -34,7 +34,13 @@ describe('RoshSummary', () => {
     it('calls the getOasysSections method on the client with a token and the persons CRN', async () => {
       await RoshSummary.initialize({}, application, 'some-token', fromPartial({ personService }))
 
-      expect(getOasysGroupMock).toHaveBeenCalledWith('some-token', application.person.crn, 'roshSummary', [])
+      expect(getOasysGroupMock).toHaveBeenCalledWith(
+        'some-token',
+        application.person.crn,
+        'roshSummary',
+        'completed_in_last_six_months',
+        [],
+      )
     })
 
     it('adds the roshSummary and personRisks to the page object', async () => {

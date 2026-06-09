@@ -15,6 +15,7 @@ import type {
   PersonRisks,
   PrisonCaseNote,
   CaseDetail,
+  Cas1OASysAssessmentSuitabilityStrategyDto,
 } from '@approved-premises/api'
 import { HttpError } from 'http-errors'
 import type { PersonClient, RestClientBuilder } from '../data'
@@ -51,11 +52,15 @@ export default class PersonService {
     return this.personClientFactory(token).acctAlerts(crn)
   }
 
-  async getOasysMetadata(token: string, crn: string): Promise<Cas1OASysMetadata> {
+  async getOasysMetadata(
+    token: string,
+    crn: string,
+    suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto = 'completed_in_last_six_months',
+  ): Promise<Cas1OASysMetadata> {
     const personClient = this.personClientFactory(token)
 
     try {
-      return await personClient.oasysMetadata(crn)
+      return await personClient.oasysMetadata(crn, suitabilityStrategy)
     } catch (error) {
       if ((error as HttpError)?.data?.status === 404) {
         throw new OasysNotFoundError(`Oasys record not found for CRN: ${crn}`, { status: 404 })
@@ -68,11 +73,12 @@ export default class PersonService {
     token: string,
     crn: string,
     group: Cas1OASysGroupName,
+    suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto,
     selectedSections: Array<number> = [],
   ): Promise<Cas1OASysGroup> {
     const personClient = this.personClientFactory(token)
     try {
-      return await personClient.oasysAnswers(crn, group, selectedSections)
+      return await personClient.oasysAnswers(crn, group, suitabilityStrategy, selectedSections)
     } catch (error) {
       if ((error as HttpError)?.data?.status === 404) {
         throw new OasysNotFoundError(`Oasys record not found for CRN: ${crn}`, { status: 404 })
