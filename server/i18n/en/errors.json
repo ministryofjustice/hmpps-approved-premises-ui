@@ -132,5 +132,8 @@
   },
   "decisionDetail": {
     "empty": "You must enter the reasons for the appeal decision"
+  },
+  "premisesId": {
+    "alreadyHasAnInitialSpaceBooking": "A booking already exists for this person."
   }
 }
