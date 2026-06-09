@@ -216,7 +216,6 @@ export type { NewWithdrawal } from './models/NewWithdrawal';
 export type { NonArrivalReason } from './models/NonArrivalReason';
 export type { NoteDetail } from './models/NoteDetail';
 export type { OASysAssessmentState } from './models/OASysAssessmentState';
-export type { Cas1OASysAssessmentSuitabilityStrategyDto } from './models/Cas1OASysAssessmentSuitabilityStrategyDto';
 export type { OASysQuestion } from './models/OASysQuestion';
 export type { OASysSections } from './models/OASysSections';
 export type { OASysSupportingInformationQuestion } from './models/OASysSupportingInformationQuestion';
