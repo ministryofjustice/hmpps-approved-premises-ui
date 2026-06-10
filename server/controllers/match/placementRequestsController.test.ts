@@ -14,6 +14,7 @@ import paths from '../../paths/placementApplications'
 
 import { getResponses } from '../../utils/applications/getResponses'
 import { placementRequestKeyDetails } from '../../utils/placementRequests/utils'
+import * as validationUtils from '../../utils/validation'
 
 jest.mock('../../utils/applications/utils')
 jest.mock('../../utils/applications/getResponses')
@@ -132,6 +133,37 @@ describe('PlacementRequestsController', () => {
             text: 'You must confirm that the information you have provided is correct',
           },
         })
+      })
+    })
+
+    describe('when confirmation is "1" and API errors', () => {
+      beforeEach(() => {
+        jest.spyOn(validationUtils, 'catchValidationErrorOrPropogate').mockReturnValue()
+      })
+
+      it('redirects to the show answers screen', async () => {
+        const placementApplication = placementApplicationFactory.build()
+
+        const apiError = new Error()
+        placementApplicationService.submit.mockRejectedValue(apiError)
+
+        const indexRequest = { ...request, body: { confirmation: '1' }, params: { id: placementApplication.id } }
+
+        await placementRequestsController.submit()(indexRequest, response, next)
+
+        const { id } = placementApplication
+        const expectedRedirect = paths.placementApplications.pages.show({
+          id,
+          task: 'request-a-placement',
+          page: 'check-your-answers',
+        })
+
+        expect(validationUtils.catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          indexRequest,
+          response,
+          apiError,
+          expectedRedirect,
+        )
       })
     })
   })

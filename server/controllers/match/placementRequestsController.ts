@@ -1,7 +1,7 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { ApplicationService, PlacementApplicationService, PlacementRequestService } from '../../services'
 import paths from '../../paths/placementApplications'
-import { addErrorMessageToFlash } from '../../utils/validation'
+import { addErrorMessageToFlash, catchValidationErrorOrPropogate } from '../../utils/validation'
 import { getResponses } from '../../utils/applications/getResponses'
 import { placementRequestKeyDetails } from '../../utils/placementRequests/utils'
 
@@ -64,11 +64,20 @@ export default class PlacementRequestsController {
         req.user.token,
         placementApplication.applicationId,
       )
-      await this.placementApplicationService.submit(req.user.token, placementApplication, application)
+      try {
+        await this.placementApplicationService.submit(req.user.token, placementApplication, application)
 
-      return res.render('placement-applications/confirm', {
-        pageHeading: 'Request for placement confirmed',
-      })
+        return res.render('placement-applications/confirm', {
+          pageHeading: 'Request for placement confirmed',
+        })
+      } catch (error) {
+        return catchValidationErrorOrPropogate(
+          req,
+          res,
+          error,
+          paths.placementApplications.pages.show({ id, task: 'request-a-placement', page: 'check-your-answers' }),
+        )
+      }
     }
   }
 }
