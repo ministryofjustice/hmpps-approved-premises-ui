@@ -132,7 +132,7 @@ describe('risks', () => {
           const result = await riskTabController({ personService, token, crn, caseDetail, placement })
           expect(result.cardList).toHaveLength(6)
           expect(result.cardList[5].html).toMatchStringIgnoringWhitespace(
-            '<h3 class="govuk-heading-s">No recent OASys risk assessment available</h3><p>No OASys assessment has been completed in the last 6 months. Check OASys for all assessments.</p>',
+            '<h3 class="govuk-heading-s">No OASys risk assessment available</h3><p>No completed assessment available in OASys</p>',
           )
           expect(render).not.toHaveBeenCalledWith('components/riskWidgets/rosh-widget/template.njk', {
             params: personRisks.roshRisks.value,
