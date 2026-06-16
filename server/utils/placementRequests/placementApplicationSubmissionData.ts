@@ -26,15 +26,20 @@ export const placementApplicationSubmissionData = (
   application: Application,
 ): SubmitPlacementApplication => {
   const { releaseType, sentenceType, situation } = getSentenceType(placementApplication)
-  const placementDates = durationAndArrivalDateFromPlacementApplication(placementApplication, releaseType, application)
+  const requestedPlacementPeriods = durationAndArrivalDateFromPlacementApplication(
+    placementApplication,
+    releaseType,
+    application,
+  )
   return {
     translatedDocument: placementApplication.document,
-    requestedPlacementPeriods: placementDates,
+    requestedPlacementPeriods,
     releaseType,
     sentenceType,
     situationType: situation,
   }
 }
+
 export const retreivePlacementDatesFromRotlPlacementApplication = (
   placementApplication: PlacementApplication,
 ): Array<Cas1RequestedPlacementPeriod> => {
