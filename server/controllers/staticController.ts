@@ -1,6 +1,6 @@
 import { Request, RequestHandler, Response } from 'express'
 
-export const TECHNICAL_BANNER_VERSION = '12-2-2026'
+export const TECHNICAL_BANNER_VERSION = '16-6-2026'
 export const TECHNICAL_BANNER_COOKIE_NAME = 'technical-updates-banner'
 
 export default class StaticController {
