@@ -13,6 +13,10 @@ import type { PersonRisks } from './PersonRisks';
 import type { PersonStatus } from './PersonStatus';
 import type { ReleaseTypeOption } from './ReleaseTypeOption';
 import type { SentenceTypeOption } from './SentenceTypeOption';
+/**
+ * Use Cas1Application
+ * @deprecated
+ */
 export type ApprovedPremisesApplication = (Application & {
     apArea?: ApArea;
     apType?: ApType;
@@ -36,6 +40,9 @@ export type ApprovedPremisesApplication = (Application & {
     licenceExpiryDate?: string;
     personStatusOnSubmission?: PersonStatus;
     releaseType?: ReleaseTypeOption;
+    /**
+     * Contains ROSH Risks, Tier, Risk Flags and MAPPA captured when the application was created
+     */
     risks?: PersonRisks;
     sentenceType?: SentenceTypeOption;
     status?: ApprovedPremisesApplicationStatus;
