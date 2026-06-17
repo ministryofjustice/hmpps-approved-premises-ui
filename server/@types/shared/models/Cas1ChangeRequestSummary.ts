@@ -13,6 +13,9 @@ export type Cas1ChangeRequestSummary = {
     id: string;
     person: (FullPersonSummary | RestrictedPersonSummary | UnknownPersonSummary);
     placementRequestId: string;
+    /**
+     * Tier when the application was created
+     */
     tier?: string;
     type: Cas1ChangeRequestType;
 };

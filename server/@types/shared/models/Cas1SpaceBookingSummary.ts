@@ -38,6 +38,9 @@ export type Cas1SpaceBookingSummary = {
     plannedTransferRequested?: boolean;
     premises: NamedId;
     status?: Cas1SpaceBookingStatus;
+    /**
+     * Tier when the application was created
+     */
     tier?: string;
     transferReason?: TransferReason;
 };

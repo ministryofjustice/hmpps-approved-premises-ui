@@ -43,6 +43,9 @@ export type Cas1Application = {
     licenceExpiryDate?: string;
     person: (FullPerson | RestrictedPerson | UnknownPerson);
     personStatusOnSubmission?: PersonStatus;
+    /**
+     * Contains ROSH Risks, Tier, Risk Flags and MAPPA captured when the application was created
+     */
     risks?: PersonRisks;
     status: ApprovedPremisesApplicationStatus;
     submittedAt?: string;

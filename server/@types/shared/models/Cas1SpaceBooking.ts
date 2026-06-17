@@ -52,6 +52,9 @@ export type Cas1SpaceBooking = {
     premises: NamedId;
     requestForPlacementId?: string;
     status?: Cas1SpaceBookingStatus;
+    /**
+     * Tier when the application was created
+     */
     tier?: string;
     transferReason?: TransferReason;
 };
