@@ -16,10 +16,6 @@ import contingencyPlanPartnerFactory from './contingencyPlanPartner'
 import contingencyPlanQuestionsBodyFactory from './contingencyPlanQuestionsBody'
 import documentFactory from './document'
 import newCancellationFactory from './newCancellation'
-import {
-  newPlacementRequestBookingConfirmationFactory,
-  newPlacementRequestBookingFactory,
-} from './newPlacementRequestBooking'
 import newAppealFactory from './newAppealFactory'
 import noteFactory from './noteFactory'
 import cas1OASysSupportingInformationMetaDataFactory from './cas1OASysSupportingInformationQuestionMetaData'
@@ -154,8 +150,6 @@ export {
   cruManagementAreaFactory,
   departureReasonFactory,
   documentFactory,
-  newPlacementRequestBookingFactory,
-  newPlacementRequestBookingConfirmationFactory,
   newCancellationFactory,
   newAppealFactory,
   noteFactory,

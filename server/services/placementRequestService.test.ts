@@ -6,7 +6,6 @@ import {
 import PlacementRequestClient, { DashboardFilters } from '../data/placementRequestClient'
 import {
   bookingNotMadeFactory,
-  newPlacementRequestBookingConfirmationFactory,
   paginatedResponseFactory,
   cas1PlacementRequestDetailFactory,
   cas1PlacementRequestSummaryFactory,
@@ -137,26 +136,6 @@ describe('placementRequestService', () => {
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
       expect(placementRequestClient.find).toHaveBeenCalledWith(placementRequestDetail.id)
-    })
-  })
-
-  describe('createBooking', () => {
-    it('should transform and create a booking', async () => {
-      const bookingConfirmation = newPlacementRequestBookingConfirmationFactory.build()
-      placementRequestClient.createBooking.mockResolvedValue(bookingConfirmation)
-
-      const newBooking = {
-        bedId: 'some-other-uuid',
-        arrivalDate: '2022-01-01',
-        departureDate: '2022-01-29',
-      }
-
-      const result = await service.createBooking(token, id, newBooking)
-
-      expect(result).toEqual(bookingConfirmation)
-
-      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
-      expect(placementRequestClient.createBooking).toHaveBeenCalledWith(id, newBooking)
     })
   })
 

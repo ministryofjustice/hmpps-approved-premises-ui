@@ -142,7 +142,6 @@ export default {
     show: cas1PlacementRequestSingle,
     dashboard: cas1PlacementRequests,
     changeRequests: cas1PlacementRequests.path('change-requests'),
-    booking: placementRequestsSingle.path('booking'),
     bookingNotMade: placementRequestsSingle.path('booking-not-made'),
     withdrawal: {
       create: cas1PlacementRequestSingle.path('withdrawal'),
