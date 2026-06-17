@@ -267,7 +267,7 @@ export const riskOasysCards = ({
     return [
       headingCard,
       card({
-        html: `${subHeadingH3('No recent OASys risk assessment available')}<p>No OASys assessment has been completed in the last 6 months. Check OASys for all assessments.</p>`,
+        html: `${subHeadingH3('No OASys risk assessment available')}<p>No completed assessment available in OASys</p>`,
       }),
     ]
   return [

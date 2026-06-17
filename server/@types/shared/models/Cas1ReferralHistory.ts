@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas1AssessmentStatus } from './Cas1AssessmentStatus';
+import type { Cas1StaffDto } from './Cas1StaffDto';
 import type { ServiceType } from './ServiceType';
 export type Cas1ReferralHistory = {
     applicationId: string;
@@ -13,7 +14,7 @@ export type Cas1ReferralHistory = {
     placementAddress?: string;
     placementStatus?: string;
     referralRejectionReason?: string;
-    referredBy: string;
+    referredBy: Cas1StaffDto;
     status: Cas1AssessmentStatus;
     type: ServiceType;
 };

@@ -3,14 +3,14 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ApprovedPremisesApplicationStatus } from './ApprovedPremisesApplicationStatus';
+import type { Cas1ExternalPremisesDto } from './Cas1ExternalPremisesDto';
 import type { Cas1SpaceBookingStatus } from './Cas1SpaceBookingStatus';
-import type { Cas1SuitablePremisesDto } from './Cas1SuitablePremisesDto';
 import type { RequestForPlacementStatus } from './RequestForPlacementStatus';
 export type Cas1SuitableApplication = {
     applicationStatus: ApprovedPremisesApplicationStatus;
     id: string;
     placementStatus?: Cas1SpaceBookingStatus;
-    premises?: Cas1SuitablePremisesDto;
+    premises?: Cas1ExternalPremisesDto;
     requestForPlacementStatus?: RequestForPlacementStatus;
 };
 

@@ -12,10 +12,25 @@
     }) }}
 {% endblock %}
 
+{#
+
+When updating this page, you should also update the TECHNICAL_BANNER_VERSION version in staticController.ts
+This will ensure that the 'whats new' banner will appear to users who have viewed previous versions of this page
+
+#}
+
 {% block content %}
     <h1 class="govuk-heading-l">What's new</h1>
 
     <p>See the latest releases and updates for the Manage Approved Premises residents service.</p>
+
+    <h2 class="govuk-heading-m">June 2026</h2>
+
+    <h3 class="govuk-heading-s">All latest OASys assessments will now show on the profile.</h3>
+
+    <p>Previously OASys assessments older than 6 months would not appear on the profile.</p>
+
+    <p>Now, the most recent OASys assessment will show in the profile regardless of how old it is, alongside the date of that assessment.</p>
 
     <h2 class="govuk-heading-m">February 2026</h2>
 
