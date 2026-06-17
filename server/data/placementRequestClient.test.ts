@@ -3,12 +3,7 @@ import { faker } from '@faker-js/faker'
 import PlacementRequestClient from './placementRequestClient'
 import paths from '../paths/api'
 
-import {
-  bookingNotMadeFactory,
-  cas1PlacementRequestDetailFactory,
-  newPlacementRequestBookingConfirmationFactory,
-  newPlacementRequestBookingFactory,
-} from '../testutils/factories'
+import { bookingNotMadeFactory, cas1PlacementRequestDetailFactory } from '../testutils/factories'
 import describeClient, { describeCas1NamespaceClient } from '../testutils/describeClient'
 import { normaliseCrn } from '../utils/normaliseCrn'
 
@@ -19,35 +14,6 @@ describeClient('placementRequestClient', provider => {
 
   beforeEach(() => {
     placementRequestClient = new PlacementRequestClient(token)
-  })
-
-  describe('createBooking', () => {
-    it('creates and returns a booking', async () => {
-      const placementRequest = cas1PlacementRequestDetailFactory.build()
-      const bookingConfirmation = newPlacementRequestBookingConfirmationFactory.build()
-      const newPlacementRequestBooking = newPlacementRequestBookingFactory.build()
-
-      await provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request to create a booking from a placement request',
-        withRequest: {
-          method: 'POST',
-          path: paths.placementRequests.booking({ placementRequestId: placementRequest.id }),
-          body: newPlacementRequestBooking,
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: bookingConfirmation,
-        },
-      })
-
-      const result = await placementRequestClient.createBooking(placementRequest.id, newPlacementRequestBooking)
-
-      expect(result).toEqual(bookingConfirmation)
-    })
   })
 
   describe('bookingNotMade', () => {
