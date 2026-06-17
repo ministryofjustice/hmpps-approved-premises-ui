@@ -4,7 +4,7 @@
 /* eslint-disable */
 export type Cas1OASysSupportingInformationQuestionMetaData = {
     /**
-     * If the user can optionally elect to include this question in an application. If not optional, it will always be returned by calls to '/cas1/people/{crn}/oasys/answers'
+     * If false this question/answer will always be returned for the supportingInformation answers. Otherwise it has to be explicitly included
      */
     inclusionOptional: boolean;
     /**
