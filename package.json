@@ -176,7 +176,7 @@
     "@types/passport": "^1.0.17",
     "@types/passport-oauth2": "^1.4.11",
     "@types/superagent": "^8.1.9",
-    "@types/supertest": "^6.0.3",
+    "@types/supertest": "^7.0.0",
     "@types/underscore": "^1.13.0",
     "audit-ci": "^7.1.0",
     "axe-core": "^4.10.3",
