@@ -2,8 +2,6 @@ import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '@appr
 import {
   Cas1PlacementRequestDetail,
   NewBookingNotMade,
-  NewPlacementRequestBooking,
-  NewPlacementRequestBookingConfirmation,
   PlacementRequestSortField,
   SortDirection,
   WithdrawPlacementRequestReason,
@@ -44,16 +42,6 @@ export default class PlacementRequestService {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.find(id)
-  }
-
-  async createBooking(
-    token: string,
-    id: string,
-    newBooking: NewPlacementRequestBooking,
-  ): Promise<NewPlacementRequestBookingConfirmation> {
-    const placementRequestClient = this.placementRequestClientFactory(token)
-
-    return placementRequestClient.createBooking(id, newBooking)
   }
 
   async bookingNotMade(token: string, id: string, body: NewBookingNotMade) {
