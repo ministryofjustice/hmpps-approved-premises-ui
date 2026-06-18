@@ -103,7 +103,6 @@ context('Placement Requests', () => {
     const cas1premises = cas1PremisesBasicSummaryFactory.buildList(3, { supportsSpaceBookings: false })
     const cas1SpaceBookingPremises = cas1PremisesBasicSummaryFactory.buildList(2, { supportsSpaceBookings: true })
     cy.task('stubCas1AllPremises', { premises: [...cas1premises, ...cas1SpaceBookingPremises] })
-    cy.task('stubBookingFromPlacementRequest', unmatchedPlacementRequest)
     cy.task('stubSpaceBookingGetWithoutPremises', spaceBooking)
 
     return {
@@ -225,7 +224,6 @@ context('Placement Requests', () => {
       const cancellation = newCancellationFactory.build()
       const booking = matchedPlacementRequest.spaceBookings[0]
       const withdrawable = withdrawableFactory.build({ id: booking.id, type: 'space_booking' })
-      cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
       cy.task('stubCancellationCreate', {
         premisesId: booking.premises.id,
         placementId: booking.id,

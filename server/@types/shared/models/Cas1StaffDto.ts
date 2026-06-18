@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type NewPlacementRequestBookingConfirmation = {
-    arrivalDate: string;
-    departureDate: string;
-    premisesName: string;
+export type Cas1StaffDto = {
+    name: string;
+    staffCode: string;
+    username: string;
 };
 

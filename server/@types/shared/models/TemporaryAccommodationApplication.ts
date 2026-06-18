@@ -12,6 +12,9 @@ export type TemporaryAccommodationApplication = (Application & {
     data?: any;
     document?: any;
     offenceId?: string;
+    /**
+     * Contains ROSH Risks, Tier, Risk Flags and MAPPA captured when the application was created
+     */
     risks?: PersonRisks;
     status?: ApplicationStatus;
     submittedAt?: string;

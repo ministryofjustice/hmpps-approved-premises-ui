@@ -102,8 +102,15 @@ describeCas1NamespaceClient('placementApplicationClient', provider => {
       const placementApplication = placementApplications[0]
 
       const body: SubmitPlacementApplication = {
-        placementDates: [{ expectedArrival: '2021-01-01', duration: 1 }],
-        placementType: 'rotl',
+        requestedPlacementPeriods: [
+          {
+            arrival: '2021-01-10',
+            arrivalFlexible: false,
+            duration: 1,
+          },
+        ],
+        releaseType: 'rotl',
+        sentenceType: 'ipp',
         translatedDocument: {},
       }
 
