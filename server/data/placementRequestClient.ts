@@ -4,8 +4,6 @@ import {
   Cas1PlacementRequestDetail,
   Cas1PlacementRequestSummary,
   NewBookingNotMade,
-  NewPlacementRequestBooking,
-  NewPlacementRequestBookingConfirmation,
   PlacementRequestRequestType,
   PlacementRequestSortField,
   PlacementRequestStatus,
@@ -17,10 +15,6 @@ import RestClient from './restClient'
 import paths from '../paths/api'
 import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '../@types/ui'
 import { normaliseCrn } from '../utils/normaliseCrn'
-
-export type GetChangeRequestsQueryParams = {
-  cruManagementAreaId?: string
-}
 
 type DashboardQueryParams = DashboardFilters & PlacementRequestDashboardSearchOptions
 
@@ -69,13 +63,6 @@ export default class PlacementRequestClient {
   async find(placementRequestId: string) {
     return this.restClient.get<Cas1PlacementRequestDetail>({
       path: paths.placementRequests.show({ placementRequestId }),
-    })
-  }
-
-  async createBooking(placementRequestId: string, newPlacementRequestBooking: NewPlacementRequestBooking) {
-    return this.restClient.post<NewPlacementRequestBookingConfirmation>({
-      path: paths.placementRequests.booking({ placementRequestId }),
-      data: newPlacementRequestBooking,
     })
   }
 

@@ -10,7 +10,7 @@ import { readFileSync } from 'fs'
 import path from 'path'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
-import { bookingNotMadeFactory, newPlacementRequestBookingConfirmationFactory } from '../../server/testutils/factories'
+import { bookingNotMadeFactory } from '../../server/testutils/factories'
 
 export default {
   stubPlacementRequestsDashboard: ({
@@ -209,20 +209,6 @@ export default {
           'Content-Type': 'application/json;charset=UTF-8',
         },
         jsonBody: placementRequestDetail,
-      },
-    }),
-  stubBookingFromPlacementRequest: (placementRequest: Cas1PlacementRequestDetail): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'POST',
-        url: paths.placementRequests.booking({ placementRequestId: placementRequest.id }),
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: newPlacementRequestBookingConfirmationFactory.build(),
       },
     }),
   stubUnableToMatchPlacementRequest: (placementRequest: Cas1PlacementRequestDetail): SuperAgentRequest =>

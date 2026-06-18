@@ -209,8 +209,6 @@ export type { NewApplication } from './models/NewApplication';
 export type { NewApplicationTimelineNote } from './models/NewApplicationTimelineNote';
 export type { NewBookingNotMade } from './models/NewBookingNotMade';
 export type { NewPlacementApplication } from './models/NewPlacementApplication';
-export type { NewPlacementRequestBooking } from './models/NewPlacementRequestBooking';
-export type { NewPlacementRequestBookingConfirmation } from './models/NewPlacementRequestBookingConfirmation';
 export type { NewReallocation } from './models/NewReallocation';
 export type { NewReferralHistoryUserNote } from './models/NewReferralHistoryUserNote';
 export type { NewWithdrawal } from './models/NewWithdrawal';
