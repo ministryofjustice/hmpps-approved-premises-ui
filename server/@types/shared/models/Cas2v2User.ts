@@ -2,13 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AuthSource } from './AuthSource';
-export type Cas2v2User = {
-    authSource: AuthSource;
-    email?: string;
-    id: string;
-    isActive: boolean;
-    name: string;
-    username: string;
-};
-
+import type { Cas2User } from './Cas2User';
+/**
+ * Deprecated alias of Cas2User
+ * @deprecated
+ */
+export type Cas2v2User = Cas2User;
