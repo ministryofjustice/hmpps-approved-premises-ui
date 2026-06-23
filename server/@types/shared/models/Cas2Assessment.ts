@@ -3,8 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Cas2StatusUpdate } from './Cas2StatusUpdate';
-/**
- * Deprecated alias of Cas2StatusUpdate
- * @deprecated
- */
-export type Cas2v2StatusUpdate = Cas2StatusUpdate;
+export type Cas2Assessment = {
+    assessorName?: string;
+    id: string;
+    nacroReferralId?: string;
+    statusUpdates?: Array<Cas2StatusUpdate>;
+};
+
