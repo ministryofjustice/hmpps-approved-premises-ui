@@ -21,6 +21,7 @@ jobs:
         with:
           # Repository is specified to run the workflow from the API repository
           repository: 'ministryofjustice/hmpps-approved-premises-ui'
+          persist-credentials: 'false'
 
       - name: Setup Node.js environment
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # V6.3.0
