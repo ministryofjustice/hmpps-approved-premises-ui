@@ -49,5 +49,6 @@
   "vulnerabilityAlerts": {
     "stabilityDays": 0
   },
-  "platformCommit": "enabled"
+  "platformCommit": "enabled",
+  "dependencyDashboard": true
 }
