@@ -1,10 +1,4 @@
-import type {
-  ApType,
-  Cas1SpaceBookingCharacteristic,
-  FullPerson,
-  PlacementCriteria,
-  TransferReason,
-} from '@approved-premises/api'
+import type { ApType, Cas1SpaceBookingCharacteristic, PlacementCriteria, TransferReason } from '@approved-premises/api'
 import { HtmlItem } from '@approved-premises/ui'
 import applyPaths from '../../paths/apply'
 import {
@@ -13,7 +7,6 @@ import {
   cas1SpaceBookingFactory,
   personFactory,
   cas1PlacementRequestDetailFactory,
-  restrictedPersonFactory,
   spaceSearchResultFactory,
 } from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
@@ -24,20 +17,16 @@ import {
   creationNotificationBodyNewPlacement,
   distanceRow,
   filterOutAPTypes,
-  keyDetails,
   newPlacementReasons,
   premisesAddress,
   requestedOrEstimatedArrivalDateRow,
   restrictionsRow,
   spaceBookingConfirmationSummaryListRows,
-  startDateObjFromParams,
 } from '.'
 import { apTypeLongLabels } from '../apTypeLabels'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
-import { displayName } from '../personUtils'
 import { characteristicsBulletList } from '../characteristicsUtils'
 import { spaceSearchResultsCharacteristicsLabels } from './spaceSearchLabels'
-import { textCell } from '../tableUtils'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
@@ -214,46 +203,6 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('startDateFromParams', () => {
-    describe('when passed input from date input', () => {
-      it('it returns an object with the date in ISO format', () => {
-        const date = new Date()
-        const dateInput = DateFormats.dateObjectToDateInputs(date, 'startDate')
-
-        expect(startDateObjFromParams({ ...dateInput })).toEqual({
-          startDate: DateFormats.dateObjToIsoDate(date),
-          ...dateInput,
-        })
-      })
-    })
-
-    describe('when passed input as startDate from params', () => {
-      it('it returns an object the date in ISO format and the date parts for a date input', () => {
-        const dateInput = DateFormats.dateObjToIsoDate(new Date(2023, 0, 1))
-
-        expect(startDateObjFromParams({ startDate: dateInput })).toEqual({
-          startDate: dateInput,
-          'startDate-day': '1',
-          'startDate-month': '1',
-          'startDate-year': '2023',
-        })
-      })
-    })
-
-    describe('when passed an empty strings from date inputs and a startDate', () => {
-      it('it returns the startDate ', () => {
-        expect(
-          startDateObjFromParams({
-            startDate: '2023-04-11',
-            'startDate-day': '',
-            'startDate-month': '',
-            'startDate-year': '',
-          }),
-        ).toEqual({ startDate: '2023-04-11', 'startDate-day': '11', 'startDate-month': '4', 'startDate-year': '2023' })
-      })
-    })
-  })
-
   describe('spaceBookingConfirmationSummaryListRows', () => {
     const placementRequest = cas1PlacementRequestDetailFactory.build()
     const premises = cas1PremisesFactory.build()
@@ -376,47 +325,6 @@ describe('matchUtils', () => {
       const expected = ['hasBrailleSignage', 'hasTactileFlooring', 'hasHearingLoop']
 
       expect(filterOutAPTypes(requirements)).toEqual(expected)
-    })
-  })
-
-  describe('keyDetails', () => {
-    it('should return the key details for a placement request', () => {
-      const person = personFactory.build({ type: 'FullPerson' })
-      const placementRequest = cas1PlacementRequestDetailFactory.build({ person })
-
-      const details = keyDetails(placementRequest)
-
-      expect(details).toEqual({
-        header: {
-          key: 'Name',
-          value: displayName(placementRequest.person),
-          showKey: false,
-        },
-        items: [
-          {
-            key: textCell('CRN'),
-            value: textCell(placementRequest.person.crn),
-          },
-          {
-            key: textCell('Tier'),
-            value: textCell(placementRequest?.risks?.tier?.value?.level || 'Not available'),
-          },
-          {
-            key: textCell('Date of birth'),
-            value: textCell(
-              DateFormats.isoDateToUIDate((placementRequest.person as FullPerson).dateOfBirth, { format: 'short' }),
-            ),
-          },
-        ],
-      })
-    })
-
-    it('should throw an error if the person is not a full person', () => {
-      const restrictedPerson = restrictedPersonFactory.build()
-      const placementRequest = cas1PlacementRequestDetailFactory.build()
-      placementRequest.person = restrictedPerson
-
-      expect(() => keyDetails(placementRequest)).toThrow('Restricted person')
     })
   })
 
