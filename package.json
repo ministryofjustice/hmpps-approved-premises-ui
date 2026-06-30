@@ -160,7 +160,7 @@
     "@jgoz/esbuild-plugin-typecheck": "^4.0.4",
     "@ministryofjustice/eslint-config-hmpps": "^1.0.1",
     "@pact-foundation/pact": "^16.0.2",
-    "@pactflow/openapi-pact-comparator": "^1.4.0",
+    "@pactflow/openapi-pact-comparator": "^2.2.0",
     "@types/bunyan": "^1.8.8",
     "@types/bunyan-format": "^0.2.5",
     "@types/compression": "^1.8.0",
