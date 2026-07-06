@@ -74,6 +74,7 @@ export type { Cas1NationalOccupancy } from './models/Cas1NationalOccupancy';
 export type { Cas1NationalOccupancyParameters } from './models/Cas1NationalOccupancyParameters';
 export type { Cas1NationalOccupancyPremises } from './models/Cas1NationalOccupancyPremises';
 export type { Cas1NewArrival } from './models/Cas1NewArrival';
+export type { Cas1NewBookingNotMade } from './models/Cas1NewBookingNotMade';
 export type { Cas1NewChangeRequest } from './models/Cas1NewChangeRequest';
 export type { Cas1NewClarificationNote } from './models/Cas1NewClarificationNote';
 export type { Cas1NewDeparture } from './models/Cas1NewDeparture';

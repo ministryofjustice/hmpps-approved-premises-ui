@@ -1,6 +1,5 @@
 /* istanbul ignore file */
 
-import path from 'path'
 import express from 'express'
 import flash from 'connect-flash'
 
@@ -48,7 +47,7 @@ export default function createApp(controllers: Controllers, services: Services):
   app.use(setUpStaticResources())
 
   app.use(flash())
-  nunjucksSetup(app, path)
+  nunjucksSetup(app)
   app.use(setUpAuthentication())
   app.use(authorisationMiddleware())
   app.use(setUpCsrf())

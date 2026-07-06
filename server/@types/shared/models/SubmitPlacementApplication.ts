@@ -6,9 +6,6 @@ import type { Cas1RequestedPlacementPeriod } from './Cas1RequestedPlacementPerio
 import type { ReleaseTypeOption } from './ReleaseTypeOption';
 import type { SentenceTypeOption } from './SentenceTypeOption';
 import type { SituationOption } from './SituationOption';
-/**
- * Information needed to submit a placement application
- */
 export type SubmitPlacementApplication = {
     releaseType: ReleaseTypeOption;
     requestedPlacementPeriods: Array<Cas1RequestedPlacementPeriod>;

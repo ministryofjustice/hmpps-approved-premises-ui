@@ -2,7 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type NewPlacementApplication = {
-    applicationId: string;
+/**
+ * Details about the failure to match
+ */
+export type Cas1NewBookingNotMade = {
+    notes?: string;
 };
 

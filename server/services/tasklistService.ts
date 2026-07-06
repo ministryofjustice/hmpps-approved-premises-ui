@@ -27,7 +27,8 @@ export default class TasklistService {
 
     this.formSections.forEach(section => {
       section.tasks.forEach(task => {
-        const previousTaskKey = Object.keys(this.taskStatuses).at(-1)
+        const taskKeys = Object.keys(this.taskStatuses)
+        const previousTaskKey = taskKeys[taskKeys.length - 1]
         const previousTaskStatus = this.taskStatuses[previousTaskKey]
 
         if (!previousTaskStatus || previousTaskStatus === 'complete') {
