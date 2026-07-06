@@ -30,7 +30,7 @@ export const forPagesInTask = (
       callback(page, pageName)
       pageName = page.next()
     } else if (pageNames.indexOf(pageName) + 1 < pageNames.length) {
-      pageName = pageNames.at(pageNames.indexOf(pageName) + 1)
+      pageName = pageNames[pageNames.indexOf(pageName) + 1]
     } else {
       pageName = ''
     }

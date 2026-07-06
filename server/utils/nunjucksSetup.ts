@@ -77,7 +77,7 @@ import { TaskStatusTag } from './tasks/statusTag'
 import { displayName } from './personUtils'
 import logger from '../../logger'
 
-export default function nunjucksSetup(app: express.Express, path: pathModule.PlatformPath): void {
+export default function nunjucksSetup(app: express.Express): void {
   app.set('view engine', 'njk')
 
   app.locals.asset_path = '/assets/'
@@ -87,7 +87,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   let assetManifest: Record<string, string> = {}
 
   try {
-    const assetMetadataPath = path.resolve(__dirname, '../../assets/manifest.json')
+    const assetMetadataPath = pathModule.resolve(__dirname, '../../assets/manifest.json')
     assetManifest = JSON.parse(fs.readFileSync(assetMetadataPath, 'utf8'))
   } catch (e) {
     if (process.env.NODE_ENV !== 'test') {
@@ -102,7 +102,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   const njkEnv = nunjucks.configure(
     [
-      path.join(__dirname, '../../server/views'),
+      pathModule.join(__dirname, '../../server/views'),
       'node_modules/govuk-frontend/dist',
       'node_modules/@ministryofjustice/frontend',
     ],
