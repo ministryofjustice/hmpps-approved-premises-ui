@@ -1,4 +1,3 @@
-import path from 'path'
 import express, { type Express } from 'express'
 import createError from 'http-errors'
 import request from 'supertest'
@@ -12,7 +11,7 @@ const setupApp = (production: boolean): Express => {
   const user = userDetailsFactory.build()
   app.set('view engine', 'njk')
 
-  nunjucksSetup(app, path)
+  nunjucksSetup(app)
   app.locals.user = user
 
   app.get('/known', (_req, res, _next) => {

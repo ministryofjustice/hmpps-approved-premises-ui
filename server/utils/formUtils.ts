@@ -129,7 +129,7 @@ export function convertKeyValuePairToCheckBoxItems<T extends object>(
   }))
 
   if (exclusiveLastOption) {
-    items.splice(-1, 1, { divider: 'or' }, { ...items.at(-1), behaviour: 'exclusive' })
+    items.splice(-1, 1, { divider: 'or' }, { ...items[items.length - 1], behaviour: 'exclusive' })
   }
 
   return items
