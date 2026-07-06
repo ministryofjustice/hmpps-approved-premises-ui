@@ -44,6 +44,10 @@ export type Cas1SpaceBooking = {
     id: string;
     keyWorkerAllocation?: Cas1KeyWorkerAllocation;
     nonArrival?: Cas1SpaceBookingNonArrival;
+    /**
+     * Change requests were developed but never used
+     * @deprecated
+     */
     openChangeRequests: Array<Cas1ChangeRequestSummary>;
     otherBookingsInPremisesForCrn: Array<Cas1SpaceBookingDates>;
     person: (FullPerson | RestrictedPerson | UnknownPerson);

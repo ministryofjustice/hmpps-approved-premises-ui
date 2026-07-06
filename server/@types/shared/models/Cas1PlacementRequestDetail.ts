@@ -52,6 +52,10 @@ export type Cas1PlacementRequestDetail = {
      * Notes from the assessor for the CRU Manager
      */
     notes?: string;
+    /**
+     * Change requests were developed but never used
+     * @deprecated
+     */
     openChangeRequests: Array<Cas1ChangeRequestSummary>;
     person: (FullPerson | RestrictedPerson | UnknownPerson);
     radius: number;

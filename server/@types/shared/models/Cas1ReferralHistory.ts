@@ -2,20 +2,24 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Cas1AssessmentStatus } from './Cas1AssessmentStatus';
+import type { ApprovedPremisesApplicationStatus } from './ApprovedPremisesApplicationStatus';
+import type { Cas1SpaceBookingStatus } from './Cas1SpaceBookingStatus';
 import type { Cas1StaffDto } from './Cas1StaffDto';
+import type { RequestForPlacementStatus } from './RequestForPlacementStatus';
 import type { ServiceType } from './ServiceType';
 export type Cas1ReferralHistory = {
     applicationId: string;
+    applicationStatus: ApprovedPremisesApplicationStatus;
     createdAt: string;
     id: string;
     localAuthorityArea?: string;
     pdu?: string;
     placementAddress?: string;
-    placementStatus?: string;
+    placementStatus?: Cas1SpaceBookingStatus;
     referralRejectionReason?: string;
     referredBy: Cas1StaffDto;
-    status: Cas1AssessmentStatus;
+    requestForPlacementStatus?: RequestForPlacementStatus;
     type: ServiceType;
+    uiUrl: string;
 };
 
