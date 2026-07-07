@@ -11,16 +11,15 @@ import {
   Cas1SpaceSearchResult as SpaceSearchResult,
   TransferReason,
 } from '@approved-premises/api'
-import { KeyDetailsArgs, ObjectWithDateParts, SummaryListItem } from '@approved-premises/ui'
+import { SummaryListItem } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
 import { apTypeLongLabels } from '../apTypeLabels'
 import { summaryListItem } from '../formUtils'
-import { displayName, isFullPerson } from '../personUtils'
+import { displayName } from '../personUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import paths from '../../paths/apply'
 import { characteristicsBulletList } from '../characteristicsUtils'
 import { spaceSearchResultsCharacteristicsLabels } from './spaceSearchLabels'
-import { textCell } from '../tableUtils'
 
 export { placementDates } from './placementDates'
 export { occupancySummary } from './occupancySummary'
@@ -145,43 +144,6 @@ export const restrictionsRow = (spaceSearchResult: SpaceSearchResult): SummaryLi
         },
       }
     : undefined
-}
-
-export const startDateObjFromParams = (params: { startDate: string } | ObjectWithDateParts<'startDate'>) => {
-  const dateParts = params as ObjectWithDateParts<'startDate'>
-  if (dateParts['startDate-day'] && dateParts['startDate-month'] && dateParts['startDate-year']) {
-    return {
-      ...DateFormats.dateAndTimeInputsToIsoString(dateParts, 'startDate'),
-    }
-  }
-
-  return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
-}
-
-export const keyDetails = (placementRequest: Cas1PlacementRequestDetail): KeyDetailsArgs => {
-  const { person } = placementRequest
-  if (!isFullPerson(person)) throw Error('Restricted person')
-  return {
-    header: {
-      key: 'Name',
-      value: displayName(person),
-      showKey: false,
-    },
-    items: [
-      {
-        key: textCell('CRN'),
-        value: textCell(person.crn),
-      },
-      {
-        key: textCell('Tier'),
-        value: textCell(placementRequest?.risks?.tier?.value?.level || 'Not available'),
-      },
-      {
-        key: textCell('Date of birth'),
-        value: textCell(DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' })),
-      },
-    ],
-  }
 }
 
 export const creationNotificationBody = (
