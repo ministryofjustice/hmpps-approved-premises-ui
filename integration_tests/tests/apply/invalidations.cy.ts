@@ -38,6 +38,7 @@ context('Apply', () => {
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
         'data',
+        'document',
         'arrivalDate',
         'duration',
         'apType',
@@ -82,6 +83,7 @@ context('Apply', () => {
 
       expect(body).to.have.keys(
         'data',
+        'document',
         'arrivalDate',
         'duration',
         'apType',

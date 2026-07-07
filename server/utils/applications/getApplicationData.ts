@@ -39,6 +39,7 @@ type QuestionResponseFunction = (formArtifact: FormArtifact, Page: unknown, ques
 export const getApplicationUpdateData = (application: Application): UpdateApprovedPremisesApplication => {
   return {
     data: application.data,
+    document: application.document,
     isInapplicable: isInapplicable(application),
     ...getUpdateFirstClassFields(application),
   }

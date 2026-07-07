@@ -1,6 +1,6 @@
 import { addDays, weeksToDays } from 'date-fns'
 import type { PageResponse, TaskListErrors, YesOrNo } from '@approved-premises/ui'
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application } from '@approved-premises/api'
 import { DateFormats, weeksAndDaysToDays } from '../../../utils/dateUtils'
 import { Page } from '../../utils/decorators'
 
@@ -37,7 +37,7 @@ export default class PlacementDuration implements TasklistPage {
 
   constructor(
     public body: Partial<PlacementDurationBody>,
-    private readonly application: ApprovedPremisesApplication,
+    private readonly application: Cas1Application,
   ) {
     this.body.duration = this.lengthInDays()
     this.initializeDates()

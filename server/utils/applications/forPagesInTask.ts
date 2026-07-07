@@ -9,29 +9,29 @@ export const forPagesInTask = (
   callback: (page: TasklistPage, pageName: string) => void,
 ): void => {
   const pageNames = Object.keys(task.pages)
-  let pageName = pageNames?.[0]
+
+  // find the first page that has been populated
+  let pageName = pageNames.find(name => !!formArtifact?.data?.[task.id]?.[name])
 
   const visited: Array<string> = []
 
   while (pageName && pageName !== 'check-your-answers') {
-    if (visited.includes(pageName)) {
-      throw new Error(
-        `Page already visited while building task list: ${pageName}. Visited pages: ${visited.join(', ')}`,
-      )
-    }
-
-    visited.push(pageName)
-    pageNames.splice(pageNames.indexOf(pageName), 1)
-
-    const Page = getPage(task.id, pageName, journeyTypeFromArtifact(formArtifact))
-    const body = formArtifact?.data?.[task.id]?.[pageName]
-    if (body) {
-      const page = new Page(body, formArtifact)
-      callback(page, pageName)
-      pageName = page.next()
-    } else if (pageNames.indexOf(pageName) + 1 < pageNames.length) {
-      pageName = pageNames[pageNames.indexOf(pageName) + 1]
+    // If the page has not been visited yet, process and add to visited list
+    if (!visited.includes(pageName)) {
+      visited.push(pageName)
+      pageNames.splice(pageNames.indexOf(pageName), 1)
+      const body = formArtifact?.data?.[task.id]?.[pageName]
+      if (body) {
+        const Page = getPage(task.id, pageName, journeyTypeFromArtifact(formArtifact))
+        const page = new Page(body, formArtifact)
+        callback(page, pageName)
+        pageName = page.next()
+      } else {
+        // Once we start on populated pages, if we hit an unpopulated one, that is where the user is up to, so stop rendering
+        pageName = pageNames[pageNames.indexOf(pageName) + 1]
+      }
     } else {
+      // If we hit a visited page, we have looped back, so we've rendered all the pages possible
       pageName = ''
     }
   }
