@@ -21,6 +21,7 @@ import setUpWebRequestParsing from './middleware/setupRequestParsing'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 import setUpMaintenancePageRedirect from './middleware/setUpMaintenancePageRedirect'
+import setUpDocumentRender from './middleware/setUpDocumentRender'
 import { appInsightsMiddleware } from './utils/azureAppInsights'
 
 import routes from './routes'
@@ -44,6 +45,7 @@ export default function createApp(controllers: Controllers, services: Services):
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
   app.use(setUpWebRequestParsing())
+  app.use(setUpDocumentRender())
   app.use(setUpStaticResources())
 
   app.use(flash())

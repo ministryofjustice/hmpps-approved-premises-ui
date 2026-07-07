@@ -20,6 +20,7 @@ export const forPagesInTask = (
     if (!visited.includes(pageName)) {
       visited.push(pageName)
       pageNames.splice(pageNames.indexOf(pageName), 1)
+
       const body = formArtifact?.data?.[task.id]?.[pageName]
       if (body) {
         const Page = getPage(task.id, pageName, journeyTypeFromArtifact(formArtifact))
