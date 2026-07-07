@@ -1,5 +1,5 @@
 import type { ErrorMessages } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication, PlacementApplicationDecisionEnvelope } from '@approved-premises/api'
+import type { Cas1Application, PlacementApplicationDecisionEnvelope } from '@approved-premises/api'
 
 export default {}
 
@@ -8,7 +8,7 @@ declare module 'express-session' {
   interface SessionData {
     returnTo: string
     nowInMinutes: number
-    application: ApprovedPremisesApplication
+    application: Cas1Application
     user: UserDetails
     placementApplicationDecisions: Record<string, Partial<PlacementApplicationDecisionEnvelope>>
     messages: Array<string>

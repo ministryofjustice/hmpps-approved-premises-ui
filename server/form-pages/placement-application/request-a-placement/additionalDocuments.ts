@@ -1,8 +1,4 @@
-import type {
-  Cas1Application,
-  Document,
-  PlacementApplication,
-} from '@approved-premises/api'
+import type { Cas1Application, Document, PlacementApplication } from '@approved-premises/api'
 import { DataServices, TaskListErrors } from '@approved-premises/ui'
 import { Page } from '../../utils/decorators'
 

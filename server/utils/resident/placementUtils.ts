@@ -1,9 +1,4 @@
-import {
-  ApprovedPremisesApplication,
-  Cas1Assessment,
-  Cas1SpaceBooking,
-  Cas1SpaceBookingShortSummary,
-} from '@approved-premises/api'
+import { Cas1Application, Cas1Assessment, Cas1SpaceBooking, Cas1SpaceBookingShortSummary } from '@approved-premises/api'
 import { SummaryListWithCard } from '@approved-premises/ui'
 import {
   Accordion,
@@ -22,7 +17,7 @@ import paths from '../../paths/manage'
 import assessPaths from '../../paths/assess'
 import { linkTo } from '../utils'
 
-export const applicationDocumentAccordion = (application: ApprovedPremisesApplication): Accordion => {
+export const applicationDocumentAccordion = (application: Cas1Application): Accordion => {
   const sections = new SubmittedDocumentRenderer(application).response
 
   const personDetails = { heading: { text: 'Person details' }, content: { html: renderPersonDetails(application) } }
@@ -43,7 +38,7 @@ export const applicationDocumentAccordion = (application: ApprovedPremisesApplic
   }
 }
 
-export const applicationCardList = (application: ApprovedPremisesApplication): Array<SummaryListWithCard> => {
+export const applicationCardList = (application: Cas1Application): Array<SummaryListWithCard> => {
   return [
     card({
       html: alertBanner({

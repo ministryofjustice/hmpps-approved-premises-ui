@@ -2,7 +2,7 @@ import type { DataServices, TaskListErrors } from '@approved-premises/ui'
 import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
-import { ApprovedPremisesApplication as Application, PlacementApplication } from '../../../@types/shared'
+import { Cas1Application as Application, PlacementApplication } from '../../../@types/shared'
 
 type Body = { reviewed?: string }
 

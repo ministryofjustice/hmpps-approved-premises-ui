@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express'
-import { ApprovedPremisesApplication, Cas1Assessment, Cas1TimelineEvent } from '@approved-premises/api'
+import { Cas1Application, Cas1Assessment, Cas1TimelineEvent } from '@approved-premises/api'
 import { SummaryListItem } from '@approved-premises/ui'
 import {
   ApplicationService,
@@ -47,7 +47,7 @@ export default class PlacementController {
       const { arrivalDate, departureDate } = canonicalDates(placement)
       const pageHeading = `${DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' })} to ${DateFormats.isoDateToUIDate(departureDate, { format: 'short' })}`
       let timelineEvents: Array<Cas1TimelineEvent> = []
-      let application: ApprovedPremisesApplication = null
+      let application: Cas1Application = null
       let assessment: Cas1Assessment = null
       let placementRequestSummaryRows: Array<SummaryListItem> = null
 

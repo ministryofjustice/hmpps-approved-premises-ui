@@ -122,7 +122,7 @@ export default class ApplicationService {
     } else {
       const application = await this.findApplication(request.user.token, request.params.id)
       const updatedApplication = updateFormArtifactData(page, application, Review)
-      console.log('*** application',application)
+
       application.document = getResponses(application)
 
       const client = this.applicationClientFactory(request.user.token)

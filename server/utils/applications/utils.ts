@@ -20,7 +20,7 @@ import type {
   Cas1TimelineEventUrlType,
   SortDirection,
   Cas1ApplicationSummary,
-  ApprovedPremisesApplication,
+  Cas1Application,
 } from '@approved-premises/api'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
@@ -139,7 +139,7 @@ const dashboardTableRows = (
 const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
   arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'
 
-export const getApplicationSummary = (application: ApprovedPremisesApplication) => [
+export const getApplicationSummary = (application: Cas1Application) => [
   summaryListItem('Created on', application.createdAt, 'date'),
   summaryListItem('Created by', application.createdByUserName),
   summaryListItem('Requested arrival date', application.arrivalDate, 'date'),
