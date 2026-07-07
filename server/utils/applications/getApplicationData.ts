@@ -1,5 +1,5 @@
 import {
-  ApprovedPremisesApplication as Application,
+  Cas1Application as Application,
   ReleaseTypeOption,
   SentenceTypeOption,
   SubmitApprovedPremisesApplication,

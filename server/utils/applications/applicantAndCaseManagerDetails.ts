@@ -1,7 +1,4 @@
-import {
-  ApprovedPremisesApplication as Application,
-  Cas1ApplicationUserDetails as UserDetails,
-} from '../../@types/shared'
+import { Cas1Application as Application, Cas1ApplicationUserDetails as UserDetails } from '../../@types/shared'
 import ConfirmYourDetails from '../../form-pages/apply/reasons-for-placement/basic-information/confirmYourDetails'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import { userDetailsFromCaseManagerPage, userDetailsFromConfirmYourDetailsPage } from './userDetailsFromApplication'
