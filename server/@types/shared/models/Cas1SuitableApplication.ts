@@ -12,5 +12,6 @@ export type Cas1SuitableApplication = {
     placementStatus?: Cas1SpaceBookingStatus;
     premises?: Cas1ExternalPremisesDto;
     requestForPlacementStatus?: RequestForPlacementStatus;
+    uiUrl: string;
 };
 
