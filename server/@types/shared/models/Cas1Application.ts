@@ -11,7 +11,9 @@ import type { Cas1CruManagementArea } from './Cas1CruManagementArea';
 import type { FullPerson } from './FullPerson';
 import type { PersonRisks } from './PersonRisks';
 import type { PersonStatus } from './PersonStatus';
+import type { ReleaseTypeOption } from './ReleaseTypeOption';
 import type { RestrictedPerson } from './RestrictedPerson';
+import type { SentenceTypeOption } from './SentenceTypeOption';
 import type { UnknownPerson } from './UnknownPerson';
 export type Cas1Application = {
     apArea?: ApArea;
@@ -43,10 +45,12 @@ export type Cas1Application = {
     licenceExpiryDate?: string;
     person: (FullPerson | RestrictedPerson | UnknownPerson);
     personStatusOnSubmission?: PersonStatus;
+    releaseType?: ReleaseTypeOption;
     /**
      * Contains ROSH Risks, Tier, Risk Flags and MAPPA captured when the application was created
      */
     risks?: PersonRisks;
+    sentenceType?: SentenceTypeOption;
     status: ApprovedPremisesApplicationStatus;
     submittedAt?: string;
 };
