@@ -1,7 +1,7 @@
 import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '@approved-premises/ui'
 import {
   Cas1PlacementRequestDetail,
-  NewBookingNotMade,
+  Cas1NewBookingNotMade,
   PlacementRequestSortField,
   SortDirection,
   WithdrawPlacementRequestReason,
@@ -44,7 +44,7 @@ export default class PlacementRequestService {
     return placementRequestClient.find(id)
   }
 
-  async bookingNotMade(token: string, id: string, body: NewBookingNotMade) {
+  async bookingNotMade(token: string, id: string, body: Cas1NewBookingNotMade) {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.bookingNotMade(id, body)

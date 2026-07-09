@@ -46,9 +46,6 @@ const person = people.path(':crn')
 
 const cas1Users = cas1Namespace.path('users')
 
-const placementRequests = path('/placement-requests')
-const placementRequestsSingle = placementRequests.path(':placementRequestId')
-
 const referenceData = path('/reference-data')
 
 export default {
@@ -142,7 +139,7 @@ export default {
     show: cas1PlacementRequestSingle,
     dashboard: cas1PlacementRequests,
     changeRequests: cas1PlacementRequests.path('change-requests'),
-    bookingNotMade: placementRequestsSingle.path('booking-not-made'),
+    bookingNotMade: cas1PlacementRequestSingle.path('booking-not-made'),
     withdrawal: {
       create: cas1PlacementRequestSingle.path('withdrawal'),
     },
