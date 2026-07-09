@@ -3,7 +3,7 @@ import {
   Cas1CruManagementArea,
   Cas1PlacementRequestDetail,
   Cas1PlacementRequestSummary,
-  NewBookingNotMade,
+  Cas1NewBookingNotMade,
   PlacementRequestRequestType,
   PlacementRequestSortField,
   PlacementRequestStatus,
@@ -66,7 +66,7 @@ export default class PlacementRequestClient {
     })
   }
 
-  async bookingNotMade(placementRequestId: string, data: NewBookingNotMade) {
+  async bookingNotMade(placementRequestId: string, data: Cas1NewBookingNotMade) {
     return this.restClient.post<BookingNotMade>({
       path: paths.placementRequests.bookingNotMade({ placementRequestId }),
       data,
