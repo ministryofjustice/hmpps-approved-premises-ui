@@ -10,6 +10,7 @@ export type UpdateApprovedPremisesApplication = {
     apType?: ApType;
     arrivalDate?: string;
     data: Record<string, any>;
+    document?: any;
     /**
      * noticeType should be used to indicate if an emergency application
      * @deprecated

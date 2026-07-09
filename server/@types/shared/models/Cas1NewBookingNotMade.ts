@@ -2,4 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1ChangeRequestSortField = 'name' | 'tier' | 'canonicalArrivalDate';
+/**
+ * Details about the failure to match
+ */
+export type Cas1NewBookingNotMade = {
+    notes?: string;
+};
+

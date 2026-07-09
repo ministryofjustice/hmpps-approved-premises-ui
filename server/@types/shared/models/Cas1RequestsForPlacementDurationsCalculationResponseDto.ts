@@ -2,7 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type NewPlacementApplication = {
-    applicationId: string;
+export type Cas1RequestsForPlacementDurationsCalculationResponseDto = {
+    defaultDurationDays: number;
+    maxDurationDays?: number;
 };
 

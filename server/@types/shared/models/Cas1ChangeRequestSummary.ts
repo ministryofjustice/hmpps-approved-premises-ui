@@ -6,6 +6,10 @@ import type { Cas1ChangeRequestType } from './Cas1ChangeRequestType';
 import type { FullPersonSummary } from './FullPersonSummary';
 import type { RestrictedPersonSummary } from './RestrictedPersonSummary';
 import type { UnknownPersonSummary } from './UnknownPersonSummary';
+/**
+ * Change requests were developed but never used
+ * @deprecated
+ */
 export type Cas1ChangeRequestSummary = {
     actualArrivalDate?: string;
     createdAt: string;

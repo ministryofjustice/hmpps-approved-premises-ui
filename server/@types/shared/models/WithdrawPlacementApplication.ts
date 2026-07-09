@@ -3,9 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { WithdrawPlacementRequestReason } from './WithdrawPlacementRequestReason';
-/**
- * Withdrawal details
- */
 export type WithdrawPlacementApplication = {
     reason: WithdrawPlacementRequestReason;
 };
