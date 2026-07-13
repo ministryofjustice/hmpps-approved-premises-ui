@@ -1,6 +1,6 @@
 import type {
   ActiveOffence,
-  ApprovedPremisesApplication as Application,
+  Cas1Application as Application,
   ApplicationSortField,
   ApplicationTimelineNote,
   Cas1ApplicationSummary,

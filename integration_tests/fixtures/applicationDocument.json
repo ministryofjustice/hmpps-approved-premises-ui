@@ -3,27 +3,27 @@
     {
       "If you need to update your details, select the relevant box below": "Phone number, Email address, Name, Area",
       "Applicant name": "Bob Smith",
-      "Applicant email address": "bob@test.com",
+      "Applicant email address": "bob@test.gov.uk",
       "Applicant phone number": "01234567890",
       "Applicant AP area": "Greater Manchester",
       "Do you have case management responsibility?": "No"
     },
     {
       "Case manager name": "Bob Smith",
-      "Case manager email": "bob@test.com",
+      "Case manager email": "bob@test.gov.uk",
       "Case manager phone number": "01234567890"
     },
     {
       "Is the person transgender or do they have a transgender history?": "Yes"
     },
     {
-      "Does the person's gender identity require a complex case board to review their application?": "Yes"
+      "What type of AP does the person need?": "Men's AP"
+    },
+    {
+      "Does this person require a complex case board?": "Yes"
     },
     {
       "Has the Complex Case Board taken place?": "Yes"
-    },
-    {
-      "What type of AP has the complex case board agreed to?": "Men's AP"
     },
     {
       "Parole eligibility date": "Thu 14 Nov 2024",
@@ -53,13 +53,21 @@
   ],
   "type-of-ap": [
     {
-      "Which type of AP does the person require?": "Recovery Focused AP (RFAP)"
+      "Which type of AP does the person require?": "Psychologically Informed Planned Environment (PIPE)"
+    },
+    {
+      "Has the person been screened into the Offender Personality Disorder Pathway (OPD)?": "Yes",
+      "When was the person's last consultation or formulation?": "Mon 9 Sep 2024"
+    },
+    {
+      "Has an application for PIPE placement been recommended in the OPD pathway plan?": "Yes",
+      "Provide any additional detail about why the person needs a PIPE placement.": "Details"
     }
   ],
   "oasys-import": [
     {
-      "Needs linked to reoffending": "1. Accommodation, 2. Relationships",
-      "Needs not linked to risk of serious harm or reoffending": "3. Emotional, 4. Thinking"
+      "Needs linked to reoffending": "1. , 2. ",
+      "Needs not linked to risk of serious harm or reoffending": "3. , 4. "
     },
     {
       "Q1: The first RoSH question": "Some answer for the first RoSH question. With an extra comment Q1",
@@ -93,10 +101,9 @@
       "Provide details of any additional measures that will be necessary for the management of risk": "deleniti enim necessitatibus"
     },
     {
-      "Has the person ever been convicted of any arson offences, sexual offences, hate crimes or non-sexual offences against children?": "Yes"
+      "Has the person ever been convicted of any sexual offences, hate crimes or non-sexual offences against children?": "Yes"
     },
     {
-      "Is the arson offence current or previous?": "Current",
       "Is the hate crime current or previous?": "Previous",
       "Is the non sexual offences against children current or previous?": "Current and previous",
       "Is the contact sexual offences against adults current or previous?": "Current and previous",
@@ -176,7 +183,7 @@
       "What is the preferred postcode area for the Approved Premises (AP) placement?": "SW11",
       "Give details of why this postcode area would benefit the person": "Some positive factors",
       "Are there any restrictions linked to placement location?": "Yes",
-      "Provide details of any restraining orders, exclusion zones or other location based licence conditions. You must also provide an exclusion zone map in the ‘attach required documents’ screen.": "Restrictions go here",
+      "Upload any exclusion zone maps to NDelius. You cannot upload these to the service.": "Restrictions go here",
       "If an AP Placement is not available in the persons preferred area, would a placement further away be considered?": "Yes",
       "Choose the maximum radius (in miles)": "70 miles"
     },
@@ -201,11 +208,15 @@
       "Does the person require the use of a wheelchair?": "Yes",
       "Does the person have any known health conditions?": "Yes - Some detail",
       "Does the person have any prescribed medication?": "Yes - Some detail",
-      "Is the person pregnant?": "Yes",
+      "Is the person pregnant?": "Yes"
+    },
+    {
       "What is their expected date of delivery?": "Sun 31 Dec 2023",
-      "Will the child be removed from the person's care at birth?": "Decision pending",
       "Is there social care involvement?": "Yes - Some detail",
-      "Are there any pregnancy related issues relevant to placement?": "Yes - some considerations",
+      "Will the child be removed from the person's care at birth?": "Decision pending",
+      "Are there any pregnancy related issues relevant to placement?": "Yes - some considerations"
+    },
+    {
       "Specify any additional details and adjustments required for the person's mobility, learning disability, neurodivergent conditions or pregnancy needs": "Some detail"
     },
     {
@@ -227,14 +238,6 @@
     },
     {
       "Has the person stayed or been offered a placement in an AP before?": "Yes - Some details here"
-    },
-    {
-      "Does this person need a RFAP?": "Yes"
-    },
-    {
-      "How has the person demonstrated their motivation to address their substance misuse?": "Some motivation",
-      "Is this person receiving clinical, medical and/or psychosocial treatment for their substance misuse?": "Yes - Some details here",
-      "How is the person planning to continue their recovery work whilst in the AP?": "Some work"
     },
     {
       "Can the person be placed in a self-catered Approved Premises (AP)?": "No - Some details here"

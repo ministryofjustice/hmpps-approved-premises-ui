@@ -9,6 +9,7 @@ import type {
   WithdrawalReason,
 } from '@approved-premises/api'
 
+import { getResponses } from '../utils/applications/getResponses'
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
 import type TasklistPage from '../form-pages/tasklistPage'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
@@ -45,12 +46,15 @@ Apply.pages['basic-information'] = {
   second: SecondPage,
 }
 
+Apply.sections = []
+
 jest.mock('../data/applicationClient.ts')
 jest.mock('../data/personClient.ts')
 jest.mock('../utils/applications/utils')
 jest.mock('../form-pages/utils/updateFormArtifactData')
 jest.mock('../form-pages/utils')
 jest.mock('../utils/applications/getApplicationData')
+jest.mock('../utils/applications/getResponses')
 
 describe('ApplicationService', () => {
   const token = 'some-token'
@@ -295,6 +299,7 @@ describe('ApplicationService', () => {
       beforeEach(() => {
         ;(updateFormArtifactData as jest.Mock).mockReturnValue(application)
         ;(getApplicationUpdateData as jest.Mock).mockReturnValue(applicationData)
+        ;(getResponses as jest.Mock).mockReturnValue([])
 
         page = createMock<TasklistPage>({
           errors: () => {
@@ -317,6 +322,7 @@ describe('ApplicationService', () => {
 
         expect(applicationClientFactory).toHaveBeenCalledWith(token)
         expect(applicationClient.update).toHaveBeenCalledWith(application.id, applicationData)
+        expect(getResponses).toHaveBeenCalledWith(application)
       })
     })
 

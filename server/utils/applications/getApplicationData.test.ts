@@ -178,6 +178,7 @@ describe('getApplicationData', () => {
 
       expect(getApplicationUpdateData(application)).toEqual({
         data: application.data,
+        document: application.document,
         isInapplicable: false,
         apType: undefined,
         isWomensApplication: false,
@@ -214,6 +215,7 @@ describe('getApplicationData', () => {
 
       expect(getApplicationUpdateData(application)).toEqual({
         data: application.data,
+        document: application.document,
         apType: 'normal',
         isInapplicable: false,
         isWomensApplication: false,

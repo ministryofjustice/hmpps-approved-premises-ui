@@ -1,8 +1,4 @@
-import {
-  ApprovedPremisesApplication as Application,
-  Cas1Assessment as Assessment,
-  Document,
-} from '@approved-premises/api'
+import { Cas1Application as Application, Cas1Assessment as Assessment, Document } from '@approved-premises/api'
 import { FormArtifact, HtmlItem, SummaryListItem, TextItem, UiTask } from '@approved-premises/ui'
 
 import applyPaths from '../../paths/apply'

@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication as Application, Cas1ApplicationUserDetails } from '@approved-premises/api'
+import { Cas1Application as Application, Cas1ApplicationUserDetails } from '@approved-premises/api'
 import CaseManagerInformation, {
   caseManagerKeys,
 } from '../../form-pages/apply/reasons-for-placement/basic-information/caseManagerInformation'
