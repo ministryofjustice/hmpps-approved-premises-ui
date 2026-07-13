@@ -11,12 +11,7 @@
           "name": "Greater Manchester"
         }
       ],
-      "detailsToUpdate": [
-        "phoneNumber",
-        "emailAddress",
-        "name",
-        "area"
-      ],
+      "detailsToUpdate": ["phoneNumber", "emailAddress", "name", "area"],
       "caseManagementResponsibility": "no",
       "userDetailsFromDelius": {
         "name": "Frank",
@@ -96,10 +91,7 @@
       "startDateSameAsReleaseDate": "yes"
     },
     "placement-purpose": {
-      "placementPurposes": [
-        "drugAlcoholMonitoring",
-        "otherReason"
-      ],
+      "placementPurposes": ["drugAlcoholMonitoring", "otherReason"],
       "otherReason": "Reason"
     }
   },
@@ -280,33 +272,13 @@
       "response": "yes"
     },
     "date-of-offence": {
-      "hateCrime": [
-        "previous"
-      ],
-      "nonSexualOffencesAgainstChildren": [
-        "current",
-        "previous"
-      ],
-      "contactSexualOffencesAgainstAdults": [
-        "current",
-        "previous"
-      ],
-      "nonContactSexualOffencesAgainstAdults": [
-        "current",
-        "previous"
-      ],
-      "contactSexualOffencesAgainstChildren": [
-        "current",
-        "previous"
-      ],
-      "nonContactSexualOffencesAgainstChildren": [
-        "current",
-        "previous"
-      ],
-      "otherSexualOffences": [
-        "current",
-        "previous"
-      ]
+      "hateCrime": ["previous"],
+      "nonSexualOffencesAgainstChildren": ["current", "previous"],
+      "contactSexualOffencesAgainstAdults": ["current", "previous"],
+      "nonContactSexualOffencesAgainstAdults": ["current", "previous"],
+      "contactSexualOffencesAgainstChildren": ["current", "previous"],
+      "nonContactSexualOffencesAgainstChildren": ["current", "previous"],
+      "otherSexualOffences": ["current", "previous"]
     },
     "rehabilitative-interventions": {
       "rehabilitativeInterventions": [
@@ -327,10 +299,7 @@
   },
   "prison-information": {
     "case-notes": {
-      "caseNoteIds": [
-        "a30173ca-061f-42c9-a1a2-28c70b282d3f",
-        "4a477187-b77f-4fcc-a919-43a6633ee868"
-      ],
+      "caseNoteIds": ["a30173ca-061f-42c9-a1a2-28c70b282d3f", "4a477187-b77f-4fcc-a919-43a6633ee868"],
       "selectedCaseNotes": [
         {
           "authorName": "Denise Collins",
@@ -438,12 +407,7 @@
   },
   "access-and-healthcare": {
     "access-needs": {
-      "additionalNeeds": [
-        "mobility",
-        "learningDisability",
-        "neurodivergentConditions",
-        "pregnancy"
-      ],
+      "additionalNeeds": ["mobility", "learningDisability", "neurodivergentConditions", "pregnancy"],
       "religiousOrCulturalNeeds": "yes",
       "religiousOrCulturalNeedsDetail": "sunt at minus",
       "needsInterpreter": "yes",
