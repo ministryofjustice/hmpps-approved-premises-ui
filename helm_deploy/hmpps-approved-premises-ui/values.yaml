@@ -20,7 +20,7 @@ generic-service:
       nginx.ingress.kubernetes.io/proxy-connect-timeout: '120'
       nginx.ingress.kubernetes.io/proxy-send-timeout: '120'
       nginx.ingress.kubernetes.io/proxy-read-timeout: '120'
-      nginx.ingress.kubernetes.io/configuration-snippet: |
+      nginx.ingress.kubernetes.io/server-snippet: |
         server_tokens off;
         location /render-application {
           deny all;
