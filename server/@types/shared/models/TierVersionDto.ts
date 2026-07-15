@@ -2,8 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1UpdatedClarificationNote = {
-    response: string;
-    responseReceivedOn: string;
-};
-
+export type TierVersionDto = 'V2' | 'V3';
