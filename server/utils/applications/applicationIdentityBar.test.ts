@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+import { Cas1Application } from '@approved-premises/api'
 import { applicationFactory, personFactory, userDetailsFactory } from '../../testutils/factories'
 import { applicationIdentityBar, applicationMenuItems, applicationTitle } from './applicationIdentityBar'
 import paths from '../../paths/apply'
@@ -24,7 +25,7 @@ describe('applicationIdentityBar', () => {
 
     it('should show a tag for an offline application', () => {
       const person = personFactory.build()
-      const application = applicationFactory.build({ person, type: 'Offline' })
+      const application = applicationFactory.build({ person, type: 'Offline' } as unknown as Cas1Application)
 
       expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
         <h1 class="govuk-heading-l">

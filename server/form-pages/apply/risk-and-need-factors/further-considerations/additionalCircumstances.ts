@@ -1,5 +1,5 @@
 import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication as Application } from '@approved-premises/api'
+import type { Cas1Application as Application } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'

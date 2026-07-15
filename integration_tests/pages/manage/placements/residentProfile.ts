@@ -1,6 +1,6 @@
 import {
   Adjudication,
-  ApprovedPremisesApplication,
+  Cas1Application,
   BookingDetails,
   Cas1OASysGroup,
   Cas1SpaceBooking,
@@ -374,7 +374,7 @@ export default class ResidentProfilePage extends Page {
     })
   }
 
-  shouldShowApplication(application: ApprovedPremisesApplication) {
+  shouldShowApplication(application: Cas1Application) {
     const person = application.person as FullPerson
     const sections = new SubmittedDocumentRenderer(application).response
 

@@ -1,5 +1,5 @@
 import { groupByAllocation, taskSummary, userQualificationsSelectOptions } from '.'
-import { type ApprovedPremisesApplication, Task } from '../../@types/shared'
+import { type Cas1Application as Application, Task } from '../../@types/shared'
 import { applicationFactory, placementDatesFactory, taskFactory, userFactory } from '../../testutils/factories'
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
@@ -27,7 +27,7 @@ describe('index', () => {
 
   describe('taskSummary', () => {
     let task: Task
-    let application: ApprovedPremisesApplication
+    let application: Application
 
     beforeEach(() => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(null)

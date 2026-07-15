@@ -1,7 +1,7 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { fromPartial } from '@total-typescript/shoehorn'
-import { ApprovedPremisesApplication as Application, FullPerson } from '../../../../@types/shared'
+import { Cas1Application as Application, FullPerson } from '../../../../@types/shared'
 import { ApAreaService, UserService } from '../../../../services'
 import { apAreaFactory, applicationFactory } from '../../../../testutils/factories'
 import { RestrictedPersonError } from '../../../../utils/errors'

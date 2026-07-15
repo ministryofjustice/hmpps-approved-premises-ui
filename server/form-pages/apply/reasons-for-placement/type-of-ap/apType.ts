@@ -1,6 +1,6 @@
 import { BackwardsCompatibleApplyApType, HtmlItem, TaskListErrors } from '@approved-premises/ui'
 
-import { ApType, ApprovedPremisesApplication } from '@approved-premises/api'
+import { ApType, Cas1Application } from '@approved-premises/api'
 import TasklistPage from '../../../tasklistPage'
 import { convertArrayToRadioItems } from '../../../../utils/formUtils'
 import { Page } from '../../../utils/decorators'
@@ -23,7 +23,7 @@ export default class SelectApType implements TasklistPage {
     public body: {
       type?: BackwardsCompatibleApplyApType
     },
-    private readonly application: ApprovedPremisesApplication,
+    private readonly application: Cas1Application,
   ) {
     this.isWomensApplication = isWomensApplication(application)
     this.availableTypes = this.isWomensApplication ? womensApTypes : apTypes

@@ -1,5 +1,6 @@
 import {
   Cas1Application as Application,
+  Cas1RequestedPlacementPeriod,
   ReleaseTypeOption,
   SentenceTypeOption,
   SubmitApprovedPremisesApplication,
@@ -64,8 +65,10 @@ const firstClassFields = <T>(
   const releaseType = getReleaseType(application, sentenceType)
   const situation =
     releaseType === 'in_community' ? retrieveQuestionResponse(application, Situation, 'situation') : null
-  const arrivalDate = arrivalDateFromApplication(application)
-  const duration = placementDurationFromApplication(application)
+  const arrival = arrivalDateFromApplication(application)
+  const requestedPlacementPeriod: Cas1RequestedPlacementPeriod = arrival
+    ? { arrival, duration: placementDurationFromApplication(application) }
+    : undefined
   const isEmergencyApplication = noticeType === 'emergency'
   const apAreaId = retrieveQuestionResponse(application, ConfirmYourDetails, 'area')
   const { applicantUserDetails, caseManagerUserDetails, caseManagerIsNotApplicant } =
@@ -80,8 +83,7 @@ const firstClassFields = <T>(
     releaseType,
     sentenceType,
     situation,
-    arrivalDate,
-    duration,
+    requestedPlacementPeriod,
     isEmergencyApplication,
     apAreaId,
     applicantUserDetails,

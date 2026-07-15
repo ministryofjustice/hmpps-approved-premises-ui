@@ -8,7 +8,7 @@ import {
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-import { ApprovedPremisesApplication as Application } from '../../../../@types/shared'
+import { Cas1Application as Application } from '../../../../@types/shared'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import ContingencyPlanPartners from './contingencyPlanPartners'
 

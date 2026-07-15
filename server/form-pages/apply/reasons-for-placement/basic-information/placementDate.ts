@@ -1,5 +1,5 @@
 import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { Cas1Application as Application } from '@approved-premises/api'
 
 import { isAfter, isSameDay } from 'date-fns'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
@@ -26,7 +26,7 @@ export default class PlacementDate implements TasklistPage {
 
   constructor(
     private _body: Partial<PlacementDateBody>,
-    public application: ApprovedPremisesApplication,
+    public application: Application,
   ) {
     const releaseDate = retrieveOptionalQuestionResponseFromFormArtifact(application, ReleaseDate)
 

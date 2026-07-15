@@ -1,4 +1,4 @@
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { Cas1Application as Application } from '@approved-premises/api'
 import { licenceExpiryDateFromApplication } from './licenceExpiryDateFromApplication'
 
 import { applicationFactory } from '../../testutils/factories'
@@ -6,7 +6,7 @@ import { applicationFactory } from '../../testutils/factories'
 jest.mock('./arrivalDateFromApplication')
 
 describe('licenceExpiryDateFromApplication', () => {
-  let application: ApprovedPremisesApplication
+  let application: Application
   const licenceExpiryDate = '2024-12-14'
 
   beforeEach(() => {

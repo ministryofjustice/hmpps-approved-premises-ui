@@ -1,5 +1,5 @@
 import type { TaskListErrors } from '@approved-premises/ui'
-import { ApprovedPremisesApplication } from '../../../../@types/shared'
+import { Cas1Application as Application } from '../../../../@types/shared'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { convictedOffenceResponseFromApplication } from '../../../../utils/applications/convictedOffenceResponseFromApplication'
 import { Page } from '../../../utils/decorators'
@@ -42,7 +42,7 @@ export default class RehabilitativeInterventions implements TasklistPage {
 
   constructor(
     private _body: RawRehabilitativeInterventionsBody,
-    private readonly application: ApprovedPremisesApplication,
+    private readonly application: Application,
   ) {}
 
   public get body(): RehabilitativeInterventionsBody {

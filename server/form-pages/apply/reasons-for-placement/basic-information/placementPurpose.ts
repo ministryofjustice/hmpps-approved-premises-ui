@@ -1,5 +1,5 @@
 import type { TaskListErrors } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { Cas1Application as Application } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -29,7 +29,7 @@ export default class PlacementPurpose implements TasklistPage {
 
   constructor(
     private _body: PlacementPurposeBody,
-    private readonly application: ApprovedPremisesApplication,
+    private readonly application: Application,
   ) {
     this._body.placementPurposes = _body?.placementPurposes
       ? ([_body.placementPurposes].flat() as Array<PlacementPurposeT>)

@@ -1,5 +1,5 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { Cas1Application as Application } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -41,7 +41,7 @@ export default class EsapPlacementCCTV implements TasklistPage {
       cctvIntelligenceDetails: string
       cctvNotes: string
     }>,
-    private readonly application: ApprovedPremisesApplication,
+    private readonly application: Application,
   ) {
     this.body.cctvHistory = flattenCheckboxInput(body.cctvHistory)
   }

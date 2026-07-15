@@ -1,5 +1,5 @@
 import type {
-  ApprovedPremisesApplication as Application,
+  Cas1Application as Application,
   ApplicationTimelineNote,
   ApprovedPremisesApplicationStatus,
   FullPerson,

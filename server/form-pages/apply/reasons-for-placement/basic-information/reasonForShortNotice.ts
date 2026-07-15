@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
+import { Cas1Application as Application } from '@approved-premises/api'
 import { TaskListErrors } from '@approved-premises/ui'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 import TasklistPage from '../../../tasklistPage'
