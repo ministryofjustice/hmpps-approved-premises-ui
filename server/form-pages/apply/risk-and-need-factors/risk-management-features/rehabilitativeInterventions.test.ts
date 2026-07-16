@@ -5,7 +5,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
 import * as formUtils from '../../../../utils/formUtils'
 import RehabilitativeInterventions, { interventionsTranslations } from './rehabilitativeInterventions'
-import { ApprovedPremisesApplication as Application } from '../../../../@types/shared'
+import { Cas1Application as Application } from '../../../../@types/shared'
 
 describe('RehabilitativeInterventions', () => {
   const person = personFactory.build({ name: 'John Wayne' })

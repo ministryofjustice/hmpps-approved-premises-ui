@@ -1,4 +1,4 @@
-import { ReleaseTypeOption, SentenceTypeOption } from '@approved-premises/api'
+import { Cas1RequestedPlacementPeriod, ReleaseTypeOption, SentenceTypeOption } from '@approved-premises/api'
 import { when } from 'jest-when'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import { applicationFactory } from '../../testutils/factories'
@@ -58,13 +58,15 @@ describe('getApplicationData', () => {
   describe('getApplicationSubmissionData', () => {
     const releaseType: ReleaseTypeOption = 'licence'
     const sentenceType: SentenceTypeOption = 'standardDeterminate'
-    const arrivalDate = '2023-01-01'
-    const duration = 84
+    const requestedPlacementPeriod: Cas1RequestedPlacementPeriod = {
+      arrival: '2023-01-01',
+      duration: 84,
+    }
     const licenceExpiryDate = DateFormats.dateObjToIsoDate(faker.date.soon())
 
     beforeEach(() => {
-      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(arrivalDate)
-      ;(placementDurationFromApplication as jest.Mock).mockReturnValue(duration)
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(requestedPlacementPeriod.arrival)
+      ;(placementDurationFromApplication as jest.Mock).mockReturnValue(requestedPlacementPeriod.duration)
       ;(isWomensApplication as jest.Mock).mockReturnValue(false)
       ;(licenceExpiryDateFromApplication as jest.Mock).mockReturnValue(licenceExpiryDate)
       mockOptionalQuestionResponse({
@@ -88,8 +90,7 @@ describe('getApplicationData', () => {
         sentenceType,
         situation: null,
         targetLocation,
-        arrivalDate,
-        duration,
+        requestedPlacementPeriod,
         isEmergencyApplication: true,
         apAreaId,
         applicantUserDetails,
@@ -223,8 +224,7 @@ describe('getApplicationData', () => {
         sentenceType: 'standardDeterminate',
         situation: null,
         targetLocation,
-        arrivalDate: '2023-01-01',
-        duration: 56,
+        requestedPlacementPeriod: { arrival: '2023-01-01', duration: 56 },
         isEmergencyApplication: true,
         apAreaId,
         caseManagerIsNotApplicant: true,

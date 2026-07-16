@@ -1,6 +1,7 @@
 import { PageResponse, SummaryListActionItem, SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
+
 import {
-  ApprovedPremisesApplication as Application,
+  Cas1Application as Application,
   Cas1RequestedPlacementPeriod,
   RequestForPlacement,
   User,

@@ -1,4 +1,4 @@
-import type { ApprovedPremisesApplication as Application, FullPerson } from '@approved-premises/api'
+import type { Cas1Application as Application, FullPerson } from '@approved-premises/api'
 import { Appeal } from '@approved-premises/api'
 import Page from '../../page'
 import paths from '../../../../server/paths/apply'

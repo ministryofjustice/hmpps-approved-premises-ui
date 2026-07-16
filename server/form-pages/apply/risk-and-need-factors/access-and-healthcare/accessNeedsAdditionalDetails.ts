@@ -1,5 +1,5 @@
 import { PageResponse, type TaskListErrors } from '@approved-premises/ui'
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application } from '@approved-premises/api'
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
@@ -24,7 +24,7 @@ export default class AccessNeedsAdditionalDetails implements TasklistPage {
 
   constructor(
     public body: Partial<AccessNeedsAdditionalDetailsBody>,
-    private readonly application: ApprovedPremisesApplication,
+    private readonly application: Cas1Application,
   ) {}
 
   previous(): string {

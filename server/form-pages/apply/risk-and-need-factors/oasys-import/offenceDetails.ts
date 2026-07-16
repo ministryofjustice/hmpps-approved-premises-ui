@@ -1,6 +1,6 @@
 import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/ui'
 
-import type { ApprovedPremisesApplication, OASysQuestion } from '@approved-premises/api'
+import type { Cas1Application as Application, OASysQuestion } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
 import { getOasysSection, oasysImportReponse } from '../../../../utils/oasysImportUtils'
@@ -33,7 +33,7 @@ export default class OffenceDetails implements OasysPage {
 
   static async initialize(
     body: Record<string, unknown>,
-    application: ApprovedPremisesApplication,
+    application: Application,
     token: string,
     dataServices: DataServices,
   ) {

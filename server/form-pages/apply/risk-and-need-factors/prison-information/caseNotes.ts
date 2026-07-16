@@ -1,6 +1,6 @@
 import type { DataServices, PageResponse, TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 
-import type { Adjudication, ApprovedPremisesApplication, PersonAcctAlert, PrisonCaseNote } from '@approved-premises/api'
+import type { Adjudication, Cas1Application, PersonAcctAlert, PrisonCaseNote } from '@approved-premises/api'
 
 import { HttpError } from 'http-errors'
 import { yesOrNoResponseWithDetailForYes } from '../../../utils'
@@ -93,7 +93,7 @@ export default class CaseNotes implements TasklistPage {
 
   constructor(
     private _body: Partial<CaseNotesBody>,
-    private readonly application: ApprovedPremisesApplication,
+    private readonly application: Cas1Application,
   ) {}
 
   public get body(): CaseNotesBody {
@@ -116,7 +116,7 @@ export default class CaseNotes implements TasklistPage {
 
   static async initialize(
     body: Record<string, unknown>,
-    application: ApprovedPremisesApplication,
+    application: Cas1Application,
     token: string,
     dataServices: DataServices,
   ) {

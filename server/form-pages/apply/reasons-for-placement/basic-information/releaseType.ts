@@ -1,4 +1,4 @@
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { Cas1Application as Application } from '@approved-premises/api'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import SentenceType from './sentenceType'
 import { Page } from '../../../utils/decorators'
@@ -9,7 +9,7 @@ import BaseReleaseType from '../../../shared/releaseType'
 export default class ReleaseType extends BaseReleaseType {
   constructor(
     readonly body: { releaseType?: SelectableReleaseTypes },
-    readonly application: ApprovedPremisesApplication,
+    readonly application: Application,
   ) {
     super(body, application)
 

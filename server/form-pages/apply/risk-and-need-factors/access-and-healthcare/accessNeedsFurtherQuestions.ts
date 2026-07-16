@@ -1,5 +1,5 @@
 import type { TaskListErrors, YesNoOrIDKWithDetail, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application } from '@approved-premises/api'
 import { sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 import { yesNoOrDontKnowResponseWithDetail, yesOrNoResponseWithDetailForYes } from '../../../utils'
@@ -41,7 +41,7 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
 
   constructor(
     public body: Partial<AccessNeedsFurtherQuestionsBody>,
-    private readonly application: ApprovedPremisesApplication,
+    private readonly application: Cas1Application,
   ) {}
 
   previous() {

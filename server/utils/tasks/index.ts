@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import { ApprovedPremisesApplication as Application, Task, UserQualification } from '../../@types/shared'
+import { Cas1Application as Application, Task, UserQualification } from '../../@types/shared'
 import { SelectOption, SummaryListItem, TaskSearchQualification } from '../../@types/ui'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { getApplicationType } from '../applications/utils'

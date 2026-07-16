@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication, Document } from '@approved-premises/api'
+import { Cas1Application, Document } from '@approved-premises/api'
 import { ErrorMessages, TableRow } from '@approved-premises/ui'
 
 import { DateFormats } from './dateUtils'
@@ -7,7 +7,7 @@ import paths from '../paths/apply'
 const tableRows = (
   documents: Array<Document>,
   selectedDocuments: Array<Document>,
-  application: ApprovedPremisesApplication,
+  application: Cas1Application,
   errors: ErrorMessages,
 ): Array<TableRow> => {
   const rows = [] as Array<TableRow>

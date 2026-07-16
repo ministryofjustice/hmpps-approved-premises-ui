@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication as Application, PlacementApplication } from '../../@types/shared'
+import { Cas1Application as Application, PlacementApplication } from '../../@types/shared'
 import { SummaryListWithCard } from '../../@types/ui'
 import PlacementApplicationForm from '../../form-pages/placement-application'
 import { forPagesInTask } from '../applications/forPagesInTask'

@@ -1,4 +1,5 @@
 import { addDays } from 'date-fns'
+import { Cas1Application as Application } from '@approved-premises/api'
 import {
   applicationFactory,
   assessmentFactory,
@@ -13,7 +14,6 @@ import { acceptanceData } from '../../../server/utils/assessments/acceptanceData
 
 import AssessHelper from '../../helpers/assess'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
-import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared/models/ApprovedPremisesApplication'
 import applicationDocument from '../../fixtures/applicationDocument.json'
 import { signIn } from '../signIn'
 import { AND, GIVEN, THEN } from '../../helpers'

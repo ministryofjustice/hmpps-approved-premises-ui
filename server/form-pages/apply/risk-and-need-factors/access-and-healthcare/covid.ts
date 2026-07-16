@@ -1,5 +1,5 @@
 import type { TaskListErrors, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
-import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
+import { Cas1Application as Application } from '@approved-premises/api'
 import { sentenceCase } from '../../../../utils/utils'
 import { yesOrNoResponseWithDetailForYes } from '../../../utils'
 import { Page } from '../../../utils/decorators'
@@ -53,15 +53,13 @@ export default class Covid implements TasklistPage {
   }
 
   response() {
-    const response = {
+    return {
       [this.questions.boosterEligibility.question]: yesOrNoResponseWithDetailForYes<'boosterEligibility'>(
         'boosterEligibility',
         this.body,
       ),
       [this.questions.immunosuppressed.question]: sentenceCase(this.body.immunosuppressed),
     }
-
-    return response
   }
 
   errors() {
