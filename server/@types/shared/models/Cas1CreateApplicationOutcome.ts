@@ -2,8 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1UpdatedClarificationNote = {
-    response: string;
-    responseReceivedOn: string;
+import type { TierDto } from './TierDto';
+export type Cas1CreateApplicationOutcome = {
+    applicationId?: string;
+    tier?: TierDto;
 };
 

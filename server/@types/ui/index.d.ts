@@ -626,3 +626,5 @@ export type ApprovedPremises = {
   town?: string
   apCode: string
 }
+
+type v2SortField = Exclude<Cas1SpaceBookingSummarySortField, 'personTier'>

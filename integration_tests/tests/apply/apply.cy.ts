@@ -325,8 +325,7 @@ context('Apply', () => {
       const body = JSON.parse(requests[requests.length - 1].body)
 
       expect(body).to.have.keys(
-        'arrivalDate',
-        'duration',
+        'requestedPlacementPeriod',
         'data',
         'document',
         'apType',
@@ -356,8 +355,7 @@ context('Apply', () => {
 
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
-        'arrivalDate',
-        'duration',
+        'requestedPlacementPeriod',
         'translatedDocument',
         'apType',
         'isEmergencyApplication',
