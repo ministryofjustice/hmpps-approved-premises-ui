@@ -1,7 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { Cas1CruManagementArea, Cas1SpaceBookingSummarySortField, SortDirection } from '@approved-premises/api'
-import { SelectOption } from '@approved-premises/ui'
+import { SelectOption, v2SortField } from '@approved-premises/ui'
 import { CruManagementAreaService, PremisesService } from '../../../services'
 import managePaths from '../../../paths/manage'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
@@ -19,7 +19,7 @@ import { getPageBackLink } from '../../../utils/backlinks'
 
 type TabSettings = {
   pageSize: number
-  sortBy: Cas1SpaceBookingSummarySortField
+  sortBy: v2SortField
   sortDirection: SortDirection
 }
 

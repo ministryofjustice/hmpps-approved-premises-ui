@@ -4,7 +4,6 @@ import type {
   Cas1PremisesBasicSummary,
   Cas1SpaceBookingResidency,
   Cas1SpaceBookingSummary,
-  Cas1SpaceBookingSummarySortField,
   NamedId,
   SortDirection,
 } from '@approved-premises/api'
@@ -16,6 +15,7 @@ import {
   TabItem,
   TableCell,
   TableRow,
+  v2SortField,
 } from '@approved-premises/ui'
 import { Request } from 'express'
 import { getTierOrBlank } from '../applications/helpers'
@@ -154,7 +154,7 @@ export const keyworkersToSelectOptions = (
     })),
 ]
 
-type ColumnField = Cas1SpaceBookingSummarySortField | 'status' | 'spaceType'
+type ColumnField = v2SortField | 'status' | 'spaceType'
 
 type ColumnDefinition = {
   title: string
@@ -179,7 +179,7 @@ const columnMap: Record<PremisesTab, Array<ColumnDefinition>> = {
 
 export const placementTableHeader = (
   activeTab: PremisesTab,
-  sortBy: Cas1SpaceBookingSummarySortField,
+  sortBy: v2SortField,
   sortDirection: SortDirection,
   hrefPrefix: string,
 ): Array<TableCell> => {
