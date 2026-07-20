@@ -1,15 +1,18 @@
 import {
   ApType,
   Cas1ExpireApplicationReason,
+  SentenceTypeOption,
   SubmitApprovedPremisesApplication,
   WithdrawalReason,
 } from '@approved-premises/api'
+import { faker } from '@faker-js/faker'
 import ApplicationClient from './applicationClient'
 import config from '../config'
 import {
   activeOffenceFactory,
   applicationFactory,
   cas1ApplicationSummaryFactory,
+  cas1RequestsForPlacementDurationsCalculationResponseDtoFactory,
   cas1TimelineEventFactory,
   documentFactory,
   noteFactory,
@@ -535,6 +538,35 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
       })
 
       await applicationClient.timeline(applicationId)
+    })
+  })
+
+  describe('getPlacementDuration', () => {
+    it('gets the placement duration with the application id, ap type and sentence type', async () => {
+      const applicationId = faker.string.uuid()
+      const sentenceType: SentenceTypeOption = 'standardDeterminate'
+      const apType: ApType = 'esap'
+
+      const durations = cas1RequestsForPlacementDurationsCalculationResponseDtoFactory.build()
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for a calculated placement duration',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.calc.durations({ id: applicationId }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          query: { sentenceType, apType },
+        },
+        willRespondWith: {
+          status: 200,
+          body: durations,
+        },
+      })
+
+      await applicationClient.getPlacementDuration(applicationId, apType, sentenceType)
     })
   })
 })

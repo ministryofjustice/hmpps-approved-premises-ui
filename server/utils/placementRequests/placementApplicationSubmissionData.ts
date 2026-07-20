@@ -7,6 +7,7 @@ import {
   SubmitPlacementApplication,
 } from '@approved-premises/api'
 
+import { DataServices } from '@approved-premises/ui'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
@@ -24,12 +25,16 @@ import { getSentenceType } from '../placementApplications'
 export const placementApplicationSubmissionData = (
   placementApplication: PlacementApplication,
   application: Application,
+  dataServices: DataServices,
+  token: string,
 ): SubmitPlacementApplication => {
   const { releaseType, sentenceType, situation } = getSentenceType(placementApplication)
   const requestedPlacementPeriods = durationAndArrivalDateFromPlacementApplication(
     placementApplication,
     releaseType,
     application,
+    dataServices,
+    token,
   )
   return {
     translatedDocument: placementApplication.document,
@@ -70,6 +75,8 @@ export const durationAndArrivalDateFromPlacementApplication = (
   placementApplication: PlacementApplication,
   reasonForPlacement: ReleaseTypeOption,
   application: Application,
+  dataServices: DataServices,
+  token: string,
 ): Array<Cas1RequestedPlacementPeriod> => {
   switch (reasonForPlacement) {
     case 'rotl': {
@@ -84,7 +91,7 @@ export const durationAndArrivalDateFromPlacementApplication = (
       return [
         {
           arrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
-          duration: Number(placementDurationFromApplication(application)),
+          duration: Number(placementDurationFromApplication(application, dataServices, token)),
         },
       ]
     }

@@ -96,6 +96,7 @@ import licenceFactory from './licence'
 import csraSummaryFactory from './csraSummary'
 import offenceFactory from './offence'
 import dietAndAllergyResponseFactory from './dietAndAllergyResponse'
+import cas1RequestsForPlacementDurationsCalculationResponseDtoFactory from './cas1RequestsForPlacementDurationsCalculationResponseDto'
 
 export {
   acctAlertFactory,
@@ -200,4 +201,5 @@ export {
   offenceFactory,
   dietAndAllergyResponseFactory,
   registrationFactory,
+  cas1RequestsForPlacementDurationsCalculationResponseDtoFactory,
 }

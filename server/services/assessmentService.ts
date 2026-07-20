@@ -51,11 +51,9 @@ export default class AssessmentService {
   ) {
     const body = getBody(Page, assessment, request, userInput)
 
-    const page = Page.initialize
-      ? await Page.initialize(body, assessment, request.user.token, dataServices)
+    return Page.initialize
+      ? Page.initialize(body, assessment, request.user.token, dataServices)
       : new Page(body, assessment)
-
-    return page
   }
 
   async save(page: TasklistPage, request: Request) {
@@ -73,7 +71,7 @@ export default class AssessmentService {
     }
   }
 
-  async submit(token: string, assessment: Assessment) {
+  async submit(token: string, assessment: Assessment, dataServices: DataServices) {
     const client = this.assessmentClientFactory(token)
 
     if (!applicationAccepted(assessment)) {
@@ -81,7 +79,7 @@ export default class AssessmentService {
       return client.rejection(assessment.id, document, rejectionRationaleFromAssessmentResponses(assessment))
     }
 
-    return client.acceptance(assessment.id, acceptanceData(assessment))
+    return client.acceptance(assessment.id, await acceptanceData(assessment, dataServices, token))
   }
 
   async createClarificationNote(token: string, assessmentId: string, clarificationNote: Cas1NewClarificationNote) {

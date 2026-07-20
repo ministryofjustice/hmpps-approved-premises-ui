@@ -1,3 +1,4 @@
+import { createMock } from '@golevelup/ts-jest'
 import { applicationFactory, assessmentFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
@@ -10,9 +11,13 @@ import {
   prepopulatablePlacementRequirementCriteria,
 } from '../../../../utils/placementCriteriaUtils'
 import { radioMatrixTable } from '../../../../utils/radioMatrixTable'
+import { ApplicationService } from '../../../../services'
 
 jest.mock('../../../../utils/applications/placementDurationFromApplication')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
+
+const applicationService = createMock<ApplicationService>({})
+const token = 'test_token'
 
 const assessment = assessmentFactory.build({
   application: applicationFactory.build({ isWomensApplication: false }),
@@ -159,9 +164,7 @@ describe('MatchingInformation', () => {
   })
 
   describe('suggestedStaySummaryListOptions', () => {
-    it('wraps around the namesake utils method, returning its return value', () => {
-      const page = new MatchingInformation(defaultArguments, assessment)
-
+    it('wraps around the namesake utils method, returning its return value', async () => {
       const utilsReturnValue = {
         rows: [
           { key: { text: 'Placement duration' }, value: { text: 'a formatted duration' } },
@@ -169,10 +172,16 @@ describe('MatchingInformation', () => {
         ],
       }
       const mockSuggestedStaySummaryListOptions = jest.spyOn(matchingInformtionUtils, 'suggestedStaySummaryListOptions')
-      mockSuggestedStaySummaryListOptions.mockReturnValue(utilsReturnValue)
+      mockSuggestedStaySummaryListOptions.mockResolvedValue(utilsReturnValue)
+
+      const page = await MatchingInformation.initialize(defaultArguments, assessment, token, { applicationService })
 
       expect(page.suggestedStaySummaryListOptions).toEqual(utilsReturnValue)
-      expect(mockSuggestedStaySummaryListOptions).toHaveBeenLastCalledWith(assessment.application)
+      expect(mockSuggestedStaySummaryListOptions).toHaveBeenLastCalledWith(
+        assessment.application,
+        { applicationService },
+        token,
+      )
     })
   })
 

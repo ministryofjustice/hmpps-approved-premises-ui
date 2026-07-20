@@ -1,19 +1,26 @@
-import { Cas1Application as Application } from '@approved-premises/api'
-import { BackwardsCompatibleApplyApType } from '@approved-premises/ui'
-import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
-import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
+import { Cas1Application as Application, SentenceTypeOption } from '@approved-premises/api'
+import { DataServices } from '@approved-premises/ui'
 
-export const getDefaultPlacementDurationInDays = (application: Application) => {
-  const apType = retrieveOptionalQuestionResponseFromFormArtifact(
-    application,
-    SelectApType,
-    'type',
-  ) as BackwardsCompatibleApplyApType
+const sentenceTypeFromApplication = (application: Application): SentenceTypeOption => {
+  const basicInformation = application.data?.['basic-information']
+  if (!basicInformation) return null
 
-  if (['standard', 'normal', 'mhapElliottHouse', 'mhapStJosephs', 'rfap'].includes(apType)) {
-    return 12 * 7
+  const { sentenceType = '' } = {
+    ...basicInformation['sentence-type'],
   }
-  if (apType === 'pipe') return 26 * 7
-  if (apType === 'esap') return 52 * 7
-  return null
+  return sentenceType as SentenceTypeOption
 }
+
+export const getDefaultPlacementDurationInDays = async (
+  application: Application,
+  dataServices: DataServices,
+  token: string,
+) =>
+  (
+    await dataServices.applicationService.getPlacementDuration(
+      token,
+      application.id,
+      application.apType,
+      sentenceTypeFromApplication(application),
+    )
+  )?.defaultDurationDays

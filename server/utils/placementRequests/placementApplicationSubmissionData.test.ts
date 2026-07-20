@@ -1,4 +1,6 @@
 import { Cas1RequestedPlacementPeriod } from '@approved-premises/api'
+import { createMock } from '@golevelup/ts-jest'
+import { DataServices } from '@approved-premises/ui'
 import AdditionalPlacementDetails from '../../form-pages/placement-application/request-a-placement/additionalPlacementDetails'
 import DatesOfPlacement from '../../form-pages/placement-application/request-a-placement/datesOfPlacement'
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
@@ -10,9 +12,14 @@ import {
   durationAndArrivalDateFromPlacementApplication,
   placementApplicationSubmissionData,
 } from './placementApplicationSubmissionData'
+import { ApplicationService } from '../../services'
 
 jest.mock('../../form-pages/utils')
 jest.mock('../applications/placementDurationFromApplication')
+
+const applicationService = createMock<ApplicationService>({})
+const dataServices = { applicationService } as DataServices
+const token = 'test_token'
 
 describe('placementApplicationSubmissionData', () => {
   const datesOfPlacement = [
@@ -71,7 +78,9 @@ describe('placementApplicationSubmissionData', () => {
       ;(getPageName as jest.MockedFn<typeof getPageName>).mockReturnValueOnce('reason')
       ;(getPageName as jest.MockedFn<typeof getPageName>).mockReturnValueOnce('dates-of-placement')
 
-      expect(placementApplicationSubmissionData(placementApplication, applicationFactory.build())).toEqual({
+      expect(
+        placementApplicationSubmissionData(placementApplication, applicationFactory.build(), dataServices, token),
+      ).toEqual({
         sentenceType: 'licence',
         releaseType: 'rotl',
         translatedDocument: {},
@@ -94,7 +103,13 @@ describe('placementApplicationSubmissionData', () => {
       })
 
       expect(
-        durationAndArrivalDateFromPlacementApplication(placementApplication, 'rotl', applicationFactory.build()),
+        durationAndArrivalDateFromPlacementApplication(
+          placementApplication,
+          'rotl',
+          applicationFactory.build(),
+          dataServices,
+          token,
+        ),
       ).toEqual(datesOfPlacementForApi)
       expect(pageDataFromApplicationOrAssessment).toHaveBeenCalledWith(DatesOfPlacement, placementApplication)
     })
@@ -110,7 +125,13 @@ describe('placementApplicationSubmissionData', () => {
       })
 
       expect(
-        durationAndArrivalDateFromPlacementApplication(placementApplication, 'rotl', applicationFactory.build()),
+        durationAndArrivalDateFromPlacementApplication(
+          placementApplication,
+          'rotl',
+          applicationFactory.build(),
+          dataServices,
+          token,
+        ),
       ).toEqual([{ ...datesOfPlacementForApi[0], arrivalFlexible: undefined }])
       expect(pageDataFromApplicationOrAssessment).toHaveBeenCalledWith(DatesOfPlacement, placementApplication)
     })
@@ -130,6 +151,8 @@ describe('placementApplicationSubmissionData', () => {
           placementApplication,
           'not_applicable',
           applicationFactory.build(),
+          dataServices,
+          token,
         ),
       ).toEqual([
         {
@@ -154,6 +177,8 @@ describe('placementApplicationSubmissionData', () => {
           placementApplication,
           'paroleDirectedLicence',
           applicationFactory.build(),
+          dataServices,
+          token,
         ),
       ).toEqual([
         {

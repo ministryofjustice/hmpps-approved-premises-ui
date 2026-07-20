@@ -5,6 +5,7 @@ import {
   PlacementDates,
   PlacementRequirements,
 } from '@approved-premises/api'
+import { DataServices } from '@approved-premises/ui'
 import { ShortNoticeReasons } from '../../form-pages/apply/reasons-for-placement/basic-information/reasonForShortNotice'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import {
@@ -30,19 +31,26 @@ import ApplicationTimeliness from '../../form-pages/assess/assessApplication/sui
 import type { ApplicationTimelinessBody } from '../../form-pages/assess/assessApplication/suitablityAssessment/applicationTimeliness'
 import { lengthOfStay } from '../../form-pages/utils/matchingInformationUtils'
 
-export const acceptanceData = (assessment: Assessment): Cas1AssessmentAcceptance => {
+export const acceptanceData = async (
+  assessment: Assessment,
+  dataServices: DataServices,
+  token: string,
+): Promise<Cas1AssessmentAcceptance> => {
   const notes = retrieveOptionalQuestionResponseFromFormArtifact(assessment, MatchingInformation, 'cruInformation')
-
   return {
     document: getResponses(assessment),
     requirements: placementRequestData(assessment),
-    placementDates: placementDates(assessment),
+    placementDates: await placementDates(assessment, dataServices, token),
     notes,
     ...timelinessDataFromAssessment(assessment),
   }
 }
 
-export const placementDates = (assessment: Assessment): PlacementDates | null => {
+export const placementDates = async (
+  assessment: Assessment,
+  dataServices: DataServices,
+  token: string,
+): Promise<PlacementDates | null> => {
   const arrivalDate = arrivalDateFromApplication(assessment.application)
 
   if (!arrivalDate) {
@@ -51,7 +59,7 @@ export const placementDates = (assessment: Assessment): PlacementDates | null =>
 
   const placementDuration =
     lengthOfStay(pageDataFromApplicationOrAssessment(MatchingInformation, assessment)) ||
-    placementDurationFromApplication(assessment.application)
+    (await placementDurationFromApplication(assessment.application, dataServices, token))
 
   return {
     expectedArrival: arrivalDate,

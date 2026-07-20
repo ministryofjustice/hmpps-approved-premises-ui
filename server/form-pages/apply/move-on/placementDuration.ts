@@ -1,6 +1,6 @@
 import { addDays, weeksToDays } from 'date-fns'
-import type { PageResponse, TaskListErrors, YesOrNo } from '@approved-premises/ui'
-import { Cas1Application } from '@approved-premises/api'
+import type { DataServices, PageResponse, TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import { Cas1Application as Application, Cas1Application } from '@approved-premises/api'
 import { DateFormats, weeksAndDaysToDays } from '../../../utils/dateUtils'
 import { Page } from '../../utils/decorators'
 
@@ -35,12 +35,25 @@ export default class PlacementDuration implements TasklistPage {
     reason: 'Why does this person require a different placement duration?',
   }
 
+  dataServices: DataServices
+
   constructor(
     public body: Partial<PlacementDurationBody>,
     private readonly application: Cas1Application,
   ) {
     this.body.duration = this.lengthInDays()
-    this.initializeDates()
+  }
+
+  static async initialize(
+    body: Partial<PlacementDurationBody>,
+    application: Application,
+    token: string,
+    dataServices: DataServices,
+  ): Promise<PlacementDuration> {
+    const page = new PlacementDuration(body, application)
+    await page.initializeDates(dataServices, token)
+
+    return page
   }
 
   previous() {
@@ -94,11 +107,11 @@ export default class PlacementDuration implements TasklistPage {
     return undefined
   }
 
-  private initializeDates(): void {
+  private async initializeDates(dataServices: DataServices, token: string): Promise<void> {
     const arrivalDateIso = arrivalDateFromApplication(this.application)
 
     if (arrivalDateIso) {
-      const standardPlacementDuration = getDefaultPlacementDurationInDays(this.application)
+      const standardPlacementDuration = await getDefaultPlacementDurationInDays(this.application, dataServices, token)
 
       const arrivalDate = DateFormats.isoToDateObj(arrivalDateIso)
       const departureDate = addDays(arrivalDate, standardPlacementDuration)
