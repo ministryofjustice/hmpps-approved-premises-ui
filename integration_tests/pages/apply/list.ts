@@ -1,7 +1,7 @@
 import Page from '../page'
 import paths from '../../../server/paths/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import { ApprovedPremisesApplication as Application, Cas1ApplicationSummary } from '../../../server/@types/shared'
+import { Cas1Application as Application, Cas1ApplicationSummary } from '../../../server/@types/shared'
 import { displayName } from '../../../server/utils/personUtils'
 
 export default class ListPage extends Page {

@@ -106,7 +106,6 @@ export default class ApplicationsController {
   show(): RequestHandler {
     return async (req: ShowRequest, res: Response) => {
       const application = await this.applicationService.findApplication(req.user.token, req.params.id)
-
       const backLink = getPageBackLink(paths.applications.show.pattern, req, [
         paths.applications.index.pattern,
         paths.applications.dashboard.pattern,

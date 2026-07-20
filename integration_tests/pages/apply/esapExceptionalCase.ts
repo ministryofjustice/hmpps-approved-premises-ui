@@ -1,8 +1,8 @@
-import { ApprovedPremisesApplication } from '../../../server/@types/shared/models/ApprovedPremisesApplication'
+import { Cas1Application } from '@approved-premises/api'
 import ApplyPage from './applyPage'
 
 export default class EsapExceptionalCase extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Cas1Application) {
     super(
       'Has there been agreement with the Community Head of Public Protection that an application should be made as an exceptional case?',
       application,

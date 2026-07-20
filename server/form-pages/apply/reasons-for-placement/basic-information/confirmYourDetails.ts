@@ -1,4 +1,4 @@
-import { ApArea, ApprovedPremisesApplication as Application } from '@approved-premises/api'
+import { ApArea, Cas1Application as Application } from '@approved-premises/api'
 import type { DataServices, PageResponse, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { RestrictedPersonError } from '../../../../utils/errors'

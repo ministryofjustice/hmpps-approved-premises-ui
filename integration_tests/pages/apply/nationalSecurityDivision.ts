@@ -1,8 +1,8 @@
-import { ApprovedPremisesApplication } from '../../../server/@types/shared/models/ApprovedPremisesApplication'
+import { Cas1Application } from '@approved-premises/api'
 import ApplyPage from './applyPage'
 
 export default class NationalSecurityDivision extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Cas1Application) {
     super(
       `Is the person managed by the National Security Division?`,
       application,

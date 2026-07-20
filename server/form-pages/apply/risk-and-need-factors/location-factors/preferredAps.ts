@@ -1,5 +1,5 @@
 import type { DataServices, PageResponse, TaskListErrors } from '@approved-premises/ui'
-import { ApprovedPremisesApplication as Application, Cas1PremisesBasicSummary } from '@approved-premises/api'
+import { Cas1Application as Application, Cas1PremisesBasicSummary } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
 

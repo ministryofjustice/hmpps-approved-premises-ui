@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication, Cas1Assessment, Cas1SpaceBooking } from '@approved-premises/api'
+import { Cas1Application, Cas1Assessment, Cas1SpaceBooking } from '@approved-premises/api'
 import { SummaryListWithCard } from '@approved-premises/ui'
 import { TabData } from './index'
 import {
@@ -27,7 +27,7 @@ export const placementApplicationTabController = async ({
   token,
   placement,
 }: TabControllerParameters): Promise<TabData & { bottomCardList?: Array<SummaryListWithCard> }> => {
-  const [application, assessment] = await settlePromises<[ApprovedPremisesApplication, Cas1Assessment]>([
+  const [application, assessment] = await settlePromises<[Cas1Application, Cas1Assessment]>([
     applicationService.findApplication(token, placement.applicationId),
     placement.assessmentId && assessmentService.findAssessment(token, placement.assessmentId),
   ])

@@ -1,5 +1,5 @@
 import {
-  ApprovedPremisesApplication,
+  Cas1Application as Application,
   Cas1OASysMetadata,
   Cas1OASysSupportingInformationQuestionMetaData,
 } from '@approved-premises/api'
@@ -42,7 +42,7 @@ export default class OptionalOasysSections implements TasklistPage {
 
   static async initialize(
     body: Partial<Response>,
-    application: ApprovedPremisesApplication,
+    application: Application,
     token: string,
     dataServices: DataServices,
   ) {

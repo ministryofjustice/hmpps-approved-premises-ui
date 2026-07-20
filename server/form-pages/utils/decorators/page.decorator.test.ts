@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application as Application } from '@approved-premises/api'
 import Page from './page.decorator'
 import { applicationFactory } from '../../../testutils/factories'
 
@@ -43,7 +43,7 @@ describe('tasklistPageDecorator', () => {
     class ClassWithApplication {
       constructor(
         readonly body: Record<string, unknown>,
-        readonly application: ApprovedPremisesApplication,
+        readonly application: Application,
       ) {}
     }
 

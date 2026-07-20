@@ -14,6 +14,9 @@ export type Cas1PlacementRequestSummary = {
     id: string;
     isParole: boolean;
     person: (FullPerson | RestrictedPerson | UnknownPerson);
+    /**
+     * This is the tier captured when the application was created. For the person's live tier use `person.tier`
+     */
     personTier?: string;
     placementRequestStatus: PlacementRequestStatus;
     requestedPlacementArrivalDate?: string;

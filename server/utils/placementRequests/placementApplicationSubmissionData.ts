@@ -1,6 +1,6 @@
 import { addWeeks } from 'date-fns'
 import {
-  ApprovedPremisesApplication as Application,
+  Cas1Application as Application,
   Cas1RequestedPlacementPeriod,
   PlacementApplication,
   ReleaseTypeOption,

@@ -1,4 +1,4 @@
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { Cas1Application as Application } from '@approved-premises/api'
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
@@ -42,7 +42,7 @@ export default class EsapPlacementSecreting implements TasklistPage {
       secretingIntelligenceDetails: string
       secretingNotes: string
     }>,
-    private readonly application: ApprovedPremisesApplication,
+    private readonly application: Application,
   ) {
     this.body.secretingHistory = flattenCheckboxInput(body.secretingHistory)
   }

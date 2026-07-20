@@ -1,6 +1,5 @@
 import {
-  ApprovedPremisesApplication as Application,
-  ApprovedPremisesApplication,
+  Cas1Application as Application,
   Cas1OASysGroup,
   Cas1OASysGroupName,
   Cas1OASysSupportingInformationQuestionMetaData,
@@ -19,7 +18,7 @@ export type Constructor<T> = new (body: unknown) => T
 
 export const getOasysSection = async <T extends OasysPage>(
   body: Record<string, unknown>,
-  application: ApprovedPremisesApplication,
+  application: Application,
   token: string,
   dataServices: DataServices,
   constructor: Constructor<T>,

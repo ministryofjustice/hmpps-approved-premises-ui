@@ -10,7 +10,7 @@ import type { ServiceType } from './ServiceType';
 export type Cas1ReferralHistory = {
     applicationId: string;
     applicationStatus: ApprovedPremisesApplicationStatus;
-    createdAt: string;
+    date: string;
     id: string;
     localAuthorityArea?: string;
     pdu?: string;

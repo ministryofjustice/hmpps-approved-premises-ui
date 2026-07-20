@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication as Application } from '../../@types/shared'
+import { Cas1Application as Application } from '../../@types/shared'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import { startDateOutsideOfNationalStandardsTimescales } from './startDateOutsideOfNationalStandardsTimescales'
 import ReasonForShortNotice from '../../form-pages/apply/reasons-for-placement/basic-information/reasonForShortNotice'

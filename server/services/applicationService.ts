@@ -7,7 +7,7 @@ import type {
 } from '@approved-premises/ui'
 import type {
   ActiveOffence,
-  ApprovedPremisesApplication as Application,
+  Cas1Application as Application,
   ApplicationSortField,
   ApplicationTimelineNote,
   Document,
@@ -25,6 +25,7 @@ import { ValidationError } from '../utils/errors'
 
 import { getBody } from '../form-pages/utils'
 import Review from '../form-pages/apply/check-your-answers/review'
+import { getResponses } from '../utils/applications/getResponses'
 
 export default class ApplicationService {
   constructor(private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>) {}
@@ -121,6 +122,8 @@ export default class ApplicationService {
     } else {
       const application = await this.findApplication(request.user.token, request.params.id)
       const updatedApplication = updateFormArtifactData(page, application, Review)
+
+      application.document = getResponses(application)
 
       const client = this.applicationClientFactory(request.user.token)
 

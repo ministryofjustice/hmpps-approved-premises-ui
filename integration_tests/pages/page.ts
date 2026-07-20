@@ -8,7 +8,7 @@ import {
 } from '@approved-premises/ui'
 import {
   Adjudication,
-  ApprovedPremisesApplication as Application,
+  Cas1Application as Application,
   Cas1Assessment as Assessment,
   Cas1TimelineEvent,
   Document,

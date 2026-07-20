@@ -2,8 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1UpdatedClarificationNote = {
-    response: string;
-    responseReceivedOn: string;
+export type Cas1NewApplication = {
+    convictionId: number;
+    crn: string;
+    deliusEventNumber: string;
+    offenceId: string;
 };
 

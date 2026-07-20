@@ -1,6 +1,6 @@
 import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/ui'
 
-import { ApprovedPremisesApplication, OASysSupportingInformationQuestion } from '@approved-premises/api'
+import { Cas1Application as Application, OASysSupportingInformationQuestion } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
 import { fetchOptionalOasysSections, getOasysSection, oasysImportReponse } from '../../../../utils/oasysImportUtils'
@@ -33,7 +33,7 @@ export default class SupportingInformation implements OasysPage {
 
   static async initialize(
     body: Record<string, unknown>,
-    application: ApprovedPremisesApplication,
+    application: Application,
     token: string,
     dataServices: DataServices,
   ) {

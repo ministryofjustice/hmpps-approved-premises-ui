@@ -35,6 +35,7 @@ import {
   UserQualification,
   LocalAuthorityArea,
   type Cas1OASysAssessmentSuitabilityStrategyDto,
+  Cas1Application,
 } from '@approved-premises/api'
 import type { Request } from 'express'
 import { Session } from 'express-session'
@@ -338,7 +339,7 @@ export type DataServices = Partial<{
   }
   applicationService: {
     getDocuments: (token: string, application: Cas1Application) => Promise<Array<Document>>
-    findApplication: (token: string, id: string) => Promise<ApprovedPremisesApplication>
+    findApplication: (token: string, id: string) => Promise<Cas1Application>
   }
   userService: {
     getUserById: (token: string, id: string) => Promise<User>
@@ -625,3 +626,5 @@ export type ApprovedPremises = {
   town?: string
   apCode: string
 }
+
+type v2SortField = Exclude<Cas1SpaceBookingSummarySortField, 'personTier'>

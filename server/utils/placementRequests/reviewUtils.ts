@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication as Application, PlacementApplication } from '@approved-premises/api'
+import { Cas1Application as Application, PlacementApplication } from '@approved-premises/api'
 import { HtmlItem, SummaryListItem, TextItem } from '@approved-premises/ui'
 import AdditionalDocuments from '../../form-pages/placement-application/request-a-placement/additionalDocuments'
 import paths from '../../paths/placementApplications'

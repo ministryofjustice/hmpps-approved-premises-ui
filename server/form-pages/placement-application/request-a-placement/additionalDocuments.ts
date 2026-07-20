@@ -1,4 +1,4 @@
-import type { ApprovedPremisesApplication, Document, PlacementApplication } from '@approved-premises/api'
+import type { Cas1Application, Document, PlacementApplication } from '@approved-premises/api'
 import { DataServices, TaskListErrors } from '@approved-premises/ui'
 import { Page } from '../../utils/decorators'
 
@@ -26,7 +26,7 @@ export default class AdditionalDocuments implements TasklistPage {
 
   documents: Array<Document> | undefined
 
-  application: ApprovedPremisesApplication
+  application: Cas1Application
 
   constructor(
     public body: AdditionalDocumentsBody,

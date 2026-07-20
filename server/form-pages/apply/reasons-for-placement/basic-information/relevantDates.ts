@@ -1,10 +1,10 @@
 import type { ObjectWithDateParts, PageResponse, TaskListErrors } from '@approved-premises/ui'
 
+import { Cas1Application as Application } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
 
 import TasklistPage from '../../../tasklistPage'
-import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 export const relevantDatesDictionary = {
@@ -42,7 +42,7 @@ export default class RelevantDates implements TasklistPage {
 
   constructor(
     _body: Partial<RelevantDatesBody>,
-    private readonly application: ApprovedPremisesApplication,
+    private readonly application: Application,
   ) {}
 
   public set body(value: Partial<RelevantDatesBody>) {

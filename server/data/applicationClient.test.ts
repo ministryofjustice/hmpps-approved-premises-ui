@@ -1,4 +1,9 @@
-import { ApType, Cas1ExpireApplicationReason, WithdrawalReason } from '@approved-premises/api'
+import {
+  ApType,
+  Cas1ExpireApplicationReason,
+  SubmitApprovedPremisesApplication,
+  WithdrawalReason,
+} from '@approved-premises/api'
 import ApplicationClient from './applicationClient'
 import config from '../config'
 import {
@@ -164,16 +169,15 @@ describeClient('ApplicationClient', provider => {
   describe('submit', () => {
     it('should submit the application', async () => {
       const application = applicationFactory.build()
-      const data = {
+      const data: SubmitApprovedPremisesApplication = {
         translatedDocument: application.document,
         apType: 'pipe' as ApType,
         isWomensApplication: false,
-        isEsapApplication: false,
-        isEmergencyApplication: false,
         targetLocation: 'ABC123',
         releaseType: 'licence' as const,
         sentenceType: 'life' as const,
         type: 'CAS1',
+        requestedPlacementPeriod: undefined,
       }
 
       await provider.addInteraction({

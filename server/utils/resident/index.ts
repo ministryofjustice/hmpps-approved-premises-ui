@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication, Cas1SpaceBooking, CaseDetail } from '@approved-premises/api'
+import { Cas1Application, Cas1SpaceBooking, CaseDetail } from '@approved-premises/api'
 import {
   HtmlItem,
   RequestWithSession,
@@ -201,7 +201,7 @@ export const renderCardList = (cardListData: Array<SummaryListWithCard>) => {
   return nunjucks.render(`manage/resident/partials/cardList.njk`, { cardList: cardListData })
 }
 
-export const renderPersonDetails = (application: ApprovedPremisesApplication): string => {
+export const renderPersonDetails = (application: Cas1Application): string => {
   return nunjucks.render(`manage/resident/partials/personDetails.njk`, { application })
 }
 

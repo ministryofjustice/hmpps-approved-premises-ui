@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication as Application } from '../../@types/shared'
+import { Cas1Application as Application } from '../../@types/shared'
 import { SessionDataError } from '../errors'
 
 export const convictedOffenceResponseFromApplication = (application: Application): string => {

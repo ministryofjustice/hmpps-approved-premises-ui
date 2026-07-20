@@ -1,4 +1,4 @@
-import type { ApprovedPremisesApplication as Application, FullPerson } from '@approved-premises/api'
+import type { Cas1Application as Application, FullPerson } from '@approved-premises/api'
 import complexCaseBoard from '../../form-pages/apply/reasons-for-placement/basic-information/complexCaseBoard'
 import boardTakenPlace from '../../form-pages/apply/reasons-for-placement/basic-information/boardTakenPlace'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'

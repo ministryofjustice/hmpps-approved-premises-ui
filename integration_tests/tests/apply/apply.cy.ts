@@ -38,11 +38,10 @@ context('Apply', () => {
     cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
       expect(requests).to.have.length(apply.numberOfPages())
       const body = JSON.parse(requests[requests.length - 1].body)
-
       expect(body).to.have.keys(
         'data',
-        'arrivalDate',
-        'duration',
+        'document',
+        'requestedPlacementPeriod',
         'apType',
         'isWomensApplication',
         'targetLocation',
@@ -69,8 +68,7 @@ context('Apply', () => {
 
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
-        'arrivalDate',
-        'duration',
+        'requestedPlacementPeriod',
         'translatedDocument',
         'apType',
         'isEmergencyApplication',
@@ -327,9 +325,9 @@ context('Apply', () => {
       const body = JSON.parse(requests[requests.length - 1].body)
 
       expect(body).to.have.keys(
-        'arrivalDate',
-        'duration',
+        'requestedPlacementPeriod',
         'data',
+        'document',
         'apType',
         'isWomensApplication',
         'targetLocation',
@@ -357,8 +355,7 @@ context('Apply', () => {
 
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
-        'arrivalDate',
-        'duration',
+        'requestedPlacementPeriod',
         'translatedDocument',
         'apType',
         'isEmergencyApplication',

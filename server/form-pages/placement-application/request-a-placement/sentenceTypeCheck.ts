@@ -1,5 +1,10 @@
 import { DataServices, SummaryListItem, TaskListErrors, YesOrNo } from '@approved-premises/ui'
-import type { PlacementApplication, ReleaseTypeOption, SentenceTypeOption } from '@approved-premises/api'
+import type {
+  ApprovedPremisesApplication,
+  PlacementApplication,
+  ReleaseTypeOption,
+  SentenceTypeOption,
+} from '@approved-premises/api'
 
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
@@ -50,8 +55,8 @@ export default class SentenceTypeCheck implements TasklistPage {
         token,
         placementApplication.applicationId,
       )
-      page.applicationReleaseType = application.releaseType
-      page.applicationSentenceType = application.sentenceType
+      page.applicationReleaseType = (application as ApprovedPremisesApplication).releaseType
+      page.applicationSentenceType = (application as ApprovedPremisesApplication).sentenceType
     }
 
     page.summaryRows = [

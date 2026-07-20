@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application } from '@approved-premises/api'
 import { addDays } from 'date-fns'
 import { getDefaultPlacementDurationInDays } from '../../../utils/applications/getDefaultPlacementDurationInDays'
 
@@ -13,7 +13,7 @@ jest.mock('../../../utils/applications/getDefaultPlacementDurationInDays')
 jest.mock('../../../utils/applications/arrivalDateFromApplication')
 
 describe('PlacementDuration', () => {
-  let application: ApprovedPremisesApplication
+  let application: Cas1Application
 
   beforeEach(() => {
     application = applicationFactory
@@ -78,7 +78,7 @@ describe('PlacementDuration', () => {
         task: 'basic-information',
         page: 'placement-date',
         keyValuePairs: { startDateSameAsReleaseDate: 'no', startDate: '2022-11-11' },
-      }) as ApprovedPremisesApplication
+      })
     })
 
     it('next', () => {

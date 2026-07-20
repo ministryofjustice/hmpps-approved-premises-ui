@@ -1,6 +1,7 @@
 import { createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
 import { FormSection, SummaryListActionItem, TaskNames, UiTask } from '@approved-premises/ui'
+import { Cas1Application } from '@approved-premises/api'
 import { applicationFactory, assessmentFactory, documentFactory } from '../../testutils/factories'
 import { SubmittedDocumentRenderer } from './submittedDocumentRenderer'
 import { embeddedSummaryListItemCompact } from '../applications/summaryListUtils/embeddedSummaryListItem'
@@ -354,7 +355,11 @@ describe('Submitted document renderer', () => {
       ],
     })
 
-    const application = applicationFactory.build({ type: 'offline', document: undefined, status: undefined })
+    const application = applicationFactory.build({
+      type: 'offline',
+      document: undefined,
+      status: undefined,
+    } as unknown as Cas1Application)
     const cards = new SubmittedDocumentRenderer(application, null, [section]).response
 
     cards.forEach(card => {

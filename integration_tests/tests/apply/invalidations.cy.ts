@@ -38,8 +38,8 @@ context('Apply', () => {
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
         'data',
-        'arrivalDate',
-        'duration',
+        'document',
+        'requestedPlacementPeriod',
         'apType',
         'isWomensApplication',
         'targetLocation',
@@ -79,12 +79,11 @@ context('Apply', () => {
     cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
       expect(requests).to.have.length(1)
       const body = JSON.parse(requests[0].body)
-
       expect(body).to.have.keys(
         'data',
-        'arrivalDate',
-        'duration',
+        'document',
         'apType',
+        'requestedPlacementPeriod',
         'isWomensApplication',
         'targetLocation',
         'releaseType',

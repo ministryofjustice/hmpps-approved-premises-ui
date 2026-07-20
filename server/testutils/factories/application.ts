@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 import { addDays } from 'date-fns'
 
 import type {
-  ApprovedPremisesApplication,
+  Cas1Application,
   ApType,
   AssessmentDecision,
   Cas1ApplicationUserDetails,
@@ -20,7 +20,7 @@ import { DateFormats } from '../../utils/dateUtils'
 import { BackwardsCompatibleApplyApType, PartnerAgencyDetails } from '../../@types/ui'
 import { apAreaFactory } from './referenceData'
 
-class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
+class ApplicationFactory extends Factory<Cas1Application> {
   withReleaseDate(releaseDate = DateFormats.dateObjToIsoDate(faker.date.soon())) {
     return this.params({
       data: {
