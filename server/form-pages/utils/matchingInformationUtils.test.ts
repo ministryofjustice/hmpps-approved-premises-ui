@@ -1,5 +1,6 @@
 import { when } from 'jest-when'
-import { BackwardsCompatibleApplyApType } from '@approved-premises/ui'
+import { BackwardsCompatibleApplyApType, DataServices } from '@approved-premises/ui'
+import { createMock } from '@golevelup/ts-jest'
 import { placementDurationFromApplication } from '../../utils/applications/placementDurationFromApplication'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
@@ -26,9 +27,15 @@ import Vulnerability from '../apply/risk-and-need-factors/further-considerations
 import SelectApType from '../apply/reasons-for-placement/type-of-ap/apType'
 import PlacementDate from '../apply/reasons-for-placement/basic-information/placementDate'
 import ReleaseDate from '../apply/reasons-for-placement/basic-information/releaseDate'
+import { ApplicationService } from '../../services'
 
 jest.mock('../../utils/applications/placementDurationFromApplication')
 jest.mock('../../utils/retrieveQuestionResponseFromFormArtifact')
+
+const applicationService = createMock<ApplicationService>({})
+const dataServices = { applicationService } as DataServices
+
+const token = 'test_token'
 
 describe('matchingInformationUtils', () => {
   const application = applicationFactory.build()
@@ -482,7 +489,7 @@ describe('matchingInformationUtils', () => {
 
     describe('if the release date is known', () => {
       describe('when the start date is the same as the release date', () => {
-        it('returns the suggested stay from the application as summary list options, using the release date as the start date', () => {
+        it('returns the suggested stay from the application as summary list options, using the release date as the start date', async () => {
           when(retrieveQuestionResponseFromFormArtifact)
             .calledWith(application, ReleaseDate, 'knowReleaseDate')
             .mockReturnValue('yes')
@@ -493,7 +500,7 @@ describe('matchingInformationUtils', () => {
             .calledWith(application, ReleaseDate)
             .mockReturnValue('2024-03-07T00:00:00Z')
 
-          expect(suggestedStaySummaryListOptions(application)).toEqual({
+          expect(await suggestedStaySummaryListOptions(application, dataServices, token)).toEqual({
             rows: [
               { key: { text: 'Placement duration' }, value: { text: '1 week, 5 days', classes: 'placement-duration' } },
               {
@@ -503,7 +510,7 @@ describe('matchingInformationUtils', () => {
             ],
           })
 
-          expect(placementDurationFromApplication).toHaveBeenCalledWith(application)
+          expect(placementDurationFromApplication).toHaveBeenCalledWith(application, dataServices, token)
           expect(retrieveQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
             application,
             PlacementDate,
@@ -514,7 +521,7 @@ describe('matchingInformationUtils', () => {
       })
 
       describe('when the start date is not the same as the release date', () => {
-        it('returns the suggested stay from the application as summary list options, using the start date from the placement date screen', () => {
+        it('returns the suggested stay from the application as summary list options, using the start date from the placement date screen', async () => {
           when(retrieveQuestionResponseFromFormArtifact)
             .calledWith(application, ReleaseDate, 'knowReleaseDate')
             .mockReturnValue('yes')
@@ -525,7 +532,7 @@ describe('matchingInformationUtils', () => {
             .calledWith(application, PlacementDate, 'startDate')
             .mockReturnValue('2024-05-07T00:00:00Z')
 
-          expect(suggestedStaySummaryListOptions(application)).toEqual({
+          expect(await suggestedStaySummaryListOptions(application, dataServices, token)).toEqual({
             rows: [
               { key: { text: 'Placement duration' }, value: { text: '1 week, 5 days', classes: 'placement-duration' } },
               {
@@ -535,7 +542,7 @@ describe('matchingInformationUtils', () => {
             ],
           })
 
-          expect(placementDurationFromApplication).toHaveBeenCalledWith(application)
+          expect(placementDurationFromApplication).toHaveBeenCalledWith(application, dataServices, token)
           expect(retrieveQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
             application,
             PlacementDate,
@@ -551,18 +558,18 @@ describe('matchingInformationUtils', () => {
     })
 
     describe('if the release date is not  known', () => {
-      it('returns only the placement duration row', () => {
+      it('returns only the placement duration row', async () => {
         when(retrieveQuestionResponseFromFormArtifact)
           .calledWith(application, ReleaseDate, 'knowReleaseDate')
           .mockReturnValue('no')
 
-        expect(suggestedStaySummaryListOptions(application)).toEqual({
+        expect(await suggestedStaySummaryListOptions(application, dataServices, token)).toEqual({
           rows: [
             { key: { text: 'Placement duration' }, value: { text: '1 week, 5 days', classes: 'placement-duration' } },
           ],
         })
 
-        expect(placementDurationFromApplication).toHaveBeenCalledWith(application)
+        expect(placementDurationFromApplication).toHaveBeenCalledWith(application, dataServices, token)
         expect(retrieveQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
           application,
           ReleaseDate,

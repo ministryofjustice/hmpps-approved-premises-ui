@@ -98,6 +98,7 @@ import offenceFactory from './offence'
 import dietAndAllergyResponseFactory from './dietAndAllergyResponse'
 import tierDtoFactory from './tierDto'
 import cas1CreateApplicationOutcomeFactory from './cas1CreateApplicationOutcome'
+import cas1RequestsForPlacementDurationsCalculationResponseDtoFactory from './cas1RequestsForPlacementDurationsCalculationResponseDto'
 
 export {
   acctAlertFactory,
@@ -202,6 +203,10 @@ export {
   offenceFactory,
   dietAndAllergyResponseFactory,
   registrationFactory,
+<<<<<<< HEAD
   tierDtoFactory,
   cas1CreateApplicationOutcomeFactory,
+=======
+  cas1RequestsForPlacementDurationsCalculationResponseDtoFactory,
+>>>>>>> 6f61da675 (FM-815 Placement duration calculation from API)
 }

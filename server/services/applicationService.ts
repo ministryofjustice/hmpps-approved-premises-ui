@@ -16,6 +16,8 @@ import type {
   Cas1ApplicationSummary,
   Cas1ExpireApplicationReason,
   Cas1CreateApplicationOutcome,
+  ApType,
+  SentenceTypeOption,
 } from '@approved-premises/api'
 
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
@@ -98,9 +100,7 @@ export default class ApplicationService {
   async getDocuments(token: string, application: Application): Promise<Array<Document>> {
     const applicationClient = this.applicationClientFactory(token)
 
-    const documents = await applicationClient.documents(application)
-
-    return documents
+    return applicationClient.documents(application)
   }
 
   async initializePage(
@@ -112,11 +112,9 @@ export default class ApplicationService {
     const application = await this.findApplication(request.user.token, request.params.id)
     const body = getBody(Page, application, request, userInput)
 
-    const page = Page.initialize
-      ? await Page.initialize(body, application, request.user.token, dataServices)
+    return Page.initialize
+      ? Page.initialize(body, application, request.user.token, dataServices)
       : new Page(body, application)
-
-    return page
   }
 
   async save(page: TasklistPage, request: Request) {
@@ -132,14 +130,20 @@ export default class ApplicationService {
 
       const client = this.applicationClientFactory(request.user.token)
 
-      await client.update(application.id, getApplicationUpdateData(updatedApplication))
+      await client.update(
+        application.id,
+        await getApplicationUpdateData(updatedApplication, { applicationService: this }, request.user.token),
+      )
     }
   }
 
   async submit(token: string, application: Application) {
     const client = this.applicationClientFactory(token)
 
-    await client.submit(application.id, getApplicationSubmissionData(application))
+    await client.submit(
+      application.id,
+      await getApplicationSubmissionData(application, { applicationService: this }, token),
+    )
   }
 
   async getApplicationFromSessionOrAPI(request: Request): Promise<Application> {
@@ -152,46 +156,39 @@ export default class ApplicationService {
   }
 
   async withdraw(token: string, applicationId: string, body: NewWithdrawal) {
-    const client = this.applicationClientFactory(token)
-
-    await client.withdrawal(applicationId, body)
+    await this.applicationClientFactory(token).withdrawal(applicationId, body)
   }
 
   async expire(token: string, applicationId: string, body: Cas1ExpireApplicationReason) {
-    const client = this.applicationClientFactory(token)
-
-    await client.expire(applicationId, body)
+    await this.applicationClientFactory(token).expire(applicationId, body)
   }
 
   async timeline(token: string, applicationId: string) {
-    const client = this.applicationClientFactory(token)
-
-    const timeline = await client.timeline(applicationId)
-
-    return timeline
+    return this.applicationClientFactory(token).timeline(applicationId)
   }
 
   async getRequestsForPlacement(token: string, applicationId: string) {
-    const client = this.applicationClientFactory(token)
-
-    const requestsForPlacement = await client.requestsForPlacement(applicationId)
-
-    return requestsForPlacement
+    return this.applicationClientFactory(token).requestsForPlacement(applicationId)
   }
 
   async addNote(token: Request['user']['token'], applicationId: Application['id'], note: ApplicationTimelineNote) {
     const client = this.applicationClientFactory(token)
 
-    const addedNote = await client.addNote(applicationId, note)
-
-    return addedNote
+    return client.addNote(applicationId, note)
   }
 
   async getWithdrawablesWithNotes(token: Request['user']['token'], applicationId: Application['id']) {
+    return this.applicationClientFactory(token).withdrawablesWithNotes(applicationId)
+  }
+
+  async getPlacementDuration(
+    token: Request['user']['token'],
+    applicationId: Application['id'],
+    apType: ApType,
+    sentenceType: SentenceTypeOption,
+  ) {
     const client = this.applicationClientFactory(token)
 
-    const withdrawables = await client.withdrawablesWithNotes(applicationId)
-
-    return withdrawables
+    return client.getPlacementDuration(applicationId, apType, sentenceType)
   }
 }

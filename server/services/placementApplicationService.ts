@@ -73,12 +73,17 @@ export default class PlacementApplicationService {
     }
   }
 
-  async submit(token: string, placementApplication: PlacementApplication, application: Application) {
+  async submit(
+    token: string,
+    placementApplication: PlacementApplication,
+    application: Application,
+    dataServices: DataServices,
+  ) {
     const placementApplicationClient = this.placementApplicationClientFactory(token)
 
     return placementApplicationClient.submission(
       placementApplication.id,
-      placementApplicationSubmissionData(placementApplication, application),
+      placementApplicationSubmissionData(placementApplication, application, dataServices, token),
     )
   }
 

@@ -3,6 +3,8 @@ import {
   activeOffenceFactory,
   applicationFactory,
   assessmentFactory,
+  cas1RequestsForPlacementDurationsCalculationResponseDtoFactory,
+  personFactory,
   risksFactory,
   tierEnvelopeFactory,
 } from '../../../server/testutils/factories'
@@ -37,6 +39,10 @@ export const setup = () => {
     cy.task('stubApplicationGet', { application })
     cy.task('stubApplications', [application])
     cy.task('stubAllApplications', { applications: [], anyQuery: true })
+    cy.task('stubGetPlacementDuration', {
+      applicationId: application.id,
+      durationObj: cas1RequestsForPlacementDurationsCalculationResponseDtoFactory.build(),
+    })
 
     cy.wrap(person).as('person')
     cy.wrap(offences).as('offences')
