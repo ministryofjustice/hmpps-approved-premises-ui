@@ -6,7 +6,6 @@ import {
   ReleaseTypeOption,
   SubmitPlacementApplication,
 } from '@approved-premises/api'
-
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
@@ -84,7 +83,7 @@ export const durationAndArrivalDateFromPlacementApplication = (
       return [
         {
           arrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
-          duration: Number(placementDurationFromApplication(application)),
+          duration: Number(placementDurationFromApplication(application)), // TODO: this is using the stored duration - it should be live
         },
       ]
     }

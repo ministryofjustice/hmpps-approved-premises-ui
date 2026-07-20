@@ -514,7 +514,7 @@ describe('matchingInformationUtils', () => {
       })
 
       describe('when the start date is not the same as the release date', () => {
-        it('returns the suggested stay from the application as summary list options, using the start date from the placement date screen', () => {
+        it('returns the suggested stay from the application as summary list options, using the start date from the placement date screen', async () => {
           when(retrieveQuestionResponseFromFormArtifact)
             .calledWith(application, ReleaseDate, 'knowReleaseDate')
             .mockReturnValue('yes')

@@ -27,9 +27,11 @@ describe('placementDurationFromApplication', () => {
     expect(getDefaultPlacementDurationInDays).not.toHaveBeenCalled()
   })
 
-  it('should return the default duration an alternative duration is not provided', () => {
-    ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce(undefined)
-    ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValueOnce(12)
+  it('should return the default duration an override duration is not provided', () => {
+    ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockImplementation((_, __, question?: string) => {
+      if (question === 'defaultDurationDays') return 12
+      return undefined
+    })
 
     expect(placementDurationFromApplication(application)).toEqual(12)
 
@@ -38,6 +40,10 @@ describe('placementDurationFromApplication', () => {
       PlacementDuration,
       'duration',
     )
-    expect(getDefaultPlacementDurationInDays).toHaveBeenCalledWith(application)
+    expect(retrieveOptionalQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
+      application,
+      PlacementDuration,
+      'defaultDurationDays',
+    )
   })
 })

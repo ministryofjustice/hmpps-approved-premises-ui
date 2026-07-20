@@ -32,7 +32,6 @@ import { lengthOfStay } from '../../form-pages/utils/matchingInformationUtils'
 
 export const acceptanceData = (assessment: Assessment): Cas1AssessmentAcceptance => {
   const notes = retrieveOptionalQuestionResponseFromFormArtifact(assessment, MatchingInformation, 'cruInformation')
-
   return {
     document: getResponses(assessment),
     requirements: placementRequestData(assessment),

@@ -159,9 +159,7 @@ describe('MatchingInformation', () => {
   })
 
   describe('suggestedStaySummaryListOptions', () => {
-    it('wraps around the namesake utils method, returning its return value', () => {
-      const page = new MatchingInformation(defaultArguments, assessment)
-
+    it('wraps around the namesake utils method, returning its return value', async () => {
       const utilsReturnValue = {
         rows: [
           { key: { text: 'Placement duration' }, value: { text: 'a formatted duration' } },
@@ -170,6 +168,8 @@ describe('MatchingInformation', () => {
       }
       const mockSuggestedStaySummaryListOptions = jest.spyOn(matchingInformtionUtils, 'suggestedStaySummaryListOptions')
       mockSuggestedStaySummaryListOptions.mockReturnValue(utilsReturnValue)
+
+      const page = await MatchingInformation.initialize(defaultArguments, assessment)
 
       expect(page.suggestedStaySummaryListOptions).toEqual(utilsReturnValue)
       expect(mockSuggestedStaySummaryListOptions).toHaveBeenLastCalledWith(assessment.application)
