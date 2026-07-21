@@ -1,10 +1,10 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application } from '@approved-premises/api'
 
 import ApplyPage from './applyPage'
 import paths from '../../../server/paths/apply'
 
 export default class RehabilitativeInterventions extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Cas1Application) {
     super(
       "Which of the rehabilitative activities will assist the person's rehabilitation in the Approved Premises (AP)?",
       application,

@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
@@ -7,7 +7,7 @@ import { PartnerAgencyDetails } from '../../../server/@types/ui'
 export default class ContingencyPlanPartnersPage extends ApplyPage {
   contigencyPlanPartners: Array<PartnerAgencyDetails>
 
-  constructor(application: ApprovedPremisesApplication, contigencyPlanPartners) {
+  constructor(application: Cas1Application, contigencyPlanPartners) {
     super(
       'Contingency plans',
       application,

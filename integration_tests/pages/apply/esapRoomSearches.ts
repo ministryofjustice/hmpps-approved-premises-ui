@@ -1,8 +1,8 @@
-import { ApprovedPremisesApplication } from '../../../server/@types/shared'
+import { Cas1Application } from '../../../server/@types/shared'
 import ApplyPage from './applyPage'
 
 export default class EsapRoomSearches extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Cas1Application) {
     super('Enhanced room searches using body worn technology', application, 'type-of-ap', 'esap-placement-secreting')
   }
 

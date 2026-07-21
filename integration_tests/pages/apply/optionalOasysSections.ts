@@ -1,10 +1,10 @@
-import { ApprovedPremisesApplication, Cas1OASysSupportingInformationQuestionMetaData } from '@approved-premises/api'
+import { Cas1Application, Cas1OASysSupportingInformationQuestionMetaData } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
 
 export default class OptionalOasysSectionsPage extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication, oasysMissing = false) {
+  constructor(application: Cas1Application, oasysMissing = false) {
     const title = oasysMissing ? 'Oasys Information' : 'Which of the following sections of OASys do you want to import?'
     super(
       title,

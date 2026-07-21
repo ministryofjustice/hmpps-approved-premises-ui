@@ -1,9 +1,9 @@
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { Cas1Application } from '@approved-premises/api'
 
 import ApplyPage from './applyPage'
 
 export default class SituationPage extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Cas1Application) {
     super('What is the reason for placing this person in an AP?', application, 'basic-information', 'situation')
   }
 

@@ -1,10 +1,10 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
 
 export default class PipeReferralPage extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Cas1Application) {
     super(
       'Has the person been screened into the Offender Personality Disorder Pathway (OPD)?',
       application,

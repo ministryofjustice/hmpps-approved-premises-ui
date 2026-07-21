@@ -1,10 +1,10 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
 
 export default class RiskManagementFeatures extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Cas1Application) {
     super(
       'What features of an Approved Premises (AP) will support the management of risk?',
       application,

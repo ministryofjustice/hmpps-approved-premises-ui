@@ -1,11 +1,11 @@
-import { ApprovedPremisesApplication, OASysSupportingInformationQuestion } from '@approved-premises/api'
+import { Cas1Application, OASysSupportingInformationQuestion } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
 
 export default class SupportingInformation extends ApplyPage {
   constructor(
-    application: ApprovedPremisesApplication,
+    application: Cas1Application,
     private readonly supportingInformationSummaries: Array<OASysSupportingInformationQuestion>,
     private readonly oasysMissing: boolean,
   ) {

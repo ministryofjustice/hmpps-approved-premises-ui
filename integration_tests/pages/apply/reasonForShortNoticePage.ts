@@ -1,9 +1,9 @@
 import ApplyPage from './applyPage'
-import { ApprovedPremisesApplication } from '../../../server/@types/shared'
+import { Cas1Application } from '../../../server/@types/shared'
 import paths from '../../../server/paths/apply'
 
 export default class ReasonForShortNoticePage extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Cas1Application) {
     super(
       'Emergency application',
       application,

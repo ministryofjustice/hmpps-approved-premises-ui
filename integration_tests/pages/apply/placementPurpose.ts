@@ -1,9 +1,9 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application } from '@approved-premises/api'
 
 import ApplyPage from './applyPage'
 
 export default class PlacementPurposePage extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Cas1Application) {
     super(
       'What is the purpose of the Approved Premises (AP) placement?',
       application,

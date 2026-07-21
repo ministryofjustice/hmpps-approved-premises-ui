@@ -1,9 +1,9 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application } from '@approved-premises/api'
 
 import ApplyPage from './applyPage'
 
 export default class CovidPage extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Cas1Application) {
     super('COVID information', application, 'access-and-healthcare', 'covid')
   }
 

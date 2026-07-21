@@ -1,7 +1,7 @@
 import type {
   Cas1Application as Application,
   ApplicationTimelineNote,
-  ApprovedPremisesApplicationStatus,
+  Cas1ApplicationStatus,
   FullPerson,
   RequestForPlacement,
   Cas1Assessment,
@@ -146,7 +146,7 @@ export default class ShowPage extends Page {
     this.shouldShowBanner('Note added')
   }
 
-  shouldShowStatusTag(status: ApprovedPremisesApplicationStatus) {
+  shouldShowStatusTag(status: Cas1ApplicationStatus) {
     cy.get(`.govuk-tag[data-cy-status="${status}"]`).should('exist')
   }
 

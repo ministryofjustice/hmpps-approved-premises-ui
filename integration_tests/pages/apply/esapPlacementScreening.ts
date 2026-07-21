@@ -1,8 +1,8 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application } from '@approved-premises/api'
 import ApplyPage from './applyPage'
 
 export default class EsapPlacementScreening extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Cas1Application) {
     super(
       `Why does the person require an enhanced security placement?`,
       application,
