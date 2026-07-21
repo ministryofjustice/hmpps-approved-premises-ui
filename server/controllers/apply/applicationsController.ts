@@ -251,13 +251,16 @@ export default class ApplicationsController {
 
       const person = await this.personService.findByCrn(req.user.token, crn)
       if (!isFullPerson(person)) throw new RestrictedPersonError(crn)
+
       const offences = await this.personService.getOffences(req.user.token, crn)
       const indexOffence = offences.find(o => o.offenceId === offenceId)
-      const application = await this.applicationService.createApplication(req.user.token, crn, indexOffence)
+      const outcome = await this.applicationService.createApplication(req.user.token, crn, indexOffence)
 
-      req.session.application = application
+      // If this is a new CRN, it's possible that the tier is in the person requested earlier is not populated - however it should be populated in the create-application response
+      // So we substitue the later and more-reliable version
+      person.tier = outcome.tier
 
-      return res.redirect(firstPageOfApplicationJourney(application))
+      return res.redirect(firstPageOfApplicationJourney(outcome.applicationId, person))
     }
   }
 

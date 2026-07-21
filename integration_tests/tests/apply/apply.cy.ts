@@ -21,6 +21,7 @@ import SubmissionConfirmation from '../../pages/apply/submissionConfirmation'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import { setup } from './setup'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
+import { fullPersonFactory } from '../../../server/testutils/factories/person'
 
 context('Apply', () => {
   beforeEach(setup)
@@ -188,12 +189,10 @@ context('Apply', () => {
 
   it(`allows the user to specify if the risk level if the person does not have a tier`, function test() {
     AND('that person does not have an eligible risk tier')
+    const person = fullPersonFactory.build({ tier: undefined })
+    this.application.person = person
 
-    this.application.risks = risksFactory.build({
-      tier: undefined,
-    })
-
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
+    const apply = new ApplyHelper(this.application, person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
