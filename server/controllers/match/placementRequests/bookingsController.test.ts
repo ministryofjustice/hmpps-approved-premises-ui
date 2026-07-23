@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
+import { Cas1NewBookingNotMade } from '@approved-premises/api'
 import BookingsController from './bookingsController'
 
 import { PlacementRequestService } from '../../../services'
-import { NewBookingNotMade } from '../../../@types/shared'
 import * as backlinkUtils from '../../../utils/backlinks'
 
 import matchPaths from '../../../paths/match'
@@ -44,7 +44,7 @@ describe('BookingsController', () => {
   describe('createBookingNotMade', () => {
     it('should call the service and redirect to the index page', async () => {
       const placementRequestId = '123'
-      const body: NewBookingNotMade = {
+      const body: Cas1NewBookingNotMade = {
         notes: 'Some notes',
       }
       const flash = jest.fn()
