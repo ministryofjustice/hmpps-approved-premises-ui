@@ -170,6 +170,7 @@ describe('utils', () => {
         tier: {
           lastUpdated: DateFormats.isoDateToUIDate(risks.tier.value.lastUpdated),
           level: risks.tier.value.level,
+          version: risks.tier.value.version,
         },
       })
     })
