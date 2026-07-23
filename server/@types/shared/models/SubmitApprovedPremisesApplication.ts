@@ -24,8 +24,7 @@ export type SubmitApprovedPremisesApplication = {
     caseManagerIsNotApplicant?: boolean;
     caseManagerUserDetails?: Cas1ApplicationUserDetails;
     /**
-     * If the applicant has requested a placement, this is the requested duration in days
-     * @deprecated
+     * The default duration for any request for placement linked to this application. This will be provided even if requestedPlacementPeriod is null
      */
     duration?: number;
     /**
