@@ -41,6 +41,7 @@ context('Apply', () => {
       expect(body).to.have.keys(
         'data',
         'document',
+        'duration',
         'requestedPlacementPeriod',
         'apType',
         'isWomensApplication',
@@ -69,6 +70,7 @@ context('Apply', () => {
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
         'requestedPlacementPeriod',
+        'duration',
         'translatedDocument',
         'apType',
         'isEmergencyApplication',
@@ -325,6 +327,7 @@ context('Apply', () => {
       const body = JSON.parse(requests[requests.length - 1].body)
 
       expect(body).to.have.keys(
+        'duration',
         'requestedPlacementPeriod',
         'data',
         'document',
@@ -355,6 +358,7 @@ context('Apply', () => {
 
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
+        'duration',
         'requestedPlacementPeriod',
         'translatedDocument',
         'apType',
