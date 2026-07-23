@@ -24,7 +24,11 @@ import {
 } from '../pages/assess'
 import Page from '../pages/page'
 import AssessPage from '../pages/assess/assessPage'
-import { assessmentSummaryFactory, personFactory } from '../../server/testutils/factories'
+import {
+  assessmentSummaryFactory,
+  cas1RequestsForPlacementDurationsCalculationResponseDtoFactory,
+  personFactory,
+} from '../../server/testutils/factories'
 import PipeSuitabilityPage from '../pages/assess/pipeSuitability'
 import ContingencyPlanSuitabilityPage from '../pages/assess/contingencyPlanSuitability'
 
@@ -77,6 +81,10 @@ export default class AseessHelper {
     })
     cy.task('stubAssessmentRejection', this.assessment)
     cy.task('stubAssessmentAcceptance', this.assessment)
+    cy.task('stubGetPlacementDuration', {
+      applicationId: this.assessment.application.id,
+      durationObj: cas1RequestsForPlacementDurationsCalculationResponseDtoFactory.build(),
+    })
   }
 
   updateAssessmentStatus(status: AssessmentStatus) {

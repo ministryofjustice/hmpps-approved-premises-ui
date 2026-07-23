@@ -2,6 +2,7 @@ import { ReleaseTypeOption } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import {
   applicationFactory,
+  cas1RequestsForPlacementDurationsCalculationResponseDtoFactory,
   documentFactory,
   personFactory,
   placementApplicationFactory,
@@ -72,6 +73,10 @@ context('Placement Applications', () => {
       cy.task('stubApplicationRequestsForPlacement', {
         applicationId: completedApplication.id,
         requestsForPlacement: [requestForPlacement],
+      })
+      cy.task('stubGetPlacementDuration', {
+        applicationId: completedApplication.id,
+        durationObj: cas1RequestsForPlacementDurationsCalculationResponseDtoFactory.build(),
       })
     })
 

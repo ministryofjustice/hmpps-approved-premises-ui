@@ -35,7 +35,9 @@ import {
   UserQualification,
   LocalAuthorityArea,
   type Cas1OASysAssessmentSuitabilityStrategyDto,
-  Cas1Application,
+  type Cas1Application as Application,
+  type SentenceTypeOption,
+  Cas1RequestsForPlacementDurationsCalculationResponseDto,
 } from '@approved-premises/api'
 import type { Request } from 'express'
 import { Session } from 'express-session'
@@ -338,8 +340,14 @@ export type DataServices = Partial<{
     ) => Promise<Cas1OASysGroup>
   }
   applicationService: {
-    getDocuments: (token: string, application: Cas1Application) => Promise<Array<Document>>
-    findApplication: (token: string, id: string) => Promise<Cas1Application>
+    getDocuments: (token: string, application: Application) => Promise<Array<Document>>
+    findApplication: (token: string, id: string) => Promise<Application>
+    getPlacementDuration: (
+      token: string,
+      applicationId: string,
+      apType: ApType,
+      sentenceType: SentenceTypeOption,
+    ) => Promise<Cas1RequestsForPlacementDurationsCalculationResponseDto>
   }
   userService: {
     getUserById: (token: string, id: string) => Promise<User>

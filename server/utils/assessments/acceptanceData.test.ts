@@ -1,10 +1,11 @@
 import { createMock } from '@golevelup/ts-jest'
-import { ApType } from '@approved-premises/api'
+import { ApType, PlacementDates, PlacementRequirements } from '@approved-premises/api'
+import { DataServices } from '@approved-premises/ui'
 import { mockOptionalQuestionResponse, mockQuestionResponse } from '../../testutils/mockQuestionResponse'
 import MatchingInformation, {
   MatchingInformationBody,
 } from '../../form-pages/assess/matchingInformation/matchingInformationTask/matchingInformation'
-import { acceptanceData, criteriaFromMatchingInformation, placementDates, placementRequestData } from './acceptanceData'
+import * as acceptanceData from './acceptanceData'
 import { assessmentFactory } from '../../testutils/factories'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
@@ -15,6 +16,7 @@ import ApplicationTimeliness, {
   ApplicationTimelinessBody,
 } from '../../form-pages/assess/assessApplication/suitablityAssessment/applicationTimeliness'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
+import { ApplicationService } from '../../services'
 
 jest.mock('../../form-pages/utils')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -23,8 +25,16 @@ jest.mock('../applications/applicantAndCaseManagerDetails')
 jest.mock('../applications/placementDurationFromApplication')
 jest.mock('../applications/getResponses')
 
+const applicationService = createMock<ApplicationService>({})
+const dataServices = { applicationService } as DataServices
+const token = 'test-token'
+
 describe('acceptanceData', () => {
   const assessment = assessmentFactory.build()
+
+  beforeEach(() => {
+    jest.restoreAllMocks()
+  })
 
   describe('acceptanceData', () => {
     const matchingInformation = createMock<MatchingInformationBody>({ apType: 'normal' })
@@ -44,40 +54,46 @@ describe('acceptanceData', () => {
       })
       mockOptionalQuestionResponse({ cruInformation: 'Some notes' })
       ;(getResponses as jest.Mock).mockReturnValue(responses)
+      jest.spyOn(acceptanceData, 'placementRequestData').mockReturnValue({} as PlacementRequirements)
+      jest.spyOn(acceptanceData, 'placementDates').mockResolvedValue({} as PlacementDates)
     })
 
-    it('should return the acceptance data for the assessment', () => {
-      expect(acceptanceData(assessment)).toEqual({
+    it('should return the acceptance data for the assessment', async () => {
+      expect(await acceptanceData.acceptanceData(assessment, { applicationService }, token)).toEqual({
         document: responses,
-        requirements: placementRequestData(assessment),
-        placementDates: placementDates(assessment),
+        requirements: {},
+        placementDates: {},
         notes: 'Some notes',
       })
       expect(getResponses).toHaveBeenCalledWith(assessment)
+      expect(acceptanceData.placementDates).toHaveBeenCalledWith(assessment, dataServices, token)
+      expect(acceptanceData.placementRequestData).toHaveBeenCalledWith(assessment)
     })
 
-    it('should return the acceptance data for the assessment with optional timeliness information', () => {
+    it('should return the acceptance data for the assessment with optional timeliness information', async () => {
       timelinessInformation = createMock<ApplicationTimelinessBody>({
         agreeWithShortNoticeReason: 'no',
         agreeWithShortNoticeReasonComments: 'comments',
         reasonForLateApplication: 'furtherOffence',
       })
-      expect(acceptanceData(assessment)).toEqual({
+      expect(await acceptanceData.acceptanceData(assessment, dataServices, token)).toEqual({
         document: responses,
-        requirements: placementRequestData(assessment),
-        placementDates: placementDates(assessment),
+        requirements: {},
+        placementDates: {},
         notes: 'Some notes',
         ...timelinessInformation,
         agreeWithShortNoticeReason: false,
       })
       expect(getResponses).toHaveBeenCalledWith(assessment)
+      expect(acceptanceData.placementDates).toHaveBeenCalledWith(assessment, dataServices, token)
+      expect(acceptanceData.placementRequestData).toHaveBeenCalledWith(assessment)
     })
   })
 
   describe('placementDates', () => {
     const expectedArrival = '2020-01-01'
 
-    it('should return the placement dates if an arrival date is provided', () => {
+    it('should return the placement dates if an arrival date is provided', async () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(expectedArrival)
       ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({
         lengthOfStayWeeks: '1',
@@ -85,27 +101,27 @@ describe('acceptanceData', () => {
         lengthOfStayAgreed: 'no',
       })
 
-      const result = placementDates(assessment)
+      const result = await acceptanceData.placementDates(assessment, dataServices, token)
 
       expect(result.expectedArrival).toEqual(expectedArrival)
       expect(result.duration).toEqual(12)
     })
 
-    it('should return the duration from the application if a duration is not provided', () => {
+    it('should return the duration from the application if a duration is not provided', async () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(expectedArrival)
       ;(placementDurationFromApplication as jest.Mock).mockReturnValueOnce('52')
       ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({ lengthOfStayAgreed: 'yes' })
 
-      const result = placementDates(assessment)
+      const result = await acceptanceData.placementDates(assessment, dataServices, token)
 
       expect(result.expectedArrival).toEqual(expectedArrival)
       expect(result.duration).toEqual(52)
     })
 
-    it('should return null if the arrival date is not provided', () => {
+    it('should return null if the arrival date is not provided', async () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(undefined)
 
-      const result = placementDates(assessment)
+      const result = await acceptanceData.placementDates(assessment, dataServices, token)
 
       expect(result).toBeNull()
     })
@@ -121,12 +137,12 @@ describe('acceptanceData', () => {
         alternativeRadius: '100',
       })
 
-      expect(placementRequestData(assessment)).toEqual({
+      expect(acceptanceData.placementRequestData(assessment)).toEqual({
         type: 'normal',
         location: 'ABC123',
         radius: '100',
         desirableCriteria: [],
-        essentialCriteria: criteriaFromMatchingInformation(matchingInformation),
+        essentialCriteria: acceptanceData.criteriaFromMatchingInformation(matchingInformation),
       })
     })
 
@@ -142,7 +158,7 @@ describe('acceptanceData', () => {
         const matchingInformation = createMock<MatchingInformationBody>({ apType: apTypeCriteria })
         ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue(matchingInformation)
 
-        expect(placementRequestData(assessment).type).toEqual(apType)
+        expect(acceptanceData.placementRequestData(assessment).type).toEqual(apType)
       })
     })
 
@@ -153,7 +169,7 @@ describe('acceptanceData', () => {
 
         mockOptionalQuestionResponse({ alternativeRadius: undefined })
 
-        expect(placementRequestData(assessment).radius).toEqual(50)
+        expect(acceptanceData.placementRequestData(assessment).radius).toEqual(50)
       })
     })
   })
@@ -170,7 +186,7 @@ describe('acceptanceData', () => {
         isSuitableForVulnerable: 'relevant',
       })
 
-      const result = criteriaFromMatchingInformation(matchingInformation)
+      const result = acceptanceData.criteriaFromMatchingInformation(matchingInformation)
 
       expect(result.sort()).toEqual(
         [
@@ -198,7 +214,7 @@ describe('acceptanceData', () => {
         isSuitableForVulnerable: 'notRelevant',
       })
 
-      expect(criteriaFromMatchingInformation(matchingInformation)).toEqual([])
+      expect(acceptanceData.criteriaFromMatchingInformation(matchingInformation)).toEqual([])
     })
   })
 })

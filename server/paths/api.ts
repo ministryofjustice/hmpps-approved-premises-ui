@@ -113,6 +113,9 @@ export default {
       show: cas1Appeals.path(':appealId'),
       create: cas1Appeals,
     },
+    calc: {
+      durations: cas1ApplicationsSingle.path('requests-for-placement/calc/durations'),
+    },
   },
   assessments: {
     index: cas1Assessments,

@@ -1,4 +1,4 @@
-import type { SummaryList, TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type { DataServices, SummaryList, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { Cas1Assessment as Assessment } from '@approved-premises/api'
 import {
@@ -69,6 +69,23 @@ export default class MatchingInformation implements TasklistPage {
     lengthOfStayAgreed: 'Do you agree with the suggested length of stay?',
     lengthOfStay: 'Provide recommended length of stay',
     cruInformation: 'Information for Central Referral Unit (CRU) manager (optional)',
+  }
+
+  suggestedStaySummaryListOptions: SummaryList
+
+  static async initialize(
+    body: Partial<MatchingInformationBody>,
+    assessment: Assessment,
+    token: string,
+    dataServices: DataServices,
+  ): Promise<MatchingInformation> {
+    const page = new MatchingInformation(body, assessment)
+    page.suggestedStaySummaryListOptions = await suggestedStaySummaryListOptions(
+      assessment.application,
+      dataServices,
+      token,
+    )
+    return page
   }
 
   relevantInformationTable = () =>
@@ -202,10 +219,6 @@ export default class MatchingInformation implements TasklistPage {
     }
 
     return errors
-  }
-
-  get suggestedStaySummaryListOptions(): SummaryList {
-    return suggestedStaySummaryListOptions(this.assessment.application)
   }
 
   get apTypeItems() {

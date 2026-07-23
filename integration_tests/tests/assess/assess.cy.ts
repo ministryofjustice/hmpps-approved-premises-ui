@@ -1,3 +1,4 @@
+import { DataServices } from '@approved-premises/ui'
 import { Cas1Assessment as Assessment } from '../../../server/@types/shared'
 import {
   assessmentFactory,
@@ -86,11 +87,12 @@ context('Assess', () => {
     assessHelper.completeAssessment()
 
     // Then the API should have received the correct data
-    cy.task('verifyAssessmentAcceptance', this.assessment).then(requests => {
+    cy.task('verifyAssessmentAcceptance', this.assessment).then(async requests => {
       expect(requests).to.have.length(1)
 
       const body = JSON.parse(requests[0].body)
-      expect(body).to.deep.equal(acceptanceData(this.assessment))
+      const expected = await acceptanceData(this.assessment, {} as DataServices, '')
+      expect(body).to.deep.equal(expected)
     })
   })
 
@@ -340,9 +342,9 @@ context('Assess', () => {
   it('does not invalidate the check your answers step if an answer is reviewed and not changed', function test() {
     // Given there is a complete application in the database
 
-    let assessment = assessmentFactory.build({ data: this.assessment.data, status: 'in_progress' })
+    // let assessment = assessmentFactory.build({ data: this.assessment.data, status: 'in_progress' })
 
-    assessment = addResponsesToFormArtifact<Assessment>(this.assessment, {
+    const assessment = addResponsesToFormArtifact<Assessment>(this.assessment, {
       page: 'application-timeliness',
       task: 'suitability-assessment',
       keyValuePairs: {

@@ -1,4 +1,4 @@
-import type {
+import {
   ActiveOffence,
   Cas1Application as Application,
   ApplicationSortField,
@@ -13,6 +13,9 @@ import type {
   UpdateApprovedPremisesApplication,
   Withdrawables,
   Cas1ExpireApplicationReason,
+  ApType,
+  SentenceTypeOption,
+  Cas1RequestsForPlacementDurationsCalculationResponseDto,
 } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
@@ -119,6 +122,17 @@ export default class ApplicationClient {
   async withdrawablesWithNotes(applicationId: string): Promise<Withdrawables> {
     return this.restClient.get<Withdrawables>({
       path: paths.applications.withdrawablesWithNotes({ id: applicationId }),
+    })
+  }
+
+  async getPlacementDuration(
+    applicationId: string,
+    apType: ApType,
+    sentenceType: SentenceTypeOption,
+  ): Promise<Cas1RequestsForPlacementDurationsCalculationResponseDto> {
+    return this.restClient.get<Cas1RequestsForPlacementDurationsCalculationResponseDto>({
+      path: paths.applications.calc.durations({ id: applicationId }),
+      query: { apType, sentenceType },
     })
   }
 }

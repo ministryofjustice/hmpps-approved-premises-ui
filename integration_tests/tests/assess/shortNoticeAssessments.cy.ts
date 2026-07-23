@@ -1,5 +1,6 @@
 import { addDays } from 'date-fns'
 import { Cas1Application as Application } from '@approved-premises/api'
+import { DataServices } from '@approved-premises/ui'
 import {
   applicationFactory,
   assessmentFactory,
@@ -104,11 +105,12 @@ describe('Short notice assessments', () => {
     this.assessHelper.completeAssessment({ isShortNoticeApplication: true })
 
     THEN('the API should have received the correct data')
-    cy.task('verifyAssessmentAcceptance', this.assessment).then(requests => {
+    cy.task('verifyAssessmentAcceptance', this.assessment).then(async requests => {
       expect(requests).to.have.length(1)
 
       const body = JSON.parse(requests[0].body)
-      expect(body).to.deep.equal(acceptanceData(this.assessHelper.assessment))
+      const expected = await acceptanceData(this.assessHelper.assessment, {} as DataServices, '')
+      expect(body).to.deep.equal(expected)
     })
   })
 })

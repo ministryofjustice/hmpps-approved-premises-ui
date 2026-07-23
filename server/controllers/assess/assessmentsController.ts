@@ -1,8 +1,9 @@
 import type { Request, RequestHandler, Response } from 'express'
 
+import { DataServices } from '@approved-premises/ui'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
-import { AssessmentService, TaskService } from '../../services'
+import { ApplicationService, AssessmentService, TaskService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 
 import paths from '../../paths/assess'
@@ -17,6 +18,7 @@ export default class AssessmentsController {
   constructor(
     private readonly assessmentService: AssessmentService,
     private readonly taskService: TaskService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   index(): RequestHandler {
@@ -132,8 +134,8 @@ export default class AssessmentsController {
 
         return res.redirect(paths.assessments.show({ id: assessment.id }))
       }
-
-      await this.assessmentService.submit(req.user.token, assessment)
+      const dataServices: Partial<DataServices> = { applicationService: this.applicationService }
+      await this.assessmentService.submit(req.user.token, assessment, dataServices)
 
       return res.render('assessments/confirm', {
         pageHeading: 'Assessment submission confirmed',

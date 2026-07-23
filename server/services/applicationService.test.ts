@@ -1,7 +1,7 @@
 import type { Request } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { DataServices, PaginatedResponse, TaskListErrors } from '@approved-premises/ui'
-import type {
+import {
   Cas1ApplicationStatus,
   Cas1ApplicationSummary,
   SubmitApprovedPremisesApplication,
@@ -23,6 +23,7 @@ import {
   activeOffenceFactory,
   applicationFactory,
   cas1ApplicationSummaryFactory,
+  cas1RequestsForPlacementDurationsCalculationResponseDtoFactory,
   documentFactory,
   noteFactory,
   paginatedResponseFactory,
@@ -357,7 +358,7 @@ describe('ApplicationService', () => {
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.submit).toHaveBeenCalledWith(application.id, applicationData)
 
-      expect(getApplicationSubmissionData).toHaveBeenCalledWith(application)
+      expect(getApplicationSubmissionData).toHaveBeenCalledWith(application, { applicationService: service }, token)
     })
   })
 
@@ -485,6 +486,23 @@ describe('ApplicationService', () => {
       expect(result).toEqual(withdrawables)
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.withdrawablesWithNotes).toHaveBeenCalledWith(applicationId)
+    })
+  })
+
+  describe('getPlacementDuration', () => {
+    it('calls the client with the ID and the token and returns the result', async () => {
+      const application = applicationFactory.build()
+      const durations = cas1RequestsForPlacementDurationsCalculationResponseDtoFactory.build()
+      applicationClient.getPlacementDuration.mockResolvedValue(durations)
+
+      const result = await service.getPlacementDuration(
+        token,
+        application.id,
+        application.apType,
+        application.sentenceType,
+      )
+
+      expect(result).toEqual(durations)
     })
   })
 })
