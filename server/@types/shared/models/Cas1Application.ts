@@ -31,6 +31,10 @@ export type Cas1Application = {
     cruManagementArea?: Cas1CruManagementArea;
     data?: any;
     document?: any;
+    /**
+     * The default duration in days for any request for placement linked to this application. This will be available for any submitted application, even if arrivalDate is null
+     */
+    duration?: number;
     id: string;
     isEmergencyApplication?: boolean;
     /**
