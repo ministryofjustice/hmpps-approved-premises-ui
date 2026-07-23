@@ -1,7 +1,7 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { PersonRisks, RiskEnvelopeStatus, RiskTierLevel } from '@approved-premises/api'
+import type { PersonRisks, RiskEnvelopeStatus, RiskTierLevel, TierVersionDto } from '@approved-premises/api'
 import { RiskLevel, TierLetter, TierNumber } from '@approved-premises/ui'
 import { DateFormats } from '../../utils/dateUtils'
 import { getCrn } from './person'
@@ -60,5 +60,6 @@ export const tierEnvelopeFactory = Factory.define<PersonRisks['tier']>(() => ({
   value: {
     level: riskTierLevel,
     lastUpdated: DateFormats.dateObjToIsoDate(faker.date.past()),
+    version: faker.helpers.arrayElement(['V2', 'V3']) as TierVersionDto,
   },
 }))

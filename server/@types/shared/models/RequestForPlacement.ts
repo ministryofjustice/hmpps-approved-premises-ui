@@ -26,7 +26,8 @@ export type RequestForPlacement = {
     id: string;
     isWithdrawn: boolean;
     /**
-     * Requests for placements only have one set of placement dates, use 'requestedPlacementPeriod' or 'authorisedPlacementPeriod' instead
+     * Deprecated. Requests for placements only have one set of placement dates, use 'requestedPlacementPeriod' or 'authorisedPlacementPeriod' instead
+     * @deprecated
      */
     placementDates: Array<PlacementDates>;
     placements: Array<Cas1SpaceBookingShortSummary>;

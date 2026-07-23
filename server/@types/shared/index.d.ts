@@ -211,7 +211,6 @@ export type { NamedId } from './models/NamedId';
 export type { NewAppeal } from './models/NewAppeal';
 export type { NewApplication } from './models/NewApplication';
 export type { NewApplicationTimelineNote } from './models/NewApplicationTimelineNote';
-export type { NewBookingNotMade } from './models/NewBookingNotMade';
 export type { NewPlacementApplication } from './models/NewPlacementApplication';
 export type { NewReallocation } from './models/NewReallocation';
 export type { NewReferralHistoryUserNote } from './models/NewReferralHistoryUserNote';
