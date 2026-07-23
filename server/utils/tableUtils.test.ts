@@ -1,18 +1,21 @@
 import { when } from 'jest-when'
 import { assessmentSummaryFactory, taskFactory } from '../testutils/factories'
-import { displayName, tierBadge } from './personUtils'
+import { displayName, tierBadge, versionedTierBadge } from './personUtils'
 import {
   crnCell,
   dateCell,
   dateCellNoWrap,
+  dateCellSortable,
   daysUntilDueCell,
   emailCell,
   nameCellLink,
   textCellNoWrap,
   tierCell,
+  versionedTierCell,
 } from './tableUtils'
 import { DateFormats } from './dateUtils'
 import { fullPersonFactory } from '../testutils/factories/person'
+import tierDtoFactory from '../testutils/factories/tierDto'
 
 describe('tableUtils', () => {
   describe('dateCell', () => {
@@ -43,6 +46,25 @@ describe('tableUtils', () => {
     })
   })
 
+  describe('dateCellSortable', () => {
+    it('returns a cell with a date in the short format from an ISO date wrapped in a non-break span with sort info', () => {
+      expect(dateCellSortable('2022-01-01')).toEqual({
+        attributes: {
+          'data-sort-value': '2022-01-01',
+        },
+        text: '1 Jan 2022',
+      })
+    })
+    it('handles an empty date', () => {
+      expect(dateCellSortable(undefined)).toEqual({
+        attributes: {
+          'data-sort-value': undefined,
+        },
+        text: '',
+      })
+    })
+  })
+
   describe('crnCell', () => {
     it('returns the crn of the person the task is assigned to as a TableCell object', () => {
       const task = taskFactory.build()
@@ -60,6 +82,23 @@ describe('tableUtils', () => {
       [undefined, ''],
     ])('returns the tier badge and sort key for the tier %s', (tier, sortKey) => {
       expect(tierCell(tier)).toEqual({ html: tierBadge(tier), attributes: { 'data-sort-value': sortKey } })
+    })
+  })
+
+  describe('versionedTierCell', () => {
+    it.each([
+      ['A1', 'A8'],
+      ['B3S', 'B6S'],
+      ['BzS', 'BzS'],
+      ['Q', 'Q'],
+      ['', ''],
+      [undefined, ''],
+    ])('returns the tier badge and sort key for the tier %s', (tierScore, sortKey) => {
+      const tier = tierDtoFactory.build({ tierScore })
+      expect(versionedTierCell(tier)).toEqual({
+        html: versionedTierBadge(tier),
+        attributes: { 'data-sort-value': sortKey },
+      })
     })
   })
 

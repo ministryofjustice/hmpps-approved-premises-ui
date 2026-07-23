@@ -5,6 +5,7 @@ import {
   PersonSummary,
   RestrictedPerson,
   RestrictedPersonSummary,
+  TierDto,
   UnknownPerson,
   UnknownPersonSummary,
 } from '../@types/shared'
@@ -15,6 +16,19 @@ const tierBadge = (tier: string): string => {
   const colour = { A: 'moj-badge--red', B: 'moj-badge--purple' }[tier[0]]
 
   return `<span class="moj-badge ${colour}">${tier}</span>`
+}
+
+const tierBadgeV3 = (tier: string): string => {
+  if (!tier) return ''
+
+  return `<span class="moj-badge">${tier}</span>`
+}
+
+const versionedTierBadge = (tier: TierDto): string => {
+  if (tier.version === 'V2') {
+    return tierBadge(tier.tierScore)
+  }
+  return tierBadgeV3(tier.tierScore)
 }
 
 const isApplicableTierDto = (person: FullPerson) => {
@@ -99,4 +113,28 @@ const displayName = (
   }
 }
 
-export { tierBadge, isApplicableTier, isApplicableTierDto, isFullPerson, displayName, isUnknownPerson }
+const personTier = (person: Person | PersonSummary): TierDto => {
+  const personType: string = (person as Person).type || (person as PersonSummary).personType
+
+  switch (personType) {
+    case 'FullPerson':
+    case 'FullPersonSummary':
+      return (person as FullPerson).tier
+    case 'RestrictedPerson':
+    case 'RestrictedPersonSummary':
+      return (person as RestrictedPerson).tier
+    default:
+      return undefined
+  }
+}
+
+export {
+  tierBadge,
+  versionedTierBadge,
+  isApplicableTier,
+  isApplicableTierDto,
+  isFullPerson,
+  displayName,
+  isUnknownPerson,
+  personTier,
+}

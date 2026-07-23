@@ -1,3 +1,4 @@
+import { TierDto } from '@approved-premises/api'
 import {
   fullPersonFactory,
   fullPersonSummaryFactory,
@@ -12,8 +13,11 @@ import {
   isFullPerson,
   isNotRestrictedPerson,
   isUnknownPerson,
+  personTier,
   tierBadge,
+  versionedTierBadge,
 } from './personUtils'
+import tierDtoFactory from '../testutils/factories/tierDto'
 
 describe('personUtils', () => {
   describe('tierBadge', () => {
@@ -24,6 +28,39 @@ describe('personUtils', () => {
     it('returns the correct tier badge for B', () => {
       expect(tierBadge('B')).toEqual('<span class="moj-badge moj-badge--purple">B</span>')
     })
+
+    it('returns the correct tier badge for C', () => {
+      expect(tierBadge('C')).toEqual('<span class="moj-badge undefined">C</span>')
+    })
+  })
+
+  describe('versionedTierBadge', () => {
+    it('returns the correct tier badge for version 2, A', () => {
+      expect(versionedTierBadge(tierDtoFactory.v2().build({ tierScore: 'A' }))).toEqual(
+        '<span class="moj-badge moj-badge--red">A</span>',
+      )
+    })
+
+    it('returns the correct tier badge for version 2, B', () => {
+      expect(versionedTierBadge(tierDtoFactory.v2().build({ tierScore: 'B' }))).toEqual(
+        '<span class="moj-badge moj-badge--purple">B</span>',
+      )
+    })
+
+    it('returns the correct tier badge for version 2, C', () => {
+      expect(versionedTierBadge(tierDtoFactory.v2().build({ tierScore: 'C' }))).toEqual(
+        '<span class="moj-badge undefined">C</span>',
+      )
+    })
+
+    it.each(['A', 'B', 'C'])(
+      'returns the correct, consistently coloured tiers badges for version 3 tiers "%s"',
+      tier => {
+        expect(versionedTierBadge(tierDtoFactory.v3().build({ tierScore: tier }))).toEqual(
+          `<span class="moj-badge">${tier}</span>`,
+        )
+      },
+    )
   })
 
   describe('isApplicableTier', () => {
@@ -178,6 +215,38 @@ describe('personUtils', () => {
 
     it('returns false if the person is not Unknown person', () => {
       expect(isUnknownPerson(restrictedPersonFactory.build())).toEqual(false)
+    })
+  })
+
+  describe('personTier', () => {
+    let tier: TierDto
+
+    beforeEach(() => {
+      tier = tierDtoFactory.build()
+    })
+
+    it('returns tier if full person', () => {
+      expect(personTier(fullPersonFactory.build({ tier }))).toEqual(tier)
+    })
+
+    it('returns tier if full person summary', () => {
+      expect(personTier(fullPersonSummaryFactory.build({ tier }))).toEqual(tier)
+    })
+
+    it('returns tier if restricted person', () => {
+      expect(personTier(restrictedPersonFactory.build({ tier }))).toEqual(tier)
+    })
+
+    it('returns tier if restricted person summary', () => {
+      expect(personTier(restrictedPersonSummaryFactory.build({ tier }))).toEqual(tier)
+    })
+
+    it('returns undefined if unknown person', () => {
+      expect(personTier(unknownPersonFactory.build())).toEqual(undefined)
+    })
+
+    it('returns undefined if unknown person summary', () => {
+      expect(personTier(unknownPersonSummaryFactory.build())).toEqual(undefined)
     })
   })
 })
