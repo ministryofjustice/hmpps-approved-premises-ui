@@ -1,7 +1,7 @@
-import { Person } from '../@types/shared'
+import { Person, TierDto } from '../@types/shared'
 import { TableCell } from '../@types/ui'
 import { DateFormats } from './dateUtils'
-import { displayName, tierBadge } from './personUtils'
+import { displayName, tierBadge, versionedTierBadge } from './personUtils'
 import { pluralize } from './utils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
@@ -32,6 +32,11 @@ const tierSortKey = (tier: string) =>
 export const tierCell = (value: string) => ({
   html: tierBadge(value),
   attributes: { 'data-sort-value': tierSortKey(value) },
+})
+
+export const versionedTierCell = (tier: TierDto) => ({
+  html: versionedTierBadge(tier),
+  attributes: { 'data-sort-value': tierSortKey(tier.tierScore) },
 })
 
 export const nameCellLink = (person: Person, link?: string) =>

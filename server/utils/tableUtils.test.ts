@@ -63,6 +63,10 @@ describe('tableUtils', () => {
     })
   })
 
+  describe('versionedTierCell', () => {
+    // TODO: implement once have tier factory
+  })
+
   describe('nameCellLink', () => {
     const person = fullPersonFactory.build()
 

@@ -180,4 +180,30 @@ describe('personUtils', () => {
       expect(isUnknownPerson(restrictedPersonFactory.build())).toEqual(false)
     })
   })
+
+  describe('personTier', () => {
+    it('returns tier if full person', () => {
+      // TODO: implement all tests once we have a tier factory
+    })
+
+    it('returns tier if full person summary', () => {
+      // TODO: implement all tests once we have a tier factory
+    })
+
+    it('returns tier if restricted person', () => {
+      // TODO: implement all tests once we have a tier factory
+    })
+
+    it('returns tier if restricted person summary', () => {
+      // TODO: implement all tests once we have a tier factory
+    })
+
+    it('returns undefined if unknown person', () => {
+      // TODO: implement all tests once we have a tier factory
+    })
+
+    it('returns undefined if unknown person summary', () => {
+      // TODO: implement all tests once we have a tier factory
+    })
+  })
 })

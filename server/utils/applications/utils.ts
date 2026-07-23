@@ -34,7 +34,7 @@ import ExceptionDetails from '../../form-pages/apply/reasons-for-placement/basic
 import { RestrictedPersonError } from '../errors'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
-import { createNameAnchorElement, getTierOrBlank } from './helpers'
+import { createNameAnchorElement, getTierOrBlank, getVersionedTierOrBlank } from './helpers'
 import { APPLICATION_SUITABLE, ApplicationStatusTag, applicationSuitableStatuses } from './statusTag'
 import { renderTimelineEventContent } from '../timeline'
 import { summaryListItem } from '../formUtils'
@@ -58,7 +58,7 @@ const applicationTableRows = (applications: Array<Cas1ApplicationSummary>): Arra
       attributes: { 'data-sort-value': displayName(application.person) },
     },
     textCell(application.person.crn),
-    htmlCell(getTierOrBlank(application.risks?.tier?.value?.level)),
+    htmlCell(getVersionedTierOrBlank(application.person, application.risks?.tier?.value)),
     {
       ...textCell(getArrivalDateorNA(application.arrivalDate)),
       attributes: { 'data-sort-value': application.arrivalDate || '' },

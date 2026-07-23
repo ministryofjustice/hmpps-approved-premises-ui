@@ -1,16 +1,19 @@
+import { RiskTier } from '@approved-premises/api'
 import {
   cas1ApplicationSummaryFactory,
   personFactory,
   restrictedPersonFactory,
   tierEnvelopeFactory,
 } from '../../testutils/factories'
-import { createNameAnchorElement, getTierOrBlank, personKeyDetails } from './helpers'
+import { createNameAnchorElement, getTierOrBlank, getVersionedTierOrBlank, personKeyDetails } from './helpers'
 import paths from '../../paths/apply'
 import * as personUtils from '../personUtils'
 import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
 import { displayName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { htmlCell, textCell } from '../tableUtils'
+import config from '../../config'
+import { tierDtoFactory } from '../../testutils/factories/tierDto'
 
 describe('helpers', () => {
   beforeEach(() => {
@@ -102,6 +105,10 @@ describe('helpers', () => {
       jest.spyOn(personUtils, 'tierBadge')
     })
 
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
+
     it('should return the tier when present', () => {
       expect(getTierOrBlank('foo')).toEqual(personUtils.tierBadge('foo'))
       expect(personUtils.tierBadge).toHaveBeenCalledWith('foo')
@@ -117,6 +124,81 @@ describe('helpers', () => {
       expect(personUtils.tierBadge).not.toHaveBeenCalled()
     })
   })
+
+  describe('getVersionedTierOrBlank', () => {
+    beforeEach(() => {
+      jest.spyOn(personUtils, 'tierBadge')
+    })
+
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
+
+    describe('use live tiers disabled, use tier on application creation', () => {
+      beforeEach(() => {
+        config.flags.useLiveTiers = false
+      })
+
+      it('should return the application tier when present', () => {
+        const tierOnApplicationCreation = tierEnvelopeFactory.build({ value: { level: 'static' } }).value
+        const personWithLiveTier = personFactory.build({ tier: tierDtoFactory.build({ tierScore: 'live' }) })
+
+        expect(getVersionedTierOrBlank(personWithLiveTier, tierOnApplicationCreation)).toEqual(
+          personUtils.tierBadge('static'),
+        )
+        expect(personUtils.tierBadge).toHaveBeenCalledWith('static')
+      })
+
+      it('should return an empty string when undefined', () => {
+        const tierOnApplicationCreation: RiskTier = undefined
+        const personWithLiveTier = personFactory.build({ tier: tierDtoFactory.build({ tierScore: 'live' }) })
+
+        expect(getVersionedTierOrBlank(personWithLiveTier, tierOnApplicationCreation)).toEqual('')
+        expect(personUtils.tierBadge).not.toHaveBeenCalled()
+      })
+
+      it('should return an empty string when null', () => {
+        const tierOnApplicationCreation: RiskTier = null
+        const personWithLiveTier = personFactory.build({ tier: tierDtoFactory.build({ tierScore: 'live' }) })
+
+        expect(getVersionedTierOrBlank(personWithLiveTier, tierOnApplicationCreation)).toEqual('')
+        expect(personUtils.tierBadge).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('use live tiers enabled, use person tier', () => {
+      beforeEach(() => {
+        config.flags.useLiveTiers = true
+      })
+
+      it('should return the person tier when present', () => {
+        const tierOnApplicationCreation = tierEnvelopeFactory.build({ value: { level: 'static' } }).value
+        const personWithLiveTier = personFactory.build({ tier: tierDtoFactory.build({ tierScore: 'live' }) })
+
+        expect(getVersionedTierOrBlank(personWithLiveTier, tierOnApplicationCreation)).toEqual(
+          personUtils.tierBadge('live'),
+        )
+        expect(personUtils.tierBadge).toHaveBeenCalledWith('live')
+      })
+
+      it('should return an empty string when undefined', () => {
+        const tierOnApplicationCreation = tierEnvelopeFactory.build({ value: { level: 'static' } }).value
+        const personWithLiveTier = personFactory.build({ tier: undefined })
+
+        expect(getVersionedTierOrBlank(personWithLiveTier, tierOnApplicationCreation)).toEqual('')
+        expect(personUtils.tierBadge).not.toHaveBeenCalled()
+      })
+
+      it('should return an empty string when null', () => {
+        const tierOnApplicationCreation = tierEnvelopeFactory.build({ value: { level: 'static' } }).value
+        const personWithLiveTier = personFactory.build({ tier: null })
+
+        expect(getVersionedTierOrBlank(personWithLiveTier, tierOnApplicationCreation)).toEqual('')
+        expect(personUtils.tierBadge).not.toHaveBeenCalled()
+      })
+    })
+  })
+
   describe('personKeyDetails', () => {
     const tier = tierEnvelopeFactory.build().value.level
 
