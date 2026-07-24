@@ -6,7 +6,7 @@ import express from 'express'
 
 import type { ErrorMessages } from '@approved-premises/ui'
 import {
-  ApprovedPremisesApplication as Application,
+  Cas1Application as Application,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
   Cas1Assessment as Assessment,
   PersonStatus,

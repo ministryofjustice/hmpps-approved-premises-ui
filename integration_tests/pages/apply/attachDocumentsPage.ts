@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication, Document } from '@approved-premises/api'
+import { Cas1Application as Application, Document } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import { DateFormats } from '../../../server/utils/dateUtils'
@@ -12,11 +12,7 @@ export default class AttachDocumentsPage extends ApplyPage {
 
   selectedDocuments: Array<Document>
 
-  constructor(
-    documents: Array<Document>,
-    selectedDocuments: Array<Document>,
-    application: ApprovedPremisesApplication,
-  ) {
+  constructor(documents: Array<Document>, selectedDocuments: Array<Document>, application: Application) {
     super(
       'Select any relevant documents to support your application',
       application,
