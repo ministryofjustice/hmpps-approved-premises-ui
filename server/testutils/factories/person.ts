@@ -27,7 +27,7 @@ export const fullPersonFactory = Factory.define<FullPerson>(() => ({
   isRestricted: false,
   ethnicity: faker.helpers.arrayElement(['White', 'Black', 'Asian', 'Mixed', undefined]),
   genderIdentity: faker.helpers.arrayElement(['Man', 'Woman', undefined]),
-  tier: tierDtoFactory.v2().build(),
+  tier: tierDtoFactory.v2Eligible().build(),
 }))
 
 export const restrictedPersonFactory = Factory.define<RestrictedPerson>(() => ({
