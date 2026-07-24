@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
 import { addDays, addYears } from 'date-fns'
-import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
+import { Cas1Application as Application } from '@approved-premises/api'
 import { E2EDatesOfPlacement } from './assess'
 import { ListPage, PlacementRequestPage } from '../pages/workflow'
 import { ApTypeLabel } from '../../server/utils/apTypeLabels'

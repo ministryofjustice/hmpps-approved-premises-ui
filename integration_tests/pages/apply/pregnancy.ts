@@ -1,9 +1,9 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application as Application } from '@approved-premises/api'
 import ApplyPage from './applyPage'
 import paths from '../../../server/paths/apply'
 
 export default class PregnancyPage extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Application) {
     super(
       'Access, cultural and healthcare needs',
       application,

@@ -1,5 +1,5 @@
 import { formatDate } from 'date-fns/format'
-import { ApprovedPremisesApplication as Application, FullPerson } from '@approved-premises/api'
+import { Cas1Application as Application, FullPerson } from '@approved-premises/api'
 import ListPage from '../../pages/admin/placementApplications/listPage'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
 import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
