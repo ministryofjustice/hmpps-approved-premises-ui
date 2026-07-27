@@ -1,4 +1,4 @@
-import type { DataServices, SummaryList, TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type { SummaryList, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { Cas1Assessment as Assessment } from '@approved-premises/api'
 import {
@@ -76,15 +76,9 @@ export default class MatchingInformation implements TasklistPage {
   static async initialize(
     body: Partial<MatchingInformationBody>,
     assessment: Assessment,
-    token: string,
-    dataServices: DataServices,
   ): Promise<MatchingInformation> {
     const page = new MatchingInformation(body, assessment)
-    page.suggestedStaySummaryListOptions = await suggestedStaySummaryListOptions(
-      assessment.application,
-      dataServices,
-      token,
-    )
+    page.suggestedStaySummaryListOptions = suggestedStaySummaryListOptions(assessment.application)
     return page
   }
 

@@ -360,7 +360,7 @@ describe('ApplicationService', () => {
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.submit).toHaveBeenCalledWith(application.id, applicationData)
 
-      expect(getApplicationSubmissionData).toHaveBeenCalledWith(application, { applicationService: service }, token)
+      expect(getApplicationSubmissionData).toHaveBeenCalledWith(application)
     })
   })
 

@@ -58,7 +58,10 @@ describe('PlacementDuration', () => {
     it('sets the dates based on arrivalDateFromApplication', async () => {
       const arrivalDate = '2022-11-11'
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(arrivalDate)
-      ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValue(30)
+      ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValue({
+        defaultDurationDays: 30,
+        maxDurationDays: 50,
+      })
 
       const page = await PlacementDuration.initialize({}, application, token, { applicationService })
 

@@ -1,8 +1,6 @@
 import { Cas1RequestedPlacementPeriod, ReleaseTypeOption, SentenceTypeOption } from '@approved-premises/api'
 import { when } from 'jest-when'
 import { faker } from '@faker-js/faker/locale/en_GB'
-import { createMock } from '@golevelup/ts-jest'
-import { DataServices } from '@approved-premises/ui'
 import { applicationFactory } from '../../testutils/factories'
 import { getApplicationSubmissionData, getApplicationUpdateData } from './getApplicationData'
 import {
@@ -18,7 +16,6 @@ import { reasonForShortNoticeDetails } from './reasonForShortNoticeDetails'
 import { applicationUserDetailsFactory } from '../../testutils/factories/application'
 import { DateFormats } from '../dateUtils'
 import { licenceExpiryDateFromApplication } from './licenceExpiryDateFromApplication'
-import { ApplicationService } from '../../services'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/applicantAndCaseManagerDetails')
@@ -28,10 +25,6 @@ jest.mock('./utils')
 jest.mock('./isWomensApplication')
 jest.mock('./reasonForShortNoticeDetails')
 jest.mock('./licenceExpiryDateFromApplication')
-
-const applicationService = createMock<ApplicationService>({})
-const dataServices: DataServices = { applicationService }
-const token = 'test_token'
 
 const apAreaId = 'test-id'
 const applicantUserDetails = applicationUserDetailsFactory.build()
@@ -85,10 +78,10 @@ describe('getApplicationData', () => {
       })
     })
 
-    it('returns the correct data', async () => {
+    it('returns the correct data', () => {
       mockRequiredQuestionResponses({ type: 'normal' })
 
-      expect(await getApplicationSubmissionData(application, dataServices, token)).toEqual({
+      expect(getApplicationSubmissionData(application)).toEqual({
         translatedDocument: application.document,
         apType: 'normal',
         isWomensApplication: false,
@@ -108,17 +101,17 @@ describe('getApplicationData', () => {
       })
     })
 
-    it('handles when a release type is missing', async () => {
+    it('handles when a release type is missing', () => {
       mockOptionalQuestionResponse({ releaseType: undefined })
       mockRequiredQuestionResponses({})
 
-      expect((await getApplicationSubmissionData(application, dataServices, token)).releaseType).toEqual(undefined)
+      expect(getApplicationSubmissionData(application).releaseType).toEqual(undefined)
     })
 
-    it('returns the correct data for a community order application', async () => {
+    it('returns the correct data for a community order application', () => {
       mockRequiredQuestionResponses({ sentenceType: 'communityOrder', situation: 'riskManagement' })
 
-      expect(await getApplicationSubmissionData(application, dataServices, token)).toEqual(
+      expect(getApplicationSubmissionData(application)).toEqual(
         expect.objectContaining({
           releaseType: 'in_community',
           sentenceType: 'communityOrder',
@@ -127,10 +120,10 @@ describe('getApplicationData', () => {
       )
     })
 
-    it('returns the correct data for a bail placement application', async () => {
+    it('returns the correct data for a bail placement application', () => {
       mockRequiredQuestionResponses({ sentenceType: 'bailPlacement', situation: 'riskManagement' })
 
-      expect(await getApplicationSubmissionData(application, dataServices, token)).toEqual(
+      expect(getApplicationSubmissionData(application)).toEqual(
         expect.objectContaining({
           releaseType: 'in_community',
           sentenceType: 'bailPlacement',
@@ -139,10 +132,10 @@ describe('getApplicationData', () => {
       )
     })
 
-    it('returns the correct data for a non-statutory application', async () => {
+    it('returns the correct data for a non-statutory application', () => {
       mockRequiredQuestionResponses({ sentenceType: 'nonStatutory' })
 
-      expect(await getApplicationSubmissionData(application, dataServices, token)).toEqual(
+      expect(getApplicationSubmissionData(application)).toEqual(
         expect.objectContaining({
           releaseType: 'not_applicable',
           sentenceType: 'nonStatutory',
@@ -150,12 +143,12 @@ describe('getApplicationData', () => {
       )
     })
 
-    it('returns the correct data for a reason for short notice application', async () => {
+    it('returns the correct data for a reason for short notice application', () => {
       when(reasonForShortNoticeDetails).calledWith(application).mockReturnValue({
         reasonForShortNotice: 'other',
         reasonForShortNoticeOther: 'test',
       })
-      expect(await getApplicationSubmissionData(application, dataServices, token)).toEqual(
+      expect(getApplicationSubmissionData(application)).toEqual(
         expect.objectContaining({
           reasonForShortNotice: 'other',
           reasonForShortNoticeOther: 'test',
@@ -163,15 +156,13 @@ describe('getApplicationData', () => {
       )
     })
 
-    it('returns correct data for a womens application', async () => {
+    it('returns correct data for a womens application', () => {
       ;(isWomensApplication as jest.Mock).mockReturnValue(true)
-      expect(await getApplicationSubmissionData(application, dataServices, token)).toEqual(
-        expect.objectContaining({ isWomensApplication: true }),
-      )
+      expect(getApplicationSubmissionData(application)).toEqual(expect.objectContaining({ isWomensApplication: true }))
     })
 
-    it('returns the licence expiry date', async () => {
-      expect(await getApplicationSubmissionData(application, dataServices, token)).toEqual(
+    it('returns the licence expiry date', () => {
+      expect(getApplicationSubmissionData(application)).toEqual(
         expect.objectContaining({
           licenseExpiryDate: licenceExpiryDate,
         }),
@@ -180,14 +171,14 @@ describe('getApplicationData', () => {
   })
 
   describe('getApplicationUpdateData', () => {
-    it('returns empty attributes for a new application', async () => {
+    it('returns empty attributes for a new application', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(undefined)
       ;(placementDurationFromApplication as jest.Mock).mockReturnValue(undefined)
       ;(isInapplicable as jest.Mock).mockReturnValue(false)
       ;(isWomensApplication as jest.Mock).mockReturnValue(false)
       mockOptionalQuestionResponse({})
 
-      expect(await getApplicationUpdateData(application, dataServices, token)).toEqual({
+      expect(getApplicationUpdateData(application)).toEqual({
         data: application.data,
         document: application.document,
         isInapplicable: false,
@@ -208,7 +199,7 @@ describe('getApplicationData', () => {
       })
     })
 
-    it('returns all the defined attributes', async () => {
+    it('returns all the defined attributes', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2023-01-01')
       ;(placementDurationFromApplication as jest.Mock).mockReturnValue(56)
       ;(isInapplicable as jest.Mock).mockReturnValue(false)
@@ -224,7 +215,7 @@ describe('getApplicationData', () => {
         caseManagerUserDetails,
       })
 
-      expect(await getApplicationUpdateData(application, dataServices, token)).toEqual({
+      expect(getApplicationUpdateData(application)).toEqual({
         data: application.data,
         document: application.document,
         apType: 'normal',
@@ -245,33 +236,33 @@ describe('getApplicationData', () => {
       })
     })
 
-    it('returns the correct data for a community order application', async () => {
+    it('returns the correct data for a community order application', () => {
       mockOptionalQuestionResponse({ sentenceType: 'communityOrder' })
 
-      expect((await getApplicationUpdateData(application, dataServices, token)).releaseType).toEqual('in_community')
+      expect(getApplicationUpdateData(application).releaseType).toEqual('in_community')
     })
 
-    it('returns the correct data for a bail placement application', async () => {
+    it('returns the correct data for a bail placement application', () => {
       mockOptionalQuestionResponse({ sentenceType: 'bailPlacement' })
 
-      expect((await getApplicationUpdateData(application, dataServices, token)).releaseType).toEqual('in_community')
+      expect(getApplicationUpdateData(application).releaseType).toEqual('in_community')
     })
 
-    it('returns the return value of `isInapplicable`', async () => {
+    it('returns the return value of `isInapplicable`', () => {
       ;(isInapplicable as jest.Mock).mockReturnValue(true)
       mockOptionalQuestionResponse({})
 
-      expect((await getApplicationUpdateData(application, dataServices, token)).isInapplicable).toEqual(true)
+      expect(getApplicationUpdateData(application).isInapplicable).toEqual(true)
       expect(isInapplicable).toHaveBeenCalledWith(application)
     })
 
-    it('returns the correct data for a reason for short notice application', async () => {
+    it('returns the correct data for a reason for short notice application', () => {
       mockOptionalQuestionResponse({})
       when(reasonForShortNoticeDetails).calledWith(application).mockReturnValue({
         reasonForShortNotice: 'other',
         reasonForShortNoticeOther: 'test',
       })
-      expect(await getApplicationUpdateData(application, dataServices, token)).toEqual(
+      expect(getApplicationUpdateData(application)).toEqual(
         expect.objectContaining({
           reasonForShortNotice: 'other',
           reasonForShortNoticeOther: 'test',

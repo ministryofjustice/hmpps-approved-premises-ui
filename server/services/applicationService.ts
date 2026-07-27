@@ -130,20 +130,14 @@ export default class ApplicationService {
 
       const client = this.applicationClientFactory(request.user.token)
 
-      await client.update(
-        application.id,
-        await getApplicationUpdateData(updatedApplication, { applicationService: this }, request.user.token),
-      )
+      await client.update(application.id, await getApplicationUpdateData(updatedApplication))
     }
   }
 
   async submit(token: string, application: Application) {
     const client = this.applicationClientFactory(token)
 
-    await client.submit(
-      application.id,
-      await getApplicationSubmissionData(application, { applicationService: this }, token),
-    )
+    await client.submit(application.id, getApplicationSubmissionData(application))
   }
 
   async getApplicationFromSessionOrAPI(request: Request): Promise<Application> {

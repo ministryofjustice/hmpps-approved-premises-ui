@@ -71,7 +71,7 @@ export default class AssessmentService {
     }
   }
 
-  async submit(token: string, assessment: Assessment, dataServices: DataServices) {
+  async submit(token: string, assessment: Assessment) {
     const client = this.assessmentClientFactory(token)
 
     if (!applicationAccepted(assessment)) {
@@ -79,7 +79,7 @@ export default class AssessmentService {
       return client.rejection(assessment.id, document, rejectionRationaleFromAssessmentResponses(assessment))
     }
 
-    return client.acceptance(assessment.id, await acceptanceData(assessment, dataServices, token))
+    return client.acceptance(assessment.id, await acceptanceData(assessment))
   }
 
   async createClarificationNote(token: string, assessmentId: string, clarificationNote: Cas1NewClarificationNote) {

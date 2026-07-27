@@ -203,10 +203,7 @@ export {
   offenceFactory,
   dietAndAllergyResponseFactory,
   registrationFactory,
-<<<<<<< HEAD
   tierDtoFactory,
   cas1CreateApplicationOutcomeFactory,
-=======
   cas1RequestsForPlacementDurationsCalculationResponseDtoFactory,
->>>>>>> 6f61da675 (FM-815 Placement duration calculation from API)
 }

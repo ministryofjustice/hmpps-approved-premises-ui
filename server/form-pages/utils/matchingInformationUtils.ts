@@ -1,6 +1,6 @@
 import { Cas1Application as Application, Cas1Assessment as Assessment, Cas1Application } from '@approved-premises/api'
 import { weeksToDays } from 'date-fns'
-import { BackwardsCompatibleApplyApType, DataServices, SummaryList } from '@approved-premises/ui'
+import { BackwardsCompatibleApplyApType, SummaryList } from '@approved-premises/ui'
 import { placementDates } from '../../utils/match'
 import { DateFormats } from '../../utils/dateUtils'
 import { placementDurationFromApplication } from '../../utils/applications/placementDurationFromApplication'
@@ -262,12 +262,8 @@ export const remapArsonAssessmentData = (assessmentData: Assessment['data']): As
   return assessmentData
 }
 
-const suggestedStaySummaryListOptions = async (
-  application: Application,
-  dataServices: DataServices,
-  token: string,
-): Promise<SummaryList> => {
-  const duration = await placementDurationFromApplication(application, dataServices, token)
+const suggestedStaySummaryListOptions = (application: Application): SummaryList => {
+  const duration = placementDurationFromApplication(application)
   const formattedDuration = DateFormats.formatDuration(duration)
   const rows: SummaryList['rows'] = [
     { key: { text: 'Placement duration' }, value: { text: formattedDuration, classes: 'placement-duration' } },

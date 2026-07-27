@@ -21,9 +21,7 @@ describe('getDefaultPlacementDurationInDays', () => {
   applicationService.getPlacementDuration.mockResolvedValue(durations)
 
   it('calls the api to calculate the default placement duration', async () => {
-    expect(await getDefaultPlacementDurationInDays(application, dataServices, token)).toEqual(
-      durations.defaultDurationDays,
-    )
+    expect(await getDefaultPlacementDurationInDays(application, dataServices, token)).toEqual(durations)
     expect(applicationService.getPlacementDuration).toHaveBeenCalledWith(
       token,
       application.id,

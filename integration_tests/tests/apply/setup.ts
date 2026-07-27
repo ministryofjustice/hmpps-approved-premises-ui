@@ -4,7 +4,6 @@ import {
   applicationFactory,
   assessmentFactory,
   cas1RequestsForPlacementDurationsCalculationResponseDtoFactory,
-  personFactory,
   risksFactory,
   tierEnvelopeFactory,
 } from '../../../server/testutils/factories'

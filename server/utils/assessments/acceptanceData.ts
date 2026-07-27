@@ -5,7 +5,6 @@ import {
   PlacementDates,
   PlacementRequirements,
 } from '@approved-premises/api'
-import { DataServices } from '@approved-premises/ui'
 import { ShortNoticeReasons } from '../../form-pages/apply/reasons-for-placement/basic-information/reasonForShortNotice'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import {
@@ -31,26 +30,18 @@ import ApplicationTimeliness from '../../form-pages/assess/assessApplication/sui
 import type { ApplicationTimelinessBody } from '../../form-pages/assess/assessApplication/suitablityAssessment/applicationTimeliness'
 import { lengthOfStay } from '../../form-pages/utils/matchingInformationUtils'
 
-export const acceptanceData = async (
-  assessment: Assessment,
-  dataServices: DataServices,
-  token: string,
-): Promise<Cas1AssessmentAcceptance> => {
+export const acceptanceData = (assessment: Assessment): Cas1AssessmentAcceptance => {
   const notes = retrieveOptionalQuestionResponseFromFormArtifact(assessment, MatchingInformation, 'cruInformation')
   return {
     document: getResponses(assessment),
     requirements: placementRequestData(assessment),
-    placementDates: await placementDates(assessment, dataServices, token),
+    placementDates: placementDates(assessment),
     notes,
     ...timelinessDataFromAssessment(assessment),
   }
 }
 
-export const placementDates = async (
-  assessment: Assessment,
-  dataServices: DataServices,
-  token: string,
-): Promise<PlacementDates | null> => {
+export const placementDates = (assessment: Assessment): PlacementDates | null => {
   const arrivalDate = arrivalDateFromApplication(assessment.application)
 
   if (!arrivalDate) {
@@ -59,7 +50,7 @@ export const placementDates = async (
 
   const placementDuration =
     lengthOfStay(pageDataFromApplicationOrAssessment(MatchingInformation, assessment)) ||
-    (await placementDurationFromApplication(assessment.application, dataServices, token))
+    placementDurationFromApplication(assessment.application)
 
   return {
     expectedArrival: arrivalDate,

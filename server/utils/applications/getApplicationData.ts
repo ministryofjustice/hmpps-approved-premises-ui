@@ -18,7 +18,7 @@ import {
 import DescribeLocationFactors from '../../form-pages/apply/risk-and-need-factors/location-factors/describeLocationFactors'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { isInapplicable } from './utils'
-import { BackwardsCompatibleApplyApType, DataServices, FormArtifact } from '../../@types/ui'
+import { BackwardsCompatibleApplyApType, FormArtifact } from '../../@types/ui'
 import { noticeTypeFromApplication } from './noticeTypeFromApplication'
 import Situation from '../../form-pages/apply/reasons-for-placement/basic-information/situation'
 import ConfirmYourDetails from '../../form-pages/apply/reasons-for-placement/basic-information/confirmYourDetails'
@@ -37,36 +37,26 @@ type FirstClassFields<T> = T extends UpdateApprovedPremisesApplication
 
 type QuestionResponseFunction = (formArtifact: FormArtifact, Page: unknown, question?: string) => unknown
 
-export const getApplicationUpdateData = async (
-  application: Application,
-  dataServices: DataServices,
-  token: string,
-): Promise<UpdateApprovedPremisesApplication> => {
+export const getApplicationUpdateData = (application: Application): UpdateApprovedPremisesApplication => {
   return {
     data: application.data,
     document: application.document,
     isInapplicable: isInapplicable(application),
-    ...(await getUpdateFirstClassFields(application, dataServices, token)),
+    ...getUpdateFirstClassFields(application),
   }
 }
 
-export const getApplicationSubmissionData = async (
-  application: Application,
-  dataServices: DataServices,
-  token: string,
-): Promise<SubmitApprovedPremisesApplication> => {
+export const getApplicationSubmissionData = (application: Application): SubmitApprovedPremisesApplication => {
   return {
     translatedDocument: application.document,
-    ...(await getSubmitFirstClassFields(application, dataServices, token)),
+    ...getSubmitFirstClassFields(application),
   }
 }
 
-const firstClassFields = async <T>(
+const firstClassFields = <T>(
   application: Application,
   retrieveQuestionResponse: QuestionResponseFunction,
-  dataServices: DataServices,
-  token: string,
-): Promise<FirstClassFields<T>> => {
+): FirstClassFields<T> => {
   const noticeType = noticeTypeFromApplication(application)
   const apTypeResponse = retrieveQuestionResponse(application, SelectApType, 'type') as BackwardsCompatibleApplyApType
   const apType = apTypeResponse === 'standard' ? 'normal' : apTypeResponse
@@ -106,20 +96,12 @@ const firstClassFields = async <T>(
   } as FirstClassFields<T>
 }
 
-const getUpdateFirstClassFields = async (
-  application: Application,
-  dataServices: DataServices,
-  token: string,
-): Promise<FirstClassFields<UpdateApprovedPremisesApplication>> => {
-  return firstClassFields(application, retrieveOptionalQuestionResponseFromFormArtifact, dataServices, token)
+const getUpdateFirstClassFields = (application: Application): FirstClassFields<UpdateApprovedPremisesApplication> => {
+  return firstClassFields(application, retrieveOptionalQuestionResponseFromFormArtifact)
 }
 
-const getSubmitFirstClassFields = async (
-  application: Application,
-  dataServices: DataServices,
-  token: string,
-): Promise<FirstClassFields<SubmitApprovedPremisesApplication>> => {
-  return firstClassFields(application, retrieveQuestionResponseFromFormArtifact, dataServices, token)
+const getSubmitFirstClassFields = (application: Application): FirstClassFields<SubmitApprovedPremisesApplication> => {
+  return firstClassFields(application, retrieveQuestionResponseFromFormArtifact)
 }
 
 const getReleaseType = (application: FormArtifact, sentenceType: SentenceTypeOption): ReleaseTypeOption =>

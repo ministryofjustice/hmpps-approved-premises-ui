@@ -6,7 +6,7 @@ import { Cas1AssessmentSummary as AssessmentSummary, Task } from '@approved-prem
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
 import AssessmentsController from './assessmentsController'
-import { ApplicationService, AssessmentService, TaskService } from '../../services'
+import { AssessmentService, TaskService } from '../../services'
 
 import {
   assessmentFactory,
@@ -36,12 +36,11 @@ describe('assessmentsController', () => {
 
   const assessmentService = createMock<AssessmentService>({})
   const taskService = createMock<TaskService>({})
-  const applicationService = createMock<ApplicationService>({})
 
   let assessmentsController: AssessmentsController
 
   beforeEach(() => {
-    assessmentsController = new AssessmentsController(assessmentService, taskService, applicationService)
+    assessmentsController = new AssessmentsController(assessmentService, taskService)
     response = createMock<Response>({ locals: { user: { id: userId } } })
     request = createMock<Request>({ user: { token }, query: {} })
   })
@@ -301,7 +300,7 @@ describe('assessmentsController', () => {
         await assessmentsController.submit()(indexRequest, response, next)
 
         expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, 'some-id')
-        expect(assessmentService.submit).toHaveBeenCalledWith(token, assessment, { applicationService })
+        expect(assessmentService.submit).toHaveBeenCalledWith(token, assessment)
         expect(response.render).toHaveBeenCalledWith('assessments/confirm', {
           pageHeading: 'Assessment submission confirmed',
           assessment,
@@ -325,7 +324,7 @@ describe('assessmentsController', () => {
         await assessmentsController.submit()(indexRequest, response, next)
 
         expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, 'some-id')
-        expect(assessmentService.submit).toHaveBeenCalledWith(token, expectedAssessment, { applicationService })
+        expect(assessmentService.submit).toHaveBeenCalledWith(token, expectedAssessment)
         expect(response.render).toHaveBeenCalledWith('assessments/confirm', {
           pageHeading: 'Assessment submission confirmed',
           assessment: expectedAssessment,

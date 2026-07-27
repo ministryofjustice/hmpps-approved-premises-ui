@@ -1,6 +1,5 @@
 import { createMock } from '@golevelup/ts-jest'
 import { ApType, PlacementDates, PlacementRequirements } from '@approved-premises/api'
-import { DataServices } from '@approved-premises/ui'
 import { mockOptionalQuestionResponse, mockQuestionResponse } from '../../testutils/mockQuestionResponse'
 import MatchingInformation, {
   MatchingInformationBody,
@@ -16,7 +15,6 @@ import ApplicationTimeliness, {
   ApplicationTimelinessBody,
 } from '../../form-pages/assess/assessApplication/suitablityAssessment/applicationTimeliness'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
-import { ApplicationService } from '../../services'
 
 jest.mock('../../form-pages/utils')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -24,10 +22,6 @@ jest.mock('../applications/arrivalDateFromApplication')
 jest.mock('../applications/applicantAndCaseManagerDetails')
 jest.mock('../applications/placementDurationFromApplication')
 jest.mock('../applications/getResponses')
-
-const applicationService = createMock<ApplicationService>({})
-const dataServices = { applicationService } as DataServices
-const token = 'test-token'
 
 describe('acceptanceData', () => {
   const assessment = assessmentFactory.build()
@@ -55,18 +49,18 @@ describe('acceptanceData', () => {
       mockOptionalQuestionResponse({ cruInformation: 'Some notes' })
       ;(getResponses as jest.Mock).mockReturnValue(responses)
       jest.spyOn(acceptanceData, 'placementRequestData').mockReturnValue({} as PlacementRequirements)
-      jest.spyOn(acceptanceData, 'placementDates').mockResolvedValue({} as PlacementDates)
+      jest.spyOn(acceptanceData, 'placementDates').mockReturnValue({} as PlacementDates)
     })
 
-    it('should return the acceptance data for the assessment', async () => {
-      expect(await acceptanceData.acceptanceData(assessment, { applicationService }, token)).toEqual({
+    it('should return the acceptance data for the assessment', () => {
+      expect(acceptanceData.acceptanceData(assessment)).toEqual({
         document: responses,
         requirements: {},
         placementDates: {},
         notes: 'Some notes',
       })
       expect(getResponses).toHaveBeenCalledWith(assessment)
-      expect(acceptanceData.placementDates).toHaveBeenCalledWith(assessment, dataServices, token)
+      expect(acceptanceData.placementDates).toHaveBeenCalledWith(assessment)
       expect(acceptanceData.placementRequestData).toHaveBeenCalledWith(assessment)
     })
 
@@ -76,7 +70,7 @@ describe('acceptanceData', () => {
         agreeWithShortNoticeReasonComments: 'comments',
         reasonForLateApplication: 'furtherOffence',
       })
-      expect(await acceptanceData.acceptanceData(assessment, dataServices, token)).toEqual({
+      expect(acceptanceData.acceptanceData(assessment)).toEqual({
         document: responses,
         requirements: {},
         placementDates: {},
@@ -85,7 +79,7 @@ describe('acceptanceData', () => {
         agreeWithShortNoticeReason: false,
       })
       expect(getResponses).toHaveBeenCalledWith(assessment)
-      expect(acceptanceData.placementDates).toHaveBeenCalledWith(assessment, dataServices, token)
+      expect(acceptanceData.placementDates).toHaveBeenCalledWith(assessment)
       expect(acceptanceData.placementRequestData).toHaveBeenCalledWith(assessment)
     })
   })
@@ -93,7 +87,7 @@ describe('acceptanceData', () => {
   describe('placementDates', () => {
     const expectedArrival = '2020-01-01'
 
-    it('should return the placement dates if an arrival date is provided', async () => {
+    it('should return the placement dates if an arrival date is provided', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(expectedArrival)
       ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({
         lengthOfStayWeeks: '1',
@@ -101,27 +95,27 @@ describe('acceptanceData', () => {
         lengthOfStayAgreed: 'no',
       })
 
-      const result = await acceptanceData.placementDates(assessment, dataServices, token)
+      const result = acceptanceData.placementDates(assessment)
 
       expect(result.expectedArrival).toEqual(expectedArrival)
       expect(result.duration).toEqual(12)
     })
 
-    it('should return the duration from the application if a duration is not provided', async () => {
+    it('should return the duration from the application if a duration is not provided', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(expectedArrival)
       ;(placementDurationFromApplication as jest.Mock).mockReturnValueOnce('52')
       ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({ lengthOfStayAgreed: 'yes' })
 
-      const result = await acceptanceData.placementDates(assessment, dataServices, token)
+      const result = acceptanceData.placementDates(assessment)
 
       expect(result.expectedArrival).toEqual(expectedArrival)
       expect(result.duration).toEqual(52)
     })
 
-    it('should return null if the arrival date is not provided', async () => {
+    it('should return null if the arrival date is not provided', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(undefined)
 
-      const result = await acceptanceData.placementDates(assessment, dataServices, token)
+      const result = acceptanceData.placementDates(assessment)
 
       expect(result).toBeNull()
     })

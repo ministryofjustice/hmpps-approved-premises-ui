@@ -16,11 +16,21 @@ type PlacementDurationBody = {
   durationWeeks?: string
   duration?: string
   reason?: string
+  defaultDurationDays?: number
+  maxDurationDays?: number
 }
 
 @Page({
   name: 'placement-duration',
-  bodyProperties: ['differentDuration', 'duration', 'durationDays', 'durationWeeks', 'reason'],
+  bodyProperties: [
+    'differentDuration',
+    'duration',
+    'durationDays',
+    'durationWeeks',
+    'reason',
+    'defaultDurationDays',
+    'maxDurationDays',
+  ],
 })
 export default class PlacementDuration implements TasklistPage {
   title = 'Placement duration and move on'
@@ -95,6 +105,13 @@ export default class PlacementDuration implements TasklistPage {
         errors.reason = 'You must specify the reason for the different placement duration'
       }
     }
+    if (this.body.differentDuration === 'no') {
+      // This error message won't be seen as the duration is set during initialization.
+      // It's here so that in-progress applications that don't have a duration will force the task to 'In progress'
+      if (!this.body.defaultDurationDays) {
+        errors.defaultDurationDays = 'Calculate duration'
+      }
+    }
 
     return errors
   }
@@ -109,12 +126,17 @@ export default class PlacementDuration implements TasklistPage {
 
   private async initializeDates(dataServices: DataServices, token: string): Promise<void> {
     const arrivalDateIso = arrivalDateFromApplication(this.application)
+    const { defaultDurationDays, maxDurationDays } = await getDefaultPlacementDurationInDays(
+      this.application,
+      dataServices,
+      token,
+    )
+    this.body.maxDurationDays = maxDurationDays
+    this.body.defaultDurationDays = defaultDurationDays
 
     if (arrivalDateIso) {
-      const standardPlacementDuration = await getDefaultPlacementDurationInDays(this.application, dataServices, token)
-
       const arrivalDate = DateFormats.isoToDateObj(arrivalDateIso)
-      const departureDate = addDays(arrivalDate, standardPlacementDuration)
+      const departureDate = addDays(arrivalDate, defaultDurationDays)
 
       this.arrivalDate = DateFormats.dateObjtoUIDate(arrivalDate)
       this.departureDate = DateFormats.dateObjtoUIDate(departureDate)

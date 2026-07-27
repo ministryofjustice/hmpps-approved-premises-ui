@@ -187,7 +187,7 @@ describe('AssessmentService', () => {
       ;(applicationAccepted as jest.Mock).mockReturnValue(true)
       ;(acceptanceData as jest.Mock).mockReturnValue(assessmentAcceptance)
 
-      await service.submit(token, assessment, dataServices)
+      await service.submit(token, assessment)
 
       expect(assessmentClientFactory).toHaveBeenCalledWith(token)
       expect(assessmentClient.acceptance).toHaveBeenCalledWith(assessment.id, assessmentAcceptance)
@@ -205,7 +205,7 @@ describe('AssessmentService', () => {
       ;(getResponses as jest.Mock).mockReturnValue(document)
       ;(getResponseForPage as jest.Mock).mockReturnValue(response)
 
-      await service.submit(token, assessment, dataServices)
+      await service.submit(token, assessment)
 
       expect(assessmentClientFactory).toHaveBeenCalledWith(token)
       expect(assessmentClient.rejection).toHaveBeenCalledWith(assessment.id, document, response.Decision)

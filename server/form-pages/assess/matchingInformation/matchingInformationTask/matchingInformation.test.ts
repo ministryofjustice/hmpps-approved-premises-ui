@@ -1,4 +1,3 @@
-import { createMock } from '@golevelup/ts-jest'
 import { applicationFactory, assessmentFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
@@ -11,13 +10,9 @@ import {
   prepopulatablePlacementRequirementCriteria,
 } from '../../../../utils/placementCriteriaUtils'
 import { radioMatrixTable } from '../../../../utils/radioMatrixTable'
-import { ApplicationService } from '../../../../services'
 
 jest.mock('../../../../utils/applications/placementDurationFromApplication')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
-
-const applicationService = createMock<ApplicationService>({})
-const token = 'test_token'
 
 const assessment = assessmentFactory.build({
   application: applicationFactory.build({ isWomensApplication: false }),
@@ -172,16 +167,12 @@ describe('MatchingInformation', () => {
         ],
       }
       const mockSuggestedStaySummaryListOptions = jest.spyOn(matchingInformtionUtils, 'suggestedStaySummaryListOptions')
-      mockSuggestedStaySummaryListOptions.mockResolvedValue(utilsReturnValue)
+      mockSuggestedStaySummaryListOptions.mockReturnValue(utilsReturnValue)
 
-      const page = await MatchingInformation.initialize(defaultArguments, assessment, token, { applicationService })
+      const page = await MatchingInformation.initialize(defaultArguments, assessment)
 
       expect(page.suggestedStaySummaryListOptions).toEqual(utilsReturnValue)
-      expect(mockSuggestedStaySummaryListOptions).toHaveBeenLastCalledWith(
-        assessment.application,
-        { applicationService },
-        token,
-      )
+      expect(mockSuggestedStaySummaryListOptions).toHaveBeenLastCalledWith(assessment.application)
     })
   })
 
