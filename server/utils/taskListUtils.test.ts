@@ -5,6 +5,7 @@ import assessPaths from '../paths/assess'
 import { applicationFactory, assessmentFactory } from '../testutils/factories'
 import { TaskListStatusTag, taskLinkHtml } from './taskListUtils'
 import { isApplicableTier, isFullPerson } from './personUtils'
+import { fullPersonFactory } from '../testutils/factories/person'
 
 jest.mock('./personUtils')
 
@@ -29,7 +30,8 @@ describe('taskListUtils', () => {
 
   describe('taskLink', () => {
     describe('with an application', () => {
-      const application = applicationFactory.build({ id: 'some-uuid' })
+      const person = fullPersonFactory.build()
+      const application = applicationFactory.build({ id: 'some-uuid', person })
 
       it('should return a link to a task the task can be started', () => {
         task.status = 'in_progress'

@@ -10,6 +10,7 @@ import {
   activeOffenceFactory,
   applicationFactory,
   cas1ApplicationSummaryFactory,
+  cas1CreateApplicationOutcomeFactory,
   cas1TimelineEventFactory,
   documentFactory,
   noteFactory,
@@ -25,6 +26,7 @@ describeClient('ApplicationClient', provider => {
   let applicationClient: ApplicationClient
 
   const token = 'token-1'
+  const crn = 'D1234'
 
   beforeEach(() => {
     config.flags.oasysDisabled = false
@@ -33,8 +35,8 @@ describeClient('ApplicationClient', provider => {
 
   describe('create', () => {
     it('should return an application when a crn is posted', async () => {
-      const application = applicationFactory.build()
       const offence = activeOffenceFactory.build()
+      const outcome = cas1CreateApplicationOutcomeFactory.build()
 
       await provider.addInteraction({
         state: 'Server is healthy',
@@ -44,11 +46,10 @@ describeClient('ApplicationClient', provider => {
           path: paths.applications.new.pattern,
           query: {},
           body: {
-            crn: application.person.crn,
+            crn,
             convictionId: offence.convictionId,
             deliusEventNumber: offence.deliusEventNumber,
             offenceId: offence.offenceId,
-            type: 'CAS1',
           },
           headers: {
             authorization: `Bearer ${token}`,
@@ -56,13 +57,13 @@ describeClient('ApplicationClient', provider => {
         },
         willRespondWith: {
           status: 201,
-          body: application,
+          body: outcome,
         },
       })
 
-      const result = await applicationClient.create(application.person.crn, offence)
+      const result = await applicationClient.create(crn, offence)
 
-      expect(result).toEqual(application)
+      expect(result).toEqual(outcome)
     })
 
     describe('when oasys integration is disabled', () => {
@@ -71,8 +72,8 @@ describeClient('ApplicationClient', provider => {
       })
 
       it('should request that the risks are skipped', async () => {
-        const application = applicationFactory.build()
         const offence = activeOffenceFactory.build()
+        const outcome = cas1CreateApplicationOutcomeFactory.build()
 
         await provider.addInteraction({
           state: 'Server is healthy',
@@ -82,11 +83,10 @@ describeClient('ApplicationClient', provider => {
             path: paths.applications.new.pattern,
             query: {},
             body: {
-              crn: application.person.crn,
+              crn,
               convictionId: offence.convictionId,
               deliusEventNumber: offence.deliusEventNumber,
               offenceId: offence.offenceId,
-              type: 'CAS1',
             },
             headers: {
               authorization: `Bearer ${token}`,
@@ -94,13 +94,13 @@ describeClient('ApplicationClient', provider => {
           },
           willRespondWith: {
             status: 201,
-            body: application,
+            body: outcome,
           },
         })
 
-        const result = await applicationClient.create(application.person.crn, offence)
+        const result = await applicationClient.create(crn, offence)
 
-        expect(result).toEqual(application)
+        expect(result).toEqual(outcome)
       })
     })
   })
