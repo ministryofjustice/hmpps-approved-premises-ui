@@ -20,6 +20,7 @@ import {
   personalTimelineFactory,
   restrictedPersonFactory,
   tierEnvelopeFactory,
+  tierDtoFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/apply'
 import managePaths from '../../paths/manage'
@@ -506,42 +507,43 @@ describe('utils', () => {
   })
 
   describe('firstPageOfApplicationJourney', () => {
+    const applicationId = 'application-id'
+
     it('returns the sentence type page for an applicable application', () => {
       jest.spyOn(personUtils, 'isApplicableTier').mockReturnValue(true)
-      const application = applicationFactory.withFullPerson().build()
+      const tier = tierDtoFactory.v2Eligible().build()
+      const person = personFactory.build({ tier })
 
-      expect(firstPageOfApplicationJourney(application)).toEqual(
-        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'confirm-your-details' }),
+      expect(firstPageOfApplicationJourney(applicationId, person)).toEqual(
+        paths.applications.pages.show({ id: applicationId, task: 'basic-information', page: 'confirm-your-details' }),
       )
     })
 
     it('returns the "enter risk level" page for an application for a person without a tier', () => {
-      const application = applicationFactory.withFullPerson().build({
-        risks: undefined,
-      })
+      const person = personFactory.build({ tier: undefined })
 
-      expect(firstPageOfApplicationJourney(application)).toEqual(
-        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'enter-risk-level' }),
+      expect(firstPageOfApplicationJourney(applicationId, person)).toEqual(
+        paths.applications.pages.show({ id: applicationId, task: 'basic-information', page: 'enter-risk-level' }),
       )
     })
 
     it('returns the is exceptional case page for an application with an unsuitable tier', () => {
       jest.spyOn(personUtils, 'isApplicableTier').mockReturnValue(false)
-      const application = applicationFactory.withFullPerson().build()
+      const tier = tierDtoFactory.v2Ineligible().build()
+      const person = personFactory.build({ tier })
 
-      expect(firstPageOfApplicationJourney(application)).toEqual(
-        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' }),
+      expect(firstPageOfApplicationJourney(applicationId, person)).toEqual(
+        paths.applications.pages.show({ id: applicationId, task: 'basic-information', page: 'is-exceptional-case' }),
       )
     })
 
     it('throws an error if the person is not a Full Person', () => {
-      const restrictedPerson = restrictedPersonFactory.build()
-      const application = applicationFactory.build({ person: restrictedPerson })
+      const restrictedPerson = restrictedPersonFactory.build() as FullPerson
 
-      expect(() => firstPageOfApplicationJourney(application)).toThrowError(
+      expect(() => firstPageOfApplicationJourney(applicationId, restrictedPerson)).toThrowError(
         `CRN: ${restrictedPerson.crn} is restricted`,
       )
-      expect(() => firstPageOfApplicationJourney(application)).toThrowError(RestrictedPersonError)
+      expect(() => firstPageOfApplicationJourney(applicationId, restrictedPerson)).toThrowError(RestrictedPersonError)
     })
   })
 
@@ -977,15 +979,16 @@ describe('utils', () => {
   describe('tierQualificationPage', () => {
     it('returns undefined for valid tier', () => {
       jest.spyOn(personUtils, 'isApplicableTier').mockReturnValue(true)
-      const application = applicationFactory.withFullPerson().build()
+      const tier = tierDtoFactory.v2Eligible().build()
+      const person = fullPersonFactory.build({ tier })
+      const application = applicationFactory.withFullPerson().build({ person })
 
       expect(tierQualificationPage(application)).toBe(undefined)
     })
 
     it('returns the "enter risk level" page for an application for a person without a tier', () => {
-      const application = applicationFactory.withFullPerson().build({
-        risks: undefined,
-      })
+      const person = fullPersonFactory.build({ tier: undefined })
+      const application = applicationFactory.withFullPerson().build({ person })
 
       expect(tierQualificationPage(application)).toEqual(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'enter-risk-level' }),
@@ -993,8 +996,8 @@ describe('utils', () => {
     })
 
     it('returns the is exceptional case page for an application with an unsuitable tier', () => {
-      jest.spyOn(personUtils, 'isApplicableTier').mockReturnValue(false)
-      const application = applicationFactory.withFullPerson().build()
+      const person = fullPersonFactory.build({ tier: tierDtoFactory.v2Ineligible().build() })
+      const application = applicationFactory.build({ person })
 
       expect(tierQualificationPage(application)).toEqual(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' }),

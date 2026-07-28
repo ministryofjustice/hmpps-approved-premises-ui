@@ -17,6 +17,15 @@ const tierBadge = (tier: string): string => {
   return `<span class="moj-badge ${colour}">${tier}</span>`
 }
 
+const isApplicableTierDto = (person: FullPerson) => {
+  const { version, tierScore } = person.tier || {}
+
+  if (version === 'V2') {
+    return isApplicableTier(person.sex, tierScore)
+  }
+  return ['A', 'B', 'C'].includes(tierScore)
+}
+
 const isApplicableTier = (sex: string, tier: string): boolean => {
   const applicableTiersAll = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3']
   const applicableTiersWomen = ['C3']
@@ -90,4 +99,4 @@ const displayName = (
   }
 }
 
-export { tierBadge, isApplicableTier, isFullPerson, displayName, isUnknownPerson }
+export { tierBadge, isApplicableTier, isApplicableTierDto, isFullPerson, displayName, isUnknownPerson }

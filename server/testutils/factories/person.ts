@@ -9,6 +9,7 @@ import type {
   UnknownPerson,
 } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
+import tierDtoFactory from './tierDto'
 
 export const getCrn = () => `C${faker.number.int({ min: 100000, max: 999999 })}`
 export const fullPersonFactory = Factory.define<FullPerson>(() => ({
@@ -26,6 +27,7 @@ export const fullPersonFactory = Factory.define<FullPerson>(() => ({
   isRestricted: false,
   ethnicity: faker.helpers.arrayElement(['White', 'Black', 'Asian', 'Mixed', undefined]),
   genderIdentity: faker.helpers.arrayElement(['Man', 'Woman', undefined]),
+  tier: tierDtoFactory.v2Eligible().build(),
 }))
 
 export const restrictedPersonFactory = Factory.define<RestrictedPerson>(() => ({
