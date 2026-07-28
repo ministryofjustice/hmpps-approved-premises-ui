@@ -1,5 +1,5 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
-import { Cas1Application as Application } from '@approved-premises/api'
+import { Cas1Application as Application, FullPerson } from '@approved-premises/api'
 import { sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 
@@ -15,7 +15,8 @@ export default class IsExceptionalCase implements TasklistPage {
     readonly body: { isExceptionalCase?: YesOrNo },
     readonly application: Application,
   ) {
-    this.tier = this.application?.risks?.tier?.value?.level
+    const person = this.application?.person as FullPerson
+    this.tier = person?.tier?.tierScore
   }
 
   response() {

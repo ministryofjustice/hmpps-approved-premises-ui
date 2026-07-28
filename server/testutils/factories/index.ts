@@ -96,6 +96,8 @@ import licenceFactory from './licence'
 import csraSummaryFactory from './csraSummary'
 import offenceFactory from './offence'
 import dietAndAllergyResponseFactory from './dietAndAllergyResponse'
+import tierDtoFactory from './tierDto'
+import cas1CreateApplicationOutcomeFactory from './cas1CreateApplicationOutcome'
 
 export {
   acctAlertFactory,
@@ -200,4 +202,6 @@ export {
   offenceFactory,
   dietAndAllergyResponseFactory,
   registrationFactory,
+  tierDtoFactory,
+  cas1CreateApplicationOutcomeFactory,
 }

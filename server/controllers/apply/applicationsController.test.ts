@@ -20,6 +20,7 @@ import {
   applicationFactory,
   assessmentFactory,
   cas1ApplicationSummaryFactory,
+  cas1CreateApplicationOutcomeFactory,
   cas1TimelineEventFactory,
   paginatedResponseFactory,
   personFactory,
@@ -656,9 +657,10 @@ describe('applicationsController', () => {
   })
 
   describe('create', () => {
-    const application = applicationFactory.build()
+    const outcome = cas1CreateApplicationOutcomeFactory.build()
     const firstPage = '/foo/bar'
     const offences = activeOffenceFactory.buildList(2)
+    const person = personFactory.build()
 
     beforeEach(() => {
       request = createMock<Request>({
@@ -668,7 +670,8 @@ describe('applicationsController', () => {
       request.body.offenceId = offences[0].offenceId
 
       personService.getOffences.mockResolvedValue(offences)
-      applicationService.createApplication.mockResolvedValue(application)
+      personService.findByCrn.mockResolvedValue(person)
+      applicationService.createApplication.mockResolvedValue(outcome)
 
       jest.spyOn(applicationUtils, 'firstPageOfApplicationJourney').mockReturnValue(firstPage)
     })
@@ -679,16 +682,8 @@ describe('applicationsController', () => {
       await requestHandler(request, response, next)
 
       expect(applicationService.createApplication).toHaveBeenCalledWith('SOME_TOKEN', 'some-crn', offences[0])
-      expect(applicationUtils.firstPageOfApplicationJourney).toHaveBeenCalledWith(application)
+      expect(applicationUtils.firstPageOfApplicationJourney).toHaveBeenCalledWith(outcome.applicationId, person)
       expect(response.redirect).toHaveBeenCalledWith(firstPage)
-    })
-
-    it('saves the application to the session', async () => {
-      const requestHandler = applicationsController.create()
-
-      await requestHandler(request, response, next)
-
-      expect(request.session.application).toEqual(application)
     })
 
     it('sets errors and redirects if the offence not selected', async () => {
@@ -697,7 +692,7 @@ describe('applicationsController', () => {
       await requestHandler(request, response, next)
 
       expect(applicationService.createApplication).toHaveBeenCalledWith('SOME_TOKEN', 'some-crn', offences[0])
-      expect(applicationUtils.firstPageOfApplicationJourney).toHaveBeenCalledWith(application)
+      expect(applicationUtils.firstPageOfApplicationJourney).toHaveBeenCalledWith(outcome.applicationId, person)
       expect(response.redirect).toHaveBeenCalledWith(firstPage)
     })
 

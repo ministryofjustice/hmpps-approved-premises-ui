@@ -13,6 +13,8 @@ import type {
   UpdateApprovedPremisesApplication,
   Withdrawables,
   Cas1ExpireApplicationReason,
+  Cas1NewApplication,
+  Cas1CreateApplicationOutcome,
 } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
@@ -33,12 +35,17 @@ export default class ApplicationClient {
     })
   }
 
-  async create(crn: string, activeOffence: ActiveOffence): Promise<Application> {
+  async create(crn: string, activeOffence: ActiveOffence): Promise<Cas1CreateApplicationOutcome> {
     const { convictionId, deliusEventNumber, offenceId } = activeOffence
-
-    return this.restClient.post<Application>({
+    const data: Cas1NewApplication = {
+      crn,
+      convictionId,
+      deliusEventNumber,
+      offenceId,
+    }
+    return this.restClient.post<Cas1CreateApplicationOutcome>({
       path: paths.applications.new.pattern,
-      data: { crn, convictionId, deliusEventNumber, offenceId, type: 'CAS1' },
+      data,
     })
   }
 

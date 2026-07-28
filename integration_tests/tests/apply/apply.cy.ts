@@ -6,6 +6,7 @@ import {
   personFactory,
   restrictedPersonFactory,
   risksFactory,
+  tierDtoFactory,
   tierEnvelopeFactory,
   userFactory,
 } from '../../../server/testutils/factories'
@@ -21,6 +22,7 @@ import SubmissionConfirmation from '../../pages/apply/submissionConfirmation'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import { setup } from './setup'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
+import { fullPersonFactory } from '../../../server/testutils/factories/person'
 
 context('Apply', () => {
   beforeEach(setup)
@@ -115,19 +117,22 @@ context('Apply', () => {
       crn: this.person.crn,
       tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
     })
-    cy.task('stubApplicationGet', { application: this.application })
-    cy.task('stubApplications', [this.application])
+    const tier = tierDtoFactory.v2Ineligible().build()
+    this.person.tier = tier
+    const application = { ...this.application, person: { ...this.person, tier } }
+    cy.task('stubApplicationGet', { application })
+    cy.task('stubApplications', [application])
 
     AND('I start the application and left')
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
+    const apply = new ApplyHelper(application, application.person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
     AND('I visit the list page')
-    const listPage = ListPage.visit([this.application], [], [])
+    const listPage = ListPage.visit([application], [], [])
 
     WHEN('I click the application from list')
-    listPage.clickApplication(this.application)
+    listPage.clickApplication(application)
 
     AND('I click the basic information')
     apply.clickBasicInformation()
@@ -188,12 +193,10 @@ context('Apply', () => {
 
   it(`allows the user to specify if the risk level if the person does not have a tier`, function test() {
     AND('that person does not have an eligible risk tier')
+    const person = fullPersonFactory.build({ tier: undefined })
+    this.application.person = person
 
-    this.application.risks = risksFactory.build({
-      tier: undefined,
-    })
-
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
+    const apply = new ApplyHelper(this.application, person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
@@ -203,12 +206,11 @@ context('Apply', () => {
 
   it(`allows the user to specify if the case is exceptional if the offender's tier is not eligible`, function test() {
     GIVEN('the person does not have an eligible risk tier')
-    this.application.risks = risksFactory.build({
-      crn: this.person.crn,
-      tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
-    })
+    const tier = tierDtoFactory.v2Ineligible().build()
+    this.person.tier = tier
+    const application = { ...this.application, person: { ...this.person, tier } }
 
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
+    const apply = new ApplyHelper(application, application.person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
@@ -216,17 +218,17 @@ context('Apply', () => {
     apply.completeExceptionalCase()
 
     AND('I should be on the Confirm Your Details page')
-    Page.verifyOnPage(ConfirmYourDetailsPage, this.application)
+    Page.verifyOnPage(ConfirmYourDetailsPage, application)
   })
 
   it('tells the user that their application is not applicable if the tier is not eligible and it is not an exceptional case', function test() {
     GIVEN('the person does not have an eligible risk tier')
-    this.application.risks = risksFactory.build({
-      crn: this.person.crn,
-      tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
-    })
+    const tier = tierDtoFactory.v2Ineligible().build()
+    this.person.tier = tier
+    const application = { ...this.application, person: { ...this.person, tier } }
 
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
+    cy.task('stubApplicationGet', { application })
+    const apply = new ApplyHelper(application, application.person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 

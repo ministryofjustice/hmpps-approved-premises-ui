@@ -23,6 +23,7 @@ import {
   activeOffenceFactory,
   applicationFactory,
   cas1ApplicationSummaryFactory,
+  cas1CreateApplicationOutcomeFactory,
   documentFactory,
   noteFactory,
   paginatedResponseFactory,
@@ -121,13 +122,14 @@ describe('ApplicationService', () => {
   describe('createApplication', () => {
     it('calls the create method and returns an application', async () => {
       const application = applicationFactory.build()
+      const createApplicationOutcome = cas1CreateApplicationOutcomeFactory.build()
       const offence = activeOffenceFactory.build()
 
-      applicationClient.create.mockResolvedValue(application)
+      applicationClient.create.mockResolvedValue(createApplicationOutcome)
 
       const result = await service.createApplication(token, application.person.crn, offence)
 
-      expect(result).toEqual(application)
+      expect(result).toEqual(createApplicationOutcome)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.create).toHaveBeenCalledWith(application.person.crn, offence)

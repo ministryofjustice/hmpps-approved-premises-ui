@@ -21,17 +21,18 @@ import type {
   SortDirection,
   Cas1ApplicationSummary,
   Cas1Application,
+  FullPerson,
+  RestrictedPerson,
 } from '@approved-premises/api'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
 
 import placementApplicationPaths from '../../paths/placementApplications'
-import { displayName, isApplicableTier, isFullPerson, PersonAny } from '../personUtils'
+import { displayName, isApplicableTierDto, isFullPerson, PersonAny } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import ExceptionDetails from '../../form-pages/apply/reasons-for-placement/basic-information/exceptionDetails'
-import { RestrictedPersonError } from '../errors'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 import { createNameAnchorElement, getTierOrBlank } from './helpers'
@@ -40,6 +41,7 @@ import { renderTimelineEventContent } from '../timeline'
 import { summaryListItem } from '../formUtils'
 import { htmlCell, textCell } from '../tableUtils'
 import { getPlacementLink } from '../resident'
+import { RestrictedPersonError } from '../errors'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
@@ -186,28 +188,34 @@ const isInapplicable = (application: Application): boolean => {
   return isExceptionalCase === 'no' || (isExceptionalCase === 'yes' && agreedCaseWithManager === 'no')
 }
 
-const tierQualificationPage = (application: Application) => {
-  if (!isFullPerson(application.person)) throw new RestrictedPersonError(application.person.crn)
+const tierQualificationPage = (application: Cas1Application) => {
+  const person: FullPerson = application?.person as FullPerson
 
-  if (!application?.risks?.tier?.value) {
-    return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'enter-risk-level' })
+  return tierQualificationPageTierDto(application?.id, person)
+}
+
+const tierQualificationPageTierDto = (applicationId: string, person: FullPerson) => {
+  if (!isFullPerson(person)) throw new RestrictedPersonError((person as RestrictedPerson).crn)
+
+  if (!person?.tier) {
+    return paths.applications.pages.show({ id: applicationId, task: 'basic-information', page: 'enter-risk-level' })
   }
 
-  if (!isApplicableTier(application.person.sex, application.risks?.tier?.value?.level)) {
-    return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' })
+  if (!isApplicableTierDto(person)) {
+    return paths.applications.pages.show({ id: applicationId, task: 'basic-information', page: 'is-exceptional-case' })
   }
   return undefined
 }
 
-const firstPageOfApplicationJourney = (application: Application) => {
-  const firstPage = tierQualificationPage(application)
+const firstPageOfApplicationJourney = (applicationId: string, person: FullPerson) => {
+  const firstPage = tierQualificationPageTierDto(applicationId, person)
 
   if (firstPage) {
     return firstPage
   }
 
   return paths.applications.pages.show({
-    id: application.id,
+    id: applicationId,
     task: 'basic-information',
     page: 'confirm-your-details',
   })

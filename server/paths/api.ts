@@ -100,7 +100,7 @@ export default {
     me: cas1Applications.path('me'),
     all: cas1Applications.path('all'),
     update: cas1ApplicationsSingle,
-    new: cas1Applications,
+    new: cas1Applications.path('create'),
     submission: cas1ApplicationsSingle.path('submission'),
     documents: cas1ApplicationsSingle.path('documents'),
     withdrawal: cas1ApplicationsSingle.path('withdrawal'),
