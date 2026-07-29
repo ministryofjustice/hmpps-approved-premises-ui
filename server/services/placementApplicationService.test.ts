@@ -207,7 +207,7 @@ describe('placementApplicationService', () => {
 
       placementApplicationClient.submission.mockResolvedValue(placementApplication)
 
-      const result = service.submit(token, placementApplication, application)
+      const result = service.submit(token, placementApplication, application, dataServices)
 
       expect(result).resolves.toEqual(placementApplication)
     })

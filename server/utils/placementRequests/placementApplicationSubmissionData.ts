@@ -4,8 +4,10 @@ import {
   Cas1RequestedPlacementPeriod,
   PlacementApplication,
   ReleaseTypeOption,
+  SentenceTypeOption,
   SubmitPlacementApplication,
 } from '@approved-premises/api'
+import { DataServices } from '@approved-premises/ui'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
@@ -14,21 +16,25 @@ import DatesOfPlacement, {
   DateOfPlacement,
 } from '../../form-pages/placement-application/request-a-placement/datesOfPlacement'
 import AdditionalPlacementDetails from '../../form-pages/placement-application/request-a-placement/additionalPlacementDetails'
-import { placementDurationFromApplication } from '../applications/placementDurationFromApplication'
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
 import { DateFormats } from '../dateUtils'
 import { makeArrayOfType } from '../utils'
 import { getSentenceType } from '../placementApplications'
 
-export const placementApplicationSubmissionData = (
+export const placementApplicationSubmissionData = async (
   placementApplication: PlacementApplication,
   application: Application,
-): SubmitPlacementApplication => {
+  dataServices: DataServices,
+  token: string,
+): Promise<SubmitPlacementApplication> => {
   const { releaseType, sentenceType, situation } = getSentenceType(placementApplication)
-  const requestedPlacementPeriods = durationAndArrivalDateFromPlacementApplication(
+  const requestedPlacementPeriods = await durationAndArrivalDateFromPlacementApplication(
     placementApplication,
+    sentenceType,
     releaseType,
     application,
+    dataServices,
+    token,
   )
   return {
     translatedDocument: placementApplication.document,
@@ -65,11 +71,14 @@ export const retreivePlacementDatesFromRotlPlacementApplication = (
   return [dateOfPlacement]
 }
 
-export const durationAndArrivalDateFromPlacementApplication = (
+export const durationAndArrivalDateFromPlacementApplication = async (
   placementApplication: PlacementApplication,
+  sentenceType: SentenceTypeOption,
   reasonForPlacement: ReleaseTypeOption,
   application: Application,
-): Array<Cas1RequestedPlacementPeriod> => {
+  dataServices: DataServices,
+  token: string,
+): Promise<Array<Cas1RequestedPlacementPeriod>> => {
   switch (reasonForPlacement) {
     case 'rotl': {
       return retreivePlacementDatesFromRotlPlacementApplication(placementApplication)
@@ -80,10 +89,16 @@ export const durationAndArrivalDateFromPlacementApplication = (
         DecisionToRelease,
         'decisionToReleaseDate',
       )
+      const { defaultDurationDays } = await dataServices.applicationService.getPlacementDuration(
+        token,
+        application.id,
+        application.apType,
+        sentenceType,
+      )
       return [
         {
           arrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
-          duration: Number(placementDurationFromApplication(application)), // TODO: this is using the stored duration - it should be live
+          duration: defaultDurationDays,
         },
       ]
     }
