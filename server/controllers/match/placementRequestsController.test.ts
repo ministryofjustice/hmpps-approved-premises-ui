@@ -107,7 +107,9 @@ describe('PlacementRequestsController', () => {
         expect(response.render).toHaveBeenCalledWith('placement-applications/confirm', {
           pageHeading: 'Request for placement confirmed',
         })
-        expect(placementApplicationService.submit).toHaveBeenCalledWith(token, placementApplication, application)
+        expect(placementApplicationService.submit).toHaveBeenCalledWith(token, placementApplication, application, {
+          applicationService,
+        })
       })
     })
 
