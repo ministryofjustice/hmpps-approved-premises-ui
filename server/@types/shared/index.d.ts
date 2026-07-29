@@ -30,6 +30,7 @@ export type { AssessmentTask } from './models/AssessmentTask';
 export type { Attachment } from './models/Attachment';
 export type { AttachmentHeader } from './models/AttachmentHeader';
 export type { AuthSource } from './models/AuthSource';
+export type { AvailableTierDto } from './models/AvailableTierDto';
 export type { BedStatus } from './models/BedStatus';
 export type { BespokeCondition } from './models/BespokeCondition';
 export type { BookingDetails } from './models/BookingDetails';
