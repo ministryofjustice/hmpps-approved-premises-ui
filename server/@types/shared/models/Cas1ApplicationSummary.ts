@@ -25,6 +25,9 @@ export type Cas1ApplicationSummary = {
     risks?: PersonRisks;
     status: ApprovedPremisesApplicationStatus;
     submittedAt?: string;
+    /**
+     * The tier value from when the application was created. For the person's live tier use person.tier
+     */
     tier?: string;
 };
 

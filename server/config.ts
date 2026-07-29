@@ -52,6 +52,7 @@ export default {
     plannedMaintenance: getFlag('PLANNED_MAINTENANCE_BANNER'),
     oasysDisabled: getFlag('OASYS_DISABLED'),
     ndeliusRiskFlagsEnabled: getFlag('NDELIUS_RISK_FLAGS_ENABLED'),
+    useLiveTiers: getFlag('USE_LIVE_TIER'),
   },
   paths: {
     ndeliusDeeplink: get('NDELIUS_DEEPLINK', ''),
