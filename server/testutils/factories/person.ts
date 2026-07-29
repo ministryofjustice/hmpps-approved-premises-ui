@@ -7,6 +7,7 @@ import type {
   FullPersonSummary,
   RestrictedPerson,
   UnknownPerson,
+  RestrictedPersonSummary,
 } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 import tierDtoFactory from './tierDto'
@@ -45,7 +46,7 @@ export const personSummaryFactory = Factory.define<PersonSummary>(() => ({
   personType: faker.helpers.arrayElement(['FullPersonSummary', 'RestrictedPersonSummary', 'UnknownPersonSummary']),
 }))
 
-export const restrictedPersonSummaryFactory = Factory.define<PersonSummary>(() => ({
+export const restrictedPersonSummaryFactory = Factory.define<RestrictedPersonSummary>(() => ({
   crn: getCrn(),
   personType: 'RestrictedPersonSummary',
 }))
