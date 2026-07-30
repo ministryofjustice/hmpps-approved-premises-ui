@@ -12,7 +12,7 @@ import { getApplicationType } from '../applications/utils'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { formattedArrivalDate } from './dateUtils'
 import { getResponseForPage } from '../applications/getResponseForPage'
-import { displayName } from '../personUtils'
+import { displayName, getVersionedTier } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import applyPaths from '../../paths/apply'
 import assessPaths from '../../paths/assess'
@@ -141,6 +141,10 @@ const assessmentKeyDetails = (assessment: Assessment): KeyDetailsArgs => {
       {
         key: { text: 'CRN' },
         value: { text: assessment.application.person.crn },
+      },
+      {
+        key: { text: 'Tier' },
+        value: { text: getVersionedTier(assessment.application.person, assessment.application.risks?.tier?.value) },
       },
       {
         key: { text: 'Arrival Date' },

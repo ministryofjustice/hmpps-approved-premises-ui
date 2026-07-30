@@ -1,3 +1,4 @@
+import config from '../config'
 import {
   FullPerson,
   FullPersonSummary,
@@ -31,6 +32,13 @@ const versionedTierBadge = (tier: TierDto): string => {
     return tierBadge(tier.tierScore)
   }
   return tierBadgeV3(tier.tierScore)
+}
+
+const getVersionedTier = (person: Person | PersonSummary, tierOnApplicationCreation?: RiskTier): string => {
+  if (!config.flags.useLiveTiers) {
+    return tierOnApplicationCreation?.level || ''
+  }
+  return personTier(person)?.tierScore || ''
 }
 
 const isApplicableTierDto = (person: FullPerson) => {
@@ -154,4 +162,5 @@ export {
   displayName,
   isUnknownPerson,
   personTier,
+  getVersionedTier,
 }
