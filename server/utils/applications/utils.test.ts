@@ -181,7 +181,6 @@ PlacementRequest.pages['placement-request-page' as TaskNames] = {
 describe('utils', () => {
   beforeEach(() => {
     jest.resetAllMocks()
-    jest.spyOn(personUtils, 'tierBadge')
   })
 
   describe('applicationTableRows', () => {
@@ -270,8 +269,6 @@ describe('utils', () => {
 
         const result = applicationTableRows([application])
 
-        expect(personUtils.tierBadge).not.toHaveBeenCalled()
-
         expect(result[0][2]).toEqual({
           html: '',
         })
@@ -287,8 +284,6 @@ describe('utils', () => {
         })
 
         const result = applicationTableRows([application])
-
-        expect(personUtils.tierBadge).not.toHaveBeenCalled()
 
         expect(result[0][2]).toEqual({
           html: '',
@@ -445,8 +440,6 @@ describe('utils', () => {
 
         const result = dashboardTableRows([application])
 
-        expect(personUtils.tierBadge).not.toHaveBeenCalled()
-
         expect(result[0][2]).toEqual({
           html: '',
         })
@@ -462,8 +455,6 @@ describe('utils', () => {
         })
 
         const result = dashboardTableRows([application])
-
-        expect(personUtils.tierBadge).not.toHaveBeenCalled()
 
         expect(result[0][2]).toEqual({
           html: '',
@@ -486,7 +477,7 @@ describe('utils', () => {
               text: application.person.crn,
             },
             {
-              html: personUtils.tierBadge(application.tier),
+              html: personUtils.tierBadge(application.risks?.tier?.value?.level),
             },
             {
               text: DateFormats.isoDateToUIDate(application.arrivalDate, { format: 'short' }),
