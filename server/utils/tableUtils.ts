@@ -1,9 +1,8 @@
 import { Person, PersonSummary, RiskTier } from '../@types/shared'
 import { TableCell } from '../@types/ui'
 import config from '../config'
-import { getVersionedTierOrBlank } from './applications/helpers'
 import { DateFormats } from './dateUtils'
-import { displayName, personTier, tierBadge } from './personUtils'
+import { displayName, getVersionedTierOrBlank, personTier, tierBadge } from './personUtils'
 import { pluralize } from './utils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3

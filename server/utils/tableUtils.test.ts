@@ -16,6 +16,8 @@ import {
 import { DateFormats } from './dateUtils'
 import { fullPersonFactory } from '../testutils/factories/person'
 import tierDtoFactory from '../testutils/factories/tierDto'
+import config from '../config'
+import { RiskTier } from '../@types/shared'
 
 describe('tableUtils', () => {
   describe('dateCell', () => {
@@ -86,6 +88,10 @@ describe('tableUtils', () => {
   })
 
   describe('versionedTierCell', () => {
+    afterEach(() => {
+      config.flags.useLiveTiers = false
+    })
+
     it.each([
       ['A1', 'A8'],
       ['B3S', 'B6S'],
@@ -93,11 +99,24 @@ describe('tableUtils', () => {
       ['Q', 'Q'],
       ['', ''],
       [undefined, ''],
-    ])('returns the tier badge and sort key for the tier %s', (tierScore, sortKey) => {
+    ])('returns the live tier badge and sort key for the tier %s', (tierScore, sortKey) => {
+      config.flags.useLiveTiers = true
       const tier = tierDtoFactory.build({ tierScore })
-      expect(versionedTierCell(tier)).toEqual({
+      const person = fullPersonFactory.build({ tier })
+
+      expect(versionedTierCell(person)).toEqual({
         html: versionedTierBadge(tier),
         attributes: { 'data-sort-value': sortKey },
+      })
+    })
+
+    it('returns the tier badge from application when live tiers are disabled', () => {
+      const person = fullPersonFactory.build({ tier: tierDtoFactory.build({ tierScore: 'B2' }) })
+      const tierOnApplicationCreation = { level: 'A1' } as RiskTier
+
+      expect(versionedTierCell(person, tierOnApplicationCreation)).toEqual({
+        html: tierBadge(tierOnApplicationCreation.level),
+        attributes: { 'data-sort-value': 'A8' },
       })
     })
   })

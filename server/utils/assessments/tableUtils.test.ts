@@ -12,8 +12,7 @@ import {
   restrictedPersonCell,
 } from './tableUtils'
 import paths from '../../paths/assess'
-import { crnCell, daysUntilDueCell, htmlCell } from '../tableUtils'
-import { getVersionedTierOrBlank } from '../applications/helpers'
+import { crnCell, daysUntilDueCell, versionedTierCell } from '../tableUtils'
 import { AssessmentSortField, Cas1AssessmentSummary as AssessmentSummary } from '../../@types/shared'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
@@ -144,7 +143,7 @@ describe('tableUtils', () => {
         [
           { html: assessmentLink(assessment, person) },
           crnCell({ crn: assessment.person.crn }),
-          htmlCell(getVersionedTierOrBlank(assessment.person, assessment.risks?.tier?.value)),
+          versionedTierCell(assessment.person, assessment.risks?.tier?.value),
           { text: formattedArrivalDate(assessment) },
           { text: person.prisonName },
           daysUntilDueCell(assessment, 'assessments--index__warning'),
@@ -187,7 +186,7 @@ describe('tableUtils', () => {
         [
           { html: assessmentLink(assessment, person) },
           crnCell({ crn: assessment.person.crn }),
-          htmlCell(getVersionedTierOrBlank(assessment.person, assessment.risks?.tier?.value)),
+          versionedTierCell(assessment.person, assessment.risks?.tier?.value),
           { text: person.prisonName },
           { text: formattedArrivalDate(assessment) },
           { text: formatDays(daysSinceReceived(assessment)) },
@@ -227,7 +226,7 @@ describe('tableUtils', () => {
         [
           { html: assessmentLink(assessment, person) },
           crnCell({ crn: assessment.person.crn }),
-          htmlCell(getVersionedTierOrBlank(assessment.person, assessment.risks?.tier?.value)),
+          versionedTierCell(assessment.person, assessment.risks?.tier?.value),
           { text: formattedArrivalDate(assessment) },
           { html: new AssessmentStatusTag(assessment.status, assessment.decision).html() },
         ],
