@@ -9,9 +9,8 @@ import { AssessmentCurrentTab, TableRow } from '@approved-premises/ui'
 import { linkTo } from '../utils'
 import { daysSinceInfoRequest, daysSinceReceived, formatDays, formattedArrivalDate } from './dateUtils'
 import paths from '../../paths/assess'
-import { crnCell, daysUntilDueCell, htmlCell } from '../tableUtils'
+import { crnCell, daysUntilDueCell, versionedTierCell } from '../tableUtils'
 import { displayName, isFullPerson } from '../personUtils'
-import { getVersionedTierOrBlank } from '../applications/helpers'
 import { sortHeader } from '../sortHeader'
 import { AssessmentStatusTag } from './statusTag'
 
@@ -139,7 +138,7 @@ const awaitingAssessmentTableRows = (assessments: Array<AssessmentSummary>): Arr
       rows.push([
         linkCell(assessment, assessment.person),
         crnCell({ crn: assessment.person.crn }),
-        htmlCell(getVersionedTierOrBlank(assessment.person, assessment.risks?.tier?.value)),
+        versionedTierCell(assessment.person, assessment.risks?.tier?.value),
         arrivalDateCell(assessment),
         prisonCell(assessment.person),
         daysUntilDueCell(assessment, 'assessments--index__warning'),
@@ -168,7 +167,7 @@ const completedTableRows = (assessments: Array<AssessmentSummary>): Array<TableR
       rows.push([
         linkCell(assessment, assessment.person),
         crnCell({ crn: assessment.person.crn }),
-        htmlCell(getVersionedTierOrBlank(assessment.person, assessment.risks?.tier?.value)),
+        versionedTierCell(assessment.person, assessment.risks?.tier?.value),
         arrivalDateCell(assessment),
         statusCell(assessment),
       ])
@@ -192,7 +191,7 @@ const requestedFurtherInformationTableRows = (assessments: Array<AssessmentSumma
       rows.push([
         linkCell(assessment, assessment.person),
         crnCell({ crn: assessment.person.crn }),
-        htmlCell(getVersionedTierOrBlank(assessment.person, assessment.risks?.tier?.value)),
+        versionedTierCell(assessment.person, assessment.risks?.tier?.value),
         prisonCell(assessment.person),
         arrivalDateCell(assessment),
         daysSinceReceivedCell(assessment),
