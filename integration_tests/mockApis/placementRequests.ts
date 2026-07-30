@@ -4,7 +4,6 @@ import type {
   Cas1PlacementRequestDetail,
   Cas1PlacementRequestSummary,
   PlacementRequestStatus,
-  RiskTierLevel,
 } from '@approved-premises/api'
 import { readFileSync } from 'fs'
 import path from 'path'
@@ -146,9 +145,10 @@ export default {
         },
       })
     ).body.requests,
+
   verifyPlacementRequestsSearch: async ({
     crnOrName,
-    tier,
+    tierOnApplicationCreation,
     arrivalDateStart,
     arrivalDateEnd,
     status,
@@ -157,7 +157,7 @@ export default {
     sortDirection = 'asc',
   }: {
     crnOrName: string
-    tier: RiskTierLevel
+    tierOnApplicationCreation: string
     arrivalDateStart: string
     arrivalDateEnd: string
     status: string
@@ -173,8 +173,8 @@ export default {
           crnOrName: {
             equalTo: crnOrName,
           },
-          tier: {
-            equalTo: tier,
+          tierOnApplicationCreation: {
+            equalTo: tierOnApplicationCreation,
           },
           status: {
             equalTo: status,

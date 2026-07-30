@@ -1,9 +1,11 @@
 import { PlacementRequestDashboardSearchOptions } from '@approved-premises/ui'
+import { AvailableTierDto } from '@approved-premises/api'
 import SearchPage from '../../pages/admin/placementApplications/searchPage'
 
 import { cas1PlacementRequestSummaryFactory } from '../../../server/testutils/factories'
 import { normaliseCrn } from '../../../server/utils/normaliseCrn'
 import { signIn } from '../signIn'
+import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 
 context('Search placement Requests', () => {
   const placementRequests = cas1PlacementRequestSummaryFactory.buildList(3)
@@ -11,16 +13,20 @@ context('Search placement Requests', () => {
 
   const searchQuery = {
     crnOrName: 'CRN123',
-    tier: 'D2',
+    tierOnApplicationCreation: 'A3',
     arrivalDateStart: '2022-01-01',
     arrivalDateEnd: '2022-01-03',
     status: 'notMatched',
   } as PlacementRequestDashboardSearchOptions
 
+  const tiers = ['A3', 'A2', 'A1', 'B3', 'B2', 'B1', 'D3', 'D2', 'D1'].map(tier => ({
+    tier,
+  })) as Array<AvailableTierDto>
+
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am signed in as a CRU member
+    GIVEN('I am signed in as a CRU member')
     signIn('cru_member')
 
     cy.task('stubPlacementRequestsSearch', { placementRequests })
@@ -29,22 +35,23 @@ context('Search placement Requests', () => {
       ...searchQuery,
       crnOrName: normaliseCrn(searchQuery.crnOrName),
     })
+    cy.task('stubTierReferenceData', { tiers })
   })
 
   it('allows me to search for placement requests', () => {
-    // When I visit the search page
+    WHEN('I visit the search page')
     const searchPage = SearchPage.visit()
 
-    // Then I should see a list of placement requests
+    THEN('I should see a list of placement requests')
     searchPage.shouldShowPlacementRequests(placementRequests)
 
-    // When I search for a CRN
+    WHEN('I search for a CRN')
     searchPage.enterSearchQuery(searchQuery)
 
-    // Then I should see the search results
+    THEN('I should see the search results')
     searchPage.shouldShowPlacementRequests(searchResults)
 
-    // And the API should have received a request for the CRN
+    AND('the API should have received a request for the CRN')
     cy.task('verifyPlacementRequestsSearch', searchQuery).then(requests => {
       expect(requests).to.have.length(1)
     })
@@ -62,27 +69,27 @@ context('Search placement Requests', () => {
       page: '9',
     })
 
-    // When I visit the search page
+    WHEN('I visit the search page')
     const searchPage = SearchPage.visit()
 
-    // Then I should see a list of placement requests
+    THEN('I should see a list of placement requests')
     searchPage.shouldShowPlacementRequests(placementRequests)
 
-    // And I search for a CRN
+    AND('I search for a CRN')
     searchPage.enterSearchQuery(searchQuery)
 
-    // When I click next
+    WHEN('I click next')
     searchPage.clickNext()
 
-    // Then the API should have received a request for the next page
+    THEN('the API should have received a request for the next page')
     cy.task('verifyPlacementRequestsSearch', { page: '2', ...searchQuery }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
-    // When I click on a page number
+    WHEN('I click on a page number')
     searchPage.clickPageNumber('9')
 
-    // Then the API should have received a request for the that page number
+    THEN('the API should have received a request for the that page number')
     cy.task('verifyPlacementRequestsSearch', { page: '9', ...searchQuery }).then(requests => {
       expect(requests).to.have.length(1)
     })
@@ -102,22 +109,22 @@ context('Search placement Requests', () => {
       sortDirection: 'desc',
     })
 
-    // When I visit the search page
+    WHEN('I visit the search paget')
     const searchPage = SearchPage.visit()
 
-    // Then I should see a list of placement requests
+    THEN('I should see a list of placement requests')
     searchPage.shouldShowPlacementRequests(placementRequests)
 
-    // And I search for a CRN
+    AND('I search for a CRN')
     searchPage.enterSearchQuery(searchQuery)
 
-    // When I sort by expected arrival in ascending order
+    WHEN('I sort by expected arrival in ascending order')
     searchPage.clickSortBy('expected_arrival')
 
-    // Then the dashboard should be sorted by expected arrival
+    THEN('the dashboard should be sorted by expected arrival')
     searchPage.shouldBeSortedByField('expected_arrival', 'ascending')
 
-    // And the API should have received a request for the correct sort order
+    AND('the API should have received a request for the correct sort order')
     cy.task('verifyPlacementRequestsSearch', {
       ...searchQuery,
       sortBy: 'expected_arrival',
@@ -126,13 +133,13 @@ context('Search placement Requests', () => {
       expect(requests).to.have.length(1)
     })
 
-    // When I sort by expected arrival in descending order
+    WHEN('I sort by expected arrival in descending order')
     searchPage.clickSortBy('expected_arrival')
 
-    // Then the dashboard should be sorted by expected arrival in descending order
+    THEN('the dashboard should be sorted by expected arrival in descending order')
     searchPage.shouldBeSortedByField('expected_arrival', 'descending')
 
-    // And the API should have received a request for the correct sort order
+    AND('the API should have received a request for the correct sort order')
     cy.task('verifyPlacementRequestsSearch', {
       ...searchQuery,
       sortBy: 'expected_arrival',
