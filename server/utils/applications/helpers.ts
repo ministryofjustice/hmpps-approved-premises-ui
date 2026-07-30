@@ -37,7 +37,7 @@ export const createNameAnchorElement = (
  */
 export const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(tier) : '')
 
-export const getVersionedTierOrBlank = (person: Person | PersonSummary, tierOnApplicationCreation: RiskTier) => {
+export const getVersionedTierOrBlank = (person: Person | PersonSummary, tierOnApplicationCreation?: RiskTier) => {
   if (!config.flags.useLiveTiers) {
     return getTierOrBlank(tierOnApplicationCreation?.level)
   }
