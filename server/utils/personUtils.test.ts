@@ -1,4 +1,6 @@
 import { RiskTier, TierDto } from '@approved-premises/api'
+import config from '../config'
+import { personFactory, tierEnvelopeFactory } from '../testutils/factories'
 import {
   fullPersonFactory,
   fullPersonSummaryFactory,
@@ -11,6 +13,7 @@ import {
   displayName,
   getTierOrBlank,
   getVersionedTierOrBlank,
+  getVersionedTier,
   isApplicableTier,
   isFullPerson,
   isNotRestrictedPerson,
@@ -308,6 +311,47 @@ describe('personUtils', () => {
         const person = fullPersonFactory.build({ tier: undefined })
 
         expect(getVersionedTierOrBlank(person, tierOnApplicationCreation)).toEqual('')
+      })
+    })
+  })
+
+  describe('getVersionedTier', () => {
+    describe('when live tiers are disabled', () => {
+      beforeEach(() => {
+        config.flags.useLiveTiers = false
+      })
+
+      it('returns the tier from application creation when present', () => {
+        const tierOnApplicationCreation = tierEnvelopeFactory.build({ value: { level: 'static', version: 'V2' } }).value
+        const personWithLiveTier = personFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
+
+        expect(getVersionedTier(personWithLiveTier, tierOnApplicationCreation)).toEqual('static')
+      })
+
+      it('returns an empty string when the application tier is undefined', () => {
+        const personWithLiveTier = personFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
+
+        expect(getVersionedTier(personWithLiveTier, undefined)).toEqual('')
+      })
+    })
+
+    describe('when live tiers are enabled', () => {
+      beforeEach(() => {
+        config.flags.useLiveTiers = true
+      })
+
+      it('returns the live person tier when present', () => {
+        const tierOnApplicationCreation = tierEnvelopeFactory.build({ value: { level: 'static', version: 'V2' } }).value
+        const personWithLiveTier = personFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
+
+        expect(getVersionedTier(personWithLiveTier, tierOnApplicationCreation)).toEqual('live')
+      })
+
+      it('returns an empty string when the person has no tier', () => {
+        const tierOnApplicationCreation = tierEnvelopeFactory.build({ value: { level: 'static', version: 'V2' } }).value
+        const personWithLiveTier = personFactory.build({ tier: undefined })
+
+        expect(getVersionedTier(personWithLiveTier, tierOnApplicationCreation)).toEqual('')
       })
     })
   })

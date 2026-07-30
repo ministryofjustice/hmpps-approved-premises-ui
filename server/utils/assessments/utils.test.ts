@@ -31,7 +31,7 @@ import {
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { getResponseForPage } from '../applications/getResponseForPage'
-import { displayName } from '../personUtils'
+import { displayName, getVersionedTier } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { linkTo } from '../utils'
 import applyPaths from '../../paths/apply'
@@ -346,6 +346,10 @@ describe('utils', () => {
             value: { text: application.person.crn },
           },
           {
+            key: { text: 'Tier' },
+            value: { text: getVersionedTier(application.person, application.risks?.tier?.value) },
+          },
+          {
             key: { text: 'Arrival Date' },
             value: {
               text: DateFormats.isoDateToUIDate(application.arrivalDate),
@@ -377,6 +381,10 @@ describe('utils', () => {
           {
             key: { text: 'CRN' },
             value: { text: application.person.crn },
+          },
+          {
+            key: { text: 'Tier' },
+            value: { text: getVersionedTier(application.person, application.risks?.tier?.value) },
           },
           {
             key: { text: 'Arrival Date' },
