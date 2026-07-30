@@ -1,4 +1,4 @@
-import { TierDto } from '@approved-premises/api'
+import { RiskTier, TierDto } from '@approved-premises/api'
 import {
   fullPersonFactory,
   fullPersonSummaryFactory,
@@ -9,6 +9,8 @@ import {
 } from '../testutils/factories/person'
 import {
   displayName,
+  getTierOrBlank,
+  getVersionedTierOrBlank,
   isApplicableTier,
   isFullPerson,
   isNotRestrictedPerson,
@@ -18,6 +20,7 @@ import {
   versionedTierBadge,
 } from './personUtils'
 import tierDtoFactory from '../testutils/factories/tierDto'
+import config from '../config'
 
 describe('personUtils', () => {
   describe('tierBadge', () => {
@@ -247,6 +250,65 @@ describe('personUtils', () => {
 
     it('returns undefined if unknown person summary', () => {
       expect(personTier(unknownPersonSummaryFactory.build())).toEqual(undefined)
+    })
+  })
+
+  describe('getTierOrBlank', () => {
+    it('returns the tier badge when a tier is present', () => {
+      expect(getTierOrBlank('A1')).toEqual(tierBadge('A1'))
+    })
+
+    it('returns an empty string when undefined', () => {
+      expect(getTierOrBlank(undefined)).toEqual('')
+    })
+
+    it('returns an empty string when null', () => {
+      expect(getTierOrBlank(null)).toEqual('')
+    })
+  })
+
+  describe('getVersionedTierOrBlank', () => {
+    const tierOnApplicationCreation = { level: 'static' } as RiskTier
+
+    afterEach(() => {
+      config.flags.useLiveTiers = false
+    })
+
+    describe('when live tiers are disabled', () => {
+      beforeEach(() => {
+        config.flags.useLiveTiers = false
+      })
+
+      it('returns the tier badge from application creation when present', () => {
+        const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
+
+        expect(getVersionedTierOrBlank(person, tierOnApplicationCreation)).toEqual(tierBadge('static'))
+      })
+
+      it('returns an empty string when the application tier is undefined', () => {
+        const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
+
+        expect(getVersionedTierOrBlank(person, undefined)).toEqual('')
+      })
+    })
+
+    describe('when live tiers are enabled', () => {
+      beforeEach(() => {
+        config.flags.useLiveTiers = true
+      })
+
+      it('returns the badge for the person tier when present', () => {
+        const tier = tierDtoFactory.v2().build({ tierScore: 'live' })
+        const person = fullPersonFactory.build({ tier })
+
+        expect(getVersionedTierOrBlank(person, tierOnApplicationCreation)).toEqual(versionedTierBadge(tier))
+      })
+
+      it('returns an empty string when the person tier is undefined', () => {
+        const person = fullPersonFactory.build({ tier: undefined })
+
+        expect(getVersionedTierOrBlank(person, tierOnApplicationCreation)).toEqual('')
+      })
     })
   })
 })

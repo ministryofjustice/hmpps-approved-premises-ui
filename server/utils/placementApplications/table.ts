@@ -2,7 +2,7 @@ import { PlacementApplicationTask, PlacementType, SortDirection, TaskSortField }
 import { TableCell, TableRow } from '../../@types/ui'
 import paths from '../../paths/placementApplications'
 import { linkTo, sentenceCase } from '../utils'
-import { crnCell, tierCell } from '../tableUtils'
+import { crnCell, versionedTierCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
 import { DateFormats } from '../dateUtils'
 
@@ -45,7 +45,7 @@ export const tableRows = (tasks: Array<PlacementApplicationTask>): Array<TableRo
     return [
       nameCell(task),
       crnCell(task),
-      tierCell(task.tier?.value?.level),
+      versionedTierCell(task.personSummary, task.tier?.value),
       arrivalDateCell(task),
       placementTypeCell(task),
       statusCell(task),

@@ -5,10 +5,12 @@ import {
   PersonSummary,
   RestrictedPerson,
   RestrictedPersonSummary,
+  RiskTier,
   TierDto,
   UnknownPerson,
   UnknownPersonSummary,
 } from '../@types/shared'
+import config from '../config'
 
 const tierBadge = (tier: string): string => {
   if (!tier) return ''
@@ -128,9 +130,24 @@ const personTier = (person: Person | PersonSummary): TierDto => {
   }
 }
 
+/**
+ * @deprecated Use getVersionedTierOrBlank instead
+ */
+const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(tier) : '')
+
+const getVersionedTierOrBlank = (person: Person | PersonSummary, tierOnApplicationCreation?: RiskTier) => {
+  if (!config.flags.useLiveTiers) {
+    return getTierOrBlank(tierOnApplicationCreation?.level)
+  }
+  const tier = personTier(person)
+  return tier ? versionedTierBadge(tier) : ''
+}
+
 export {
   tierBadge,
   versionedTierBadge,
+  getTierOrBlank,
+  getVersionedTierOrBlank,
   isApplicableTier,
   isApplicableTierDto,
   isFullPerson,

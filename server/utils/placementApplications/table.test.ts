@@ -7,7 +7,7 @@ import {
   statusCell,
   tableRows,
 } from './table'
-import { crnCell, tierCell } from '../tableUtils'
+import { crnCell, versionedTierCell } from '../tableUtils'
 import * as utils from '../utils'
 import paths from '../../paths/placementApplications'
 import { sortHeader } from '../sortHeader'
@@ -94,7 +94,7 @@ describe('table', () => {
             html: stubLink,
           },
           crnCell(tasks[0]),
-          tierCell(tasks[0].tier?.value?.level),
+          versionedTierCell(tasks[0].personSummary, tasks[0].tier?.value),
           arrivalDateCell(tasks[0]),
           placementTypeCell(tasks[0]),
           statusCell(tasks[0]),

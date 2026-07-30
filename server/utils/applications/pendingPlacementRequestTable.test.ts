@@ -8,7 +8,8 @@ import {
   releaseTypeSelectOptions,
 } from './pendingPlacementRequestTable'
 import { allReleaseTypes } from './releaseTypeUtils'
-import { createNameAnchorElement, getTierOrBlank } from './helpers'
+import { createNameAnchorElement } from './helpers'
+import { getTierOrBlank } from '../personUtils'
 import { htmlCell, textCell } from '../tableUtils'
 
 describe('pendingPlacementRequestTable', () => {

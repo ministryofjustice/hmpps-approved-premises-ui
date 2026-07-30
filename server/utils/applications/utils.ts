@@ -28,14 +28,21 @@ import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basi
 import paths from '../../paths/apply'
 
 import placementApplicationPaths from '../../paths/placementApplications'
-import { displayName, isApplicableTierDto, isFullPerson, PersonAny } from '../personUtils'
+import {
+  displayName,
+  getTierOrBlank,
+  getVersionedTierOrBlank,
+  isApplicableTierDto,
+  isFullPerson,
+  PersonAny,
+} from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import ExceptionDetails from '../../form-pages/apply/reasons-for-placement/basic-information/exceptionDetails'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
-import { createNameAnchorElement, getTierOrBlank, getVersionedTierOrBlank } from './helpers'
+import { createNameAnchorElement } from './helpers'
 import { APPLICATION_SUITABLE, ApplicationStatusTag, applicationSuitableStatuses } from './statusTag'
 import { renderTimelineEventContent } from '../timeline'
 import { summaryListItem } from '../formUtils'
