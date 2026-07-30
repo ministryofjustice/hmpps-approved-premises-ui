@@ -7,7 +7,7 @@ import { cas1SpaceBookingFactory, caseDetailFactory, risksFactory } from '../../
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { DateFormats } from '../dateUtils'
 import { PersonStatusTag } from '../people/personStatusTag'
-import { getTierOrBlank } from '../applications/helpers'
+import { getTierOrBlank } from '../personUtils'
 import * as utils from './index'
 import * as contactUtils from './contactUtils'
 import { htmlCell } from '../tableUtils'

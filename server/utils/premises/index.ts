@@ -18,11 +18,10 @@ import {
   v2SortField,
 } from '@approved-premises/ui'
 import { Request } from 'express'
-import { getTierOrBlank } from '../applications/helpers'
 import managePaths from '../../paths/manage'
 import { createQueryString, linkTo } from '../utils'
 import { sortHeader } from '../sortHeader'
-import { displayName } from '../personUtils'
+import { displayName, getTierOrBlank } from '../personUtils'
 import { canonicalDates, placementStatusCell } from '../placements'
 import { dateCell, htmlCell, textCell } from '../tableUtils'
 import { getRoomCharacteristicLabel } from '../characteristicsUtils'

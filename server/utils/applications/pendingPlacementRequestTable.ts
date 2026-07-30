@@ -3,7 +3,8 @@ import { SelectOption, TableCell, TableRow } from '../../@types/ui'
 import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
 import { allReleaseTypes } from './releaseTypeUtils'
-import { createNameAnchorElement, getTierOrBlank } from './helpers'
+import { createNameAnchorElement } from './helpers'
+import { getTierOrBlank } from '../personUtils'
 import { htmlCell, textCell } from '../tableUtils'
 
 export const pendingPlacementRequestTableHeader = (

@@ -1,10 +1,9 @@
 import { KeyDetailsArgs } from '@approved-premises/ui'
-import { Cas1Application, Cas1ApplicationSummary, Person, PersonSummary, RiskTier } from '../../@types/shared'
-import { displayName, isFullPerson, personTier, tierBadge, versionedTierBadge } from '../personUtils'
+import { Cas1Application, Cas1ApplicationSummary, Person } from '../../@types/shared'
+import { displayName, isFullPerson } from '../personUtils'
 import paths from '../../paths/apply'
 import { DateFormats } from '../dateUtils'
 import { htmlCell, textCell } from '../tableUtils'
-import config from '../../config'
 
 export const createNameAnchorElement = (
   person: Person,
@@ -30,19 +29,6 @@ export const createNameAnchorElement = (
         }</a>`,
       )
     : textCell(name)
-}
-
-/**
- * @deprecated Use getVersionedTierOrBlank instead
- */
-export const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(tier) : '')
-
-export const getVersionedTierOrBlank = (person: Person | PersonSummary, tierOnApplicationCreation?: RiskTier) => {
-  if (!config.flags.useLiveTiers) {
-    return getTierOrBlank(tierOnApplicationCreation?.level)
-  }
-  const tier = personTier(person)
-  return tier ? versionedTierBadge(tier) : ''
 }
 
 export const personKeyDetails = (person: Person, tier?: string): KeyDetailsArgs => ({
