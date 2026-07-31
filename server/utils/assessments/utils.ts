@@ -17,6 +17,7 @@ import { DateFormats } from '../dateUtils'
 import applyPaths from '../../paths/apply'
 import assessPaths from '../../paths/assess'
 import { hasPermission } from '../users'
+import { summaryListItem } from '../formUtils'
 
 const awaitingAssessmentStatuses = ['in_progress', 'not_started'] as Array<Cas1AssessmentStatus>
 
@@ -138,26 +139,18 @@ const assessmentKeyDetails = (assessment: Assessment): KeyDetailsArgs => {
       showKey: false,
     },
     items: [
-      {
-        key: { text: 'CRN' },
-        value: { text: assessment.application.person.crn },
-      },
-      {
-        key: { text: 'Tier' },
-        value: {
-          text:
-            getVersionedTierValue(assessment.application.person, assessment.application.risks?.tier?.value) ||
-            'Not available',
-        },
-      },
-      {
-        key: { text: 'Arrival Date' },
-        value: {
-          text: assessment.application.arrivalDate
-            ? DateFormats.isoDateToUIDate(assessment.application.arrivalDate)
-            : 'Not provided',
-        },
-      },
+      summaryListItem('CRN', assessment.application.person.crn),
+      summaryListItem(
+        'Tier',
+        getVersionedTierValue(assessment.application.person, assessment.application.risks?.tier?.value) ||
+          'Not available',
+      ),
+      summaryListItem(
+        'Arrival Date',
+        assessment.application.arrivalDate
+          ? DateFormats.isoDateToUIDate(assessment.application.arrivalDate)
+          : 'Not provided',
+      ),
       {
         value: {
           html: linkTo(applyPaths.applications.show({ id: assessment.application.id }), {
