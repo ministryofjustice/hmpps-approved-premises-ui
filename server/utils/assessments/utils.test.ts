@@ -24,6 +24,9 @@ import {
   assessmentSummaryFactory,
   personFactory,
   prisonCaseNotesFactory,
+  risksFactory,
+  tierDtoFactory,
+  tierEnvelopeFactory,
   userDetailsFactory,
   userFactory,
 } from '../../testutils/factories'
@@ -31,7 +34,8 @@ import {
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { getResponseForPage } from '../applications/getResponseForPage'
-import { displayName, getVersionedTier } from '../personUtils'
+import { displayName } from '../personUtils'
+import config from '../../config'
 import { DateFormats } from '../dateUtils'
 import { linkTo } from '../utils'
 import applyPaths from '../../paths/apply'
@@ -328,10 +332,13 @@ describe('utils', () => {
   })
 
   describe('assessmentKeyDetails', () => {
-    const person = personFactory.build()
+    const person = personFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'D2Live' }) })
+    const risks = risksFactory.build({
+      tier: tierEnvelopeFactory.build({ value: { level: 'D2' } }),
+    })
 
     it('should return key details for an assessment when an arrival date is provided', () => {
-      const application = applicationFactory.build({ arrivalDate: '2022-01-01', person })
+      const application = applicationFactory.build({ arrivalDate: '2022-01-01', person, risks })
       const assessment = assessmentFactory.build({ application })
 
       expect(assessmentKeyDetails(assessment)).toEqual({
@@ -347,7 +354,7 @@ describe('utils', () => {
           },
           {
             key: { text: 'Tier' },
-            value: { text: getVersionedTier(application.person, application.risks?.tier?.value) },
+            value: { text: 'D2' },
           },
           {
             key: { text: 'Arrival Date' },
@@ -368,7 +375,7 @@ describe('utils', () => {
     })
 
     it('should return key details for an assessment when an arrival date is not provided', () => {
-      const application = applicationFactory.build({ arrivalDate: undefined, person })
+      const application = applicationFactory.build({ arrivalDate: undefined, person, risks })
       const assessment = assessmentFactory.build({ application })
 
       expect(assessmentKeyDetails(assessment)).toEqual({
@@ -384,7 +391,7 @@ describe('utils', () => {
           },
           {
             key: { text: 'Tier' },
-            value: { text: getVersionedTier(application.person, application.risks?.tier?.value) },
+            value: { text: 'D2' },
           },
           {
             key: { text: 'Arrival Date' },
