@@ -10,11 +10,13 @@ import {
   assessmentFactory,
   cas1OasysGroupFactory,
   prisonCaseNotesFactory,
+  risksFactory,
 } from '../../testutils/factories'
 
 import SupportingInformationController from './supportingInformationController'
-import { AssessmentService } from '../../services'
+import { AssessmentService, PersonService } from '../../services'
 import { DateFormats } from '../../utils/dateUtils'
+import config from '../../config'
 
 describe('supportingInformationController', () => {
   const token = 'SOME_TOKEN'
@@ -25,13 +27,14 @@ describe('supportingInformationController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const assessmentService = createMock<AssessmentService>({})
+  const personService = createMock<PersonService>({})
 
   let supportingInformationController: SupportingInformationController
   let request: DeepMocked<Request>
 
   beforeEach(() => {
     jest.resetAllMocks()
-    supportingInformationController = new SupportingInformationController(assessmentService)
+    supportingInformationController = new SupportingInformationController(assessmentService, personService)
     request = createMock<Request>({
       user: { token },
       flash: flashSpy,
@@ -51,7 +54,7 @@ describe('supportingInformationController', () => {
     describe('for "risk-information"', () => {
       let oasysImport: Record<string, OasysSummariesSection>
 
-      it('renders the view', async () => {
+      beforeEach(() => {
         request.params.category = 'risk-information'
 
         oasysImport = {
@@ -68,6 +71,9 @@ describe('supportingInformationController', () => {
         }
 
         assessmentService.findAssessment.mockResolvedValue(assessment)
+      })
+
+      it('renders the view', async () => {
         const requestHandler = supportingInformationController.show()
 
         await requestHandler(request, response, next)
@@ -86,6 +92,45 @@ describe('supportingInformationController', () => {
           pageHeading: 'Review risk information',
         })
         expect(assessmentService.findAssessment).toBeCalledWith(token, request.params.id)
+      })
+
+      describe('when the live tiers feature flag is enabled', () => {
+        const liveRisks = risksFactory.build()
+
+        beforeEach(() => {
+          config.flags.useLiveTiers = true
+          personService.riskProfile.mockResolvedValue(liveRisks)
+        })
+
+        afterEach(() => {
+          config.flags.useLiveTiers = false
+        })
+
+        it('sources the risk widgets from the risk profile endpoint', async () => {
+          const requestHandler = supportingInformationController.show()
+
+          await requestHandler(request, response, next)
+
+          expect(personService.riskProfile).toHaveBeenCalledWith(token, assessment.application.person.crn)
+          expect(response.render).toHaveBeenCalledWith(
+            'assessments/pages/risk-information/oasys-information',
+            expect.objectContaining({ risks: liveRisks }),
+          )
+        })
+      })
+
+      describe('when the live tiers feature flag is disabled', () => {
+        it('sources the risk widgets from the application risks and does not call the risk profile endpoint', async () => {
+          const requestHandler = supportingInformationController.show()
+
+          await requestHandler(request, response, next)
+
+          expect(personService.riskProfile).not.toHaveBeenCalled()
+          expect(response.render).toHaveBeenCalledWith(
+            'assessments/pages/risk-information/oasys-information',
+            expect.objectContaining({ risks: assessment.application.risks }),
+          )
+        })
       })
     })
 

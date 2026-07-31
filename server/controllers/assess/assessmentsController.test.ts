@@ -283,6 +283,7 @@ describe('assessmentsController', () => {
 
       afterEach(() => {
         config.flags.useLiveTiers = false
+        personService.riskProfile.mockClear()
       })
 
       it('sources the risk widgets from the risk profile endpoint', async () => {

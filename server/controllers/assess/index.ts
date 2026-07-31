@@ -16,7 +16,7 @@ export const controllers = (services: Services) => {
     userService,
     assessmentService,
   } as unknown as DataServices)
-  const supportingInformationController = new SupportingInformationController(assessmentService)
+  const supportingInformationController = new SupportingInformationController(assessmentService, personService)
 
   return {
     assessmentsController,
