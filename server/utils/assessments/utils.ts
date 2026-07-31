@@ -144,7 +144,7 @@ const assessmentKeyDetails = (assessment: Assessment): KeyDetailsArgs => {
       },
       {
         key: { text: 'Tier' },
-        value: { text: getVersionedTier(assessment.application.person, assessment.application.risks?.tier?.value) },
+        value: { text: getVersionedTier(assessment.application.person, assessment.application.risks?.tier?.value) || 'Not available' },
       },
       {
         key: { text: 'Arrival Date' },

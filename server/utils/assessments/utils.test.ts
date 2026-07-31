@@ -403,6 +403,15 @@ describe('utils', () => {
         ],
       })
     })
+
+    it('should show the tier as not available if it is not defined', () => {
+      const application = applicationFactory.build({ person, risks: undefined })
+      const assessment = assessmentFactory.build({ application })
+
+      const result = assessmentKeyDetails(assessment)
+
+      expect(result.items[1].value).toEqual({ text: 'Not available' })
+    })
   })
 
   describe('assessmentsTabItems', () => {
