@@ -118,6 +118,7 @@ context('Apply', () => {
       tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
     })
     const tier = tierDtoFactory.v2Ineligible().build()
+    this.person.sex = 'Male'
     this.person.tier = tier
     const application = { ...this.application, person: { ...this.person, tier } }
     cy.task('stubApplicationGet', { application })
@@ -207,6 +208,7 @@ context('Apply', () => {
   it(`allows the user to specify if the case is exceptional if the offender's tier is not eligible`, function test() {
     GIVEN('the person does not have an eligible risk tier')
     const tier = tierDtoFactory.v2Ineligible().build()
+    this.person.sex = 'Male'
     this.person.tier = tier
     const application = { ...this.application, person: { ...this.person, tier } }
 
@@ -224,6 +226,7 @@ context('Apply', () => {
   it('tells the user that their application is not applicable if the tier is not eligible and it is not an exceptional case', function test() {
     GIVEN('the person does not have an eligible risk tier')
     const tier = tierDtoFactory.v2Ineligible().build()
+    this.person.sex = 'Male'
     this.person.tier = tier
     const application = { ...this.application, person: { ...this.person, tier } }
 
