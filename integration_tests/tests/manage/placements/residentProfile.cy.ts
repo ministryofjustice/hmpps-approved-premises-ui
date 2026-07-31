@@ -71,14 +71,14 @@ context('ResidentProfile', () => {
     })
 
     it('should show the personal -> personal details tab', () => {
-      const { placement, caseDetail, personRisks } = setup({})
+      const { placement, caseDetail } = setup({})
       const page = visitPage({ placement, caseDetail })
 
       THEN('I should see the person information in the header')
       page.checkHeader()
       THEN('the Personal tab should be selected')
       page.shouldHaveActiveTab('Personal details')
-      page.shouldShowPersonalInformation(placement.person, personRisks)
+      page.shouldShowPersonalInformation(placement.person)
 
       WHEN('I click the contacts subtab')
       page.clickSideNav('Contacts')

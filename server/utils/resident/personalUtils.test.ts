@@ -3,11 +3,11 @@ import { FullPerson } from '@approved-premises/api'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import { addYears } from 'date-fns'
 import { contactsCardList, personalSideNavigation, personDetailsCardList } from './personalUtils'
-import { cas1SpaceBookingFactory, caseDetailFactory, risksFactory } from '../../testutils/factories'
+import { cas1SpaceBookingFactory, caseDetailFactory } from '../../testutils/factories'
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { DateFormats } from '../dateUtils'
 import { PersonStatusTag } from '../people/personStatusTag'
-import { getTierOrBlank } from '../personUtils'
+import { versionedTierBadge } from '../personUtils'
 import * as utils from './index'
 import * as contactUtils from './contactUtils'
 import { htmlCell } from '../tableUtils'
@@ -75,7 +75,7 @@ describe('personalUtils', () => {
           { key: { text: 'Age' }, value: { text: '32 years' } },
           { key: { text: 'Status' }, value: { html: new PersonStatusTag(person.status).html() } },
           { key: { text: 'Nationality' }, value: { text: person.nationality } },
-          { key: { text: 'Tier' }, value: { html: getTierOrBlank(personRisks.tier?.value?.level) } },
+          { key: { text: 'Tier' }, value: { html: versionedTierBadge(person.tier) } },
         ],
       })
     }
@@ -85,14 +85,13 @@ describe('personalUtils', () => {
       genderIdentity: faker.helpers.arrayElement(['Man', 'Woman']),
       dateOfBirth: DateFormats.dateObjToIsoDate(dob),
     })
-    const personRisks = risksFactory.build()
 
     beforeEach(() => {
       jest.spyOn(utils, 'ndeliusDeeplink').mockImplementation(({ text, component }) => `${component}:${text}`)
     })
 
     it('should render the personal details cardlist', () => {
-      const result = personDetailsCardList(person, personRisks)
+      const result = personDetailsCardList(person)
       expect(result[0]).toEqual({
         card: { title: { text: 'Contact details' } },
         html: 'CaseSummary:View contact details in NDelius (opens in a new window)',
