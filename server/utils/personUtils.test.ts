@@ -277,19 +277,17 @@ describe('personUtils', () => {
     })
 
     describe('when live tiers are disabled', () => {
+      const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
+
       beforeEach(() => {
         config.flags.useLiveTiers = false
       })
 
       it('returns the tier badge from application creation when present', () => {
-        const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
-
         expect(getVersionedTierOrBlank(person, tierOnApplicationCreation)).toEqual(tierBadge('static'))
       })
 
       it('returns an empty string when the application tier is undefined', () => {
-        const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
-
         expect(getVersionedTierOrBlank(person, undefined)).toEqual('')
       })
     })
@@ -315,6 +313,9 @@ describe('personUtils', () => {
   })
 
   describe('getVersionedTierValue', () => {
+    const tierOnApplicationCreation = tierEnvelopeFactory.build({ value: { level: 'static', version: 'V2' } }).value
+    const personWithLiveTier = personFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
+
     afterEach(() => {
       config.flags.useLiveTiers = false
     })
@@ -325,15 +326,10 @@ describe('personUtils', () => {
       })
 
       it('returns the tier from application creation when present', () => {
-        const tierOnApplicationCreation = tierEnvelopeFactory.build({ value: { level: 'static', version: 'V2' } }).value
-        const personWithLiveTier = personFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
-
         expect(getVersionedTierValue(personWithLiveTier, tierOnApplicationCreation)).toEqual('static')
       })
 
       it('returns an empty string when the application tier is undefined', () => {
-        const personWithLiveTier = personFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
-
         expect(getVersionedTierValue(personWithLiveTier, undefined)).toEqual('')
       })
     })
@@ -344,17 +340,13 @@ describe('personUtils', () => {
       })
 
       it('returns the live person tier when present', () => {
-        const tierOnApplicationCreation = tierEnvelopeFactory.build({ value: { level: 'static', version: 'V2' } }).value
-        const personWithLiveTier = personFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
-
         expect(getVersionedTierValue(personWithLiveTier, tierOnApplicationCreation)).toEqual('live')
       })
 
       it('returns an empty string when the person has no tier', () => {
-        const tierOnApplicationCreation = tierEnvelopeFactory.build({ value: { level: 'static', version: 'V2' } }).value
-        const personWithLiveTier = personFactory.build({ tier: undefined })
+        const personWithoutTier = personFactory.build({ tier: undefined })
 
-        expect(getVersionedTierValue(personWithLiveTier, tierOnApplicationCreation)).toEqual('')
+        expect(getVersionedTierValue(personWithoutTier, tierOnApplicationCreation)).toEqual('')
       })
     })
   })
