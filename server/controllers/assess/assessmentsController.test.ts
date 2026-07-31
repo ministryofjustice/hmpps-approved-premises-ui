@@ -6,12 +6,14 @@ import { Cas1AssessmentSummary as AssessmentSummary, Task } from '@approved-prem
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
 import AssessmentsController from './assessmentsController'
-import { AssessmentService, TaskService } from '../../services'
+import { AssessmentService, PersonService, TaskService } from '../../services'
+import config from '../../config'
 
 import {
   assessmentFactory,
   assessmentSummaryFactory,
   paginatedResponseFactory,
+  risksFactory,
   taskFactory,
 } from '../../testutils/factories'
 
@@ -36,11 +38,12 @@ describe('assessmentsController', () => {
 
   const assessmentService = createMock<AssessmentService>({})
   const taskService = createMock<TaskService>({})
+  const personService = createMock<PersonService>({})
 
   let assessmentsController: AssessmentsController
 
   beforeEach(() => {
-    assessmentsController = new AssessmentsController(assessmentService, taskService)
+    assessmentsController = new AssessmentsController(assessmentService, taskService, personService)
     response = createMock<Response>({ locals: { user: { id: userId } } })
     request = createMock<Request>({ user: { token }, query: {} })
   })
@@ -185,6 +188,7 @@ describe('assessmentsController', () => {
         contextKeyDetails: assessmentKeyDetails(assessment),
         pageHeading: 'Assess an Approved Premises (AP) application',
         taskList: stubTaskList,
+        risks: assessment.application.risks,
         errorSummary: [],
         errors: {},
       })
@@ -235,6 +239,7 @@ describe('assessmentsController', () => {
         contextKeyDetails: assessmentKeyDetails(assessment),
         pageHeading: 'Assess an Approved Premises (AP) application',
         taskList: stubTaskList,
+        risks: assessment.application.risks,
         errorSummary: [],
         errors: {},
       })
@@ -259,11 +264,47 @@ describe('assessmentsController', () => {
           contextKeyDetails: assessmentKeyDetails(assessment),
           pageHeading: 'Assess an Approved Premises (AP) application',
           taskList: stubTaskList,
+          risks: assessment.application.risks,
           errorSummary: errorsAndUserInput.errorSummary,
           errors: errorsAndUserInput.errors,
         })
 
         expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
+      })
+    })
+
+    describe('when the live tiers feature flag is enabled', () => {
+      const liveRisks = risksFactory.build()
+
+      beforeEach(() => {
+        config.flags.useLiveTiers = true
+        personService.riskProfile.mockResolvedValue(liveRisks)
+      })
+
+      afterEach(() => {
+        config.flags.useLiveTiers = false
+      })
+
+      it('sources the risk widgets from the risk profile endpoint', async () => {
+        await assessmentsController.show()(request, response, next)
+
+        expect(personService.riskProfile).toHaveBeenCalledWith(token, assessment.application.person.crn)
+        expect(response.render).toHaveBeenCalledWith(
+          'assessments/tasklist',
+          expect.objectContaining({ risks: liveRisks }),
+        )
+      })
+    })
+
+    describe('when the live tiers feature flag is disabled', () => {
+      it('sources the risk widgets from the application risks and does not call the risk profile endpoint', async () => {
+        await assessmentsController.show()(request, response, next)
+
+        expect(personService.riskProfile).not.toHaveBeenCalled()
+        expect(response.render).toHaveBeenCalledWith(
+          'assessments/tasklist',
+          expect.objectContaining({ risks: assessment.application.risks }),
+        )
       })
     })
   })

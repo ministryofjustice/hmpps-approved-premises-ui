@@ -2,8 +2,9 @@ import type { Request, RequestHandler, Response } from 'express'
 
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
-import { AssessmentService, TaskService } from '../../services'
+import { AssessmentService, PersonService, TaskService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
+import config from '../../config'
 
 import paths from '../../paths/assess'
 import { Cas1Assessment, AssessmentSortField, Cas1AssessmentStatus, TaskSortField } from '../../@types/shared'
@@ -17,6 +18,7 @@ export default class AssessmentsController {
   constructor(
     private readonly assessmentService: AssessmentService,
     private readonly taskService: TaskService,
+    private readonly personService: PersonService,
   ) {}
 
   index(): RequestHandler {
@@ -101,11 +103,16 @@ export default class AssessmentsController {
       } else {
         const taskList = new TasklistService(assessment)
 
+        const risks = config.flags.useLiveTiers
+          ? await this.personService.riskProfile(req.user.token, assessment.application.person.crn)
+          : assessment.application.risks
+
         res.render('assessments/tasklist', {
           assessment,
           pageHeading: tasklistPageHeading,
           contextKeyDetails: assessmentKeyDetails(assessment),
           taskList,
+          risks,
           errorSummary,
           errors,
         })

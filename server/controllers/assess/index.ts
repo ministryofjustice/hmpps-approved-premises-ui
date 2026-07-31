@@ -8,9 +8,9 @@ import { type Services } from '../../services'
 import { DataServices } from '../../@types/ui'
 
 export const controllers = (services: Services) => {
-  const { assessmentService, applicationService, userService, taskService } = services
+  const { assessmentService, applicationService, userService, taskService, personService } = services
 
-  const assessmentsController = new AssessmentsController(assessmentService, taskService)
+  const assessmentsController = new AssessmentsController(assessmentService, taskService, personService)
   const assessmentPagesController = new AssessmentPagesController(assessmentService, {
     applicationService,
     userService,
