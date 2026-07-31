@@ -12,7 +12,7 @@ import { getApplicationType } from '../applications/utils'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { formattedArrivalDate } from './dateUtils'
 import { getResponseForPage } from '../applications/getResponseForPage'
-import { displayName, getVersionedTier } from '../personUtils'
+import { displayName, getVersionedTierValue } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import applyPaths from '../../paths/apply'
 import assessPaths from '../../paths/assess'
@@ -144,7 +144,7 @@ const assessmentKeyDetails = (assessment: Assessment): KeyDetailsArgs => {
       },
       {
         key: { text: 'Tier' },
-        value: { text: getVersionedTier(assessment.application.person, assessment.application.risks?.tier?.value) || 'Not available' },
+        value: { text: getVersionedTierValue(assessment.application.person, assessment.application.risks?.tier?.value) || 'Not available' },
       },
       {
         key: { text: 'Arrival Date' },
