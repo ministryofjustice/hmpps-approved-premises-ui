@@ -35,7 +35,6 @@ import { arrivalDateFromApplication } from '../applications/arrivalDateFromAppli
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { getResponseForPage } from '../applications/getResponseForPage'
 import { displayName } from '../personUtils'
-import config from '../../config'
 import { DateFormats } from '../dateUtils'
 import { linkTo } from '../utils'
 import applyPaths from '../../paths/apply'

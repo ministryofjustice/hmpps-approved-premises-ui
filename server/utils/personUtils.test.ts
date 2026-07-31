@@ -19,7 +19,6 @@ import {
   isUnknownPerson,
   personTier,
   tierBadge,
-  tierBadgeV3,
   versionedTierBadge,
 } from './personUtils'
 import tierDtoFactory from '../testutils/factories/tierDto'
@@ -271,7 +270,7 @@ describe('personUtils', () => {
   })
 
   describe('getVersionedTierOrBlank', () => {
-    const tierOnApplicationCreation = { level: 'static', version: 'V2' } as RiskTier
+    const tierOnApplicationCreation = { level: 'static' } as RiskTier
 
     afterEach(() => {
       config.flags.useLiveTiers = false
@@ -292,13 +291,6 @@ describe('personUtils', () => {
         const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
 
         expect(getVersionedTierOrBlank(person, undefined)).toEqual('')
-      })
-
-      it('returns the V3 tier badge when the application tier is V3', () => {
-        const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
-        const v3TierOnApplicationCreation = { level: 'static', version: 'V3' } as RiskTier
-
-        expect(getVersionedTierOrBlank(person, v3TierOnApplicationCreation)).toEqual(tierBadgeV3('static'))
       })
     })
 
