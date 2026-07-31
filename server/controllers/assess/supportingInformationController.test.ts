@@ -106,7 +106,7 @@ describe('supportingInformationController', () => {
           config.flags.useLiveTiers = false
         })
 
-        it('sources the risk widgets from the risk profile endpoint', async () => {
+        it('renders the view with risks from the risk profile endpoint', async () => {
           const requestHandler = supportingInformationController.show()
 
           await requestHandler(request, response, next)
@@ -120,7 +120,7 @@ describe('supportingInformationController', () => {
       })
 
       describe('when the live tiers feature flag is disabled', () => {
-        it('sources the risk widgets from the application risks and does not call the risk profile endpoint', async () => {
+        it('renders the view with risks from the application when live tiers are disabled', async () => {
           const requestHandler = supportingInformationController.show()
 
           await requestHandler(request, response, next)

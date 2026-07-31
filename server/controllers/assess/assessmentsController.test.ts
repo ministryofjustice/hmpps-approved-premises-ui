@@ -286,7 +286,7 @@ describe('assessmentsController', () => {
         personService.riskProfile.mockClear()
       })
 
-      it('sources the risk widgets from the risk profile endpoint', async () => {
+      it('renders the task list with risks from the risk profile endpoint', async () => {
         await assessmentsController.show()(request, response, next)
 
         expect(personService.riskProfile).toHaveBeenCalledWith(token, assessment.application.person.crn)
@@ -298,7 +298,7 @@ describe('assessmentsController', () => {
     })
 
     describe('when the live tiers feature flag is disabled', () => {
-      it('sources the risk widgets from the application risks and does not call the risk profile endpoint', async () => {
+      it('renders the task list with risks from the application when live tiers are disabled', async () => {
         await assessmentsController.show()(request, response, next)
 
         expect(personService.riskProfile).not.toHaveBeenCalled()
