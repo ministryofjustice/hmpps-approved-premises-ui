@@ -4,7 +4,9 @@ import type {
   Cas1PremisesBasicSummary,
   Cas1SpaceBookingResidency,
   Cas1SpaceBookingSummary,
+  Cas1SpaceBookingSummarySortField,
   NamedId,
+  RiskTier,
   SortDirection,
 } from '@approved-premises/api'
 import {
@@ -18,12 +20,13 @@ import {
   v2SortField,
 } from '@approved-premises/ui'
 import { Request } from 'express'
+import config from '../../config'
 import managePaths from '../../paths/manage'
 import { createQueryString, linkTo } from '../utils'
 import { sortHeader } from '../sortHeader'
-import { displayName, getTierOrBlank } from '../personUtils'
+import { displayName } from '../personUtils'
 import { canonicalDates, placementStatusCell } from '../placements'
-import { dateCell, htmlCell, textCell } from '../tableUtils'
+import { dateCell, htmlCell, textCell, versionedTierCell } from '../tableUtils'
 import { getRoomCharacteristicLabel } from '../characteristicsUtils'
 import { getPlacementLink } from '../resident'
 
@@ -178,13 +181,16 @@ const columnMap: Record<PremisesTab, Array<ColumnDefinition>> = {
 
 export const placementTableHeader = (
   activeTab: PremisesTab,
-  sortBy: v2SortField,
+  sortBy: Cas1SpaceBookingSummarySortField,
   sortDirection: SortDirection,
   hrefPrefix: string,
 ): Array<TableCell> => {
-  return columnMap[activeTab].map(({ title, fieldName, sortable }: ColumnDefinition) =>
-    sortable ? sortHeader<ColumnField>(title, fieldName, sortBy, sortDirection, hrefPrefix) : textCell(title),
-  )
+  return columnMap[activeTab].map(({ title, fieldName, sortable }: ColumnDefinition) => {
+    if (!sortable) return textCell(title)
+    const targetField: Cas1SpaceBookingSummarySortField =
+      fieldName === 'tier' && config.flags.useLiveTiers ? 'personTier' : fieldName
+    return sortHeader<Cas1SpaceBookingSummarySortField>(title, targetField, sortBy, sortDirection, hrefPrefix)
+  })
 }
 
 export const placementTableRows = (
@@ -208,7 +214,7 @@ export const mapPlacementTableRows = (
     const link = getPlacementLink({ request, premisesId, person, placementId: placement.id })
     const fieldValues: Record<ColumnField, TableCell> = {
       personName: htmlCell(`<a href="${link}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`),
-      tier: htmlCell(getTierOrBlank(tier)),
+      tier: versionedTierCell(person, tier ? ({ level: tier } as RiskTier) : undefined),
       canonicalArrivalDate: dateCell(arrivalDate),
       canonicalDepartureDate: dateCell(departureDate),
       keyWorkerName: textCell(keyWorkerAllocation?.name || 'Not assigned'),
