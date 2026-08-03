@@ -5,9 +5,9 @@ import {
   Cas1SpaceBookingDates,
   Cas1SpaceBookingSummary,
   Cas1SpaceBookingShortSummary,
+  RiskTier,
 } from '@approved-premises/api'
 import { RadioItem, SummaryList, TabItem, TableCell, TaskData, UserDetails } from '@approved-premises/ui'
-import { RiskTier } from '../../@types/shared'
 import { DateFormats } from '../dateUtils'
 import { personKeyDetails } from '../applications/helpers'
 import paths from '../../paths/manage'
