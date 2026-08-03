@@ -1,4 +1,5 @@
 import { RiskTier, TierDto } from '@approved-premises/api'
+import { personFactory, tierEnvelopeFactory } from '../testutils/factories'
 import {
   fullPersonFactory,
   fullPersonSummaryFactory,
@@ -11,6 +12,7 @@ import {
   displayName,
   getTierOrBlank,
   getVersionedTierOrBlank,
+  getVersionedTierValue,
   isApplicableTier,
   isFullPerson,
   isNotRestrictedPerson,
@@ -275,19 +277,17 @@ describe('personUtils', () => {
     })
 
     describe('when live tiers are disabled', () => {
+      const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
+
       beforeEach(() => {
         config.flags.useLiveTiers = false
       })
 
       it('returns the tier badge from application creation when present', () => {
-        const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
-
         expect(getVersionedTierOrBlank(person, tierOnApplicationCreation)).toEqual(tierBadge('static'))
       })
 
       it('returns an empty string when the application tier is undefined', () => {
-        const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
-
         expect(getVersionedTierOrBlank(person, undefined)).toEqual('')
       })
     })
@@ -308,6 +308,45 @@ describe('personUtils', () => {
         const person = fullPersonFactory.build({ tier: undefined })
 
         expect(getVersionedTierOrBlank(person, tierOnApplicationCreation)).toEqual('')
+      })
+    })
+  })
+
+  describe('getVersionedTierValue', () => {
+    const tierOnApplicationCreation = tierEnvelopeFactory.build({ value: { level: 'static', version: 'V2' } }).value
+    const personWithLiveTier = personFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
+
+    afterEach(() => {
+      config.flags.useLiveTiers = false
+    })
+
+    describe('when live tiers are disabled', () => {
+      beforeEach(() => {
+        config.flags.useLiveTiers = false
+      })
+
+      it('returns the tier from application creation when present', () => {
+        expect(getVersionedTierValue(personWithLiveTier, tierOnApplicationCreation)).toEqual('static')
+      })
+
+      it('returns an empty string when the application tier is undefined', () => {
+        expect(getVersionedTierValue(personWithLiveTier, undefined)).toEqual('')
+      })
+    })
+
+    describe('when live tiers are enabled', () => {
+      beforeEach(() => {
+        config.flags.useLiveTiers = true
+      })
+
+      it('returns the live person tier when present', () => {
+        expect(getVersionedTierValue(personWithLiveTier, tierOnApplicationCreation)).toEqual('live')
+      })
+
+      it('returns an empty string when the person has no tier', () => {
+        const personWithoutTier = personFactory.build({ tier: undefined })
+
+        expect(getVersionedTierValue(personWithoutTier, tierOnApplicationCreation)).toEqual('')
       })
     })
   })

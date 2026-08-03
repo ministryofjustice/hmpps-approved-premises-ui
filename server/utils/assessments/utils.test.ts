@@ -24,6 +24,9 @@ import {
   assessmentSummaryFactory,
   personFactory,
   prisonCaseNotesFactory,
+  risksFactory,
+  tierDtoFactory,
+  tierEnvelopeFactory,
   userDetailsFactory,
   userFactory,
 } from '../../testutils/factories'
@@ -328,10 +331,13 @@ describe('utils', () => {
   })
 
   describe('assessmentKeyDetails', () => {
-    const person = personFactory.build()
+    const person = personFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'D2Live' }) })
+    const risks = risksFactory.build({
+      tier: tierEnvelopeFactory.build({ value: { level: 'D2' } }),
+    })
 
     it('should return key details for an assessment when an arrival date is provided', () => {
-      const application = applicationFactory.build({ arrivalDate: '2022-01-01', person })
+      const application = applicationFactory.build({ arrivalDate: '2022-01-01', person, risks })
       const assessment = assessmentFactory.build({ application })
 
       expect(assessmentKeyDetails(assessment)).toEqual({
@@ -344,6 +350,10 @@ describe('utils', () => {
           {
             key: { text: 'CRN' },
             value: { text: application.person.crn },
+          },
+          {
+            key: { text: 'Tier' },
+            value: { text: 'D2' },
           },
           {
             key: { text: 'Arrival Date' },
@@ -364,7 +374,7 @@ describe('utils', () => {
     })
 
     it('should return key details for an assessment when an arrival date is not provided', () => {
-      const application = applicationFactory.build({ arrivalDate: undefined, person })
+      const application = applicationFactory.build({ arrivalDate: undefined, person, risks })
       const assessment = assessmentFactory.build({ application })
 
       expect(assessmentKeyDetails(assessment)).toEqual({
@@ -377,6 +387,10 @@ describe('utils', () => {
           {
             key: { text: 'CRN' },
             value: { text: application.person.crn },
+          },
+          {
+            key: { text: 'Tier' },
+            value: { text: 'D2' },
           },
           {
             key: { text: 'Arrival Date' },
@@ -394,6 +408,15 @@ describe('utils', () => {
           },
         ],
       })
+    })
+
+    it('should show the tier as not available if it is not defined', () => {
+      const application = applicationFactory.build({ person, risks: undefined })
+      const assessment = assessmentFactory.build({ application })
+
+      const result = assessmentKeyDetails(assessment)
+
+      expect(result.items[1].value).toEqual({ text: 'Not available' })
     })
   })
 
