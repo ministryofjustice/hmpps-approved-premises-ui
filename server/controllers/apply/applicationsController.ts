@@ -31,6 +31,7 @@ import { RestrictedPersonError } from '../../utils/errors'
 import peoplePaths from '../../paths/people'
 import { applicationKeyDetails, personKeyDetails } from '../../utils/applications/helpers'
 import { getPageBackLink } from '../../utils/backlinks'
+import config from '../../config'
 
 interface ShowRequest extends Request {
   query: { tab: ApplicationShowPageTab }
@@ -106,6 +107,7 @@ export default class ApplicationsController {
   show(): RequestHandler {
     return async (req: ShowRequest, res: Response) => {
       const application = await this.applicationService.findApplication(req.user.token, req.params.id)
+
       const backLink = getPageBackLink(paths.applications.show.pattern, req, [
         paths.applications.index.pattern,
         paths.applications.dashboard.pattern,
@@ -157,7 +159,12 @@ export default class ApplicationsController {
             DateFormats.dateObjtoUIDate(addYears(application.assessmentDecisionDate, 1)),
         })
       }
-      return res.render('applications/tasklist', { application, taskList, errorSummary, errors })
+
+      const risks = config.flags.useLiveTiers
+        ? await this.personService.riskProfile(req.user.token, application.person.crn)
+        : application.risks
+
+      return res.render('applications/tasklist', { application, taskList, errorSummary, errors, risks })
     }
   }
 

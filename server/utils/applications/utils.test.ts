@@ -181,7 +181,6 @@ PlacementRequest.pages['placement-request-page' as TaskNames] = {
 describe('utils', () => {
   beforeEach(() => {
     jest.resetAllMocks()
-    jest.spyOn(personUtils, 'tierBadge')
   })
 
   describe('applicationTableRows', () => {
@@ -270,8 +269,6 @@ describe('utils', () => {
 
         const result = applicationTableRows([application])
 
-        expect(personUtils.tierBadge).not.toHaveBeenCalled()
-
         expect(result[0][2]).toEqual({
           html: '',
         })
@@ -287,8 +284,6 @@ describe('utils', () => {
         })
 
         const result = applicationTableRows([application])
-
-        expect(personUtils.tierBadge).not.toHaveBeenCalled()
 
         expect(result[0][2]).toEqual({
           html: '',
@@ -445,8 +440,6 @@ describe('utils', () => {
 
         const result = dashboardTableRows([application])
 
-        expect(personUtils.tierBadge).not.toHaveBeenCalled()
-
         expect(result[0][2]).toEqual({
           html: '',
         })
@@ -462,8 +455,6 @@ describe('utils', () => {
         })
 
         const result = dashboardTableRows([application])
-
-        expect(personUtils.tierBadge).not.toHaveBeenCalled()
 
         expect(result[0][2]).toEqual({
           html: '',
@@ -486,7 +477,7 @@ describe('utils', () => {
               text: application.person.crn,
             },
             {
-              html: personUtils.tierBadge(application.tier),
+              html: personUtils.tierBadge(application.risks?.tier?.value?.level),
             },
             {
               text: DateFormats.isoDateToUIDate(application.arrivalDate, { format: 'short' }),
@@ -528,9 +519,8 @@ describe('utils', () => {
     })
 
     it('returns the is exceptional case page for an application with an unsuitable tier', () => {
-      jest.spyOn(personUtils, 'isApplicableTier').mockReturnValue(false)
       const tier = tierDtoFactory.v2Ineligible().build()
-      const person = personFactory.build({ tier })
+      const person = personFactory.build({ sex: 'Male', tier })
 
       expect(firstPageOfApplicationJourney(applicationId, person)).toEqual(
         paths.applications.pages.show({ id: applicationId, task: 'basic-information', page: 'is-exceptional-case' }),
@@ -996,7 +986,7 @@ describe('utils', () => {
     })
 
     it('returns the is exceptional case page for an application with an unsuitable tier', () => {
-      const person = fullPersonFactory.build({ tier: tierDtoFactory.v2Ineligible().build() })
+      const person = fullPersonFactory.build({ sex: 'Male', tier: tierDtoFactory.v2Ineligible().build() })
       const application = applicationFactory.build({ person })
 
       expect(tierQualificationPage(application)).toEqual(
