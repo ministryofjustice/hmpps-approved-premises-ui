@@ -442,11 +442,13 @@ export const createApplication = async (
     person,
     oasysSections,
     applicationType,
+    submit = 'true',
   }: {
     page: Page
     person: TestOptions['person']
     oasysSections: Array<string>
     applicationType: ApplicationType
+    submit?: string
   },
   withReleaseDate: boolean,
   testMappaFlow?: boolean,
@@ -493,15 +495,18 @@ export const createApplication = async (
   // And I check my answers
   await checkApplyAnswers(page)
 
-  // And I submit my application
-  await submitApplication(page)
+  if (submit !== 'false') {
+    // And I submit my application
+    await submitApplication(page)
 
-  // Then I should see a confirmation message
-  await shouldSeeConfirmationPage(page)
+    // Then I should see a confirmation message
+    await shouldSeeConfirmationPage(page)
 
-  const url = page.url()
+    const url = page.url()
 
-  return { id: url.match(/applications\/(.+)\//)[1], preferredAps, apType, preferredPostcode, releaseType }
+    return { id: url.match(/applications\/(.+)\//)[1], preferredAps, apType, preferredPostcode, releaseType }
+  }
+  return { preferredAps, apType, preferredPostcode, releaseType }
 }
 
 export const withdrawAnApplicationBeforeSubmission = async (page: Page, applicationId: string) => {
