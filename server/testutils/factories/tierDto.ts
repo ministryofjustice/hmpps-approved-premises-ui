@@ -6,7 +6,8 @@ import { DateFormats } from '../../utils/dateUtils'
 const v3EligibleTiers = ['A', 'B', 'C']
 const v3IneligibleTiers = ['D', 'E', 'F', 'G']
 const v2EligibleTiers = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3']
-const v2IneligibleTiers = ['C1', 'C2', 'C3']
+const v2IneligibleTiers = ['C1', 'C2']
+const v2WomenEligibleTiers = ['C3']
 
 class TierDtoFactory extends Factory<TierDto> {
   v3() {
@@ -18,7 +19,7 @@ class TierDtoFactory extends Factory<TierDto> {
 
   v2() {
     return this.params({
-      tierScore: faker.helpers.arrayElement([...v2EligibleTiers, ...v2IneligibleTiers]),
+      tierScore: faker.helpers.arrayElement([...v2EligibleTiers, ...v2IneligibleTiers, ...v2WomenEligibleTiers]),
       version: 'V2',
     })
   }

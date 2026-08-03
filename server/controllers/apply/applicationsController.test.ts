@@ -26,6 +26,7 @@ import {
   personFactory,
   requestForPlacementFactory,
   restrictedPersonFactory,
+  risksFactory,
 } from '../../testutils/factories'
 
 import paths from '../../paths/apply'
@@ -38,6 +39,7 @@ import { getApplicationShowPageTabs } from '../../utils/applications/utils'
 import { getApplicationTableHeader, getApplicationTableRows } from '../../utils/applications/manageApplications'
 import { applicationKeyDetails, personKeyDetails } from '../../utils/applications/helpers'
 import { statusesLimitedToOne } from '../../utils/applications/statusTag'
+import config from '../../config'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applications/getResponses')
@@ -248,6 +250,59 @@ describe('applicationsController', () => {
       contextKeyDetails: applicationKeyDetails(application),
     }
 
+    describe('the application is started and hence, the timeline shows', () => {
+      const stubTaskList = jest.fn()
+
+      beforeEach(() => {
+        application.status = 'started'
+        applicationService.findApplication.mockResolvedValue(application)
+        ;(TasklistService as jest.Mock).mockImplementation(() => {
+          return stubTaskList
+        })
+      })
+
+      afterEach(() => {
+        config.flags.useLiveTiers = false
+      })
+
+      it('fetches the application and live person risks from the API and renders the task list if the application is started and the the useLiveTiers feature flag is set', async () => {
+        config.flags.useLiveTiers = true
+
+        const risks = risksFactory.build()
+
+        personService.riskProfile.mockResolvedValue(risks)
+
+        await applicationsController.show()(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('applications/tasklist', {
+          application,
+          taskList: stubTaskList,
+          errors: {},
+          errorSummary: [],
+          risks,
+        })
+
+        expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
+        expect(personService.riskProfile).toHaveBeenCalledWith(token, application.person.crn)
+      })
+
+      it('uses the risk information from the application if the useLiveTiers feature flag is not set', async () => {
+        config.flags.useLiveTiers = false
+
+        await applicationsController.show()(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('applications/tasklist', {
+          application,
+          taskList: stubTaskList,
+          errors: {},
+          errorSummary: [],
+          risks: application.risks,
+        })
+
+        expect(personService.riskProfile).not.toHaveBeenCalled()
+      })
+    })
+
     it('renders the readonly view if the application has been submitted', async () => {
       application.status = 'awaitingAssesment'
 
@@ -260,29 +315,6 @@ describe('applicationsController', () => {
         tab: 'application',
         tabs: getApplicationShowPageTabs(application.id, 'application'),
       })
-    })
-
-    it('fetches the application from the API and renders the task list if the application is started', async () => {
-      application.status = 'started'
-
-      const requestHandler = applicationsController.show()
-      const stubTaskList = jest.fn()
-
-      applicationService.findApplication.mockResolvedValue(application)
-      ;(TasklistService as jest.Mock).mockImplementation(() => {
-        return stubTaskList
-      })
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('applications/tasklist', {
-        application,
-        taskList: stubTaskList,
-        errors: {},
-        errorSummary: [],
-      })
-
-      expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
     })
 
     describe('when the tab=timeline query param is present', () => {
@@ -406,6 +438,7 @@ describe('applicationsController', () => {
           taskList: stubTaskList,
           errors: errorsAndUserInput.errors,
           errorSummary: errorsAndUserInput.errorSummary,
+          risks: application.risks,
         })
 
         expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
