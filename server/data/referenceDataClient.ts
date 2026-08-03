@@ -1,7 +1,7 @@
 import type { ReferenceData } from '@approved-premises/ui'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
-import { ApArea, NonArrivalReason, ProbationRegion } from '../@types/shared'
+import { ApArea, AvailableTierDto, NonArrivalReason, ProbationRegion } from '../@types/shared'
 import paths from '../paths/api'
 
 export default class ReferenceDataClient {
@@ -28,6 +28,12 @@ export default class ReferenceDataClient {
   async getNonArrivalReasons(): Promise<Array<NonArrivalReason>> {
     return this.restClient.get<Array<NonArrivalReason>>({
       path: paths.referenceData({ type: 'non-arrival-reasons' }),
+    })
+  }
+
+  async getTiers(): Promise<Array<AvailableTierDto>> {
+    return this.restClient.get<Array<AvailableTierDto>>({
+      path: paths.referenceData({ type: 'tiers' }),
     })
   }
 }

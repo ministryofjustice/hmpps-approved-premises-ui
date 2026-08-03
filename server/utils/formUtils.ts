@@ -11,7 +11,6 @@ import type {
   SummaryListItem,
   TextItem,
 } from '@approved-premises/ui'
-import type { RiskTierLevel } from '@approved-premises/api'
 import { PlacementRequestStatus } from '@approved-premises/api'
 import { isCardinal, resolvePath, sentenceCase } from './utils'
 import { DateFormats } from './dateUtils'
@@ -257,10 +256,7 @@ export const escape = (text: string): string => {
   const escapeFilter = new nunjucks.Environment().getFilter('escape')
   return escapeFilter(text).val
 }
-
-export const tierSelectOptions = (selectedOption: RiskTierLevel | undefined): Array<SelectOption> => {
-  const tiers = ['D0', 'D1', 'D2', 'D3', 'C0', 'C1', 'C2', 'C3', 'B0', 'B1', 'B2', 'B3', 'A0', 'A1', 'A2', 'A3']
-
+export const tierSelectOptions = (tiers: Array<string>, selectedOption: string | undefined): Array<SelectOption> => {
   const options = tiers.map(tier => ({
     text: tier,
     value: tier,

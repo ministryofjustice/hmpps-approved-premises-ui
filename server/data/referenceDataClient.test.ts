@@ -1,4 +1,5 @@
 import {
+  AvailableTierDto,
   CancellationReason,
   DepartureReason,
   DestinationProvider,
@@ -132,6 +133,30 @@ describeClient('ReferenceDataClient', provider => {
 
       const output = await referenceDataClient.getNonArrivalReasons()
       expect(output).toEqual(nonArrivalReasons)
+    })
+  })
+
+  describe('getTiers', () => {
+    it('should return an array of AvailableTierDto objects', async () => {
+      const tiers: Array<AvailableTierDto> = [{ tier: 'T1' }, { tier: 'T2' }, { tier: 'T3' }]
+
+      await provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: `A request to get available Tiers`,
+        withRequest: {
+          method: 'GET',
+          path: paths.referenceData({ type: 'tiers' }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: tiers,
+        },
+      })
+
+      expect(await referenceDataClient.getTiers()).toEqual(tiers)
     })
   })
 })

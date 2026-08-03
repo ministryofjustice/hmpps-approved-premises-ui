@@ -520,7 +520,7 @@ describe('utils', () => {
 
     it('returns the is exceptional case page for an application with an unsuitable tier', () => {
       const tier = tierDtoFactory.v2Ineligible().build()
-      const person = personFactory.build({ sex: 'Male', tier })
+      const person = fullPersonFactory.build({ sex: 'Male', tier })
 
       expect(firstPageOfApplicationJourney(applicationId, person)).toEqual(
         paths.applications.pages.show({ id: applicationId, task: 'basic-information', page: 'is-exceptional-case' }),
