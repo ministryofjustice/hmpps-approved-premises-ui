@@ -28,7 +28,7 @@ export default class NewPlacementController {
     const { placementRequestId } = req.params
     const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
     const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, placementRequestId)
-    const contextKeyDetails = personKeyDetails(placementRequest.person, placementRequest.risks.tier.value.level)
+    const contextKeyDetails = personKeyDetails(placementRequest.person, placementRequest.risks.tier.value)
 
     return { placementRequestId, placementRequest, contextKeyDetails, errors, errorSummary, userInput }
   }

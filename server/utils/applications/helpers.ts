@@ -1,6 +1,6 @@
 import { KeyDetailsArgs } from '@approved-premises/ui'
-import { Cas1Application, Cas1ApplicationSummary, Person } from '../../@types/shared'
-import { displayName, isFullPerson } from '../personUtils'
+import { Cas1Application, Cas1ApplicationSummary, Person, RiskTier } from '../../@types/shared'
+import { displayName, getVersionedTierValue, isFullPerson } from '../personUtils'
 import paths from '../../paths/apply'
 import { DateFormats } from '../dateUtils'
 import { htmlCell, textCell } from '../tableUtils'
@@ -31,11 +31,14 @@ export const createNameAnchorElement = (
     : textCell(name)
 }
 
-export const personKeyDetails = (person: Person, tier?: string): KeyDetailsArgs => ({
+export const personKeyDetails = (person: Person, tierOnApplicationCreation?: RiskTier): KeyDetailsArgs => ({
   header: { value: displayName(person), key: '', showKey: false },
   items: [
     { key: textCell('CRN'), value: textCell(person.crn) },
-    { key: { text: 'Tier' }, value: { text: tier || 'Not available' } },
+    {
+      key: { text: 'Tier' },
+      value: { text: getVersionedTierValue(person, tierOnApplicationCreation) || 'Not available' },
+    },
     isFullPerson(person)
       ? {
           key: { text: 'Date of birth' },
@@ -48,4 +51,4 @@ export const personKeyDetails = (person: Person, tier?: string): KeyDetailsArgs 
 })
 
 export const applicationKeyDetails = (application: Cas1Application): KeyDetailsArgs =>
-  personKeyDetails(application.person, application.risks?.tier?.value?.level)
+  personKeyDetails(application.person, application.risks?.tier?.value)

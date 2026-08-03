@@ -7,6 +7,7 @@ import {
   Cas1SpaceBookingShortSummary,
 } from '@approved-premises/api'
 import { RadioItem, SummaryList, TabItem, TableCell, TaskData, UserDetails } from '@approved-premises/ui'
+import { RiskTier } from '../../@types/shared'
 import { DateFormats } from '../dateUtils'
 import { personKeyDetails } from '../applications/helpers'
 import paths from '../../paths/manage'
@@ -125,7 +126,8 @@ export const actions = (placement: Cas1SpaceBooking, user: UserDetails, profileD
   return actionList.length ? [{ items: actionList }] : null
 }
 
-export const placementKeyDetails = (placement: Cas1SpaceBooking) => personKeyDetails(placement.person, placement.tier)
+export const placementKeyDetails = (placement: Cas1SpaceBooking) =>
+  personKeyDetails(placement.person, placement.tier ? ({ level: placement.tier } as RiskTier) : undefined)
 
 export const placementName = (placement: Cas1SpaceBookingSummary): string =>
   `${placement.premises.name} from ${DateFormats.isoDateToUIDate(placement.expectedArrivalDate)}`
