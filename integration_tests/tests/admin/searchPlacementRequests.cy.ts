@@ -109,7 +109,7 @@ context('Search placement Requests', () => {
       sortDirection: 'desc',
     })
 
-    WHEN('I visit the search paget')
+    WHEN('I visit the search page')
     const searchPage = SearchPage.visit()
 
     THEN('I should see a list of placement requests')
