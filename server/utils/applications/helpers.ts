@@ -4,6 +4,7 @@ import { displayName, getVersionedTierValue, isFullPerson } from '../personUtils
 import paths from '../../paths/apply'
 import { DateFormats } from '../dateUtils'
 import { htmlCell, textCell } from '../tableUtils'
+import { summaryListItem } from '../formUtils'
 
 export const createNameAnchorElement = (
   person: Person,
@@ -34,18 +35,10 @@ export const createNameAnchorElement = (
 export const personKeyDetails = (person: Person, tierOnApplicationCreation?: RiskTier): KeyDetailsArgs => ({
   header: { value: displayName(person), key: '', showKey: false },
   items: [
-    { key: textCell('CRN'), value: textCell(person.crn) },
-    {
-      key: { text: 'Tier' },
-      value: { text: getVersionedTierValue(person, tierOnApplicationCreation) || 'Not available' },
-    },
+    summaryListItem('CRN', person.crn),
+    summaryListItem('Tier', getVersionedTierValue(person, tierOnApplicationCreation) || 'Not available'),
     isFullPerson(person)
-      ? {
-          key: { text: 'Date of birth' },
-          value: {
-            text: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
-          },
-        }
+      ? summaryListItem('Date of birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
       : undefined,
   ],
 })
