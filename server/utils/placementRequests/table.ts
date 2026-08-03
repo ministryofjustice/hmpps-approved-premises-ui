@@ -10,8 +10,9 @@ import { DateFormats } from '../dateUtils'
 import { linkTo } from '../utils'
 import { dateCell, htmlCell, textCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
-import { displayName, isFullPerson, tierBadge } from '../personUtils'
+import { displayName, isFullPerson, personTier, tierBadge, versionedTierBadge } from '../personUtils'
 import { placementRequestStatus } from '../formUtils'
+import config from '../../config'
 
 export const dashboardTableRows = (
   placementRequests: Array<Cas1PlacementRequestSummary>,
@@ -20,7 +21,11 @@ export const dashboardTableRows = (
   placementRequests.map(placementRequest =>
     [
       nameCell(placementRequest),
-      htmlCell(tierBadge(placementRequest.personTier)),
+      htmlCell(
+        config.flags.useLiveTiers
+          ? versionedTierBadge(personTier(placementRequest.person))
+          : tierBadge(placementRequest.personTier),
+      ),
       textCell(placementRequest.isParole ? 'Parole' : 'Standard release'),
       status === 'matched' && dateCell(placementRequest.firstBookingArrivalDate),
       status === 'matched' && textCell(placementRequest.firstBookingPremisesName),
@@ -62,7 +67,7 @@ export const dashboardTableHeader = (
 
   return [
     sortColumn('Name and CRN', 'person_name'),
-    sortColumn('Tier', 'person_risks_tier'),
+    sortColumn('Tier', config.flags.useLiveTiers ? 'person_tier' : 'person_risks_tier'),
     sortColumn('Request type', 'request_type'),
     status === 'matched' && sortColumn('Booked arrival date', 'canonical_arrival_date'),
     status === 'matched' && sortColumn('Approved Premises', 'name'),
