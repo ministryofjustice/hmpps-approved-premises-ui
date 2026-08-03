@@ -85,7 +85,7 @@
 
     {% if not oasysDisabled %}
         <div class="govuk-grid-column-one-third">
-            {{ widgets(assessment.application.risks | mapApiPersonRisksForUi) }}
+            {{ widgets(risks | mapApiPersonRisksForUi) }}
         </div>
     {% endif %}
 
