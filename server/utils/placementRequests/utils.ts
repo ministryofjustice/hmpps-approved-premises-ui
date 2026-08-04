@@ -31,7 +31,7 @@ export const withdrawalMessage = (duration: number, expectedArrivalDate: string)
   `Request for placement for ${DateFormats.formatDuration(duration)} starting on ${DateFormats.isoDateToUIDate(expectedArrivalDate, { format: 'short' })} withdrawn successfully`
 
 export const placementRequestKeyDetails = (placementRequest: Cas1PlacementRequestDetail) =>
-  personKeyDetails(placementRequest.person, placementRequest.risks?.tier?.value?.level)
+  personKeyDetails(placementRequest.person, placementRequest.risks?.tier?.value)
 
 export const placementRadioItems = (
   placements: Array<Cas1SpaceBookingSummary>,
