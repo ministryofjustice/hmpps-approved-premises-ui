@@ -12,7 +12,6 @@ import {
   Licence,
   Person,
   PersonAcctAlert,
-  PersonRisks,
   PrisonCaseNote,
   RoshRisks,
 } from '@approved-premises/api'
@@ -215,9 +214,9 @@ export default class ResidentProfilePage extends Page {
     cards.forEach(card => this.shouldShowCard(card))
   }
 
-  shouldShowPersonalInformation(person: Person, personRisks: PersonRisks) {
+  shouldShowPersonalInformation(person: Person) {
     cy.stub(residentUtils, 'insetText').returns('inset text')
-    const cards = personDetailsCardList(person as FullPerson, personRisks)
+    const cards = personDetailsCardList(person as FullPerson)
     cards.forEach(card => this.shouldShowCard(card))
   }
 
