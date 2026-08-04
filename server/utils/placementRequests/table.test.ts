@@ -2,9 +2,9 @@ import { PlacementRequestSortField, PlacementRequestStatus } from '@approved-pre
 import { cas1PlacementRequestSummaryFactory, restrictedPersonFactory } from '../../testutils/factories'
 import { dashboardTableHeader, dashboardTableRows, durationCell, nameCell } from './table'
 import { DateFormats } from '../dateUtils'
-import { htmlCell, textCell } from '../tableUtils'
+import { textCell, versionedTierCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
-import { displayName, personTier, tierBadge, versionedTierBadge } from '../personUtils'
+import { displayName } from '../personUtils'
 import * as utils from '../utils'
 import adminPaths from '../../paths/admin'
 import { fullPersonFactory } from '../../testutils/factories/person'
@@ -95,7 +95,7 @@ describe('tableUtils', () => {
         expect(dashboardTableRows([placementRequest], status)).toEqual([
           [
             nameCell(placementRequest),
-            htmlCell(versionedTierBadge(personTier(placementRequest.person))),
+            versionedTierCell(placementRequest.person, { level: placementRequest.personTier }),
             textCell('Parole'),
             textCell(DateFormats.isoDateToUIDate(placementRequest.applicationSubmittedDate, { format: 'short' })),
             textCell(DateFormats.isoDateToUIDate(placementRequest.requestedPlacementArrivalDate, { format: 'short' })),
@@ -111,7 +111,7 @@ describe('tableUtils', () => {
       expect(dashboardTableRows([placementRequest], 'matched')).toEqual([
         [
           nameCell(placementRequest),
-          htmlCell(versionedTierBadge(personTier(placementRequest.person))),
+          versionedTierCell(placementRequest.person, { level: placementRequest.personTier }),
           textCell('Parole'),
           textCell(DateFormats.isoDateToUIDate(placementRequest.firstBookingArrivalDate, { format: 'short' })),
           textCell(placementRequest.firstBookingPremisesName),
@@ -137,7 +137,7 @@ describe('tableUtils', () => {
       expect(dashboardTableRows([placementRequest], undefined)).toEqual([
         [
           nameCell(placementRequest),
-          htmlCell(versionedTierBadge(personTier(placementRequest.person))),
+          versionedTierCell(placementRequest.person, { level: placementRequest.personTier }),
           textCell('Parole'),
           textCell(DateFormats.isoDateToUIDate(placementRequest.requestedPlacementArrivalDate, { format: 'short' })),
           durationCell(placementRequest.requestedPlacementDuration),
@@ -153,7 +153,7 @@ describe('tableUtils', () => {
       expect(dashboardTableRows([placementRequest], 'matched')).toEqual([
         [
           nameCell(placementRequest),
-          htmlCell(tierBadge(placementRequest.personTier)),
+          versionedTierCell(placementRequest.person, { level: placementRequest.personTier }),
           textCell('Parole'),
           textCell(DateFormats.isoDateToUIDate(placementRequest.firstBookingArrivalDate, { format: 'short' })),
           textCell(placementRequest.firstBookingPremisesName),

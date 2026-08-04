@@ -8,9 +8,9 @@ import { TableCell, TableRow } from '@approved-premises/ui'
 import adminPaths from '../../paths/admin'
 import { DateFormats } from '../dateUtils'
 import { linkTo } from '../utils'
-import { dateCell, htmlCell, textCell } from '../tableUtils'
+import { dateCell, htmlCell, textCell, versionedTierCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
-import { displayName, isFullPerson, personTier, tierBadge, versionedTierBadge } from '../personUtils'
+import { displayName, isFullPerson } from '../personUtils'
 import { placementRequestStatus } from '../formUtils'
 import config from '../../config'
 
@@ -21,11 +21,7 @@ export const dashboardTableRows = (
   placementRequests.map(placementRequest =>
     [
       nameCell(placementRequest),
-      htmlCell(
-        config.flags.useLiveTiers
-          ? versionedTierBadge(personTier(placementRequest.person))
-          : tierBadge(placementRequest.personTier),
-      ),
+      versionedTierCell(placementRequest.person, { level: placementRequest.personTier }),
       textCell(placementRequest.isParole ? 'Parole' : 'Standard release'),
       status === 'matched' && dateCell(placementRequest.firstBookingArrivalDate),
       status === 'matched' && textCell(placementRequest.firstBookingPremisesName),

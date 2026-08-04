@@ -135,7 +135,7 @@ const personTier = (person: Person | PersonSummary): TierDto => {
  */
 const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(tier) : '')
 
-const getVersionedTierOrBlank = (person: Person | PersonSummary, tierOnApplicationCreation?: RiskTier) => {
+const getVersionedTierOrBlank = (person: Person | PersonSummary, tierOnApplicationCreation?: Partial<RiskTier>) => {
   if (!config.flags.useLiveTiers) {
     return getTierOrBlank(tierOnApplicationCreation?.level)
   }
