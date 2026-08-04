@@ -188,7 +188,7 @@ export default class ApplicationsController {
         applicationList.length > 0 ? applicationList[0].person : await this.personService.findByCrn(req.user.token, crn)
 
       return res.render('applications/manageApplications', {
-        contextKeyDetails: personKeyDetails(person, applicationList[0] && applicationList[0].risks?.tier?.value?.level),
+        contextKeyDetails: personKeyDetails(person, applicationList[0] && applicationList[0].risks?.tier?.value),
         continuePath: applicationList.length > 0 ? undefined : paths.applications.people.selectOffence({ crn }),
         pageHeading: getApplicationsHeading(applicationList),
         applicationsHeader: getApplicationTableHeader(),
