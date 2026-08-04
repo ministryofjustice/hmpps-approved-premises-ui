@@ -200,8 +200,8 @@ export const placementTableRows = (
   return mapPlacementTableRows(columnMap[activeTab], premisesId, placements, request)
 }
 
-export const mapPlacementTableRows = <T extends string>(
-  fields: Array<ColumnDefinition<T>>,
+export const mapPlacementTableRows = (
+  fields: Array<ColumnDefinition<ColumnField>>,
   premisesId: string,
   placements: Array<Cas1SpaceBookingSummary>,
   request: RequestWithSession,
@@ -226,7 +226,7 @@ export const mapPlacementTableRows = <T extends string>(
       ),
     }
 
-    return fields.map(({ fieldName }) => fieldValues[fieldName as ColumnField])
+    return fields.map(({ fieldName }) => fieldValues[fieldName])
   })
 
 export const localRestrictionsTableRows = (premises: Cas1Premises): Array<TableRow> =>

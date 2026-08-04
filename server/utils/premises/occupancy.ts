@@ -170,7 +170,7 @@ export type SortablePlacementColumnField = Exclude<Cas1SpaceBookingDaySummarySor
 export type PlacementColumnField = SortablePlacementColumnField | 'spaceType'
 export type OutOfServiceBedColumnField = keyof Cas1OutOfServiceBedSummary
 
-export const placementColumnMap: Array<ColumnDefinition<PlacementColumnField>> = [
+export const placementColumnMap: Array<ColumnDefinition<Exclude<PlacementColumnField, 'personTier'>>> = [
   { title: 'Name and CRN', fieldName: 'personName', sortable: true },
   { title: 'Tier', fieldName: 'tier', sortable: true },
   { title: 'Arrival date', fieldName: 'canonicalArrivalDate', sortable: true },
