@@ -18,6 +18,7 @@ import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { getRoomCharacteristicLabel, roomCharacteristicMap } from '../characteristicsUtils'
 import { mapPlacementTableRows } from './index'
 import { htmlCell, textCell } from '../tableUtils'
+import config from '../../config'
 
 type CalendarDayStatus = 'available' | 'full' | 'overbooked'
 
@@ -197,9 +198,11 @@ export const tableHeader = <T extends string>(
   sortDirection?: SortDirection,
   hrefPrefix?: string,
 ): Array<TableCell> => {
-  return columnMap.map(({ title, fieldName, sortable }: ColumnDefinition<T>) =>
-    sortable ? sortHeader<T>(title, fieldName, sortBy, sortDirection, hrefPrefix) : textCell(title),
-  )
+  return columnMap.map(({ title, fieldName, sortable }: ColumnDefinition<T>) => {
+    if (!sortable) return textCell(title)
+    const targetField = fieldName === 'tier' && config.flags.useLiveTiers ? ('personTier' as T) : fieldName
+    return sortHeader<T>(title, targetField, sortBy, sortDirection, hrefPrefix)
+  })
 }
 
 export const placementTableRows = (

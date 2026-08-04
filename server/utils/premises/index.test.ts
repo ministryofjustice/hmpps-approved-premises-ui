@@ -299,9 +299,7 @@ describe('premisesUtils', () => {
 
       const tableHeadings = placementTableHeader('upcoming', 'personTier', 'asc', 'Test_Href_Prefix')
 
-      expect(tableHeadings).toContainEqual(
-        sortHeader('Tier', 'personTier', 'personTier', 'asc', 'Test_Href_Prefix'),
-      )
+      expect(tableHeadings).toContainEqual(sortHeader('Tier', 'personTier', 'personTier', 'asc', 'Test_Href_Prefix'))
     })
   })
 
