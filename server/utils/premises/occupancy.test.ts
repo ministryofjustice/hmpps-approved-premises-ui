@@ -247,6 +247,10 @@ describe('apOccupancy utils', () => {
   describe('tableHeader', () => {
     const prefix: string = 'prefix'
     type FieldName = 'fn1' | 'fn2'
+    afterEach(() => {
+      config.flags.useLiveTiers = false
+    })
+
     it('should render a data table header', () => {
       const tableDefinition: Array<ColumnDefinition<FieldName>> = [
         { title: 'Col 1', fieldName: 'fn1', sortable: true },
@@ -276,7 +280,6 @@ describe('apOccupancy utils', () => {
       expect(tableHeader(tierColumn, 'personTier', 'asc', prefix)).toEqual([
         sortHeader('Tier', 'personTier', 'personTier', 'asc', prefix),
       ])
-      config.flags.useLiveTiers = false
     })
 
     it('should render the Tier column sorted on "tier" when the useLiveTiers flag is disabled', () => {
