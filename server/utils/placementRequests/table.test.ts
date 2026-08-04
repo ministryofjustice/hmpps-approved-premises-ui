@@ -2,13 +2,14 @@ import { PlacementRequestSortField, PlacementRequestStatus } from '@approved-pre
 import { cas1PlacementRequestSummaryFactory, restrictedPersonFactory } from '../../testutils/factories'
 import { dashboardTableHeader, dashboardTableRows, durationCell, nameCell } from './table'
 import { DateFormats } from '../dateUtils'
-import { htmlCell, textCell } from '../tableUtils'
+import { textCell, versionedTierCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
-import { displayName, tierBadge } from '../personUtils'
+import { displayName } from '../personUtils'
 import * as utils from '../utils'
 import adminPaths from '../../paths/admin'
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { placementRequestStatus } from '../formUtils'
+import config from '../../config'
 
 describe('tableUtils', () => {
   beforeEach(() => {
@@ -75,6 +76,14 @@ describe('tableUtils', () => {
       matched: cas1PlacementRequestSummaryFactory.matched(),
     }
 
+    beforeEach(() => {
+      config.flags.useLiveTiers = true
+    })
+
+    afterEach(() => {
+      config.flags.useLiveTiers = false
+    })
+
     it.each(['notMatched', 'unableToMatch'])(
       'returns table rows for placement requests with status %s',
       (status: PlacementRequestStatus) => {
@@ -86,7 +95,7 @@ describe('tableUtils', () => {
         expect(dashboardTableRows([placementRequest], status)).toEqual([
           [
             nameCell(placementRequest),
-            htmlCell(tierBadge(placementRequest.personTier)),
+            versionedTierCell(placementRequest.person, { level: placementRequest.personTier }),
             textCell('Parole'),
             textCell(DateFormats.isoDateToUIDate(placementRequest.applicationSubmittedDate, { format: 'short' })),
             textCell(DateFormats.isoDateToUIDate(placementRequest.requestedPlacementArrivalDate, { format: 'short' })),
@@ -102,7 +111,7 @@ describe('tableUtils', () => {
       expect(dashboardTableRows([placementRequest], 'matched')).toEqual([
         [
           nameCell(placementRequest),
-          htmlCell(tierBadge(placementRequest.personTier)),
+          versionedTierCell(placementRequest.person, { level: placementRequest.personTier }),
           textCell('Parole'),
           textCell(DateFormats.isoDateToUIDate(placementRequest.firstBookingArrivalDate, { format: 'short' })),
           textCell(placementRequest.firstBookingPremisesName),
@@ -128,11 +137,26 @@ describe('tableUtils', () => {
       expect(dashboardTableRows([placementRequest], undefined)).toEqual([
         [
           nameCell(placementRequest),
-          htmlCell(tierBadge(placementRequest.personTier)),
+          versionedTierCell(placementRequest.person, { level: placementRequest.personTier }),
           textCell('Parole'),
           textCell(DateFormats.isoDateToUIDate(placementRequest.requestedPlacementArrivalDate, { format: 'short' })),
           durationCell(placementRequest.requestedPlacementDuration),
           textCell(placementRequestStatus[placementRequest.placementRequestStatus]),
+        ],
+      ])
+    })
+
+    it('returns the static tier badge if the useLiveTiers feature flag is not enabled', () => {
+      config.flags.useLiveTiers = false
+
+      const placementRequest = factories.matched.build({ isParole: true })
+      expect(dashboardTableRows([placementRequest], 'matched')).toEqual([
+        [
+          nameCell(placementRequest),
+          versionedTierCell(placementRequest.person, { level: placementRequest.personTier }),
+          textCell('Parole'),
+          textCell(DateFormats.isoDateToUIDate(placementRequest.firstBookingArrivalDate, { format: 'short' })),
+          textCell(placementRequest.firstBookingPremisesName),
         ],
       ])
     })
@@ -143,12 +167,20 @@ describe('tableUtils', () => {
     const sortDirection = 'asc'
     const hrefPrefix = 'http://example.com'
 
+    beforeEach(() => {
+      config.flags.useLiveTiers = true
+    })
+
+    afterEach(() => {
+      config.flags.useLiveTiers = false
+    })
+
     it.each(['notMatched', 'unableToMatch'])(
       'returns the table headers for the %s status',
       (status: PlacementRequestStatus) => {
         expect(dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix)).toEqual([
           sortHeader<PlacementRequestSortField>('Name and CRN', 'person_name', sortBy, sortDirection, hrefPrefix),
-          sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
+          sortHeader<PlacementRequestSortField>('Tier', 'person_tier', sortBy, sortDirection, hrefPrefix),
           sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
           sortHeader<PlacementRequestSortField>(
             'Application date',
@@ -172,7 +204,7 @@ describe('tableUtils', () => {
     it('returns the table headers for the matched status', () => {
       expect(dashboardTableHeader('matched', sortBy, sortDirection, hrefPrefix)).toEqual([
         sortHeader<PlacementRequestSortField>('Name and CRN', 'person_name', sortBy, sortDirection, hrefPrefix),
-        sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>('Tier', 'person_tier', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>(
           'Booked arrival date',
@@ -188,7 +220,7 @@ describe('tableUtils', () => {
     it('returns the table headers when no status is provided (Search tab)', () => {
       expect(dashboardTableHeader(undefined, sortBy, sortDirection, hrefPrefix)).toEqual([
         sortHeader<PlacementRequestSortField>('Name and CRN', 'person_name', sortBy, sortDirection, hrefPrefix),
-        sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>('Tier', 'person_tier', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>(
           'Requested arrival date',
@@ -199,6 +231,24 @@ describe('tableUtils', () => {
         ),
         sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
         { text: 'Status' },
+      ])
+    })
+
+    it('uses the static tier "person_risks_tier" rather than "person_tier" if the useLiveTiers flag is not enabled', () => {
+      config.flags.useLiveTiers = false
+
+      expect(dashboardTableHeader('matched', sortBy, sortDirection, hrefPrefix)).toEqual([
+        sortHeader<PlacementRequestSortField>('Name and CRN', 'person_name', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>(
+          'Booked arrival date',
+          'canonical_arrival_date',
+          sortBy,
+          sortDirection,
+          hrefPrefix,
+        ),
+        sortHeader<PlacementRequestSortField>('Approved Premises', 'name', sortBy, sortDirection, hrefPrefix),
       ])
     })
   })

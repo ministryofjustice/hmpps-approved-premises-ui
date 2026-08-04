@@ -1,5 +1,12 @@
 import { Response } from 'superagent'
-import { ApArea, Cas1ChangeRequestType, Cas1CruManagementArea, NamedId, NonArrivalReason } from '@approved-premises/api'
+import {
+  ApArea,
+  AvailableTierDto,
+  Cas1ChangeRequestType,
+  Cas1CruManagementArea,
+  NamedId,
+  NonArrivalReason,
+} from '@approved-premises/api'
 import { ReferenceData } from '@approved-premises/ui'
 import { stubFor } from './setup'
 import {
@@ -149,6 +156,21 @@ const stubChangeRequestRejectionReasonsReferenceData = ({
     },
   })
 
+const stubTierReferenceData = ({ tiers }: { tiers: Array<AvailableTierDto> }) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      url: paths.referenceData({ type: 'tiers' }),
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: tiers,
+    },
+  })
+
 export default {
   stubApAreaReferenceData,
   stubCruManagementAreaReferenceData,
@@ -157,4 +179,5 @@ export default {
   stubMoveOnCategoriesReferenceData,
   stubChangeRequestReasonsReferenceData,
   stubChangeRequestRejectionReasonsReferenceData,
+  stubTierReferenceData,
 }

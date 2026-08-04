@@ -1,3 +1,4 @@
+import config from '../config'
 import {
   FullPerson,
   FullPersonSummary,
@@ -10,7 +11,6 @@ import {
   UnknownPerson,
   UnknownPersonSummary,
 } from '../@types/shared'
-import config from '../config'
 
 const tierBadge = (tier: string): string => {
   if (!tier) return ''
@@ -135,12 +135,19 @@ const personTier = (person: Person | PersonSummary): TierDto => {
  */
 const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(tier) : '')
 
-const getVersionedTierOrBlank = (person: Person | PersonSummary, tierOnApplicationCreation?: RiskTier) => {
+const getVersionedTierOrBlank = (person: Person | PersonSummary, tierOnApplicationCreation?: Partial<RiskTier>) => {
   if (!config.flags.useLiveTiers) {
     return getTierOrBlank(tierOnApplicationCreation?.level)
   }
   const tier = personTier(person)
   return tier ? versionedTierBadge(tier) : ''
+}
+
+const getVersionedTierValue = (person: Person | PersonSummary, tierOnApplicationCreation?: RiskTier): string => {
+  if (!config.flags.useLiveTiers) {
+    return tierOnApplicationCreation?.level || ''
+  }
+  return personTier(person)?.tierScore || ''
 }
 
 export {
@@ -154,4 +161,5 @@ export {
   displayName,
   isUnknownPerson,
   personTier,
+  getVersionedTierValue,
 }

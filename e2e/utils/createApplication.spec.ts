@@ -6,6 +6,7 @@ import { assessApplication } from '../steps/assess'
 
 const applicationType = process.env.APPLICATION_TYPE as ApplicationType
 const assess: string = process.env.ASSESS_APPLICATION
+const submit: string = process.env.SUBMIT_APPLICATION
 
 test(`create ${assess ? 'and assess ' : ''}${applicationType} application`, async ({
   page,
@@ -15,7 +16,7 @@ test(`create ${assess ? 'and assess ' : ''}${applicationType} application`, asyn
   emergencyApplicationUser,
 }) => {
   await signIn(page, assessor)
-  const { id } = await createApplication({ page, person, oasysSections, applicationType }, true, true)
+  const { id } = await createApplication({ page, person, oasysSections, applicationType, submit }, true, true)
 
   if (assess) {
     const allocatedUser = applicationType !== 'standard' ? emergencyApplicationUser : undefined

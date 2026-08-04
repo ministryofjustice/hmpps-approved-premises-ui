@@ -70,7 +70,7 @@ describe('utils', () => {
 
       expect(applicationHelpers.personKeyDetails).toHaveBeenCalledWith(
         placementRequest.person,
-        placementRequest.risks.tier.value.level,
+        placementRequest.risks.tier.value,
       )
     })
   })
