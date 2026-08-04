@@ -35,7 +35,7 @@ export const tierCell = (value: string) => ({
   attributes: { 'data-sort-value': tierSortKey(value) },
 })
 
-export const versionedTierCell = (person: Person | PersonSummary, tierOnApplicationCreation?: RiskTier) => {
+export const versionedTierCell = (person: Person | PersonSummary, tierOnApplicationCreation?: Partial<RiskTier>) => {
   const tierScore = config.flags.useLiveTiers ? personTier(person)?.tierScore : tierOnApplicationCreation?.level
 
   return {
