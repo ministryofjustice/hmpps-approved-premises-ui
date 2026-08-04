@@ -7,7 +7,7 @@ import {
   Cas1SpaceBookingSummary,
   SortDirection,
 } from '@approved-premises/api'
-import { SelectOption, SummaryListItem, TableCell, TableRow } from '@approved-premises/ui'
+import { ColumnDefinition, SelectOption, SummaryListItem, TableCell, TableRow } from '@approved-premises/ui'
 import { Request } from 'express'
 import { DateFormats } from '../dateUtils'
 import managePaths from '../../paths/manage'
@@ -169,12 +169,6 @@ const itemListHtml = (items: Array<string>): TableCell =>
 export type SortablePlacementColumnField = Exclude<Cas1SpaceBookingDaySummarySortField, 'releaseType'>
 export type PlacementColumnField = SortablePlacementColumnField | 'spaceType'
 export type OutOfServiceBedColumnField = keyof Cas1OutOfServiceBedSummary
-
-export type ColumnDefinition<T> = {
-  title: string
-  fieldName: T
-  sortable: boolean
-}
 
 export const placementColumnMap: Array<ColumnDefinition<PlacementColumnField>> = [
   { title: 'Name and CRN', fieldName: 'personName', sortable: true },

@@ -17,7 +17,7 @@ import {
   TabItem,
   TableCell,
   TableRow,
-  v2SortField,
+  ColumnDefinition,
 } from '@approved-premises/ui'
 import { Request } from 'express'
 import config from '../../config'
@@ -156,23 +156,22 @@ export const keyworkersToSelectOptions = (
     })),
 ]
 
-type ColumnField = v2SortField | 'status' | 'spaceType'
+type ColumnField = Exclude<Cas1SpaceBookingSummarySortField, 'personTier'> | 'status' | 'spaceType'
 
-type ColumnDefinition = {
-  title: string
-  fieldName: ColumnField
-  sortable: boolean
-}
-const baseColumns: Array<ColumnDefinition> = [
+const baseColumns: Array<ColumnDefinition<ColumnField>> = [
   { title: 'Name and CRN', fieldName: 'personName', sortable: true },
   { title: 'Tier', fieldName: 'tier', sortable: true },
   { title: 'Arrival date', fieldName: 'canonicalArrivalDate', sortable: true },
   { title: 'Departure date', fieldName: 'canonicalDepartureDate', sortable: true },
 ]
-const statusColumn: ColumnDefinition = { title: 'Status', fieldName: 'status', sortable: false }
-const keyWorkerColumn: ColumnDefinition = { title: 'Key worker', fieldName: 'keyWorkerName', sortable: true }
+const statusColumn: ColumnDefinition<ColumnField> = { title: 'Status', fieldName: 'status', sortable: false }
+const keyWorkerColumn: ColumnDefinition<ColumnField> = {
+  title: 'Key worker',
+  fieldName: 'keyWorkerName',
+  sortable: true,
+}
 
-const columnMap: Record<PremisesTab, Array<ColumnDefinition>> = {
+const columnMap: Record<PremisesTab, Array<ColumnDefinition<ColumnField>>> = {
   upcoming: [...baseColumns, keyWorkerColumn, statusColumn],
   current: [...baseColumns, keyWorkerColumn, statusColumn],
   historic: [...baseColumns, statusColumn],
@@ -185,11 +184,10 @@ export const placementTableHeader = (
   sortDirection: SortDirection,
   hrefPrefix: string,
 ): Array<TableCell> => {
-  return columnMap[activeTab].map(({ title, fieldName, sortable }: ColumnDefinition) => {
+  return columnMap[activeTab].map(({ title, fieldName, sortable }: ColumnDefinition<ColumnField>) => {
     if (!sortable) return textCell(title)
-    const targetField: Cas1SpaceBookingSummarySortField =
-      fieldName === 'tier' && config.flags.useLiveTiers ? 'personTier' : fieldName
-    return sortHeader<Cas1SpaceBookingSummarySortField>(title, targetField, sortBy, sortDirection, hrefPrefix)
+    const targetField = fieldName === 'tier' && config.flags.useLiveTiers ? 'personTier' : fieldName
+    return sortHeader(title, targetField, sortBy, sortDirection, hrefPrefix)
   })
 }
 
@@ -202,8 +200,8 @@ export const placementTableRows = (
   return mapPlacementTableRows(columnMap[activeTab], premisesId, placements, request)
 }
 
-export const mapPlacementTableRows = (
-  fields: Array<ColumnDefinition>,
+export const mapPlacementTableRows = <T extends string>(
+  fields: Array<ColumnDefinition<T>>,
   premisesId: string,
   placements: Array<Cas1SpaceBookingSummary>,
   request: RequestWithSession,
@@ -228,7 +226,7 @@ export const mapPlacementTableRows = (
       ),
     }
 
-    return fields.map(({ fieldName }: ColumnDefinition) => fieldValues[fieldName])
+    return fields.map(({ fieldName }) => fieldValues[fieldName as ColumnField])
   })
 
 export const localRestrictionsTableRows = (premises: Cas1Premises): Array<TableRow> =>

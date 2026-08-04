@@ -1,4 +1,4 @@
-import type { SelectOption } from '@approved-premises/ui'
+import type { ColumnDefinition, SelectOption } from '@approved-premises/ui'
 import {
   Cas1OutOfServiceBedSummary,
   Cas1PremiseCapacityForDay,
@@ -15,7 +15,6 @@ import {
   cas1SpaceBookingSummaryFactory,
 } from '../../testutils/factories'
 import {
-  ColumnDefinition,
   dayStatusFromDayCapacity,
   daySummaryRows,
   durationSelectOptions,
