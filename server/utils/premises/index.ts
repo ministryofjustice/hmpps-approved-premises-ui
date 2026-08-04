@@ -6,7 +6,6 @@ import type {
   Cas1SpaceBookingSummary,
   Cas1SpaceBookingSummarySortField,
   NamedId,
-  RiskTier,
   SortDirection,
 } from '@approved-premises/api'
 import {
@@ -212,7 +211,7 @@ export const mapPlacementTableRows = (
     const link = getPlacementLink({ request, premisesId, person, placementId: placement.id })
     const fieldValues: Record<ColumnField, TableCell> = {
       personName: htmlCell(`<a href="${link}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`),
-      tier: versionedTierCell(person, tier ? ({ level: tier } as RiskTier) : undefined),
+      tier: versionedTierCell(person, tier ? { level: tier } : undefined),
       canonicalArrivalDate: dateCell(arrivalDate),
       canonicalDepartureDate: dateCell(departureDate),
       keyWorkerName: textCell(keyWorkerAllocation?.name || 'Not assigned'),

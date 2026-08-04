@@ -1,4 +1,4 @@
-import { Cas1SpaceBookingResidency, Cas1SpaceBookingSummary, RiskTier } from '@approved-premises/api'
+import { Cas1SpaceBookingResidency, Cas1SpaceBookingSummary } from '@approved-premises/api'
 import { TextItem } from '@approved-premises/ui'
 import { addDays } from 'date-fns'
 import { createMock } from '@golevelup/ts-jest'
@@ -324,7 +324,7 @@ describe('premisesUtils', () => {
             {
               html: legacyLink(placement),
             },
-            versionedTierCell(placement.person, { level: placement.tier } as RiskTier),
+            versionedTierCell(placement.person, { level: placement.tier }),
             { text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) },
             { text: DateFormats.isoDateToUIDate(departureDate, { format: 'short' }) },
           ]
