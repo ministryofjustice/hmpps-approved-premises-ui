@@ -28,14 +28,7 @@ import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basi
 import paths from '../../paths/apply'
 
 import placementApplicationPaths from '../../paths/placementApplications'
-import {
-  displayName,
-  getTierOrBlank,
-  getVersionedTierOrBlank,
-  isApplicableTierDto,
-  isFullPerson,
-  PersonAny,
-} from '../personUtils'
+import { displayName, getVersionedTierOrBlank, isApplicableTierDto, isFullPerson, PersonAny } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
@@ -46,7 +39,7 @@ import { createNameAnchorElement } from './helpers'
 import { APPLICATION_SUITABLE, ApplicationStatusTag, applicationSuitableStatuses } from './statusTag'
 import { renderTimelineEventContent } from '../timeline'
 import { summaryListItem } from '../formUtils'
-import { htmlCell, textCell } from '../tableUtils'
+import { htmlCell, textCell, versionedTierCell } from '../tableUtils'
 import { getPlacementLink } from '../resident'
 import { RestrictedPersonError } from '../errors'
 
@@ -136,7 +129,7 @@ const dashboardTableRows = (
     (application): TableRow => [
       createNameAnchorElement(application.person, application, { linkInProgressApplications }),
       textCell(application.person.crn),
-      htmlCell(getTierOrBlank(application.risks?.tier?.value?.level)),
+      versionedTierCell(application.person, application.risks?.tier?.value),
       textCell(getArrivalDateorNA(application.arrivalDate)),
       textCell(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
       htmlCell(new ApplicationStatusTag(application.status).html()),

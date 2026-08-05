@@ -58,6 +58,7 @@ import { renderTimelineEventContent } from '../timeline'
 import { summaryListItem } from '../formUtils'
 import { fullPersonFactory } from '../../testutils/factories/person'
 import * as residentUtils from '../resident'
+import { versionedTierCell } from '../tableUtils'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -385,9 +386,7 @@ describe('utils', () => {
           {
             text: applicationA.person.crn,
           },
-          {
-            html: personUtils.tierBadge('A1'),
-          },
+          versionedTierCell(applicationA.person, applicationA.risks?.tier?.value),
           {
             text: 'N/A',
           },
@@ -410,9 +409,7 @@ describe('utils', () => {
           {
             text: applicationB.person.crn,
           },
-          {
-            html: '',
-          },
+          versionedTierCell(applicationB.person, applicationB.risks?.tier?.value),
           {
             text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
           },
@@ -440,9 +437,7 @@ describe('utils', () => {
 
         const result = dashboardTableRows([application])
 
-        expect(result[0][2]).toEqual({
-          html: '',
-        })
+        expect(result[0][2]).toEqual(versionedTierCell(application.person, application.risks?.tier?.value))
       })
     })
 
@@ -456,9 +451,7 @@ describe('utils', () => {
 
         const result = dashboardTableRows([application])
 
-        expect(result[0][2]).toEqual({
-          html: '',
-        })
+        expect(result[0][2]).toEqual(versionedTierCell(application.person, application.risks?.tier?.value))
       })
     })
 
@@ -476,9 +469,7 @@ describe('utils', () => {
             {
               text: application.person.crn,
             },
-            {
-              html: personUtils.tierBadge(application.risks?.tier?.value?.level),
-            },
+            versionedTierCell(application.person, application.risks?.tier?.value),
             {
               text: DateFormats.isoDateToUIDate(application.arrivalDate, { format: 'short' }),
             },
