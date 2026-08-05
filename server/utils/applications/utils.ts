@@ -28,14 +28,7 @@ import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basi
 import paths from '../../paths/apply'
 
 import placementApplicationPaths from '../../paths/placementApplications'
-import {
-  displayName,
-  getTierOrBlank,
-  getVersionedTierOrBlank,
-  isApplicableTierDto,
-  isFullPerson,
-  PersonAny,
-} from '../personUtils'
+import { displayName, getVersionedTierOrBlank, isApplicableTierDto, isFullPerson, PersonAny } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
