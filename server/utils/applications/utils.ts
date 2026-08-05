@@ -46,7 +46,7 @@ import { createNameAnchorElement } from './helpers'
 import { APPLICATION_SUITABLE, ApplicationStatusTag, applicationSuitableStatuses } from './statusTag'
 import { renderTimelineEventContent } from '../timeline'
 import { summaryListItem } from '../formUtils'
-import { htmlCell, textCell } from '../tableUtils'
+import { htmlCell, textCell, versionedTierCell } from '../tableUtils'
 import { getPlacementLink } from '../resident'
 import { RestrictedPersonError } from '../errors'
 
@@ -136,7 +136,7 @@ const dashboardTableRows = (
     (application): TableRow => [
       createNameAnchorElement(application.person, application, { linkInProgressApplications }),
       textCell(application.person.crn),
-      htmlCell(getTierOrBlank(application.risks?.tier?.value?.level)),
+      versionedTierCell(application.person, { level: application.risks?.tier?.value?.level }),
       textCell(getArrivalDateorNA(application.arrivalDate)),
       textCell(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
       htmlCell(new ApplicationStatusTag(application.status).html()),
