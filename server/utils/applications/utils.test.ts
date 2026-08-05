@@ -386,7 +386,7 @@ describe('utils', () => {
           {
             text: applicationA.person.crn,
           },
-          versionedTierCell(applicationA.person, { level: applicationA.risks?.tier?.value?.level }),
+          versionedTierCell(applicationA.person, applicationA.risks?.tier?.value),
           {
             text: 'N/A',
           },
@@ -409,7 +409,7 @@ describe('utils', () => {
           {
             text: applicationB.person.crn,
           },
-          versionedTierCell(applicationB.person, { level: applicationB.risks?.tier?.value?.level }),
+          versionedTierCell(applicationB.person, applicationB.risks?.tier?.value),
           {
             text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
           },
@@ -437,9 +437,7 @@ describe('utils', () => {
 
         const result = dashboardTableRows([application])
 
-        expect(result[0][2]).toEqual(
-          versionedTierCell(application.person, { level: application.risks?.tier?.value?.level }),
-        )
+        expect(result[0][2]).toEqual(versionedTierCell(application.person, application.risks?.tier?.value))
       })
     })
 
@@ -453,9 +451,7 @@ describe('utils', () => {
 
         const result = dashboardTableRows([application])
 
-        expect(result[0][2]).toEqual(
-          versionedTierCell(application.person, { level: application.risks?.tier?.value?.level }),
-        )
+        expect(result[0][2]).toEqual(versionedTierCell(application.person, application.risks?.tier?.value))
       })
     })
 
@@ -473,7 +469,7 @@ describe('utils', () => {
             {
               text: application.person.crn,
             },
-            versionedTierCell(application.person, { level: application.risks?.tier?.value?.level }),
+            versionedTierCell(application.person, application.risks?.tier?.value),
             {
               text: DateFormats.isoDateToUIDate(application.arrivalDate, { format: 'short' }),
             },

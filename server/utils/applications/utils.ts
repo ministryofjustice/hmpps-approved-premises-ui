@@ -129,7 +129,7 @@ const dashboardTableRows = (
     (application): TableRow => [
       createNameAnchorElement(application.person, application, { linkInProgressApplications }),
       textCell(application.person.crn),
-      versionedTierCell(application.person, { level: application.risks?.tier?.value?.level }),
+      versionedTierCell(application.person, application.risks?.tier?.value),
       textCell(getArrivalDateorNA(application.arrivalDate)),
       textCell(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
       htmlCell(new ApplicationStatusTag(application.status).html()),
