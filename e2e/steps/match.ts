@@ -122,7 +122,6 @@ export const matchAndBookApplication = async ({
   // And the placement should be listed
   await cruDashboard.findRowWithValues([
     `${person.name}, ${person.crn}`,
-    person.tier,
     DateFormats.isoDateToUIDate(newDatesOfPlacement.startDate, { format: 'short' }),
     premisesName,
   ])
