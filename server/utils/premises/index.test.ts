@@ -28,8 +28,9 @@ import { linkTo } from '../utils'
 import { displayName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
-import { textCell } from '../tableUtils'
+import { textCell, versionedTierCell } from '../tableUtils'
 import { restrictedPersonSummaryFactory } from '../../testutils/factories/person'
+import config from '../../config'
 
 describe('premisesUtils', () => {
   describe('premisesActions', () => {
@@ -266,6 +267,10 @@ describe('premisesUtils', () => {
   })
 
   describe('placementTableHeader', () => {
+    afterEach(() => {
+      config.flags.useLiveTiers = false
+    })
+
     it.each(['upcoming', 'current', 'historic'])(
       'should return the sortable table headings for tab "%s" of the placement list',
       (activeTab: Cas1SpaceBookingResidency) => {
@@ -288,6 +293,14 @@ describe('premisesUtils', () => {
         expect(tableHeadings).toEqual(expectedTableHeadings)
       },
     )
+
+    it('should return the Tier column sorted on "personTier" when the useLiveTiers flag is enabled', () => {
+      config.flags.useLiveTiers = true
+
+      const tableHeadings = placementTableHeader('upcoming', 'personTier', 'asc', 'Test_Href_Prefix')
+
+      expect(tableHeadings).toContainEqual(sortHeader('Tier', 'personTier', 'personTier', 'asc', 'Test_Href_Prefix'))
+    })
   })
 
   describe('placementTableRows', () => {
@@ -311,7 +324,7 @@ describe('premisesUtils', () => {
             {
               html: legacyLink(placement),
             },
-            { html: `<span class="moj-badge moj-badge--red">${placement.tier}</span>` },
+            versionedTierCell(placement.person, { level: placement.tier }),
             { text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) },
             { text: DateFormats.isoDateToUIDate(departureDate, { format: 'short' }) },
           ]

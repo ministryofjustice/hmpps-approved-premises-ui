@@ -135,6 +135,12 @@ export type Table = {
   rows: Array<TableRow>
 }
 
+export type ColumnDefinition<T extends string = string> = {
+  title: string
+  fieldName: T
+  sortable: boolean
+}
+
 export type RadioItemButton = (
   | {
       text: string

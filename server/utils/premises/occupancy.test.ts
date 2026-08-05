@@ -1,4 +1,4 @@
-import type { SelectOption } from '@approved-premises/ui'
+import type { ColumnDefinition, SelectOption } from '@approved-premises/ui'
 import {
   Cas1OutOfServiceBedSummary,
   Cas1PremiseCapacityForDay,
@@ -15,7 +15,6 @@ import {
   cas1SpaceBookingSummaryFactory,
 } from '../../testutils/factories'
 import {
-  ColumnDefinition,
   dayStatusFromDayCapacity,
   daySummaryRows,
   durationSelectOptions,
@@ -35,6 +34,7 @@ import { roomCharacteristicMap } from '../characteristicsUtils'
 import { sortHeader } from '../sortHeader'
 import { canonicalDates } from '../placements'
 import * as premisesUtils from './index'
+import config from '../../config'
 
 describe('apOccupancy utils', () => {
   describe('dayStatusFromDayCapacity', () => {
@@ -247,6 +247,10 @@ describe('apOccupancy utils', () => {
   describe('tableHeader', () => {
     const prefix: string = 'prefix'
     type FieldName = 'fn1' | 'fn2'
+    afterEach(() => {
+      config.flags.useLiveTiers = false
+    })
+
     it('should render a data table header', () => {
       const tableDefinition: Array<ColumnDefinition<FieldName>> = [
         { title: 'Col 1', fieldName: 'fn1', sortable: true },
@@ -265,6 +269,26 @@ describe('apOccupancy utils', () => {
       expect(tableHeader(tableDefinition, 'fn1', 'asc', prefix)).toEqual([
         sortHeader('Col 1', 'fn1', 'fn1', 'asc', prefix),
         { text: 'Col 2' },
+      ])
+    })
+
+    it('should render the Tier column sorted on "personTier" when the useLiveTiers flag is enabled', () => {
+      config.flags.useLiveTiers = true
+      const tierColumn: Array<ColumnDefinition<'tier' | 'personTier'>> = [
+        { title: 'Tier', fieldName: 'tier', sortable: true },
+      ]
+      expect(tableHeader(tierColumn, 'personTier', 'asc', prefix)).toEqual([
+        sortHeader('Tier', 'personTier', 'personTier', 'asc', prefix),
+      ])
+    })
+
+    it('should render the Tier column sorted on "tier" when the useLiveTiers flag is disabled', () => {
+      config.flags.useLiveTiers = false
+      const tierColumn: Array<ColumnDefinition<'tier' | 'personTier'>> = [
+        { title: 'Tier', fieldName: 'tier', sortable: true },
+      ]
+      expect(tableHeader(tierColumn, 'tier', 'asc', prefix)).toEqual([
+        sortHeader('Tier', 'tier', 'tier', 'asc', prefix),
       ])
     })
   })
