@@ -97,7 +97,7 @@ describe('helpers', () => {
   })
 
   describe('personKeyDetails', () => {
-    const tier = tierEnvelopeFactory.build().value.level
+    const tier = tierEnvelopeFactory.build().value
 
     it('should return the key information for a placement', () => {
       const person = personFactory.build()
@@ -106,7 +106,7 @@ describe('helpers', () => {
         header: { key: '', showKey: false, value: person.name },
         items: [
           { key: { text: 'CRN' }, value: { text: person.crn } },
-          { key: { text: 'Tier' }, value: { text: tier } },
+          { key: { text: 'Tier' }, value: { text: tier.level } },
           {
             key: { text: 'Date of birth' },
             value: {
@@ -142,7 +142,7 @@ describe('helpers', () => {
         header: { key: '', showKey: false, value: 'Limited Access Offender' },
         items: [
           { key: { text: 'CRN' }, value: { text: person.crn } },
-          { key: { text: 'Tier' }, value: { text: tier } },
+          { key: { text: 'Tier' }, value: { text: tier.level } },
         ],
       })
     })
@@ -154,7 +154,7 @@ describe('helpers', () => {
         header: { key: '', showKey: false, value: 'Unknown person' },
         items: [
           { key: { text: 'CRN' }, value: { text: person.crn } },
-          { key: { text: 'Tier' }, value: { text: tier } },
+          { key: { text: 'Tier' }, value: { text: tier.level } },
         ],
       })
     })

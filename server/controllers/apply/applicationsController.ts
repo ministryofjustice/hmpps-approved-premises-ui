@@ -31,6 +31,7 @@ import { RestrictedPersonError } from '../../utils/errors'
 import peoplePaths from '../../paths/people'
 import { applicationKeyDetails, personKeyDetails } from '../../utils/applications/helpers'
 import { getPageBackLink } from '../../utils/backlinks'
+import config from '../../config'
 
 interface ShowRequest extends Request {
   query: { tab: ApplicationShowPageTab }
@@ -106,6 +107,7 @@ export default class ApplicationsController {
   show(): RequestHandler {
     return async (req: ShowRequest, res: Response) => {
       const application = await this.applicationService.findApplication(req.user.token, req.params.id)
+
       const backLink = getPageBackLink(paths.applications.show.pattern, req, [
         paths.applications.index.pattern,
         paths.applications.dashboard.pattern,
@@ -157,7 +159,12 @@ export default class ApplicationsController {
             DateFormats.dateObjtoUIDate(addYears(application.assessmentDecisionDate, 1)),
         })
       }
-      return res.render('applications/tasklist', { application, taskList, errorSummary, errors })
+
+      const risks = config.flags.useLiveTiers
+        ? await this.personService.riskProfile(req.user.token, application.person.crn)
+        : application.risks
+
+      return res.render('applications/tasklist', { application, taskList, errorSummary, errors, risks })
     }
   }
 
@@ -181,7 +188,7 @@ export default class ApplicationsController {
         applicationList.length > 0 ? applicationList[0].person : await this.personService.findByCrn(req.user.token, crn)
 
       return res.render('applications/manageApplications', {
-        contextKeyDetails: personKeyDetails(person, applicationList[0] && applicationList[0].risks?.tier?.value?.level),
+        contextKeyDetails: personKeyDetails(person, applicationList[0] && applicationList[0].risks?.tier?.value),
         continuePath: applicationList.length > 0 ? undefined : paths.applications.people.selectOffence({ crn }),
         pageHeading: getApplicationsHeading(applicationList),
         applicationsHeader: getApplicationTableHeader(),
