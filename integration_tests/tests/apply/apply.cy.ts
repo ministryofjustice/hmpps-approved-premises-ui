@@ -142,6 +142,38 @@ context('Apply', () => {
     Page.verifyOnPage(ApplyPages.IsExceptionalCasePage, this.application)
   })
 
+  it('If user navigates away from application on confirm details page for eligible CRN, return to confirm details page', function test() {
+    GIVEN('the person has an eligible risk tier')
+
+    const tier = tierDtoFactory.v2Eligible().build()
+    this.application.risks = risksFactory.build({
+      crn: this.person.crn,
+      tier: tierEnvelopeFactory.build({ value: { level: tier.tierScore } }),
+    })
+    this.person.sex = 'Male'
+    this.person.tier = tier
+    const application = { ...this.application, person: { ...this.person, tier } }
+    cy.task('stubApplicationGet', { application })
+    cy.task('stubApplications', [application])
+
+    AND('I start the application and left')
+    const apply = new ApplyHelper(application, application.person, this.offences)
+    apply.setupApplicationStubs()
+    apply.startApplication()
+
+    AND('I visit the list page')
+    const listPage = ListPage.visit([application], [], [])
+
+    WHEN('I click the application from list')
+    listPage.clickApplication(application)
+
+    AND('I click the basic information')
+    apply.clickBasicInformation()
+
+    THEN('I should see the is exceptional case page')
+    Page.verifyOnPage(ApplyPages.ConfirmYourDetailsPage, this.application)
+  })
+
   it('throws an error if the the CRN entered is an LAO', function test() {
     const lao = restrictedPersonFactory.build()
     cy.task('stubFindPerson', { person: lao })
