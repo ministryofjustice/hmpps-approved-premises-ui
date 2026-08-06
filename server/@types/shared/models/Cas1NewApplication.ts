@@ -7,5 +7,6 @@ export type Cas1NewApplication = {
     crn: string;
     deliusEventNumber: string;
     offenceId: string;
+    referredBy?: string;
 };
 
