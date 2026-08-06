@@ -19,8 +19,8 @@ import {
   ApplicationShowPageTab,
   applicationsTabs,
   applicationStatusSelectOptions,
-  firstPageOfApplicationJourney,
   getApplicationShowPageTabs,
+  firstPageOfApplicationJourney,
 } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { isFullPerson } from '../../utils/personUtils'

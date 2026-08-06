@@ -188,13 +188,7 @@ const isInapplicable = (application: Application): boolean => {
   return isExceptionalCase === 'no' || (isExceptionalCase === 'yes' && agreedCaseWithManager === 'no')
 }
 
-const tierQualificationPage = (application: Cas1Application) => {
-  const person: FullPerson = application?.person as FullPerson
-
-  return tierQualificationPageTierDto(application?.id, person)
-}
-
-const tierQualificationPageTierDto = (applicationId: string, person: FullPerson) => {
+const firstPageOfApplicationJourney = (applicationId: string, person: FullPerson) => {
   if (!isFullPerson(person)) throw new RestrictedPersonError((person as RestrictedPerson).crn)
 
   if (!person?.tier) {
@@ -204,21 +198,8 @@ const tierQualificationPageTierDto = (applicationId: string, person: FullPerson)
   if (!isApplicableTierDto(person)) {
     return paths.applications.pages.show({ id: applicationId, task: 'basic-information', page: 'is-exceptional-case' })
   }
-  return undefined
-}
 
-const firstPageOfApplicationJourney = (applicationId: string, person: FullPerson) => {
-  const firstPage = tierQualificationPageTierDto(applicationId, person)
-
-  if (firstPage) {
-    return firstPage
-  }
-
-  return paths.applications.pages.show({
-    id: applicationId,
-    task: 'basic-information',
-    page: 'confirm-your-details',
-  })
+  return paths.applications.pages.show({ id: applicationId, task: 'basic-information', page: 'confirm-your-details' })
 }
 
 const getApplicationType = (application: Application): ApplicationType => {
@@ -449,6 +430,5 @@ export {
   lengthOfStayForUI,
   applicationStatusSelectOptions,
   appealDecisionRadioItems,
-  tierQualificationPage,
   applicationSuitableStatuses,
 }
