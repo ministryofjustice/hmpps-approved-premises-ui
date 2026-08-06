@@ -34,7 +34,7 @@ describe('RiskToSelf', () => {
         'some-token',
         application.person.crn,
         'riskToSelf',
-        'completed_in_last_six_months',
+        'allow_all',
         [],
       )
     })

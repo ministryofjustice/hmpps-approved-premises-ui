@@ -55,7 +55,7 @@ export default class PersonService {
   async getOasysMetadata(
     token: string,
     crn: string,
-    suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto = 'completed_in_last_six_months',
+    suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto = 'allow_all',
   ): Promise<Cas1OASysMetadata> {
     const personClient = this.personClientFactory(token)
 

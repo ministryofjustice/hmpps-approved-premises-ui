@@ -64,11 +64,7 @@ describe('OptionalOasysSections', () => {
     it('calls the getOasysSelections method on the client with a token and the persons CRN', async () => {
       callInitialize()
 
-      expect(getOasysMetadataMock).toHaveBeenCalledWith(
-        'some-token',
-        application.person.crn,
-        'completed_in_last_six_months',
-      )
+      expect(getOasysMetadataMock).toHaveBeenCalledWith('some-token', application.person.crn, 'allow_all')
     })
 
     it('filters the OASys sections into needs linked to reoffending and other needs not linked to reoffending or harm', async () => {

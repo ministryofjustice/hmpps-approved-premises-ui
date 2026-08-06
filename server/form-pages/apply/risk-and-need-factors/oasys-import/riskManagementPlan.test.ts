@@ -37,7 +37,7 @@ describe('RiskManagement', () => {
         'some-token',
         application.person.crn,
         'riskManagementPlan',
-        'completed_in_last_six_months',
+        'allow_all',
         [],
       )
     })
