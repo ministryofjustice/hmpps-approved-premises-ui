@@ -2,15 +2,25 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 import { applicationFactory } from '../../../../testutils/factories'
 
 import IsExceptionalCase from './isExceptionalCase'
+import { fullPersonFactory } from '../../../../testutils/factories/person'
 
 describe('IsExceptionalCase', () => {
-  const application = applicationFactory.build()
+  const person = fullPersonFactory.build({ name: 'John Doe' })
+  const application = applicationFactory.build({ person })
 
   describe('body', () => {
     it('should set the body', () => {
       const page = new IsExceptionalCase({ isExceptionalCase: 'yes' }, application)
 
       expect(page.body).toEqual({ isExceptionalCase: 'yes' })
+    })
+  })
+
+  describe('title', () => {
+    it('should set the title', () => {
+      const page = new IsExceptionalCase({ isExceptionalCase: 'yes' }, application)
+
+      expect(page.title).toEqual('John Doe is not normally eligible for an AP placement')
     })
   })
 
@@ -32,7 +42,9 @@ describe('IsExceptionalCase', () => {
 
     it('should return an errors if isExceptionalCase is not populated', () => {
       const page = new IsExceptionalCase({}, application)
-      expect(page.errors()).toEqual({ isExceptionalCase: 'You must state if this application is an exceptional case' })
+      expect(page.errors()).toEqual({
+        isExceptionalCase: 'Select yes if a senior manager has agreed that this is an exceptional case',
+      })
     })
   })
 
@@ -41,7 +53,7 @@ describe('IsExceptionalCase', () => {
       const page = new IsExceptionalCase({ isExceptionalCase: 'yes' }, application)
 
       expect(page.response()).toEqual({
-        [page.title]: 'Yes',
+        [page.question]: 'Yes',
       })
     })
   })
