@@ -1,7 +1,4 @@
-import {
-  ApprovedPremisesApplication as Application,
-  Cas1ApplicationUserDetails as UserDetails,
-} from '@approved-premises/api'
+import { Cas1Application as Application, Cas1ApplicationUserDetails as UserDetails } from '@approved-premises/api'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,

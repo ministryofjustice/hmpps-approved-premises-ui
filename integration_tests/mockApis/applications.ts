@@ -4,7 +4,7 @@ import type {
   Appeal,
   ApplicationSortField,
   ApplicationTimelineNote,
-  ApprovedPremisesApplication,
+  Cas1Application as Application,
   Cas1ApplicationSummary,
   Cas1TimelineEvent,
   RequestForPlacement,
@@ -126,7 +126,7 @@ export default {
     return request.body.requests
   },
 
-  stubApplicationGet: (args: { application: ApprovedPremisesApplication }): SuperAgentRequest =>
+  stubApplicationGet: (args: { application: Application }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
@@ -139,10 +139,7 @@ export default {
       },
     }),
 
-  stubApplicationDocuments: (args: {
-    application: ApprovedPremisesApplication
-    documents: Array<Document>
-  }): SuperAgentRequest =>
+  stubApplicationDocuments: (args: { application: Application; documents: Array<Document> }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
@@ -155,7 +152,7 @@ export default {
       },
     }),
 
-  stubApplicationSubmit: (args: { application: ApprovedPremisesApplication }): SuperAgentRequest =>
+  stubApplicationSubmit: (args: { application: Application }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',
@@ -197,7 +194,7 @@ export default {
     applicationId,
   }: {
     requestsForPlacement: Array<RequestForPlacement>
-    applicationId: ApprovedPremisesApplication['id']
+    applicationId: Application['id']
   }): SuperAgentRequest =>
     stubFor({
       request: {
@@ -213,10 +210,7 @@ export default {
       },
     }),
 
-  stubApplicationNote: (args: {
-    applicationId: ApprovedPremisesApplication['id']
-    note: ApplicationTimelineNote
-  }): SuperAgentRequest =>
+  stubApplicationNote: (args: { applicationId: Application['id']; note: ApplicationTimelineNote }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',

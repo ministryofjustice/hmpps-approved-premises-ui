@@ -1,3 +1,4 @@
+import { Cas1Application } from '@approved-premises/api'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import { ListPage, NotesConfirmationPage, ShowPage } from '../../pages/apply'
 import Page from '../../pages/page'
@@ -144,7 +145,9 @@ context('show applications', () => {
   })
 
   it('shows an offline application', function test() {
-    const { application } = setup({ application: { type: 'Offline', status: undefined, document: undefined } })
+    const { application } = setup({
+      application: { type: 'Offline', status: undefined, document: undefined } as Partial<Cas1Application>,
+    })
     cy.task('stubApplicationGet', { application })
 
     AND('I visit the application page')

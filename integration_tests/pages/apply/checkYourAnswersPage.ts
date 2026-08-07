@@ -1,5 +1,5 @@
-import type { ApprovedPremisesApplication, Document, PersonAcctAlert, PrisonCaseNote } from '@approved-premises/api'
-import { PartnerAgencyDetails } from '../../../server/@types/ui'
+import type { Cas1Application as Application, Document, PersonAcctAlert, PrisonCaseNote } from '@approved-premises/api'
+import { PartnerAgencyDetails } from '@approved-premises/ui'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import ApplyPage from './applyPage'
 
@@ -8,7 +8,7 @@ import { sentenceCase } from '../../../server/utils/utils'
 import paths from '../../../server/paths/apply'
 
 export default class CheckYourAnswersPage extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Application) {
     super(
       'Check your answers',
       application,
