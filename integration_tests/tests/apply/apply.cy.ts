@@ -275,7 +275,7 @@ context('Apply', () => {
     isExceptionalCasePage.clickSubmit()
 
     THEN('I should be told the application is not eligible')
-    Page.verifyOnPage(NotEligiblePage)
+    Page.verifyOnPage(NotEligiblePage, application)
   })
 
   it('allows completion of application emergency flow', function test() {

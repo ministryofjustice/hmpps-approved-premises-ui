@@ -1,13 +1,24 @@
 /* istanbul ignore file */
+import { Cas1Application as Application } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
+import { displayName } from '../../../../utils/personUtils'
+import { getApplicationTierValue } from '../../../../utils/applications/utils'
 
 @Page({ name: 'not-eligible', bodyProperties: [] })
 export default class NotEligible implements TasklistPage {
-  title = 'This application is not eligible'
+  title: string
 
-  constructor(public readonly body: Record<string, unknown>) {}
+  tier: string
+
+  constructor(
+    public readonly body: Record<string, unknown>,
+    application: Application,
+  ) {
+    this.title = `${displayName(application.person)} is not eligible for an AP placement`
+    this.tier = getApplicationTierValue(application)
+  }
 
   previous() {
     return ''
