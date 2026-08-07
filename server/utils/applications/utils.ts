@@ -26,6 +26,7 @@ import type {
 } from '@approved-premises/api'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
+import config from '../../config'
 
 import placementApplicationPaths from '../../paths/placementApplications'
 import { displayName, getVersionedTierOrBlank, isApplicableTierDto, isFullPerson, PersonAny } from '../personUtils'
@@ -109,7 +110,13 @@ const dashboardTableHeader = (
     {
       text: 'CRN',
     },
-    sortHeader<ApplicationSortField>('Tier', 'tier', sortBy, sortDirection, hrefPrefix),
+    sortHeader<ApplicationSortField>(
+      'Tier',
+      config.flags.useLiveTiers ? 'personTier' : 'tier',
+      sortBy,
+      sortDirection,
+      hrefPrefix,
+    ),
     sortHeader<ApplicationSortField>('Arrival Date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
     sortHeader<ApplicationSortField>('Date of application', 'createdAt', sortBy, sortDirection, hrefPrefix),
     {

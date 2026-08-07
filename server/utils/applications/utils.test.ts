@@ -24,6 +24,7 @@ import {
 } from '../../testutils/factories'
 import paths from '../../paths/apply'
 import managePaths from '../../paths/manage'
+import config from '../../config'
 import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
 import PlacementRequest from '../../form-pages/placement-application'
@@ -333,6 +334,10 @@ describe('utils', () => {
     const sortDirection = 'asc'
     const hrefPrefix = 'http://example.com'
 
+    afterEach(() => {
+      config.flags.useLiveTiers = false
+    })
+
     it('returns header values', () => {
       expect(dashboardTableHeader(sortBy, sortDirection, hrefPrefix)).toEqual([
         {
@@ -351,6 +356,14 @@ describe('utils', () => {
           text: 'Actions',
         },
       ])
+    })
+
+    it('should return the Tier column sorted on "personTier" when the useLiveTiers flag is enabled', () => {
+      config.flags.useLiveTiers = true
+
+      expect(dashboardTableHeader(sortBy, sortDirection, hrefPrefix)).toContainEqual(
+        sortHeader<ApplicationSortField>('Tier', 'personTier', sortBy, sortDirection, hrefPrefix),
+      )
     })
   })
 
