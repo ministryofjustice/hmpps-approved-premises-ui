@@ -21,8 +21,8 @@ import type {
   SortDirection,
   Cas1ApplicationSummary,
   Cas1Application,
-  FullPerson,
   RestrictedPerson,
+  Person,
 } from '@approved-premises/api'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
@@ -188,7 +188,7 @@ const isInapplicable = (application: Application): boolean => {
   return isExceptionalCase === 'no' || (isExceptionalCase === 'yes' && agreedCaseWithManager === 'no')
 }
 
-const firstPageOfApplicationJourney = (applicationId: string, person: FullPerson) => {
+const firstPageOfApplicationJourney = (applicationId: string, person: Person) => {
   if (!isFullPerson(person)) throw new RestrictedPersonError((person as RestrictedPerson).crn)
 
   if (!person?.tier) {
