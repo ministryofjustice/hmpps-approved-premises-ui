@@ -3,17 +3,15 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PlacementApplicationClient from '../data/placementApplicationClient'
 import {
-  applicationFactory,
   placementApplicationDecisionEnvelopeFactory,
   placementApplicationFactory,
+  submitPlacementApplicationFactory,
 } from '../testutils/factories'
 import PlacementApplicationService, { LegacyError } from './placementApplicationService'
 import { DataServices, TaskListErrors } from '../@types/ui'
 import { getBody } from '../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
-
-import { placementApplicationSubmissionData } from '../utils/placementRequests/placementApplicationSubmissionData'
 import { ApplicationService } from './index'
 
 jest.mock('../data/placementApplicationClient.ts')
@@ -202,13 +200,15 @@ describe('placementApplicationService', () => {
   describe('submit', () => {
     it('calls the client method and returns the resulting placement application', () => {
       const placementApplication = placementApplicationFactory.build()
-      const application = applicationFactory.build()
-      ;(placementApplicationSubmissionData as jest.Mock).mockReturnValue({})
-
+      const submitPlacementApplication = submitPlacementApplicationFactory.build()
       placementApplicationClient.submission.mockResolvedValue(placementApplication)
 
-      const result = service.submit(token, placementApplication, application, dataServices)
+      const result = service.submit(token, placementApplication, submitPlacementApplication)
 
+      expect(placementApplicationClient.submission).toHaveBeenCalledWith(
+        placementApplication.id,
+        submitPlacementApplication,
+      )
       expect(result).resolves.toEqual(placementApplication)
     })
   })

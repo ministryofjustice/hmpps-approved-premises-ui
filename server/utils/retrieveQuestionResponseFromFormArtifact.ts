@@ -27,7 +27,7 @@ export const retrieveQuestionResponseFromFormArtifact = (
   const response = pageData[q]
 
   if (!response) {
-    throw new SessionDataError(`Question ${q} was not found in the session`)
+    throw new SessionDataError(`Question "${q}" was not found in the session`)
   }
 
   return response

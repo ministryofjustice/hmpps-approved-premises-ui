@@ -1,13 +1,10 @@
 import { addWeeks } from 'date-fns'
 import {
-  Cas1Application as Application,
   Cas1RequestedPlacementPeriod,
+  Cas1RequestsForPlacementDurationsCalculationResponseDto,
   PlacementApplication,
-  ReleaseTypeOption,
-  SentenceTypeOption,
   SubmitPlacementApplication,
 } from '@approved-premises/api'
-import { DataServices } from '@approved-premises/ui'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
@@ -21,21 +18,12 @@ import { DateFormats } from '../dateUtils'
 import { makeArrayOfType } from '../utils'
 import { getSentenceType } from '../placementApplications'
 
-export const placementApplicationSubmissionData = async (
+export const placementApplicationSubmissionData = (
   placementApplication: PlacementApplication,
-  application: Application,
-  dataServices: DataServices,
-  token: string,
-): Promise<SubmitPlacementApplication> => {
+  requestedPlacementPeriods: Array<Cas1RequestedPlacementPeriod>,
+): SubmitPlacementApplication => {
   const { releaseType, sentenceType, situation } = getSentenceType(placementApplication)
-  const requestedPlacementPeriods = await durationAndArrivalDateFromPlacementApplication(
-    placementApplication,
-    sentenceType,
-    releaseType,
-    application,
-    dataServices,
-    token,
-  )
+
   return {
     translatedDocument: placementApplication.document,
     requestedPlacementPeriods,
@@ -71,15 +59,13 @@ export const retreivePlacementDatesFromRotlPlacementApplication = (
   return [dateOfPlacement]
 }
 
-export const durationAndArrivalDateFromPlacementApplication = async (
+export const durationAndArrivalDateFromPlacementApplication = (
   placementApplication: PlacementApplication,
-  sentenceType: SentenceTypeOption,
-  reasonForPlacement: ReleaseTypeOption,
-  application: Application,
-  dataServices: DataServices,
-  token: string,
-): Promise<Array<Cas1RequestedPlacementPeriod>> => {
-  switch (reasonForPlacement) {
+  placementDurations: Cas1RequestsForPlacementDurationsCalculationResponseDto,
+): Array<Cas1RequestedPlacementPeriod> => {
+  const { releaseType } = getSentenceType(placementApplication)
+
+  switch (releaseType) {
     case 'rotl': {
       return retreivePlacementDatesFromRotlPlacementApplication(placementApplication)
     }
@@ -89,16 +75,10 @@ export const durationAndArrivalDateFromPlacementApplication = async (
         DecisionToRelease,
         'decisionToReleaseDate',
       )
-      const { defaultDurationDays } = await dataServices.applicationService.getPlacementDuration(
-        token,
-        application.id,
-        application.apType,
-        sentenceType,
-      )
       return [
         {
           arrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
-          duration: defaultDurationDays,
+          duration: placementDurations?.defaultDurationDays,
         },
       ]
     }

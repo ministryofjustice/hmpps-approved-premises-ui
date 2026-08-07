@@ -86,7 +86,7 @@ context('Assess', () => {
     assessHelper.completeAssessment()
 
     // Then the API should have received the correct data
-    cy.task('verifyAssessmentAcceptance', this.assessment).then(async requests => {
+    cy.task('verifyAssessmentAcceptance', this.assessment).then(requests => {
       expect(requests).to.have.length(1)
 
       const body = JSON.parse(requests[0].body)

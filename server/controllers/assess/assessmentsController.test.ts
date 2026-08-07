@@ -6,7 +6,7 @@ import { Cas1AssessmentSummary as AssessmentSummary, Task } from '@approved-prem
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
 import AssessmentsController from './assessmentsController'
-import { AssessmentService, ApplicationService, PersonService, TaskService } from '../../services'
+import { AssessmentService, PersonService, TaskService } from '../../services'
 import config from '../../config'
 
 import {
@@ -39,8 +39,6 @@ describe('assessmentsController', () => {
   const assessmentService = createMock<AssessmentService>({})
   const taskService = createMock<TaskService>({})
   const personService = createMock<PersonService>({})
-  const applicationService = createMock<ApplicationService>({})
-
 
   let assessmentsController: AssessmentsController
 
@@ -127,9 +125,8 @@ describe('assessmentsController', () => {
 
         taskService.getAll.mockResolvedValue(paginatedTaskResponse)
         const activeTab = 'requests_for_placement'
-        const requestHandler = assessmentsController.index()
 
-        await requestHandler(
+        await assessmentsController.index()(
           {
             ...request,
             query: {

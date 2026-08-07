@@ -1,9 +1,15 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
+import { Cas1RequestsForPlacementDurationsCalculationResponseDto } from '@approved-premises/api'
 import { ApplicationService, PlacementApplicationService, PlacementRequestService } from '../../services'
 import paths from '../../paths/placementApplications'
 import { addErrorMessageToFlash, catchValidationErrorOrPropogate } from '../../utils/validation'
 import { getResponses } from '../../utils/applications/getResponses'
 import { placementRequestKeyDetails } from '../../utils/placementRequests/utils'
+import {
+  durationAndArrivalDateFromPlacementApplication,
+  placementApplicationSubmissionData,
+} from '../../utils/placementRequests/placementApplicationSubmissionData'
+import { getSentenceType } from '../../utils/placementApplications'
 
 export default class PlacementRequestsController {
   constructor(
@@ -65,9 +71,25 @@ export default class PlacementRequestsController {
         placementApplication.applicationId,
       )
       try {
-        await this.placementApplicationService.submit(req.user.token, placementApplication, application, {
-          applicationService: this.applicationService,
-        })
+        const { releaseType, sentenceType } = getSentenceType(placementApplication)
+        let placementDurations: Cas1RequestsForPlacementDurationsCalculationResponseDto
+        if (releaseType === 'paroleDirectedLicence') {
+          placementDurations = await this.applicationService.getPlacementDuration(
+            req.user.token,
+            application.id,
+            application.apType,
+            sentenceType,
+          )
+        }
+
+        const requestedPlacementPeriods = durationAndArrivalDateFromPlacementApplication(
+          placementApplication,
+          placementDurations,
+        )
+
+        const submissionData = placementApplicationSubmissionData(placementApplication, requestedPlacementPeriods)
+
+        await this.placementApplicationService.submit(req.user.token, placementApplication, submissionData)
 
         return res.render('placement-applications/confirm', {
           pageHeading: 'Request for placement confirmed',

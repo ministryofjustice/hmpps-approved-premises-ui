@@ -19,7 +19,6 @@ export default class AssessmentsController {
     private readonly assessmentService: AssessmentService,
     private readonly taskService: TaskService,
     private readonly personService: PersonService,
-    private readonly applicationService: ApplicationService,
   ) {}
 
   index(): RequestHandler {
@@ -140,6 +139,7 @@ export default class AssessmentsController {
 
         return res.redirect(paths.assessments.show({ id: assessment.id }))
       }
+
       await this.assessmentService.submit(req.user.token, assessment)
 
       return res.render('assessments/confirm', {
