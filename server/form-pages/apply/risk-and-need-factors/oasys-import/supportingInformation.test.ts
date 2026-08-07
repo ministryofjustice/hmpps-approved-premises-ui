@@ -54,7 +54,7 @@ describe('SupportingInformation', () => {
         'some-token',
         application.person.crn,
         'supportingInformation',
-        'completed_in_last_six_months',
+        'allow_all',
         [1, 2],
       )
     })

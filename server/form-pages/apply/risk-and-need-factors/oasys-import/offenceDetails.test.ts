@@ -39,7 +39,7 @@ describe('OffenceDetails', () => {
         'some-token',
         application.person.crn,
         'offenceDetails',
-        'completed_in_last_six_months',
+        'allow_all',
         [],
       )
     })

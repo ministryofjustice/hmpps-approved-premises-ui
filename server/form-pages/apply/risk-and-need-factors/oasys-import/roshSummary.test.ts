@@ -38,7 +38,7 @@ describe('RoshSummary', () => {
         'some-token',
         application.person.crn,
         'roshSummary',
-        'completed_in_last_six_months',
+        'allow_all',
         [],
       )
     })

@@ -55,7 +55,7 @@ export default class OptionalOasysSections implements TasklistPage {
       }: Cas1OASysMetadata = await dataServices.personService.getOasysMetadata(
         token,
         application.person.crn,
-        'completed_in_last_six_months',
+        'allow_all',
       )
 
       const allNeedsLinkedToReoffending = supportingInformation.filter(
