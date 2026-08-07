@@ -1,27 +1,32 @@
-import { applicationFactory } from '../../testutils/factories'
-import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
+import { createMock } from '@golevelup/ts-jest'
+import { DataServices } from '@approved-premises/ui'
+import {
+  applicationFactory,
+  cas1RequestsForPlacementDurationsCalculationResponseDtoFactory,
+} from '../../testutils/factories'
 import { getDefaultPlacementDurationInDays } from './getDefaultPlacementDurationInDays'
+import { ApplicationService } from '../../services'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
+const applicationService = createMock<ApplicationService>({})
+const dataServices = { applicationService } as DataServices
+
+const token = 'test_token'
 
 describe('getDefaultPlacementDurationInDays', () => {
-  const application = applicationFactory.build()
-
-  it.each([
-    [12, 'normal'],
-    [12, 'standard'],
-    [12, 'mhapElliottHouse'],
-    [12, 'mhapStJosephs'],
-    [12, 'rfap'],
-    [26, 'pipe'],
-    [52, 'esap'],
-  ])('returns %s weeks when the AP type is "%s"', (weeks, apType) => {
-    ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce(apType)
-    expect(getDefaultPlacementDurationInDays(application)).toEqual(weeks * 7)
+  const application = applicationFactory.build({
+    data: { 'basic-information': { 'sentence-type': { sentenceType: 'sentence-type' } } },
   })
+  const durations = cas1RequestsForPlacementDurationsCalculationResponseDtoFactory.build()
+  applicationService.getPlacementDuration.mockResolvedValue(durations)
 
-  it('returns null when the AP type is anything else', () => {
-    ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce('something else')
-    expect(getDefaultPlacementDurationInDays(application)).toEqual(null)
+  it('calls the api to calculate the default placement duration', async () => {
+    expect(await getDefaultPlacementDurationInDays(application, dataServices, token)).toEqual(durations)
+    expect(applicationService.getPlacementDuration).toHaveBeenCalledWith(
+      token,
+      application.id,
+      application.apType,
+      'sentence-type',
+    )
   })
 })

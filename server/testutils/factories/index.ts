@@ -98,6 +98,7 @@ import offenceFactory from './offence'
 import dietAndAllergyResponseFactory from './dietAndAllergyResponse'
 import tierDtoFactory from './tierDto'
 import cas1CreateApplicationOutcomeFactory from './cas1CreateApplicationOutcome'
+import cas1RequestsForPlacementDurationsCalculationResponseDtoFactory from './cas1RequestsForPlacementDurationsCalculationResponseDto'
 
 export {
   acctAlertFactory,
@@ -204,4 +205,5 @@ export {
   registrationFactory,
   tierDtoFactory,
   cas1CreateApplicationOutcomeFactory,
+  cas1RequestsForPlacementDurationsCalculationResponseDtoFactory,
 }

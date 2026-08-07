@@ -22,6 +22,7 @@ import { ApplicationOrAssessmentResponse } from '../utils/applications/utils'
 import { applicationAccepted } from '../utils/assessments/decisionUtils'
 import { getResponses } from '../utils/applications/getResponses'
 import { getResponseForPage } from '../utils/applications/getResponseForPage'
+import { ApplicationService } from './index'
 
 jest.mock('../data/assessmentClient.ts')
 jest.mock('../data/personClient.ts')
@@ -32,6 +33,9 @@ jest.mock('../utils/applications/getResponses')
 jest.mock('../utils/applications/getResponseForPage')
 jest.mock('../utils/assessments/acceptanceData')
 jest.mock('../utils/assessments/decisionUtils')
+
+const applicationService = createMock<ApplicationService>({})
+const dataServices = { applicationService } as DataServices
 
 describe('AssessmentService', () => {
   const assessmentClient = new AssessmentClient(null) as jest.Mocked<AssessmentClient>
@@ -102,7 +106,6 @@ describe('AssessmentService', () => {
     })
 
     it("should call a page's initialize method if it exists", async () => {
-      const dataServices = createMock<DataServices>({}) as DataServices
       ;(getBody as jest.Mock).mockReturnValue(request.body)
 
       const TestPage = { initialize: jest.fn() } as unknown as TasklistPageInterface

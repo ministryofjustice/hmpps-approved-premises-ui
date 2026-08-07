@@ -65,7 +65,9 @@ export default class PlacementRequestsController {
         placementApplication.applicationId,
       )
       try {
-        await this.placementApplicationService.submit(req.user.token, placementApplication, application)
+        await this.placementApplicationService.submit(req.user.token, placementApplication, application, {
+          applicationService: this.applicationService,
+        })
 
         return res.render('placement-applications/confirm', {
           pageHeading: 'Request for placement confirmed',

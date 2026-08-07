@@ -1,18 +1,24 @@
 import { Cas1RequestedPlacementPeriod } from '@approved-premises/api'
+import { createMock } from '@golevelup/ts-jest'
+import { DataServices } from '@approved-premises/ui'
 import AdditionalPlacementDetails from '../../form-pages/placement-application/request-a-placement/additionalPlacementDetails'
 import DatesOfPlacement from '../../form-pages/placement-application/request-a-placement/datesOfPlacement'
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
 import { getPageName, pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import { applicationFactory, placementApplicationFactory } from '../../testutils/factories'
-import { placementDurationFromApplication } from '../applications/placementDurationFromApplication'
 import { DateFormats } from '../dateUtils'
 import {
   durationAndArrivalDateFromPlacementApplication,
   placementApplicationSubmissionData,
 } from './placementApplicationSubmissionData'
+import { ApplicationService } from '../../services'
 
 jest.mock('../../form-pages/utils')
 jest.mock('../applications/placementDurationFromApplication')
+
+const applicationService = createMock<ApplicationService>({})
+const dataServices = { applicationService } as DataServices
+const token = 'test_token'
 
 describe('placementApplicationSubmissionData', () => {
   const datesOfPlacement = [
@@ -52,7 +58,7 @@ describe('placementApplicationSubmissionData', () => {
   ]
 
   describe('placementApplicationSubmissionData', () => {
-    it('returns the data in the correct format for submission', () => {
+    it('returns the data in the correct format for submission', async () => {
       const placementApplication = placementApplicationFactory.build({
         data: {
           'request-a-placement': {
@@ -71,7 +77,9 @@ describe('placementApplicationSubmissionData', () => {
       ;(getPageName as jest.MockedFn<typeof getPageName>).mockReturnValueOnce('reason')
       ;(getPageName as jest.MockedFn<typeof getPageName>).mockReturnValueOnce('dates-of-placement')
 
-      expect(placementApplicationSubmissionData(placementApplication, applicationFactory.build())).toEqual({
+      expect(
+        await placementApplicationSubmissionData(placementApplication, applicationFactory.build(), dataServices, token),
+      ).toEqual({
         sentenceType: 'licence',
         releaseType: 'rotl',
         translatedDocument: {},
@@ -85,7 +93,7 @@ describe('placementApplicationSubmissionData', () => {
       jest.clearAllMocks()
     })
 
-    it('returns the arrivalDate and duration from the dates-of-placement page if the "reason" is "rotl"', () => {
+    it('returns the arrivalDate and duration from the dates-of-placement page if the "reason" is "rotl"', async () => {
       const placementApplication = placementApplicationFactory.build({
         data: { 'request-a-placement': { 'reason-for-placement': { reason: 'rotl' } } },
       })
@@ -94,12 +102,19 @@ describe('placementApplicationSubmissionData', () => {
       })
 
       expect(
-        durationAndArrivalDateFromPlacementApplication(placementApplication, 'rotl', applicationFactory.build()),
+        await durationAndArrivalDateFromPlacementApplication(
+          placementApplication,
+          'standardDeterminate',
+          'rotl',
+          applicationFactory.build(),
+          dataServices,
+          token,
+        ),
       ).toEqual(datesOfPlacementForApi)
       expect(pageDataFromApplicationOrAssessment).toHaveBeenCalledWith(DatesOfPlacement, placementApplication)
     })
 
-    it('returns the arrivalDate and duration from the legacy placement dates if the "reason" is "rotl"', () => {
+    it('returns the arrivalDate and duration from the legacy placement dates if the "reason" is "rotl"', async () => {
       const placementApplication = placementApplicationFactory.build({
         data: { 'request-a-placement': { 'reason-for-placement': { reason: 'rotl' } } },
       })
@@ -110,12 +125,19 @@ describe('placementApplicationSubmissionData', () => {
       })
 
       expect(
-        durationAndArrivalDateFromPlacementApplication(placementApplication, 'rotl', applicationFactory.build()),
+        await durationAndArrivalDateFromPlacementApplication(
+          placementApplication,
+          'standardDeterminate',
+          'rotl',
+          applicationFactory.build(),
+          dataServices,
+          token,
+        ),
       ).toEqual([{ ...datesOfPlacementForApi[0], arrivalFlexible: undefined }])
       expect(pageDataFromApplicationOrAssessment).toHaveBeenCalledWith(DatesOfPlacement, placementApplication)
     })
 
-    it('returns the arrivalDate and duration from the additional-placement-details page if the "reason" is "additional_placement"', () => {
+    it('returns the arrivalDate and duration from the additional-placement-details page if the "reason" is "additional_placement"', async () => {
       const placementApplication = placementApplicationFactory.build({
         data: { 'request-a-placement': { 'reason-for-placement': { reason: 'additional_placement' } } },
       })
@@ -126,10 +148,13 @@ describe('placementApplicationSubmissionData', () => {
       })
 
       expect(
-        durationAndArrivalDateFromPlacementApplication(
+        await durationAndArrivalDateFromPlacementApplication(
           placementApplication,
+          'standardDeterminate',
           'not_applicable',
           applicationFactory.build(),
+          dataServices,
+          token,
         ),
       ).toEqual([
         {
@@ -140,20 +165,26 @@ describe('placementApplicationSubmissionData', () => {
       expect(pageDataFromApplicationOrAssessment).toHaveBeenCalledWith(AdditionalPlacementDetails, placementApplication)
     })
 
-    it('calculates the release date to be decision to release date + 6 weeks and retrieves the placement duration from the application if the "reason" is "release_following_decision"', () => {
+    it('calculates the release date to be decision to release date + 6 weeks and retrieves the placement duration from the application if the "reason" is "release_following_decision"', async () => {
       const placementApplication = placementApplicationFactory.build({
         data: { 'request-a-placement': { 'reason-for-placement': { reason: 'release_following_decision' } } },
       })
       ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({
         decisionToReleaseDate: '2023-01-01',
       })
-      ;(placementDurationFromApplication as jest.Mock).mockReturnValue('1')
+      applicationService.getPlacementDuration.mockResolvedValue({
+        defaultDurationDays: 1,
+        maxDurationDays: 10,
+      })
 
       expect(
-        durationAndArrivalDateFromPlacementApplication(
+        await durationAndArrivalDateFromPlacementApplication(
           placementApplication,
+          'standardDeterminate',
           'paroleDirectedLicence',
           applicationFactory.build(),
+          dataServices,
+          token,
         ),
       ).toEqual([
         {

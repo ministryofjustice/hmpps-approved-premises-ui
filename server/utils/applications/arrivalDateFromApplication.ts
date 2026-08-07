@@ -2,7 +2,6 @@ import type { Cas1Application as Application } from '@approved-premises/api'
 
 export const arrivalDateFromApplication = (application: Application): string | null => {
   const basicInformation = application.data?.['basic-information']
-
   if (!basicInformation) return null
 
   const {

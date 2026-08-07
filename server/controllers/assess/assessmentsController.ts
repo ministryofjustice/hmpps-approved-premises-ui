@@ -139,7 +139,6 @@ export default class AssessmentsController {
 
         return res.redirect(paths.assessments.show({ id: assessment.id }))
       }
-
       await this.assessmentService.submit(req.user.token, assessment)
 
       return res.render('assessments/confirm', {
