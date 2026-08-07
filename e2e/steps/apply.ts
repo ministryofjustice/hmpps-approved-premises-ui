@@ -52,7 +52,7 @@ export const completeBasicInformationTask = async (
   testMappaFlow = false,
   completeCaseManagerSection = false,
 ) => {
-  const notEligiblePage = await ApplyPage.initialize(page, 'This application is not eligible')
+  const notEligiblePage = await ApplyPage.initialize(page, 'Ben Davies is not normally eligible for an AP placement')
   await notEligiblePage.checkRadio('Yes')
   await notEligiblePage.clickSave()
 
