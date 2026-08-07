@@ -16,6 +16,7 @@ describe('pendingPlacementRequestTable', () => {
   describe('pendingPlacementRequestTableHeader', () => {
     const sortFields: Record<ApplicationSortField, undefined> = {
       tier: undefined,
+      personTier: undefined,
       createdAt: undefined,
       arrivalDate: undefined,
       releaseType: undefined,
