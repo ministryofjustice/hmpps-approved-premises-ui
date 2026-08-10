@@ -43,6 +43,7 @@ import {
   eventTypeTranslations,
   firstPageOfApplicationJourney,
   getApplicationSummary,
+  getApplicationTierValue,
   getApplicationType,
   isInapplicable,
   isWomensApplication,
@@ -966,6 +967,17 @@ describe('utils', () => {
           },
         },
       ])
+    })
+  })
+
+  describe('getApplicationTierValue', () => {
+    it('calls getVersionedTierValue with the correct parameters from the application', () => {
+      const application = applicationFactory.build()
+      jest.spyOn(personUtils, 'getVersionedTierValue').mockReturnValue('D')
+
+      expect(getApplicationTierValue(application)).toEqual('D')
+
+      expect(personUtils.getVersionedTierValue).toHaveBeenCalledWith(application.person, application.risks.tier.value)
     })
   })
 })

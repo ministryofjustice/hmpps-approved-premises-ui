@@ -29,7 +29,14 @@ import paths from '../../paths/apply'
 import config from '../../config'
 
 import placementApplicationPaths from '../../paths/placementApplications'
-import { displayName, getVersionedTierOrBlank, isApplicableTierDto, isFullPerson, PersonAny } from '../personUtils'
+import {
+  displayName,
+  getVersionedTierOrBlank,
+  getVersionedTierValue,
+  isApplicableTierDto,
+  isFullPerson,
+  PersonAny,
+} from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
@@ -423,6 +430,9 @@ const appealDecisionRadioItems = (selectedOption: AppealDecision | undefined) =>
   }))
 }
 
+const getApplicationTierValue = (application: Cas1Application) =>
+  getVersionedTierValue(application.person, application.risks?.tier?.value)
+
 export {
   applicationTableRows,
   dashboardTableRows,
@@ -438,4 +448,5 @@ export {
   applicationStatusSelectOptions,
   appealDecisionRadioItems,
   applicationSuitableStatuses,
+  getApplicationTierValue,
 }

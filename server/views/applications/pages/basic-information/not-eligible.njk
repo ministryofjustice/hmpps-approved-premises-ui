@@ -12,16 +12,14 @@
     <div class="govuk-grid-column-two-thirds">
 
       <h1 class="govuk-heading-l">{{page.title}}</h1>
-      <p>
-        From the information you've provided this person is not eligible for an Approved Premises (AP) placement.
-      </p>
 
+      <p>Based on your answers, this person is not normally eligible because:</p>
+      <ul class="govuk-list govuk-list--bullet">
+          <li>they are in tier {{ page.tier }}</li>
+          <li>their exceptional case has not been agreed with a senior manager</li>
+       </ul>
       <p>
-        Consider referring the person to other accommodation providers.
-      </p>
-
-      <p>
-        <a href="{{ paths.applications.index() }}">Back to dashboard</a>
+        <a href="{{ paths.applications.index() }}">Go to dashboard</a>
       </p>
     </div>
   </div>
