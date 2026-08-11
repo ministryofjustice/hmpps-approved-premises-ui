@@ -26,7 +26,7 @@ import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 context('Apply', () => {
   beforeEach(setup)
 
-  xit('allows completion of the form', function test() {
+  it('allows completion of the form', function test() {
     AND('I complete the application')
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
     const apply = new ApplyHelper(this.application, this.person, this.offences)
