@@ -1,4 +1,4 @@
-import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../../utils/dateUtils'
 
@@ -6,14 +6,13 @@ import TasklistPage from '../../../tasklistPage'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 export type ExceptionDetailsBody = ObjectWithDateParts<'agreementDate'> & {
-  agreedCaseWithManager: YesOrNo
   managerName: string
   agreementSummary: string
 }
 
 @Page({
   name: 'exception-details',
-  bodyProperties: ['agreedCaseWithManager', 'managerName', ...dateBodyProperties('agreementDate'), 'agreementSummary'],
+  bodyProperties: ['managerName', ...dateBodyProperties('agreementDate'), 'agreementSummary'],
   mergeBody: true,
 })
 export default class ExceptionDetails implements TasklistPage {
@@ -29,7 +28,6 @@ export default class ExceptionDetails implements TasklistPage {
 
   constructor(_body: Partial<ExceptionDetailsBody>) {
     this.body = {
-      agreedCaseWithManager: _body.agreedCaseWithManager,
       managerName: _body.managerName,
       'agreementDate-year': _body['agreementDate-year'],
       'agreementDate-month': _body['agreementDate-month'],
@@ -55,10 +53,6 @@ export default class ExceptionDetails implements TasklistPage {
   }
 
   next() {
-    if (this.body.agreedCaseWithManager === 'no') {
-      return 'not-eligible'
-    }
-
     return 'confirm-your-details'
   }
 

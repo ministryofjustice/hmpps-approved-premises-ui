@@ -5,7 +5,6 @@ import ExceptionDetails, { ExceptionDetailsBody } from './exceptionDetails'
 
 describe('ExceptionDetails', () => {
   const body = {
-    agreedCaseWithManager: 'yes',
     managerName: 'Mr Manager',
     agreementSummary: 'Some Summary',
     'agreementDate-year': '2023',
@@ -18,7 +17,6 @@ describe('ExceptionDetails', () => {
       const page = new ExceptionDetails(body)
 
       expect(page.body).toEqual({
-        agreedCaseWithManager: 'yes',
         managerName: 'Mr Manager',
         agreementSummary: 'Some Summary',
         'agreementDate-year': '2023',
@@ -31,13 +29,7 @@ describe('ExceptionDetails', () => {
 
   itShouldHavePreviousValue(new ExceptionDetails({}), 'is-exceptional-case')
 
-  describe('when agreedCaseWithManager is yes', () => {
-    itShouldHaveNextValue(new ExceptionDetails({ agreedCaseWithManager: 'yes' }), 'confirm-your-details')
-  })
-
-  describe('when agreedCaseWithManager is no', () => {
-    itShouldHaveNextValue(new ExceptionDetails({ agreedCaseWithManager: 'no' }), 'not-eligible')
-  })
+  itShouldHaveNextValue(new ExceptionDetails({}), 'confirm-your-details')
 
   describe('errors', () => {
     it('should return an empty object if the body is provided correctly', () => {
