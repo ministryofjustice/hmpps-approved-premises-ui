@@ -1,5 +1,4 @@
-import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
-import { sentenceCase } from '../../../../utils/utils'
+import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../../utils/dateUtils'
 
@@ -7,31 +6,28 @@ import TasklistPage from '../../../tasklistPage'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 export type ExceptionDetailsBody = ObjectWithDateParts<'agreementDate'> & {
-  agreedCaseWithManager: YesOrNo
   managerName: string
   agreementSummary: string
 }
 
 @Page({
   name: 'exception-details',
-  bodyProperties: ['agreedCaseWithManager', 'managerName', ...dateBodyProperties('agreementDate'), 'agreementSummary'],
+  bodyProperties: ['managerName', ...dateBodyProperties('agreementDate'), 'agreementSummary'],
   mergeBody: true,
 })
 export default class ExceptionDetails implements TasklistPage {
-  title = 'Provide details for exemption application'
+  title = 'Exceptional case details'
 
   questions = {
-    agreedCaseWithManager: 'Have you agreed the case with a senior manager?',
-    managerName: 'Name of senior manager',
-    agreementDate: 'What date was this agreed?',
-    agreementSummary: 'Provide a summary of the reasons why this is an exempt application',
+    managerName: 'Name of senior manager who approved exemption',
+    agreementDate: 'Date of approval',
+    agreementSummary: 'Reason for exceptional case',
   }
 
   body: ExceptionDetailsBody
 
   constructor(_body: Partial<ExceptionDetailsBody>) {
     this.body = {
-      agreedCaseWithManager: _body.agreedCaseWithManager,
       managerName: _body.managerName,
       'agreementDate-year': _body['agreementDate-year'],
       'agreementDate-month': _body['agreementDate-month'],
@@ -45,18 +41,11 @@ export default class ExceptionDetails implements TasklistPage {
   }
 
   response() {
-    let response = { [this.questions.agreedCaseWithManager]: sentenceCase(this.body.agreedCaseWithManager) }
-
-    if (this.body.agreedCaseWithManager === 'yes') {
-      response = {
-        ...response,
-        [this.questions.managerName]: this.body.managerName,
-        [this.questions.agreementDate]: DateFormats.isoDateToUIDate(this.body.agreementDate),
-        [this.questions.agreementSummary]: this.body.agreementSummary,
-      }
+    return {
+      [this.questions.managerName]: this.body.managerName,
+      [this.questions.agreementDate]: DateFormats.isoDateToUIDate(this.body.agreementDate),
+      [this.questions.agreementSummary]: this.body.agreementSummary,
     }
-
-    return response
   }
 
   previous() {
@@ -64,34 +53,25 @@ export default class ExceptionDetails implements TasklistPage {
   }
 
   next() {
-    if (this.body.agreedCaseWithManager === 'no') {
-      return 'not-eligible'
-    }
-
     return 'confirm-your-details'
   }
 
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    if (!this.body.agreedCaseWithManager) {
-      errors.agreedCaseWithManager = 'You must state if you have agreed the case with a senior manager'
+    if (!this.body.managerName) {
+      errors.managerName = 'Enter the name of the senior manager who approved the exemption'
     }
 
-    if (this.body.agreedCaseWithManager === 'yes') {
-      if (!this.body.agreementDate) {
-        errors.agreementDate = 'You must provide an agreement date'
-      } else if (!dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'agreementDate'>, 'agreementDate')) {
-        errors.agreementDate = 'The agreement date is an invalid date'
-      }
+    if (
+      !this.body.agreementDate ||
+      !dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'agreementDate'>, 'agreementDate')
+    ) {
+      errors.agreementDate = 'Enter a date of approval'
+    }
 
-      if (!this.body.managerName) {
-        errors.managerName = 'You must provide the name of the senior manager'
-      }
-
-      if (!this.body.agreementSummary) {
-        errors.agreementSummary = 'You must provide a summary of the reasons why this is an exempt application'
-      }
+    if (!this.body.agreementSummary) {
+      errors.agreementSummary = 'Enter a reason for the exceptional case'
     }
 
     return errors

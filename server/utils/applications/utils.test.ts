@@ -555,7 +555,6 @@ describe('utils', () => {
 
       expect(isInapplicable(application)).toEqual(false)
     })
-
     it('should return true if the applicant has answered yes to the isExceptionalCase question and no to the agreedCaseWithManager question', () => {
       mockOptionalQuestionResponse({ isExceptionalCase: 'yes', agreedCaseWithManager: 'no' })
 

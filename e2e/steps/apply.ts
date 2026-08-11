@@ -56,14 +56,10 @@ export const completeBasicInformationTask = async (
   await notEligiblePage.checkRadio('Yes')
   await notEligiblePage.clickSave()
 
-  const exemptionApplicationPage = await ApplyPage.initialize(page, 'Provide details for exemption application')
-  await exemptionApplicationPage.checkRadio('Yes')
-  await exemptionApplicationPage.fillField('Name of senior manager', 'Some text')
+  const exemptionApplicationPage = await ApplyPage.initialize(page, 'Exceptional case details')
+  await exemptionApplicationPage.fillField('Name of senior manager who approved exemption', 'Some text')
   await exemptionApplicationPage.fillDateField({ year: '2022', month: '3', day: '12' })
-  await exemptionApplicationPage.fillField(
-    'Provide a summary of the reasons why this is an exempt application',
-    'Some text',
-  )
+  await exemptionApplicationPage.fillField('Reason for exceptional case', 'Some text')
   await exemptionApplicationPage.clickSave()
 
   const confirmYourDetailsPage = await ApplyPage.initialize(page, 'Confirm your details')
