@@ -11,7 +11,7 @@ import { SummaryListWithCard } from '@approved-premises/ui'
 import { card, cellMetaData, combineResultAndContent, insetText, loadingErrorMessage, ResidentProfileSubTab } from '.'
 import paths from '../../paths/manage'
 import { dateCellNoWrap, textCell } from '../tableUtils'
-import { oasysQuestionDetailsByNumber, summaryCards, tableRow } from './riskUtils'
+import { summaryCards, tableRow } from './riskUtils'
 import { ApiOutcome, linkTo } from '../utils'
 import { bulletList, summaryListItem } from '../formUtils'
 
@@ -122,27 +122,12 @@ export const healthDetailsCards = ({
 }) => {
   const linkText = `Go to the ${linkTo(paths.resident.tabPlacement.application({ crn, placementId }), { text: 'application and assessment page' })} to check if any access, cultural and healthcare needs were added to the application.`
 
-  let cards = [card({ html: insetText(linkText) })]
-
-  const assessentIso = supportingInformation?.assessmentMetadata?.dateCompleted
-  if (assessentIso && assessentIso > '2025-04-09T18:00') {
-    const definition = oasysQuestionDetailsByNumber['13.1']
-    cards = cards.concat([
-      card({
-        title: definition.label,
-        html: `<p>We cannot load general health - any physical or mental health conditions right now.</p>
-<p>Go to OASys to check if any general health details have been entered.</p>`,
-      }),
-    ])
-  } else {
-    cards = cards.concat(summaryCards(['13.1'], supportingInformation, supportingInformationOutcome))
-  }
-
-  cards = cards.concat([
+  return [
+    card({ html: insetText(linkText) }),
+    ...summaryCards(['13.1'], supportingInformation, supportingInformationOutcome),
     dietCard(dietAndAllergy, dietAndAllergyOutcome),
     smokerCard(bookingDetails, bookingDetailsOutcome),
-  ])
-  return cards
+  ]
 }
 
 export const mentalHealthCards = ({
