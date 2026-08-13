@@ -50,7 +50,7 @@ export default class MakeADecision implements TasklistPage {
 
   constructor(
     public body: {
-      decision: string
+      decision: DecisionOption
       decisionRationale?: string
     },
   ) {
@@ -66,7 +66,7 @@ export default class MakeADecision implements TasklistPage {
   }
 
   response() {
-    const { decision } = this.body as { decision: DecisionOption }
+    const { decision } = this.body
     const topLevelDescription = findKey(this.responses, reason => Boolean(reason[decision]))
 
     return {
