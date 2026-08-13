@@ -119,6 +119,17 @@ describe('tableUtils', () => {
         attributes: { 'data-sort-value': 'A8' },
       })
     })
+
+    it('returns the updated live tier instead of the tier from application creation', () => {
+      config.flags.useLiveTiers = true
+      const tierOnApplicationCreation = { level: 'C1' } as RiskTier
+      const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'A1' }) })
+
+      expect(versionedTierCell(person, tierOnApplicationCreation)).toEqual({
+        html: versionedTierBadge(person.tier),
+        attributes: { 'data-sort-value': 'A8' },
+      })
+    })
   })
 
   describe('nameCellLink', () => {
