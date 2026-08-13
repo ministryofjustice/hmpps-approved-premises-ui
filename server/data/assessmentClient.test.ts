@@ -1,4 +1,4 @@
-import { PlacementRequirements } from '@approved-premises/api'
+import { Cas1AssessmentRejection, PlacementRequirements } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import AssessmentClient from './assessmentClient'
 import { assessmentFactory, assessmentSummaryFactory, clarificationNoteFactory } from '../testutils/factories'
@@ -150,16 +150,19 @@ describeCas1NamespaceClient('AssessmentClient', provider => {
       const assessment = assessmentFactory.build()
       const response = { section: [{ task: 'response' }] }
 
+      const details: Cas1AssessmentRejection = {
+        document: response,
+        rejectionRationale: assessment.rejectionRationale,
+        rejectionReason: faker.helpers.arrayElement(['accommodationNeedOnly', 'needsCannotBeMet']),
+      }
+
       await provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to reject an assessment',
         withRequest: {
           method: 'POST',
           path: paths.assessments.rejection({ id: assessment.id }),
-          body: {
-            document: response,
-            rejectionRationale: assessment.rejectionRationale,
-          },
+          body: details,
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -169,7 +172,7 @@ describeCas1NamespaceClient('AssessmentClient', provider => {
         },
       })
 
-      await assessmentClient.rejection(assessment.id, response, assessment.rejectionRationale)
+      await assessmentClient.rejection(assessment.id, details)
     })
   })
 

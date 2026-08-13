@@ -1,9 +1,12 @@
 import { findKey } from 'underscore'
 import type { TaskListErrors } from '@approved-premises/ui'
 
+import { Cas1AssessmentRejectionReasonDto } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
+
+type DecisionOption = Cas1AssessmentRejectionReasonDto | 'accept'
 
 @Page({
   name: 'make-a-decision',
@@ -14,7 +17,7 @@ export default class MakeADecision implements TasklistPage {
 
   title = 'Make a decision'
 
-  responses: Record<string, Record<string, string>> = {
+  responses: Record<string, Partial<Record<DecisionOption, string>>> = {
     'Accept as suitable for an AP': {
       accept: 'Accept',
     },
@@ -63,7 +66,7 @@ export default class MakeADecision implements TasklistPage {
   }
 
   response() {
-    const { decision } = this.body
+    const { decision } = this.body as { decision: DecisionOption }
     const topLevelDescription = findKey(this.responses, reason => Boolean(reason[decision]))
 
     return {

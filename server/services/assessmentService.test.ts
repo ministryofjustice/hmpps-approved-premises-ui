@@ -3,6 +3,7 @@ import { Request } from 'express'
 import { Cas1AssessmentAcceptance, Cas1AssessmentSummary, Cas1UpdatedClarificationNote } from '@approved-premises/api'
 
 import { fromPartial } from '@total-typescript/shoehorn'
+import { faker } from '@faker-js/faker'
 import { AssessmentClient } from '../data'
 import AssessmentService from './assessmentService'
 import {
@@ -19,7 +20,7 @@ import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { DataServices, PaginatedResponse, TaskListErrors } from '../@types/ui'
 import { ValidationError } from '../utils/errors'
 import { ApplicationOrAssessmentResponse } from '../utils/applications/utils'
-import { applicationAccepted } from '../utils/assessments/decisionUtils'
+import { applicationAccepted, decisionFromAssessment } from '../utils/assessments/decisionUtils'
 import { getResponses } from '../utils/applications/getResponses'
 import { getResponseForPage } from '../utils/applications/getResponseForPage'
 
@@ -198,14 +199,21 @@ describe('AssessmentService', () => {
         ...document,
         'make-a-decision': [response],
       }
+      const rejectionReason = faker.helpers.arrayElement(['accommodationNeedOnly', 'needsCannotBeMet'])
+
       ;(applicationAccepted as jest.Mock).mockReturnValue(false)
       ;(getResponses as jest.Mock).mockReturnValue(document)
       ;(getResponseForPage as jest.Mock).mockReturnValue(response)
+      ;(decisionFromAssessment as jest.Mock).mockReturnValue(rejectionReason)
 
       await service.submit(token, assessment)
 
       expect(assessmentClientFactory).toHaveBeenCalledWith(token)
-      expect(assessmentClient.rejection).toHaveBeenCalledWith(assessment.id, document, response.Decision)
+      expect(assessmentClient.rejection).toHaveBeenCalledWith(assessment.id, {
+        document,
+        rejectionRationale: response.Decision,
+        rejectionReason,
+      })
       expect(placementRequestData).not.toHaveBeenCalled()
     })
   })
