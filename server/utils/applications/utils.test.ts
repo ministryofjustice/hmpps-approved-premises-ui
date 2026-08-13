@@ -24,6 +24,7 @@ import {
 } from '../../testutils/factories'
 import paths from '../../paths/apply'
 import managePaths from '../../paths/manage'
+import config from '../../config'
 import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
 import PlacementRequest from '../../form-pages/placement-application'
@@ -42,6 +43,7 @@ import {
   eventTypeTranslations,
   firstPageOfApplicationJourney,
   getApplicationSummary,
+  getApplicationTierValue,
   getApplicationType,
   isInapplicable,
   isWomensApplication,
@@ -333,6 +335,10 @@ describe('utils', () => {
     const sortDirection = 'asc'
     const hrefPrefix = 'http://example.com'
 
+    afterEach(() => {
+      config.flags.useLiveTiers = false
+    })
+
     it('returns header values', () => {
       expect(dashboardTableHeader(sortBy, sortDirection, hrefPrefix)).toEqual([
         {
@@ -351,6 +357,14 @@ describe('utils', () => {
           text: 'Actions',
         },
       ])
+    })
+
+    it('should return the Tier column sorted on "personTier" when the useLiveTiers flag is enabled', () => {
+      config.flags.useLiveTiers = true
+
+      expect(dashboardTableHeader(sortBy, sortDirection, hrefPrefix)).toContainEqual(
+        sortHeader<ApplicationSortField>('Tier', 'personTier', sortBy, sortDirection, hrefPrefix),
+      )
     })
   })
 
@@ -541,7 +555,6 @@ describe('utils', () => {
 
       expect(isInapplicable(application)).toEqual(false)
     })
-
     it('should return true if the applicant has answered yes to the isExceptionalCase question and no to the agreedCaseWithManager question', () => {
       mockOptionalQuestionResponse({ isExceptionalCase: 'yes', agreedCaseWithManager: 'no' })
 
@@ -953,6 +966,17 @@ describe('utils', () => {
           },
         },
       ])
+    })
+  })
+
+  describe('getApplicationTierValue', () => {
+    it('calls getVersionedTierValue with the correct parameters from the application', () => {
+      const application = applicationFactory.build()
+      jest.spyOn(personUtils, 'getVersionedTierValue').mockReturnValue('D')
+
+      expect(getApplicationTierValue(application)).toEqual('D')
+
+      expect(personUtils.getVersionedTierValue).toHaveBeenCalledWith(application.person, application.risks.tier.value)
     })
   })
 })
