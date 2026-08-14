@@ -7,6 +7,7 @@ import {
   Cas1NewClarificationNote,
   SortDirection,
   Cas1UpdatedClarificationNote,
+  Cas1AssessmentRejection,
 } from '@approved-premises/api'
 import type { DataServices } from '@approved-premises/ui'
 
@@ -19,7 +20,7 @@ import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getBody } from '../form-pages/utils'
 import { ValidationError } from '../utils/errors'
 import { rejectionRationaleFromAssessmentResponses } from '../utils/assessments/utils'
-import { applicationAccepted } from '../utils/assessments/decisionUtils'
+import { applicationAccepted, decisionFromAssessment } from '../utils/assessments/decisionUtils'
 import { getResponses } from '../utils/applications/getResponses'
 
 export default class AssessmentService {
@@ -75,8 +76,12 @@ export default class AssessmentService {
     const client = this.assessmentClientFactory(token)
 
     if (!applicationAccepted(assessment)) {
-      const document = getResponses(assessment)
-      return client.rejection(assessment.id, document, rejectionRationaleFromAssessmentResponses(assessment))
+      const details: Cas1AssessmentRejection = {
+        document: getResponses(assessment),
+        rejectionRationale: rejectionRationaleFromAssessmentResponses(assessment),
+        rejectionReason: decisionFromAssessment(assessment),
+      }
+      return client.rejection(assessment.id, details)
     }
 
     return client.acceptance(assessment.id, await acceptanceData(assessment))

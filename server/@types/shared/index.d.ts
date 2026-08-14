@@ -49,6 +49,7 @@ export type { Cas1ApprovedPremisesGender } from './models/Cas1ApprovedPremisesGe
 export type { Cas1Assessment } from './models/Cas1Assessment';
 export type { Cas1AssessmentAcceptance } from './models/Cas1AssessmentAcceptance';
 export type { Cas1AssessmentRejection } from './models/Cas1AssessmentRejection';
+export type { Cas1AssessmentRejectionReasonDto } from './models/Cas1AssessmentRejectionReasonDto';
 export type { Cas1AssessmentSortField } from './models/Cas1AssessmentSortField';
 export type { Cas1AssessmentStatus } from './models/Cas1AssessmentStatus';
 export type { Cas1AssessmentSummary } from './models/Cas1AssessmentSummary';

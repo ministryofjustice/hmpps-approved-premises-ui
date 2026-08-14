@@ -1,18 +1,19 @@
-import type {
+import {
   Cas1Assessment as Assessment,
   Cas1AssessmentAcceptance,
+  Cas1AssessmentRejection,
   Cas1AssessmentStatus,
   Cas1AssessmentSummary,
   Cas1ClarificationNote,
   Cas1NewClarificationNote,
   Cas1UpdatedClarificationNote,
+  AssessmentSortField,
+  SortDirection,
 } from '@approved-premises/api'
-import { AssessmentSortField, SortDirection } from '@approved-premises/api'
 import { PaginatedResponse } from '@approved-premises/ui'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
-import { ApplicationOrAssessmentResponse } from '../utils/applications/utils'
 
 export default class AssessmentClient {
   restClient: RestClient
@@ -52,14 +53,10 @@ export default class AssessmentClient {
     })
   }
 
-  async rejection(
-    assessmentId: string,
-    document: ApplicationOrAssessmentResponse,
-    rejectionRationale: string,
-  ): Promise<void> {
+  async rejection(assessmentId: string, rejectionDetails: Cas1AssessmentRejection): Promise<void> {
     await this.restClient.post({
       path: paths.assessments.rejection({ id: assessmentId }),
-      data: { document, rejectionRationale },
+      data: rejectionDetails,
     })
   }
 
