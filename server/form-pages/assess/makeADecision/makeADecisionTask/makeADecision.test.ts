@@ -1,3 +1,4 @@
+import { Cas1AssessmentRejectionReasonDto } from '@approved-premises/api'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import MakeADecision from './makeADecision'
@@ -40,7 +41,7 @@ describe('MakeADecision', () => {
 
   describe('errors', () => {
     it('should have an error if there is no answers', () => {
-      const page = new MakeADecision({} as { decision: string })
+      const page = new MakeADecision({} as { decision: Cas1AssessmentRejectionReasonDto | 'accept' })
 
       expect(page.errors()).toEqual({
         decision: 'You must select one option',
@@ -58,7 +59,7 @@ describe('MakeADecision', () => {
   })
 
   describe('no errors', () => {
-    it.each(['accept', 'withdrawnByPp'])(
+    it.each(['accept', 'withdrawnByPp'] as Array<Cas1AssessmentRejectionReasonDto>)(
       'should not raise error if the decision is %s and a reason has not been provided',
       async decision => {
         const page = new MakeADecision({

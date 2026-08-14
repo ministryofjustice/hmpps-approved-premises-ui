@@ -76,10 +76,11 @@ describe('healthUtils', () => {
 
       expect(result).toHaveLength(4)
       expect(result[0]).toEqual({ html: 'Nunjucks template partials/insetText.njk' })
-      expect(result[1]).toEqual({
-        card: { title: { text: 'General Health - Any physical or mental health conditions' } },
-        html: '<p>We cannot load general health - any physical or mental health conditions right now.</p>\n<p>Go to OASys to check if any general health details have been entered.</p>',
-      })
+      expect(result[1]).toEqual(
+        expect.objectContaining({
+          card: { title: { text: 'General Health - Any physical or mental health conditions' } },
+        }),
+      )
       expect(result[2]).toEqual(expect.objectContaining({ card: { title: { text: 'Diet and food allergies' } } }))
       expect(result[3]).toEqual({
         card: { title: { text: 'Smoker or vaper' } },

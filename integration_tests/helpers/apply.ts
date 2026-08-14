@@ -427,14 +427,14 @@ export default class ApplyHelper {
     enterRiskLevelPage.completeForm('veryHighRisk')
     enterRiskLevelPage.clickSubmit()
 
-    const isExceptionalCasePage = new ApplyPages.IsExceptionalCasePage()
+    const isExceptionalCasePage = new ApplyPages.IsExceptionalCasePage(this.application)
     isExceptionalCasePage.showsTierNotFoundMessage()
     isExceptionalCasePage.completeForm('yes')
     isExceptionalCasePage.clickSubmit()
   }
 
   completeExceptionalCase() {
-    const isExceptionalCasePage = new ApplyPages.IsExceptionalCasePage()
+    const isExceptionalCasePage = new ApplyPages.IsExceptionalCasePage(this.application)
 
     isExceptionalCasePage.completeForm('yes')
     isExceptionalCasePage.clickSubmit()

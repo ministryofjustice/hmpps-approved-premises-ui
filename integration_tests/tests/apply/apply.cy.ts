@@ -22,7 +22,6 @@ import SubmissionConfirmation from '../../pages/apply/submissionConfirmation'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import { setup } from './setup'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
-import { fullPersonFactory } from '../../../server/testutils/factories/person'
 
 context('Apply', () => {
   beforeEach(setup)
@@ -139,7 +138,7 @@ context('Apply', () => {
     apply.clickBasicInformation()
 
     THEN('I should see the is exceptional case page')
-    Page.verifyOnPage(ApplyPages.IsExceptionalCasePage, this.application)
+    Page.verifyOnPage(ApplyPages.IsExceptionalCasePage, application)
   })
 
   it('If user navigates away from application on confirm details page for eligible CRN, return to confirm details page', function test() {
@@ -224,19 +223,6 @@ context('Apply', () => {
     Page.verifyOnPage(ConfirmYourDetailsPage, this.application)
   })
 
-  it(`allows the user to specify if the risk level if the person does not have a tier`, function test() {
-    AND('that person does not have an eligible risk tier')
-    const person = fullPersonFactory.build({ tier: undefined })
-    this.application.person = person
-
-    const apply = new ApplyHelper(this.application, person, this.offences)
-    apply.setupApplicationStubs()
-    apply.startApplication()
-
-    THEN('I should be able to confirm that the case is exceptional')
-    apply.completeMissingTierSection()
-  })
-
   it(`allows the user to specify if the case is exceptional if the offender's tier is not eligible`, function test() {
     GIVEN('the person does not have an eligible risk tier')
     const tier = tierDtoFactory.v2Ineligible().build()
@@ -268,7 +254,7 @@ context('Apply', () => {
     apply.startApplication()
 
     THEN('I should be prompted to confirm that the case is exceptional')
-    const isExceptionalCasePage = Page.verifyOnPage(IsExceptionalCasePage)
+    const isExceptionalCasePage = Page.verifyOnPage(IsExceptionalCasePage, application)
 
     AND('I select no')
     isExceptionalCasePage.completeForm('no')

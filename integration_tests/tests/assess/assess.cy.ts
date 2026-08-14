@@ -274,7 +274,7 @@ context('Assess', () => {
           expect(requests).to.have.length(1)
 
           const body = JSON.parse(requests[0].body)
-          expect(body).to.have.keys('document', 'rejectionRationale')
+          expect(body).to.have.keys('document', 'rejectionRationale', 'rejectionReason')
         })
       })
   })
