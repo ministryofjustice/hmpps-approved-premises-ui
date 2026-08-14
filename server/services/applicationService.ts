@@ -15,6 +15,7 @@ import type {
   SortDirection,
   Cas1ApplicationSummary,
   Cas1ExpireApplicationReason,
+  Cas1CreateApplicationOutcome,
 } from '@approved-premises/api'
 
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
@@ -30,7 +31,11 @@ import { getResponses } from '../utils/applications/getResponses'
 export default class ApplicationService {
   constructor(private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>) {}
 
-  async createApplication(token: string, crn: string, activeOffence: ActiveOffence): Promise<Application> {
+  async createApplication(
+    token: string,
+    crn: string,
+    activeOffence: ActiveOffence,
+  ): Promise<Cas1CreateApplicationOutcome> {
     const applicationClient = this.applicationClientFactory(token)
 
     return applicationClient.create(crn, activeOffence)

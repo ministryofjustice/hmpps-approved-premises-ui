@@ -4,22 +4,26 @@ import { sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
+import { displayName, getVersionedTierValue } from '../../../../utils/personUtils'
 
 @Page({ name: 'is-exceptional-case', bodyProperties: ['isExceptionalCase'] })
 export default class IsExceptionalCase implements TasklistPage {
-  title = 'Is this an exceptional case?'
+  title: string
 
   tier: string
+
+  question = 'Has a senior manager agreed that this is an exceptional case?'
 
   constructor(
     readonly body: { isExceptionalCase?: YesOrNo },
     readonly application: Application,
   ) {
-    this.tier = this.application?.risks?.tier?.value?.level
+    this.tier = getVersionedTierValue(application.person, application.risks?.tier?.value)
+    this.title = `${displayName(application.person)} is not normally eligible for an AP placement`
   }
 
   response() {
-    return { [this.title]: sentenceCase(this.body.isExceptionalCase) }
+    return { [this.question]: sentenceCase(this.body.isExceptionalCase) }
   }
 
   previous() {
@@ -37,7 +41,7 @@ export default class IsExceptionalCase implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.isExceptionalCase) {
-      errors.isExceptionalCase = 'You must state if this application is an exceptional case'
+      errors.isExceptionalCase = 'Select yes if a senior manager has agreed that this is an exceptional case'
     }
 
     return errors

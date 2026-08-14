@@ -3,15 +3,15 @@
 
 {% block questions %}
 
-  <h1 class="govuk-heading-l">
+  <h1 class="govuk-heading-l govuk-!-margin-bottom-8">
     {{ page.title }}
   </h1>
 
-  {% set conditionalHTML %}
   {{ formPageInput({
         fieldName: "managerName",
         label: {
-          text: page.questions.managerName
+          text: page.questions.managerName,
+          classes: "govuk-label--s"
         }
       },fetchContext()) }}
 
@@ -21,7 +21,8 @@
         fieldName: "agreementDate",
         fieldset: {
           legend: {
-            text: page.questions.agreementDate
+            text: page.questions.agreementDate,
+            classes: "govuk-fieldset__legend--s"
           }
         },
         hint: {
@@ -36,37 +37,14 @@
   {{ formPageTextarea({
       fieldName: 'agreementSummary',
       label: {
-        text: page.questions.agreementSummary
+        text: page.questions.agreementSummary,
+        classes: "govuk-label--s"
+        },
+        hint:{
+            text:'Tell us why this is an exceptional case'
         }
     }, fetchContext()) }}
 
-  {% endset -%}
 
-  {{ formPageRadios(
-      {
-        fieldset: {
-          legend: {
-            text: page.questions.agreedCaseWithManager,
-            classes: "govuk-fieldset__legend--m"
-          }
-        },
-        items: [
-          {
-            value: "yes",
-            text: "Yes",
-            conditional: {
-              html: conditionalHTML
-            }
-          },
-          {
-            text: "No",
-            value: "no"
-          }
-        ],
-        fieldName: "agreedCaseWithManager"
-      },
-      fetchContext()
-    )
-  }}
 
 {% endblock %}

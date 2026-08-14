@@ -1,8 +1,8 @@
-import { CaseDetail, FullPerson, PersonRisks } from '@approved-premises/api'
+import { CaseDetail, FullPerson } from '@approved-premises/api'
 import { card, insetText, loadingErrorMessage, ndeliusDeeplink, ResidentProfileSubTab, summaryItemNd } from './index'
 import paths from '../../paths/manage'
 import { PersonStatusTag } from '../people/personStatusTag'
-import { getTierOrBlank } from '../applications/helpers'
+import { versionedTierBadge } from '../personUtils'
 import { ApiOutcome } from '../utils'
 import { contactCard, ContactGroup, groupContacts } from './contactUtils'
 import { DateFormats } from '../dateUtils'
@@ -19,7 +19,7 @@ export const personalSideNavigation = (subTab: ResidentProfileSubTab, crn: strin
   ]
 }
 
-export const personDetailsCardList = (person: FullPerson, personRisks: PersonRisks) => {
+export const personDetailsCardList = (person: FullPerson) => {
   return [
     card({
       title: 'Contact details',
@@ -43,7 +43,7 @@ export const personDetailsCardList = (person: FullPerson, personRisks: PersonRis
         ),
         summaryItemNd('Status', person.status && new PersonStatusTag(person.status).html(), 'html'),
         summaryItemNd('Nationality', person.nationality),
-        summaryItemNd('Tier', getTierOrBlank(personRisks.tier?.value?.level), 'html'),
+        summaryItemNd('Tier', versionedTierBadge(person.tier), 'html'),
       ],
     }),
     card({

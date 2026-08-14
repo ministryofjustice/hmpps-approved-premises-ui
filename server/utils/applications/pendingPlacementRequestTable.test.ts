@@ -8,13 +8,15 @@ import {
   releaseTypeSelectOptions,
 } from './pendingPlacementRequestTable'
 import { allReleaseTypes } from './releaseTypeUtils'
-import { createNameAnchorElement, getTierOrBlank } from './helpers'
+import { createNameAnchorElement } from './helpers'
+import { getTierOrBlank } from '../personUtils'
 import { htmlCell, textCell } from '../tableUtils'
 
 describe('pendingPlacementRequestTable', () => {
   describe('pendingPlacementRequestTableHeader', () => {
     const sortFields: Record<ApplicationSortField, undefined> = {
       tier: undefined,
+      personTier: undefined,
       createdAt: undefined,
       arrivalDate: undefined,
       releaseType: undefined,

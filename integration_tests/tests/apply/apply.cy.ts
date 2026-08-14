@@ -6,6 +6,7 @@ import {
   personFactory,
   restrictedPersonFactory,
   risksFactory,
+  tierDtoFactory,
   tierEnvelopeFactory,
   userFactory,
 } from '../../../server/testutils/factories'
@@ -41,6 +42,7 @@ context('Apply', () => {
       expect(body).to.have.keys(
         'data',
         'document',
+        'duration',
         'requestedPlacementPeriod',
         'apType',
         'isWomensApplication',
@@ -69,6 +71,7 @@ context('Apply', () => {
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
         'requestedPlacementPeriod',
+        'duration',
         'translatedDocument',
         'apType',
         'isEmergencyApplication',
@@ -113,25 +116,61 @@ context('Apply', () => {
       crn: this.person.crn,
       tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
     })
-    cy.task('stubApplicationGet', { application: this.application })
-    cy.task('stubApplications', [this.application])
+    const tier = tierDtoFactory.v2Ineligible().build()
+    this.person.sex = 'Male'
+    this.person.tier = tier
+    const application = { ...this.application, person: { ...this.person, tier } }
+    cy.task('stubApplicationGet', { application })
+    cy.task('stubApplications', [application])
 
     AND('I start the application and left')
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
+    const apply = new ApplyHelper(application, application.person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
     AND('I visit the list page')
-    const listPage = ListPage.visit([this.application], [], [])
+    const listPage = ListPage.visit([application], [], [])
 
     WHEN('I click the application from list')
-    listPage.clickApplication(this.application)
+    listPage.clickApplication(application)
 
     AND('I click the basic information')
     apply.clickBasicInformation()
 
     THEN('I should see the is exceptional case page')
-    Page.verifyOnPage(ApplyPages.IsExceptionalCasePage, this.application)
+    Page.verifyOnPage(ApplyPages.IsExceptionalCasePage, application)
+  })
+
+  it('If user navigates away from application on confirm details page for eligible CRN, return to confirm details page', function test() {
+    GIVEN('the person has an eligible risk tier')
+
+    const tier = tierDtoFactory.v2Eligible().build()
+    this.application.risks = risksFactory.build({
+      crn: this.person.crn,
+      tier: tierEnvelopeFactory.build({ value: { level: tier.tierScore } }),
+    })
+    this.person.sex = 'Male'
+    this.person.tier = tier
+    const application = { ...this.application, person: { ...this.person, tier } }
+    cy.task('stubApplicationGet', { application })
+    cy.task('stubApplications', [application])
+
+    AND('I start the application and left')
+    const apply = new ApplyHelper(application, application.person, this.offences)
+    apply.setupApplicationStubs()
+    apply.startApplication()
+
+    AND('I visit the list page')
+    const listPage = ListPage.visit([application], [], [])
+
+    WHEN('I click the application from list')
+    listPage.clickApplication(application)
+
+    AND('I click the basic information')
+    apply.clickBasicInformation()
+
+    THEN('I should see the is exceptional case page')
+    Page.verifyOnPage(ApplyPages.ConfirmYourDetailsPage, this.application)
   })
 
   it('throws an error if the the CRN entered is an LAO', function test() {
@@ -184,29 +223,14 @@ context('Apply', () => {
     Page.verifyOnPage(ConfirmYourDetailsPage, this.application)
   })
 
-  it(`allows the user to specify if the risk level if the person does not have a tier`, function test() {
-    AND('that person does not have an eligible risk tier')
-
-    this.application.risks = risksFactory.build({
-      tier: undefined,
-    })
-
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
-    apply.setupApplicationStubs()
-    apply.startApplication()
-
-    THEN('I should be able to confirm that the case is exceptional')
-    apply.completeMissingTierSection()
-  })
-
   it(`allows the user to specify if the case is exceptional if the offender's tier is not eligible`, function test() {
     GIVEN('the person does not have an eligible risk tier')
-    this.application.risks = risksFactory.build({
-      crn: this.person.crn,
-      tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
-    })
+    const tier = tierDtoFactory.v2Ineligible().build()
+    this.person.sex = 'Male'
+    this.person.tier = tier
+    const application = { ...this.application, person: { ...this.person, tier } }
 
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
+    const apply = new ApplyHelper(application, application.person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
@@ -214,29 +238,30 @@ context('Apply', () => {
     apply.completeExceptionalCase()
 
     AND('I should be on the Confirm Your Details page')
-    Page.verifyOnPage(ConfirmYourDetailsPage, this.application)
+    Page.verifyOnPage(ConfirmYourDetailsPage, application)
   })
 
   it('tells the user that their application is not applicable if the tier is not eligible and it is not an exceptional case', function test() {
     GIVEN('the person does not have an eligible risk tier')
-    this.application.risks = risksFactory.build({
-      crn: this.person.crn,
-      tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
-    })
+    const tier = tierDtoFactory.v2Ineligible().build()
+    this.person.sex = 'Male'
+    this.person.tier = tier
+    const application = { ...this.application, person: { ...this.person, tier } }
 
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
+    cy.task('stubApplicationGet', { application })
+    const apply = new ApplyHelper(application, application.person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
     THEN('I should be prompted to confirm that the case is exceptional')
-    const isExceptionalCasePage = Page.verifyOnPage(IsExceptionalCasePage)
+    const isExceptionalCasePage = Page.verifyOnPage(IsExceptionalCasePage, application)
 
     AND('I select no')
     isExceptionalCasePage.completeForm('no')
     isExceptionalCasePage.clickSubmit()
 
     THEN('I should be told the application is not eligible')
-    Page.verifyOnPage(NotEligiblePage)
+    Page.verifyOnPage(NotEligiblePage, application)
   })
 
   it('allows completion of application emergency flow', function test() {
@@ -325,6 +350,7 @@ context('Apply', () => {
       const body = JSON.parse(requests[requests.length - 1].body)
 
       expect(body).to.have.keys(
+        'duration',
         'requestedPlacementPeriod',
         'data',
         'document',
@@ -355,6 +381,7 @@ context('Apply', () => {
 
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
+        'duration',
         'requestedPlacementPeriod',
         'translatedDocument',
         'apType',

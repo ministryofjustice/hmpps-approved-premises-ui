@@ -269,7 +269,7 @@ describe('placementUtils', () => {
 
       placementKeyDetails(placement)
 
-      expect(applicationHelpers.personKeyDetails).toHaveBeenCalledWith(placement.person, placement.tier)
+      expect(applicationHelpers.personKeyDetails).toHaveBeenCalledWith(placement.person, { level: placement.tier })
     })
   })
 

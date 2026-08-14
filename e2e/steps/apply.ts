@@ -52,18 +52,14 @@ export const completeBasicInformationTask = async (
   testMappaFlow = false,
   completeCaseManagerSection = false,
 ) => {
-  const notEligiblePage = await ApplyPage.initialize(page, 'This application is not eligible')
+  const notEligiblePage = await ApplyPage.initialize(page, 'Ben Davies is not normally eligible for an AP placement')
   await notEligiblePage.checkRadio('Yes')
   await notEligiblePage.clickSave()
 
-  const exemptionApplicationPage = await ApplyPage.initialize(page, 'Provide details for exemption application')
-  await exemptionApplicationPage.checkRadio('Yes')
-  await exemptionApplicationPage.fillField('Name of senior manager', 'Some text')
+  const exemptionApplicationPage = await ApplyPage.initialize(page, 'Exceptional case details')
+  await exemptionApplicationPage.fillField('Name of senior manager who approved exemption', 'Some text')
   await exemptionApplicationPage.fillDateField({ year: '2022', month: '3', day: '12' })
-  await exemptionApplicationPage.fillField(
-    'Provide a summary of the reasons why this is an exempt application',
-    'Some text',
-  )
+  await exemptionApplicationPage.fillField('Reason for exceptional case', 'Some text')
   await exemptionApplicationPage.clickSave()
 
   const confirmYourDetailsPage = await ApplyPage.initialize(page, 'Confirm your details')
@@ -442,11 +438,13 @@ export const createApplication = async (
     person,
     oasysSections,
     applicationType,
+    submit = 'true',
   }: {
     page: Page
     person: TestOptions['person']
     oasysSections: Array<string>
     applicationType: ApplicationType
+    submit?: string
   },
   withReleaseDate: boolean,
   testMappaFlow?: boolean,
@@ -493,15 +491,18 @@ export const createApplication = async (
   // And I check my answers
   await checkApplyAnswers(page)
 
-  // And I submit my application
-  await submitApplication(page)
+  if (submit !== 'false') {
+    // And I submit my application
+    await submitApplication(page)
 
-  // Then I should see a confirmation message
-  await shouldSeeConfirmationPage(page)
+    // Then I should see a confirmation message
+    await shouldSeeConfirmationPage(page)
 
-  const url = page.url()
+    const url = page.url()
 
-  return { id: url.match(/applications\/(.+)\//)[1], preferredAps, apType, preferredPostcode, releaseType }
+    return { id: url.match(/applications\/(.+)\//)[1], preferredAps, apType, preferredPostcode, releaseType }
+  }
+  return { preferredAps, apType, preferredPostcode, releaseType }
 }
 
 export const withdrawAnApplicationBeforeSubmission = async (page: Page, applicationId: string) => {

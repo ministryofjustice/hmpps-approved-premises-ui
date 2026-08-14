@@ -4,9 +4,8 @@ import {
   restrictedPersonFactory,
   tierEnvelopeFactory,
 } from '../../testutils/factories'
-import { createNameAnchorElement, getTierOrBlank, personKeyDetails } from './helpers'
+import { createNameAnchorElement, personKeyDetails } from './helpers'
 import paths from '../../paths/apply'
-import * as personUtils from '../personUtils'
 import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
 import { displayName } from '../personUtils'
 import { DateFormats } from '../dateUtils'
@@ -97,28 +96,8 @@ describe('helpers', () => {
     })
   })
 
-  describe('getTierOrBlank', () => {
-    beforeEach(() => {
-      jest.spyOn(personUtils, 'tierBadge')
-    })
-
-    it('should return the tier when present', () => {
-      expect(getTierOrBlank('foo')).toEqual(personUtils.tierBadge('foo'))
-      expect(personUtils.tierBadge).toHaveBeenCalledWith('foo')
-    })
-
-    it('should return an empty string when undefined', () => {
-      expect(getTierOrBlank(undefined)).toEqual('')
-      expect(personUtils.tierBadge).not.toHaveBeenCalled()
-    })
-
-    it('should return an empty string when null', () => {
-      expect(getTierOrBlank(null)).toEqual('')
-      expect(personUtils.tierBadge).not.toHaveBeenCalled()
-    })
-  })
   describe('personKeyDetails', () => {
-    const tier = tierEnvelopeFactory.build().value.level
+    const tier = tierEnvelopeFactory.build().value
 
     it('should return the key information for a placement', () => {
       const person = personFactory.build()
@@ -127,7 +106,7 @@ describe('helpers', () => {
         header: { key: '', showKey: false, value: person.name },
         items: [
           { key: { text: 'CRN' }, value: { text: person.crn } },
-          { key: { text: 'Tier' }, value: { text: tier } },
+          { key: { text: 'Tier' }, value: { text: tier.level } },
           {
             key: { text: 'Date of birth' },
             value: {
@@ -163,7 +142,7 @@ describe('helpers', () => {
         header: { key: '', showKey: false, value: 'Limited Access Offender' },
         items: [
           { key: { text: 'CRN' }, value: { text: person.crn } },
-          { key: { text: 'Tier' }, value: { text: tier } },
+          { key: { text: 'Tier' }, value: { text: tier.level } },
         ],
       })
     })
@@ -175,7 +154,7 @@ describe('helpers', () => {
         header: { key: '', showKey: false, value: 'Unknown person' },
         items: [
           { key: { text: 'CRN' }, value: { text: person.crn } },
-          { key: { text: 'Tier' }, value: { text: tier } },
+          { key: { text: 'Tier' }, value: { text: tier.level } },
         ],
       })
     })

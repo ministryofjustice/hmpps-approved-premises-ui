@@ -19,6 +19,7 @@ import ApAreaService from './apAreaService'
 import CruManagementAreaService from './cruManagementAreaService'
 import AppealService from './appealService'
 import FormDataService from './formDataService'
+import ReferenceDataService from './referenceDataService'
 
 export const services = () => {
   const {
@@ -60,6 +61,7 @@ export const services = () => {
   const apAreaService = new ApAreaService(referenceDataClientBuilder)
   const cruManagementAreaService = new CruManagementAreaService(cas1ReferenceDataClientBuilder)
   const formDataService = new FormDataService(formClientBuilder)
+  const referenceDataService = new ReferenceDataService(referenceDataClientBuilder)
 
   return {
     appealService,
@@ -79,6 +81,7 @@ export const services = () => {
     apAreaService,
     cruManagementAreaService,
     formDataService,
+    referenceDataService,
   }
 }
 

@@ -3,22 +3,21 @@ import {
   activeOffenceFactory,
   applicationFactory,
   assessmentFactory,
-  personFactory,
   risksFactory,
   tierEnvelopeFactory,
 } from '../../../server/testutils/factories'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { defaultUserId } from '../../mockApis/auth'
 import { signIn } from '../signIn'
+import { fullPersonFactory } from '../../../server/testutils/factories/person'
 
 export const setup = () => {
   cy.task('reset')
 
   GIVEN('I am signed in as an applicant')
   signIn('applicant', { id: defaultUserId })
-
   cy.fixture('applicationData.json').then(applicationData => {
-    const person = personFactory.build()
+    const person = fullPersonFactory.build()
     const assessment = assessmentFactory.build()
     const application = applicationFactory.build({
       person,
@@ -35,7 +34,6 @@ export const setup = () => {
 
     application.data = updateApplicationReleaseDate(applicationData)
     application.risks = risks
-
     cy.task('stubApplicationGet', { application })
     cy.task('stubApplications', [application])
     cy.task('stubAllApplications', { applications: [], anyQuery: true })

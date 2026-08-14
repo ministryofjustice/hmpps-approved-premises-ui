@@ -4,7 +4,7 @@ import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import isAssessment from './assessments/isAssessment'
 import { StatusTag } from './statusTag'
-import { tierQualificationPage } from './applications/utils'
+import { firstPageOfApplicationJourney } from './applications/utils'
 
 export const taskLink = (
   task: TaskWithStatus,
@@ -20,7 +20,8 @@ export const taskLink = (
           task: task.id,
           page: firstPage || '',
         })
-      : (task.id === 'basic-information' && tierQualificationPage(applicationOrAssessment)) ||
+      : (task.id === 'basic-information' &&
+          firstPageOfApplicationJourney(applicationOrAssessment.id, applicationOrAssessment.person)) ||
         applyPaths.applications.pages.show({
           id: (applicationOrAssessment as Application).id,
           task: task.id,

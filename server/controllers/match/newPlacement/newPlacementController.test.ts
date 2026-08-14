@@ -27,10 +27,7 @@ import { convertKeyValuePairToRadioItems } from '../../../utils/formUtils'
 describe('newPlacementController', () => {
   const token = 'TEST_TOKEN'
   const placementRequestDetail = cas1PlacementRequestDetailFactory.build()
-  const contextKeyDetails = personKeyDetails(
-    placementRequestDetail.person,
-    placementRequestDetail.risks.tier.value.level,
-  )
+  const contextKeyDetails = personKeyDetails(placementRequestDetail.person, placementRequestDetail.risks.tier.value)
   const params = { placementRequestId: placementRequestDetail.id }
 
   let request: DeepMocked<Request>

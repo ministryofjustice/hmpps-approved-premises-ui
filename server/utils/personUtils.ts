@@ -1,3 +1,4 @@
+import config from '../config'
 import {
   FullPerson,
   FullPersonSummary,
@@ -5,6 +6,8 @@ import {
   PersonSummary,
   RestrictedPerson,
   RestrictedPersonSummary,
+  RiskTier,
+  TierDto,
   UnknownPerson,
   UnknownPersonSummary,
 } from '../@types/shared'
@@ -15,6 +18,28 @@ const tierBadge = (tier: string): string => {
   const colour = { A: 'moj-badge--red', B: 'moj-badge--purple' }[tier[0]]
 
   return `<span class="moj-badge ${colour}">${tier}</span>`
+}
+
+const tierBadgeV3 = (tier: string): string => {
+  if (!tier) return ''
+
+  return `<span class="moj-badge">${tier}</span>`
+}
+
+const versionedTierBadge = (tier: TierDto): string => {
+  if (tier.version === 'V2') {
+    return tierBadge(tier.tierScore)
+  }
+  return tierBadgeV3(tier.tierScore)
+}
+
+const isApplicableTierDto = (person: FullPerson) => {
+  const { version, tierScore } = person.tier || {}
+
+  if (version === 'V2') {
+    return isApplicableTier(person.sex, tierScore)
+  }
+  return ['A', 'B', 'C'].includes(tierScore)
 }
 
 const isApplicableTier = (sex: string, tier: string): boolean => {
@@ -90,4 +115,51 @@ const displayName = (
   }
 }
 
-export { tierBadge, isApplicableTier, isFullPerson, displayName, isUnknownPerson }
+const personTier = (person: Person | PersonSummary): TierDto => {
+  const personType: string = (person as Person).type || (person as PersonSummary).personType
+
+  switch (personType) {
+    case 'FullPerson':
+    case 'FullPersonSummary':
+      return (person as FullPerson).tier
+    case 'RestrictedPerson':
+    case 'RestrictedPersonSummary':
+      return (person as RestrictedPerson).tier
+    default:
+      return undefined
+  }
+}
+
+/**
+ * @deprecated Use getVersionedTierOrBlank instead
+ */
+const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(tier) : '')
+
+const getVersionedTierOrBlank = (person: Person | PersonSummary, tierOnApplicationCreation?: Partial<RiskTier>) => {
+  if (!config.flags.useLiveTiers) {
+    return getTierOrBlank(tierOnApplicationCreation?.level)
+  }
+  const tier = personTier(person)
+  return tier ? versionedTierBadge(tier) : ''
+}
+
+const getVersionedTierValue = (person: Person | PersonSummary, tierOnApplicationCreation?: RiskTier): string => {
+  if (!config.flags.useLiveTiers) {
+    return tierOnApplicationCreation?.level || ''
+  }
+  return personTier(person)?.tierScore || ''
+}
+
+export {
+  tierBadge,
+  versionedTierBadge,
+  getTierOrBlank,
+  getVersionedTierOrBlank,
+  isApplicableTier,
+  isApplicableTierDto,
+  isFullPerson,
+  displayName,
+  isUnknownPerson,
+  personTier,
+  getVersionedTierValue,
+}

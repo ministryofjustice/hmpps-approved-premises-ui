@@ -1,7 +1,8 @@
-import { Person } from '../@types/shared'
+import { Person, PersonSummary, RiskTier } from '../@types/shared'
 import { TableCell } from '../@types/ui'
+import config from '../config'
 import { DateFormats } from './dateUtils'
-import { displayName, tierBadge } from './personUtils'
+import { displayName, getVersionedTierOrBlank, personTier, tierBadge } from './personUtils'
 import { pluralize } from './utils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
@@ -33,6 +34,15 @@ export const tierCell = (value: string) => ({
   html: tierBadge(value),
   attributes: { 'data-sort-value': tierSortKey(value) },
 })
+
+export const versionedTierCell = (person: Person | PersonSummary, tierOnApplicationCreation?: Partial<RiskTier>) => {
+  const tierScore = config.flags.useLiveTiers ? personTier(person)?.tierScore : tierOnApplicationCreation?.level
+
+  return {
+    html: getVersionedTierOrBlank(person, tierOnApplicationCreation),
+    attributes: { 'data-sort-value': tierSortKey(tierScore || '') },
+  }
+}
 
 export const nameCellLink = (person: Person, link?: string) =>
   htmlCell(

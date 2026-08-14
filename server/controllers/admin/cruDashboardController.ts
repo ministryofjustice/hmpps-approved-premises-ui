@@ -8,14 +8,18 @@ import {
 } from '@approved-premises/api'
 import { PlacementRequestDashboardSearchOptions } from '@approved-premises/ui'
 import createError from 'http-errors'
+
+import config from '../../config'
 import { CruManagementAreaService, PlacementRequestService, PremisesService } from '../../services'
 import adminPaths from '../../paths/admin'
+import { objectClean } from '../../utils/utils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
 import { cruDashboardActions, cruDashboardTabItems } from '../../utils/admin/cruDashboardUtils'
 import { pagination } from '../../utils/pagination'
 import { dashboardTableHeader, dashboardTableRows } from '../../utils/placementRequests/table'
 import { placementRequestStatusSelectOptions, tierSelectOptions } from '../../utils/formUtils'
+import ReferenceDataService from '../../services/referenceDataService'
 
 interface IndexRequest extends Request {
   query: {
@@ -33,6 +37,7 @@ export default class CruDashboardController {
     private readonly placementRequestService: PlacementRequestService,
     private readonly cruManagementAreaService: CruManagementAreaService,
     private readonly premisesService: PremisesService,
+    private readonly referenceDataService: ReferenceDataService,
   ) {}
 
   index(): TypedRequestHandler<Request, Response> {
@@ -97,26 +102,35 @@ export default class CruDashboardController {
         'arrivalDateEnd',
         'status',
       ])
+
       const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<PlacementRequestSortField>(
         req,
         adminPaths.admin.cruDashboard.search({}),
         searchOptions,
       )
 
+      const tierFieldName = config.flags.useLiveTiers ? 'personTier' : 'tierOnApplicationCreation'
+
       const dashboard = await this.placementRequestService.search(
         req.user.token,
-        searchOptions,
+        objectClean({
+          ...searchOptions,
+          [tierFieldName]: searchOptions.tier,
+          tier: undefined,
+        }),
         pageNumber,
         sortBy,
         sortDirection,
       )
+
+      const tiers = await this.referenceDataService.getTiers(req.user.token)
 
       res.render('admin/cruDashboard/search', {
         pageHeading: 'CRU Dashboard',
         tabs: cruDashboardTabItems(res.locals.user, 'search'),
         activeTab: 'search',
         ...searchOptions,
-        tierOptions: tierSelectOptions(searchOptions.tier),
+        tierOptions: tierSelectOptions(tiers, searchOptions.tier),
         statusOptions: placementRequestStatusSelectOptions(searchOptions.status),
         tableHead: dashboardTableHeader(undefined, sortBy, sortDirection, hrefPrefix),
         tableRows: dashboardTableRows(dashboard.data),

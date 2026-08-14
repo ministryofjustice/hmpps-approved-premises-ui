@@ -32,10 +32,12 @@
     "generate-types": "script/generate-types",
     "create-application:standard": "APPLICATION_TYPE='standard' npx playwright test --config ./e2e/playwright.config.ts --project=local utils/createApplication.spec.ts",
     "create-application:standard:assess": "ASSESS_APPLICATION='true' npm run create-application:standard",
+    "create-application:standard:unsubmitted": "SUBMIT_APPLICATION='false' npm run create-application:standard",
     "create-application:emergency": "APPLICATION_TYPE='emergency' npx playwright test --config ./e2e/playwright.config.ts --project=local utils/createApplication.spec.ts",
     "create-application:emergency:assess": "ASSESS_APPLICATION='true' npm run create-application:emergency",
     "create-application:short-notice": "APPLICATION_TYPE='shortNotice' npx playwright test --config ./e2e/playwright.config.ts --project=local utils/createApplication.spec.ts",
     "create-application:short-notice:assess": "ASSESS_APPLICATION='true' npm run create-application:short-notice",
+
     "setup": "npm ci && hmpps-npm-script-run-allowlist"
   },
   "engines": {

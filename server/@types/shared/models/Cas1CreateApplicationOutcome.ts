@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { TierDto } from './TierDto';
 export type Cas1CreateApplicationOutcome = {
-    applicationId?: string;
-    tier?: TierDto;
+    applicationId: string;
+    tier: TierDto;
 };
 

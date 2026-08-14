@@ -135,6 +135,12 @@ export type Table = {
   rows: Array<TableRow>
 }
 
+export type ColumnDefinition<T extends string = string> = {
+  title: string
+  fieldName: T
+  sortable: boolean
+}
+
 export type RadioItemButton = (
   | {
       text: string
@@ -467,7 +473,9 @@ export type MiddlewareSpec = {
 
 export type PlacementRequestDashboardSearchOptions = {
   crnOrName?: string
-  tier?: RiskTierLevel
+  tier?: string
+  personTier?: string
+  tierOnApplicationCreation?: string
   arrivalDateStart?: string
   arrivalDateEnd?: string
   status?: PlacementRequestStatus

@@ -1,5 +1,10 @@
 import { SuperAgentRequest } from 'superagent'
-import { Cas1Application as Application, Cas1Assessment as Assessment } from '@approved-premises/api'
+import {
+  Cas1Application,
+  Cas1Application as Application,
+  Cas1Assessment as Assessment,
+  FullPerson,
+} from '@approved-premises/api'
 
 import { UiTask } from '@approved-premises/ui'
 import { bulkStub, getMatchingRequests } from './setup'
@@ -191,46 +196,58 @@ export const stubJourney = (form: Application | Assessment): SuperAgentRequest =
   const journeyType = isAssessment(form) ? 'assessment' : 'application'
   const scenarioName = journeyType === 'assessment' ? 'assess' : 'apply'
 
-  const startRequest =
-    journeyType === 'application'
-      ? {
-          method: 'POST',
-          url: paths.applications.new({}),
-        }
-      : {
-          method: 'GET',
-          url: paths.assessments.show({ id: form.id }),
-        }
-  const getEndpoint =
-    journeyType === 'application' ? paths.applications.show({ id: form.id }) : paths.assessments.show({ id: form.id })
-
-  const stubs = [
-    {
+  const stubs = []
+  // Creation
+  if (journeyType === 'application') {
+    const application = form as Cas1Application
+    stubs.push({
       scenarioName,
       requiredScenarioState: `Started`,
       newScenarioState: `${journeyType}Created`,
-      request: startRequest,
+      request: {
+        method: 'POST',
+        url: paths.applications.new({}),
+      },
+      response: {
+        status: 201,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { applicationId: application.id, tier: (application.person as FullPerson).tier },
+      },
+    })
+  } else {
+    stubs.push({
+      scenarioName,
+      requiredScenarioState: `Started`,
+      newScenarioState: `${journeyType}Created`,
+      request: {
+        method: 'GET',
+        url: paths.assessments.show({ id: form.id }),
+      },
       response: {
         status: 201,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: { ...form, data: null },
       },
+    })
+  }
+
+  const getEndpoint =
+    journeyType === 'application' ? paths.applications.show({ id: form.id }) : paths.assessments.show({ id: form.id })
+
+  stubs.push({
+    scenarioName,
+    requiredScenarioState: `${journeyType}Created`,
+    newScenarioState: `${journeyType}Started`,
+    request: {
+      method: 'GET',
+      url: getEndpoint,
     },
-    {
-      scenarioName,
-      requiredScenarioState: `${journeyType}Created`,
-      newScenarioState: `${journeyType}Started`,
-      request: {
-        method: 'GET',
-        url: getEndpoint,
-      },
-      response: {
-        status: 200,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: { ...form, data: {} },
-      },
+    response: {
+      status: 200,
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      jsonBody: { ...form, data: {} },
     },
-  ] as Array<Record<string, unknown>>
+  })
 
   const tasks = isAssessment(form)
     ? getSections(form as Assessment)

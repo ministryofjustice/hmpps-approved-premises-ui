@@ -5,7 +5,6 @@ import ExceptionDetails, { ExceptionDetailsBody } from './exceptionDetails'
 
 describe('ExceptionDetails', () => {
   const body = {
-    agreedCaseWithManager: 'yes',
     managerName: 'Mr Manager',
     agreementSummary: 'Some Summary',
     'agreementDate-year': '2023',
@@ -18,7 +17,6 @@ describe('ExceptionDetails', () => {
       const page = new ExceptionDetails(body)
 
       expect(page.body).toEqual({
-        agreedCaseWithManager: 'yes',
         managerName: 'Mr Manager',
         agreementSummary: 'Some Summary',
         'agreementDate-year': '2023',
@@ -31,13 +29,7 @@ describe('ExceptionDetails', () => {
 
   itShouldHavePreviousValue(new ExceptionDetails({}), 'is-exceptional-case')
 
-  describe('when agreedCaseWithManager is yes', () => {
-    itShouldHaveNextValue(new ExceptionDetails({ agreedCaseWithManager: 'yes' }), 'confirm-your-details')
-  })
-
-  describe('when agreedCaseWithManager is no', () => {
-    itShouldHaveNextValue(new ExceptionDetails({ agreedCaseWithManager: 'no' }), 'not-eligible')
-  })
+  itShouldHaveNextValue(new ExceptionDetails({}), 'confirm-your-details')
 
   describe('errors', () => {
     it('should return an empty object if the body is provided correctly', () => {
@@ -45,14 +37,7 @@ describe('ExceptionDetails', () => {
       expect(page.errors()).toEqual({})
     })
 
-    it('should return errors if agreedCaseWithManager is blank', () => {
-      const page = new ExceptionDetails({})
-      expect(page.errors()).toEqual({
-        agreedCaseWithManager: 'You must state if you have agreed the case with a senior manager',
-      })
-    })
-
-    it('should return errors if agreedCaseWithManager is yes and the required fields are blank', () => {
+    it('should return errors if the required fields are blank', () => {
       const page = new ExceptionDetails({
         ...body,
         'agreementDate-year': '',
@@ -62,9 +47,9 @@ describe('ExceptionDetails', () => {
         agreementSummary: '',
       })
       expect(page.errors()).toEqual({
-        agreementDate: 'You must provide an agreement date',
-        managerName: 'You must provide the name of the senior manager',
-        agreementSummary: 'You must provide a summary of the reasons why this is an exempt application',
+        managerName: 'Enter the name of the senior manager who approved the exemption',
+        agreementDate: 'Enter a date of approval',
+        agreementSummary: 'Enter a reason for the exceptional case',
       })
     })
 
@@ -76,7 +61,7 @@ describe('ExceptionDetails', () => {
         'agreementDate-day': '199999',
       })
       expect(page.errors()).toEqual({
-        agreementDate: 'The agreement date is an invalid date',
+        agreementDate: 'Enter a date of approval',
       })
     })
   })
@@ -86,10 +71,9 @@ describe('ExceptionDetails', () => {
       const page = new ExceptionDetails(body)
 
       expect(page.response()).toEqual({
-        'Have you agreed the case with a senior manager?': 'Yes',
-        'Name of senior manager': 'Mr Manager',
-        'Provide a summary of the reasons why this is an exempt application': 'Some Summary',
-        'What date was this agreed?': DateFormats.dateAndTimeInputsToUiDate(body, 'agreementDate'),
+        'Name of senior manager who approved exemption': 'Mr Manager',
+        'Date of approval': DateFormats.dateAndTimeInputsToUiDate(body, 'agreementDate'),
+        'Reason for exceptional case': 'Some Summary',
       })
     })
   })

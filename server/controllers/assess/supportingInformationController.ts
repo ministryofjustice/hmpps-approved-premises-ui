@@ -1,7 +1,8 @@
 import { Request, RequestHandler, Response } from 'express'
 
-import { AssessmentService } from '../../services'
+import { AssessmentService, PersonService } from '../../services'
 import { DateFormats } from '../../utils/dateUtils'
+import config from '../../config'
 
 import {
   acctAlertsFromAssessment,
@@ -11,7 +12,10 @@ import {
 import { oasysInformationFromAssessment } from '../../utils/assessments/oasysUtils'
 
 export default class SupportingInformationController {
-  constructor(private readonly assessmentService: AssessmentService) {}
+  constructor(
+    private readonly assessmentService: AssessmentService,
+    private readonly personService: PersonService,
+  ) {}
 
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
@@ -26,6 +30,10 @@ export default class SupportingInformationController {
           'risk-to-self': { riskToSelfSummaries: unknown }
         }
 
+        const risks = config.flags.useLiveTiers
+          ? await this.personService.riskProfile(req.user.token, assessment.application.person.crn)
+          : assessment.application.risks
+
         res.render('assessments/pages/risk-information/oasys-information', {
           pageHeading: 'Review risk information',
           oasysSections: {
@@ -37,7 +45,7 @@ export default class SupportingInformationController {
           },
           dateOfImport: DateFormats.isoDateToUIDate(assessment.application.submittedAt),
           assessmentId: assessment.id,
-          risks: assessment.application.risks,
+          risks,
         })
       } else {
         res.render('assessments/pages/risk-information/prison-information', {
