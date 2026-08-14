@@ -125,9 +125,8 @@ describe('assessmentsController', () => {
 
         taskService.getAll.mockResolvedValue(paginatedTaskResponse)
         const activeTab = 'requests_for_placement'
-        const requestHandler = assessmentsController.index()
 
-        await requestHandler(
+        await assessmentsController.index()(
           {
             ...request,
             query: {

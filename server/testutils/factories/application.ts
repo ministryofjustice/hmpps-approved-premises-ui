@@ -143,6 +143,7 @@ export default ApplicationFactory.define(() => ({
   submittedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   data: {},
   document: {},
+  duration: faker.number.int({ min: 1, max: 365 }),
   outdatedSchema: faker.datatype.boolean(),
   isWomensApplication: faker.datatype.boolean(),
   risks: risksFactory.build(),

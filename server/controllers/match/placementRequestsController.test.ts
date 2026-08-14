@@ -1,19 +1,21 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
+import { SubmitPlacementApplication } from '@approved-premises/api'
 import PlacementRequestsController from './placementRequestsController'
 
 import { ApplicationService, PlacementApplicationService, PlacementRequestService } from '../../services'
 import {
   apAreaFactory,
-  applicationFactory,
   placementApplicationFactory,
   cas1PlacementRequestDetailFactory,
+  cas1RequestedPlacementPeriodFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/placementApplications'
 
 import { getResponses } from '../../utils/applications/getResponses'
 import { placementRequestKeyDetails } from '../../utils/placementRequests/utils'
+import * as placementApplicationSubmissionData from '../../utils/placementRequests/placementApplicationSubmissionData'
 import * as validationUtils from '../../utils/validation'
 
 jest.mock('../../utils/applications/utils')
@@ -57,9 +59,11 @@ describe('PlacementRequestsController', () => {
 
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
 
-      const requestHandler = placementRequestsController.show()
-
-      await requestHandler({ ...request, params: { placementRequestId: placementRequestDetail.id } }, response, next)
+      await placementRequestsController.show()(
+        { ...request, params: { placementRequestId: placementRequestDetail.id } },
+        response,
+        next,
+      )
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/show', {
         pageHeading: 'Matching information',
@@ -94,10 +98,21 @@ describe('PlacementRequestsController', () => {
   describe('submit', () => {
     describe('when confirmation is "1"', () => {
       it('should POST to the service and redirect to the confirmation page', async () => {
+        const requestedPlacementPeriods = cas1RequestedPlacementPeriodFactory.buildList(1)
+        const submissionData: SubmitPlacementApplication = {
+          releaseType: 'licence',
+          requestedPlacementPeriods,
+          translatedDocument: {},
+        }
+        jest
+          .spyOn(placementApplicationSubmissionData, 'durationAndArrivalDateFromPlacementApplication')
+          .mockReturnValue(requestedPlacementPeriods)
+
+        jest
+          .spyOn(placementApplicationSubmissionData, 'placementApplicationSubmissionData')
+          .mockReturnValue(submissionData)
         const placementApplication = placementApplicationFactory.build()
-        const application = applicationFactory.build()
-        placementApplicationService.submit.mockResolvedValue(placementApplication)
-        applicationService.findApplication.mockResolvedValue(application)
+
         placementApplicationService.getPlacementApplication.mockResolvedValue(placementApplication)
         const indexRequest = { ...request, body: { confirmation: '1' }, params: { id: placementApplication.id } }
 
@@ -107,7 +122,7 @@ describe('PlacementRequestsController', () => {
         expect(response.render).toHaveBeenCalledWith('placement-applications/confirm', {
           pageHeading: 'Request for placement confirmed',
         })
-        expect(placementApplicationService.submit).toHaveBeenCalledWith(token, placementApplication, application)
+        expect(placementApplicationService.submit).toHaveBeenCalledWith(token, placementApplication, submissionData)
       })
     })
 

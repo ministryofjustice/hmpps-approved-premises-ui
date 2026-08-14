@@ -3,21 +3,23 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PlacementApplicationClient from '../data/placementApplicationClient'
 import {
-  applicationFactory,
   placementApplicationDecisionEnvelopeFactory,
   placementApplicationFactory,
+  submitPlacementApplicationFactory,
 } from '../testutils/factories'
 import PlacementApplicationService, { LegacyError } from './placementApplicationService'
 import { DataServices, TaskListErrors } from '../@types/ui'
 import { getBody } from '../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
-
-import { placementApplicationSubmissionData } from '../utils/placementRequests/placementApplicationSubmissionData'
+import { ApplicationService } from './index'
 
 jest.mock('../data/placementApplicationClient.ts')
 jest.mock('../form-pages/utils')
 jest.mock('../utils/placementRequests/placementApplicationSubmissionData')
+
+const applicationService = createMock<ApplicationService>({})
+const dataServices = { applicationService } as DataServices
 
 describe('placementApplicationService', () => {
   const placementApplicationClient = new PlacementApplicationClient(null) as jest.Mocked<PlacementApplicationClient>
@@ -46,8 +48,6 @@ describe('placementApplicationService', () => {
 
   describe('initializePage', () => {
     let request: DeepMocked<Request>
-
-    const dataServices = createMock<DataServices>({}) as DataServices
     const placementApplication = placementApplicationFactory.build({
       data: { 'request-a-placement': { 'sentence-type-check': { sentenceTypeCheck: 'no' } } },
     })
@@ -200,13 +200,15 @@ describe('placementApplicationService', () => {
   describe('submit', () => {
     it('calls the client method and returns the resulting placement application', () => {
       const placementApplication = placementApplicationFactory.build()
-      const application = applicationFactory.build()
-      ;(placementApplicationSubmissionData as jest.Mock).mockReturnValue({})
-
+      const submitPlacementApplication = submitPlacementApplicationFactory.build()
       placementApplicationClient.submission.mockResolvedValue(placementApplication)
 
-      const result = service.submit(token, placementApplication, application)
+      const result = service.submit(token, placementApplication, submitPlacementApplication)
 
+      expect(placementApplicationClient.submission).toHaveBeenCalledWith(
+        placementApplication.id,
+        submitPlacementApplication,
+      )
       expect(result).resolves.toEqual(placementApplication)
     })
   })

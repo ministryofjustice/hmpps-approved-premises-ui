@@ -108,7 +108,8 @@ describe('Short notice assessments', () => {
       expect(requests).to.have.length(1)
 
       const body = JSON.parse(requests[0].body)
-      expect(body).to.deep.equal(acceptanceData(this.assessHelper.assessment))
+      const expected = acceptanceData(this.assessHelper.assessment)
+      expect(body).to.deep.equal(expected)
     })
   })
 })

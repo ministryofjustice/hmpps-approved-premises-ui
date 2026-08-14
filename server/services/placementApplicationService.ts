@@ -1,17 +1,16 @@
 import type { Request } from 'express'
 import { DataServices } from '@approved-premises/ui'
 import {
-  Cas1Application as Application,
   PlacementApplication,
   PlacementApplicationDecisionEnvelope,
+  SubmitPlacementApplication,
+  WithdrawPlacementRequestReason,
 } from '@approved-premises/api'
 import { RestClientBuilder } from '../data'
 import PlacementApplicationClient from '../data/placementApplicationClient'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getBody, getPageName, getTaskName } from '../form-pages/utils'
 import { ValidationError } from '../utils/errors'
-import { placementApplicationSubmissionData } from '../utils/placementRequests/placementApplicationSubmissionData'
-import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 import CheckSentenceTypePage from '../form-pages/placement-application/request-a-placement/sentenceTypeCheck'
 import { getSentenceType } from '../utils/placementApplications'
 
@@ -73,13 +72,10 @@ export default class PlacementApplicationService {
     }
   }
 
-  async submit(token: string, placementApplication: PlacementApplication, application: Application) {
+  async submit(token: string, placementApplication: PlacementApplication, submissionData: SubmitPlacementApplication) {
     const placementApplicationClient = this.placementApplicationClientFactory(token)
 
-    return placementApplicationClient.submission(
-      placementApplication.id,
-      placementApplicationSubmissionData(placementApplication, application),
-    )
+    return placementApplicationClient.submission(placementApplication.id, submissionData)
   }
 
   async submitDecision(

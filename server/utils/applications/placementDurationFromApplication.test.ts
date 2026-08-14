@@ -8,7 +8,7 @@ jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('./getDefaultPlacementDurationInDays')
 
 describe('placementDurationFromApplication', () => {
-  const application = applicationFactory.build()
+  const application = applicationFactory.build({ duration: undefined })
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -27,9 +27,11 @@ describe('placementDurationFromApplication', () => {
     expect(getDefaultPlacementDurationInDays).not.toHaveBeenCalled()
   })
 
-  it('should return the default duration an alternative duration is not provided', () => {
-    ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce(undefined)
-    ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValueOnce(12)
+  it('should return the default duration an override duration is not provided', () => {
+    ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockImplementation((_, __, question?: string) => {
+      if (question === 'defaultDurationDays') return 12
+      return undefined
+    })
 
     expect(placementDurationFromApplication(application)).toEqual(12)
 
@@ -38,6 +40,17 @@ describe('placementDurationFromApplication', () => {
       PlacementDuration,
       'duration',
     )
-    expect(getDefaultPlacementDurationInDays).toHaveBeenCalledWith(application)
+    expect(retrieveOptionalQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
+      application,
+      PlacementDuration,
+      'defaultDurationDays',
+    )
+  })
+
+  it('should return the duration from the application body. if populated', () => {
+    const submittedApplication = applicationFactory.build({ duration: 80 })
+
+    expect(placementDurationFromApplication(submittedApplication)).toEqual(80)
+    expect(retrieveOptionalQuestionResponseFromFormArtifact).not.toHaveBeenCalled()
   })
 })
