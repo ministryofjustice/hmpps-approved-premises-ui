@@ -71,6 +71,17 @@ export default class MatchingInformation implements TasklistPage {
     cruInformation: 'Information for Central Referral Unit (CRU) manager (optional)',
   }
 
+  suggestedStaySummaryListOptions: SummaryList
+
+  static async initialize(
+    body: Partial<MatchingInformationBody>,
+    assessment: Assessment,
+  ): Promise<MatchingInformation> {
+    const page = new MatchingInformation(body, assessment)
+    page.suggestedStaySummaryListOptions = suggestedStaySummaryListOptions(assessment.application)
+    return page
+  }
+
   relevantInformationTable = () =>
     radioMatrixTable(
       ['Risks and offences to consider', 'Relevant', 'Not required'],
@@ -202,10 +213,6 @@ export default class MatchingInformation implements TasklistPage {
     }
 
     return errors
-  }
-
-  get suggestedStaySummaryListOptions(): SummaryList {
-    return suggestedStaySummaryListOptions(this.assessment.application)
   }
 
   get apTypeItems() {

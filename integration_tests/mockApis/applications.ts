@@ -1,16 +1,17 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type {
+import {
   Appeal,
   ApplicationSortField,
   ApplicationTimelineNote,
   ApprovedPremisesApplication,
   Cas1ApplicationSummary,
+  Cas1RequestsForPlacementDurationsCalculationResponseDto,
   Cas1TimelineEvent,
   RequestForPlacement,
   SortDirection,
+  Withdrawables,
 } from '@approved-premises/api'
-import { Withdrawables } from '@approved-premises/api'
 import { ApplicationDashboardSearchOptions } from '@approved-premises/ui'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
@@ -288,6 +289,26 @@ export default {
 
   stubAppealErrors: ({ applicationId, params }: { applicationId: string; params: Array<string> }) =>
     stubFor(errorStub(params, paths.applications.appeals.create({ id: applicationId }))),
+
+  stubGetPlacementDuration: ({
+    applicationId,
+    durationObj,
+  }: {
+    applicationId: string
+    durationObj: Cas1RequestsForPlacementDurationsCalculationResponseDto
+  }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPath: paths.applications.calc.durations({ id: applicationId }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: durationObj,
+      },
+    }),
+
   verifyApplicationWithdrawn: async (args: { applicationId: string }) =>
     (
       await getMatchingRequests({

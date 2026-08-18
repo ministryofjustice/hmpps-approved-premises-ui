@@ -1,5 +1,6 @@
 import { Cas1Application } from '@approved-premises/api'
 import { addDays } from 'date-fns'
+import { createMock } from '@golevelup/ts-jest'
 import { getDefaultPlacementDurationInDays } from '../../../utils/applications/getDefaultPlacementDurationInDays'
 
 import PlacementDuration from './placementDuration'
@@ -8,9 +9,13 @@ import { addResponsesToFormArtifact } from '../../../testutils/addToApplication'
 import { arrivalDateFromApplication } from '../../../utils/applications/arrivalDateFromApplication'
 import { DateFormats } from '../../../utils/dateUtils'
 import * as formUtils from '../../../utils/formUtils'
+import { ApplicationService } from '../../../services'
 
 jest.mock('../../../utils/applications/getDefaultPlacementDurationInDays')
 jest.mock('../../../utils/applications/arrivalDateFromApplication')
+
+const applicationService = createMock<ApplicationService>({})
+const token = 'test_token'
 
 describe('PlacementDuration', () => {
   let application: Cas1Application
@@ -50,12 +55,15 @@ describe('PlacementDuration', () => {
   })
 
   describe('initializeDates', () => {
-    it('sets the dates based on arrivalDateFromApplication', () => {
+    it('sets the dates based on arrivalDateFromApplication', async () => {
       const arrivalDate = '2022-11-11'
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(arrivalDate)
-      ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValue(30)
+      ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValue({
+        defaultDurationDays: 30,
+        maxDurationDays: 50,
+      })
 
-      const page = new PlacementDuration({}, application)
+      const page = await PlacementDuration.initialize({}, application, token, { applicationService })
 
       expect(page.arrivalDate).toEqual(DateFormats.isoDateToUIDate(arrivalDate))
       const arrivalDatePlus30Days = addDays(new Date(arrivalDate), 30)

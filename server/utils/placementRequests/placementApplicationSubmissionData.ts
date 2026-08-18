@@ -1,12 +1,10 @@
 import { addWeeks } from 'date-fns'
 import {
-  Cas1Application as Application,
   Cas1RequestedPlacementPeriod,
+  Cas1RequestsForPlacementDurationsCalculationResponseDto,
   PlacementApplication,
-  ReleaseTypeOption,
   SubmitPlacementApplication,
 } from '@approved-premises/api'
-
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
@@ -15,7 +13,6 @@ import DatesOfPlacement, {
   DateOfPlacement,
 } from '../../form-pages/placement-application/request-a-placement/datesOfPlacement'
 import AdditionalPlacementDetails from '../../form-pages/placement-application/request-a-placement/additionalPlacementDetails'
-import { placementDurationFromApplication } from '../applications/placementDurationFromApplication'
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
 import { DateFormats } from '../dateUtils'
 import { makeArrayOfType } from '../utils'
@@ -23,14 +20,10 @@ import { getSentenceType } from '../placementApplications'
 
 export const placementApplicationSubmissionData = (
   placementApplication: PlacementApplication,
-  application: Application,
+  requestedPlacementPeriods: Array<Cas1RequestedPlacementPeriod>,
 ): SubmitPlacementApplication => {
   const { releaseType, sentenceType, situation } = getSentenceType(placementApplication)
-  const requestedPlacementPeriods = durationAndArrivalDateFromPlacementApplication(
-    placementApplication,
-    releaseType,
-    application,
-  )
+
   return {
     translatedDocument: placementApplication.document,
     requestedPlacementPeriods,
@@ -68,10 +61,11 @@ export const retreivePlacementDatesFromRotlPlacementApplication = (
 
 export const durationAndArrivalDateFromPlacementApplication = (
   placementApplication: PlacementApplication,
-  reasonForPlacement: ReleaseTypeOption,
-  application: Application,
+  placementDurations: Cas1RequestsForPlacementDurationsCalculationResponseDto,
 ): Array<Cas1RequestedPlacementPeriod> => {
-  switch (reasonForPlacement) {
+  const { releaseType } = getSentenceType(placementApplication)
+
+  switch (releaseType) {
     case 'rotl': {
       return retreivePlacementDatesFromRotlPlacementApplication(placementApplication)
     }
@@ -84,7 +78,7 @@ export const durationAndArrivalDateFromPlacementApplication = (
       return [
         {
           arrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
-          duration: Number(placementDurationFromApplication(application)),
+          duration: placementDurations?.defaultDurationDays,
         },
       ]
     }
