@@ -11,6 +11,7 @@ import {
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared'
 
 import OptionalOasysSections from './optionalOasysSections'
+import config from '../../../../config'
 
 jest.mock('../../../../services/personService.ts')
 
@@ -61,14 +62,28 @@ describe('OptionalOasysSections', () => {
       getOasysMetadataMock.mockResolvedValue(cas1OasysMetadata)
     })
 
-    it('calls the getOasysSelections method on the client with a token and the persons CRN', async () => {
-      callInitialize()
+    afterEach(() => {
+      config.flags.oasysSixMonthRuleDisabled = false
+    })
+
+    it('calls the getOasysSelections method on the client with a token and the persons CRN when the six month rule is enabled', async () => {
+      config.flags.oasysSixMonthRuleDisabled = false
+
+      await callInitialize()
 
       expect(getOasysMetadataMock).toHaveBeenCalledWith(
         'some-token',
         application.person.crn,
         'completed_in_last_six_months',
       )
+    })
+
+    it('calls the getOasysSelections method on the client with a token and the persons CRN when the six month rule is disabled', async () => {
+      config.flags.oasysSixMonthRuleDisabled = true
+
+      await callInitialize()
+
+      expect(getOasysMetadataMock).toHaveBeenCalledWith('some-token', application.person.crn, 'allow_all')
     })
 
     it('filters the OASys sections into needs linked to reoffending and other needs not linked to reoffending or harm', async () => {
