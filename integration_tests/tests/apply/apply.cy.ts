@@ -218,7 +218,7 @@ context('Apply', () => {
     apply.setupApplicationStubs()
 
     THEN('I should be able to select an offence')
-    apply.startApplication(offences[2])
+    apply.startApplication({ selectedOffence: offences[2] })
 
     THEN('I should be on the Confirm Your Details page')
     Page.verifyOnPage(ConfirmYourDetailsPage, this.application)
@@ -242,7 +242,7 @@ context('Apply', () => {
     Page.verifyOnPage(ConfirmYourDetailsPage, application)
   })
 
-  it('tells the user that their application is not applicable if the tier is not eligible and it is not an exceptional case', function test() {
+  it('tells the user that their application is not applicable if the V2 tier is not eligible and it is not an exceptional case', function test() {
     GIVEN('the person does not have an eligible risk tier')
     const tier = tierDtoFactory.v2Ineligible().build()
     this.person.sex = 'Male'
@@ -253,6 +253,29 @@ context('Apply', () => {
     const apply = new ApplyHelper(application, application.person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
+
+    THEN('I should be prompted to confirm that the case is exceptional')
+    const isExceptionalCasePage = Page.verifyOnPage(IsExceptionalCasePage, application)
+
+    AND('I select no')
+    isExceptionalCasePage.completeForm('no')
+    isExceptionalCasePage.clickSubmit()
+
+    THEN('I should be told the application is not eligible')
+    Page.verifyOnPage(NotEligiblePage, application)
+  })
+
+  it('tells the user that their application is not applicable if the V3 tier is not eligible and it is not an exceptional case', function test() {
+    GIVEN('the person does not have an eligible risk tier')
+    const tier = tierDtoFactory.v3Ineligible().build()
+    this.person.sex = 'Male'
+    this.person.tier = tier
+    const application = { ...this.application, person: { ...this.person, tier } }
+
+    cy.task('stubApplicationGet', { application })
+    const apply = new ApplyHelper(application, application.person, this.offences)
+    apply.setupApplicationStubs()
+    apply.startApplication({ withCas2Interstitial: true })
 
     THEN('I should be prompted to confirm that the case is exceptional')
     const isExceptionalCasePage = Page.verifyOnPage(IsExceptionalCasePage, application)
@@ -438,29 +461,10 @@ context('Apply', () => {
     this.person.tier = tierDtoFactory.build({ version: 'V3', tierScore: 'B' })
     const apply = new ApplyHelper({ ...this.application, person: this.person }, this.person, this.offences)
     apply.setupApplicationStubs()
+    apply.startApplication({ withCas2Interstitial: true })
 
-    WHEN('I start an application and confirm the person')
-    apply.enterCrnDetails()
-    Page.verifyOnPage(ApplyPages.ConfirmDetailsPage, this.person as FullPerson).clickSaveAndContinue()
-
-    THEN('I am on the blue interstitial CAS2 page')
-    const eligibilityCheckPAge = Page.verifyOnPage(ApplyPages.EligibilityCheckPage, this.person as FullPerson)
-    eligibilityCheckPAge.checkContent()
-
-    WHEN('I click continue')
-    eligibilityCheckPAge.clickLink('Continue')
-
-    THEN('I am on the CAS2 choice page')
-    const cas2OptionPage = Page.verifyOnPage(ApplyPages.Cas2OptionPage, this.person)
-
-    AND('The page should contain the correct content')
-    cas2OptionPage.checkContent()
-
-    WHEN('I click the link to continue with CAS1 application')
-    cas2OptionPage.clickLink('Apply for Approved Premises (CAS1) anyway')
-
-    THEN('I am on the Select offences page')
-    Page.verifyOnPage(ApplyPages.SelectOffencePage, this.person, this.offences)
+    THEN('I am on the Confirm your details page')
+    Page.verifyOnPage(ApplyPages.ConfirmYourDetailsPage, this.application)
   })
 
   it('Stops the application if V3 tier is MISSING', function test() {
@@ -472,7 +476,7 @@ context('Apply', () => {
     apply.enterCrnDetails()
     Page.verifyOnPage(ApplyPages.ConfirmDetailsPage, this.person as FullPerson).clickSaveAndContinue()
 
-    THEN('I am on the blue interstitial CAS2 page')
+    THEN('I am on the stop page')
     const eligibilityCheckPage = Page.verifyOnPage(ApplyPages.EligibilityCheckPage, this.person as FullPerson)
     eligibilityCheckPage.checkDashboardLink()
   })

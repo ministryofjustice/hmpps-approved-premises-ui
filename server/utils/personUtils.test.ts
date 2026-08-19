@@ -1,4 +1,4 @@
-import { RiskTier, TierDto, TierVersionDto } from '@approved-premises/api'
+import { RiskTier, TierDto } from '@approved-premises/api'
 import { personFactory, tierEnvelopeFactory } from '../testutils/factories'
 import {
   fullPersonFactory,
@@ -15,6 +15,7 @@ import {
   getVersionedTierValue,
   isApplicableTierDto,
   isApplicableV2Tier,
+  isApplicableV3Tier,
   isFullPerson,
   isNotRestrictedPerson,
   isUnknownPerson,
@@ -24,6 +25,7 @@ import {
 } from './personUtils'
 import tierDtoFactory from '../testutils/factories/tierDto'
 import config from '../config'
+import * as personUtils from './personUtils'
 
 describe('personUtils', () => {
   describe('tierBadge', () => {
@@ -68,17 +70,43 @@ describe('personUtils', () => {
   })
 
   describe('isApplicableTierDto', () => {
-    const person = fullPersonFactory.build()
-    it.each([
-      ['V3', 'A', true],
-      ['V3', 'B', false],
-      ['V3', 'MISSING', false],
-      ['V2', 'A', false],
-      ['V2', 'A1', true],
-    ])('for tier version %s, tier of %s returns %s', (version, tierScore, result) => {
-      const tierDto = tierDtoFactory.build({ tierScore, version: version as TierVersionDto })
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
 
-      expect(isApplicableTierDto({ ...person, tier: tierDto })).toBe(result)
+    it('Evaluates eligibility for a V2 tier', () => {
+      jest.spyOn(personUtils, 'isApplicableV2Tier').mockReturnValue(true)
+      const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build() })
+
+      expect(isApplicableTierDto(person)).toBe(true)
+      expect(personUtils.isApplicableV2Tier).toHaveBeenCalledWith(person.sex, person.tier.tierScore)
+    })
+
+    it('Evaluates eligibility for a V3 tier', () => {
+      jest.spyOn(personUtils, 'isApplicableV3Tier').mockReturnValue(false)
+      const person = fullPersonFactory.build({ tier: tierDtoFactory.v3().build() })
+
+      expect(isApplicableTierDto(person)).toBe(false)
+      expect(personUtils.isApplicableV3Tier).toHaveBeenCalledWith(person.sex, person.tier.tierScore)
+    })
+  })
+
+  describe('isApplicableV3Tier', () => {
+    it.each([
+      ['Male', 'A', true],
+      ['Female', 'A', true],
+      ['Male', 'C', true],
+      ['Female', 'C', true],
+      ['Male', 'D', false],
+      ['Female', 'D', true],
+      ['Male', 'E', false],
+      ['Female', 'E', false],
+      ['Male', 'G', false],
+      ['Female', 'G', false],
+      ['Male', 'MISSING', false],
+      ['Female', 'NOT_SUPERVISED', false],
+    ])('for tier version %s, tier of %s returns %s', (sex, tierScore, result) => {
+      expect(isApplicableV3Tier(sex, tierScore)).toBe(result)
     })
   })
 
