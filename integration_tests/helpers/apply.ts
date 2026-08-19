@@ -121,7 +121,13 @@ export default class ApplyHelper {
     crnPage.clickSubmit()
   }
 
-  startApplication(selectedOffence: ActiveOffence = this.offences[0]) {
+  startApplication({
+    selectedOffence = this.offences[0],
+    withCas2Interstitial = false,
+  }: {
+    selectedOffence?: ActiveOffence
+    withCas2Interstitial?: boolean
+  } = {}) {
     this.enterCrnDetails()
 
     AND('I see the person on the confirmation page')
@@ -130,6 +136,23 @@ export default class ApplyHelper {
 
     AND('I confirm the person is who I expect to see')
     confirmDetailsPage.clickSaveAndContinue()
+    if (withCas2Interstitial) {
+      THEN('I am on the blue interstitial CAS2 page')
+      const eligibilityCheckPAge = Page.verifyOnPage(ApplyPages.EligibilityCheckPage, this.person as FullPerson)
+      eligibilityCheckPAge.checkContent()
+
+      WHEN('I click continue')
+      eligibilityCheckPAge.clickLink('Continue')
+
+      THEN('I am on the CAS2 choice page')
+      const cas2OptionPage = Page.verifyOnPage(ApplyPages.Cas2OptionPage, this.person)
+
+      AND('The page should contain the correct content')
+      cas2OptionPage.checkContent()
+
+      WHEN('I click the link to continue with CAS1 application')
+      cas2OptionPage.clickLink('Apply for Approved Premises (CAS1) anyway')
+    }
 
     THEN('I should be forwarded to select an offence')
     const selectOffencePage = Page.verifyOnPage(ApplyPages.SelectOffencePage, this.person, this.offences)
