@@ -45,6 +45,14 @@ export class RestrictedPersonError extends Error {
   }
 }
 
+export class NoTierError extends Error {
+  type: 'NO_TIER'
+
+  constructor(crn: string) {
+    super(`CRN: ${crn} has no tier`)
+  }
+}
+
 export class CrnMismatchError extends Error {
   type: 'CRN_MISMATCH'
 

@@ -68,6 +68,8 @@ import TypeOfAccommodationPage from './typeOfAccommodation'
 import VulnerabilityPage from './vulnerability'
 import NoOffencePage from './noOffence'
 import ManageApplicationsPage from './manageApplications'
+import EligibilityCheckPage from './eligibilityCheck'
+import Cas2OptionPage from './cas2Option'
 
 export {
   AccessNeedsAdditionalDetailsPage,
@@ -78,6 +80,7 @@ export {
   ArsonPage,
   AttachDocumentsPage,
   BoardTakenPlacePage,
+  Cas2OptionPage,
   CaseManagerInformationPage,
   CaseNotesPage,
   CateringPage,
@@ -100,6 +103,7 @@ export {
   EsapPlacementScreening,
   EsapNotEligible,
   EsapRoomSearches,
+  EligibilityCheckPage,
   ForeignNationalPage,
   IsExceptionalCasePage,
   ListPage,

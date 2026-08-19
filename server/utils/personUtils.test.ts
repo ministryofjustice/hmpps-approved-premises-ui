@@ -1,4 +1,4 @@
-import { RiskTier, TierDto } from '@approved-premises/api'
+import { RiskTier, TierDto, TierVersionDto } from '@approved-premises/api'
 import { personFactory, tierEnvelopeFactory } from '../testutils/factories'
 import {
   fullPersonFactory,
@@ -13,7 +13,8 @@ import {
   getTierOrBlank,
   getVersionedTierOrBlank,
   getVersionedTierValue,
-  isApplicableTier,
+  isApplicableTierDto,
+  isApplicableV2Tier,
   isFullPerson,
   isNotRestrictedPerson,
   isUnknownPerson,
@@ -68,29 +69,44 @@ describe('personUtils', () => {
     )
   })
 
-  describe('isApplicableTier', () => {
+  describe('isApplicableTierDto', () => {
+    const person = fullPersonFactory.build()
+    it.each([
+      ['V3', 'A', true],
+      ['V3', 'B', false],
+      ['V3', 'MISSING', false],
+      ['V2', 'A', false],
+      ['V2', 'A1', true],
+    ])('for tier version %s, tier of %s returns %s', (version, tierScore, result) => {
+      const tierDto = tierDtoFactory.build({ tierScore, version: version as TierVersionDto })
+
+      expect(isApplicableTierDto({ ...person, tier: tierDto })).toBe(result)
+    })
+  })
+
+  describe('isApplicableV2Tier', () => {
     it(`returns true if the person's sex is male and has an applicable tier`, () => {
-      expect(isApplicableTier('Male', 'A1')).toBeTruthy()
+      expect(isApplicableV2Tier('Male', 'A1')).toBeTruthy()
     })
 
     it(`returns false if the person's sex is male and has a tier that is not applicable to males`, () => {
-      expect(isApplicableTier('Male', 'C3')).toBeFalsy()
+      expect(isApplicableV2Tier('Male', 'C3')).toBeFalsy()
     })
 
     it(`returns false if the person's sex is male and has an inapplicable tier`, () => {
-      expect(isApplicableTier('Male', 'D1')).toBeFalsy()
+      expect(isApplicableV2Tier('Male', 'D1')).toBeFalsy()
     })
 
     it(`returns true if the person's sex is female and has an applicable tier`, () => {
-      expect(isApplicableTier('Female', 'A3')).toBeTruthy()
+      expect(isApplicableV2Tier('Female', 'A3')).toBeTruthy()
     })
 
     it(`returns true if the person's sex is female and has a tier that is applicable to females`, () => {
-      expect(isApplicableTier('Female', 'C3')).toBeTruthy()
+      expect(isApplicableV2Tier('Female', 'C3')).toBeTruthy()
     })
 
     it(`returns false if the person's sex is female and has an inapplicable tier`, () => {
-      expect(isApplicableTier('Female', 'D1')).toBeFalsy()
+      expect(isApplicableV2Tier('Female', 'D1')).toBeFalsy()
     })
   })
 

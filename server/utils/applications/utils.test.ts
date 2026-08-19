@@ -505,7 +505,7 @@ describe('utils', () => {
     const applicationId = 'application-id'
 
     it('returns the sentence type page for an applicable application', () => {
-      jest.spyOn(personUtils, 'isApplicableTier').mockReturnValue(true)
+      jest.spyOn(personUtils, 'isApplicableTierDto').mockReturnValue(true)
       const tier = tierDtoFactory.v2Eligible().build()
       const person = personFactory.build({ tier })
 

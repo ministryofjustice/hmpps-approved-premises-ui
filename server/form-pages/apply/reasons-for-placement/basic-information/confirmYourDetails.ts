@@ -2,7 +2,7 @@ import { ApArea, Cas1Application as Application } from '@approved-premises/api'
 import type { DataServices, PageResponse, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { RestrictedPersonError } from '../../../../utils/errors'
-import { isApplicableTier, isFullPerson } from '../../../../utils/personUtils'
+import { isApplicableV2Tier, isFullPerson } from '../../../../utils/personUtils'
 import { lowerCase, sentenceCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
@@ -184,7 +184,7 @@ export default class ConfirmYourDetails implements TasklistPage {
       throw new RestrictedPersonError(this.application.person.crn)
     }
 
-    return isApplicableTier(this.application.person.sex, this.application.risks?.tier?.value?.level)
+    return isApplicableV2Tier(this.application.person.sex, this.application.risks?.tier?.value?.level)
       ? 'dashboard'
       : 'exception-details'
   }
