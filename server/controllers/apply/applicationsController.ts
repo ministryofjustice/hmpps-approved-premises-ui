@@ -29,7 +29,7 @@ import {
   firstPageOfApplicationJourney,
 } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
-import { isApplicableTierDto, isFullPerson } from '../../utils/personUtils'
+import { isFullPerson } from '../../utils/personUtils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { ApplicationDashboardSearchOptions } from '../../@types/ui'
 import { getSearchOptions } from '../../utils/getSearchOptions'
@@ -264,7 +264,7 @@ export default class ApplicationsController {
 
       const { version, tierScore } = person.tier || {}
       if (version === 'V3') {
-        if (isApplicableTierDto(person)) return res.redirect(paths.applications.people.selectOffence({ crn }))
+        if (tierScore === 'A') return res.redirect(paths.applications.people.selectOffence({ crn }))
 
         return res.render('applications/people/eligibilityCheck', {
           person,

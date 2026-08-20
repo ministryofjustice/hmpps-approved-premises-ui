@@ -457,7 +457,7 @@ context('Apply', () => {
     cas2OptionPage.checkContent()
 
     WHEN('I click the link to continue with CAS1 application')
-    cas2OptionPage.clickLink('Apply for Approved Premises application (CAS1) anyway')
+    cas2OptionPage.clickLink('Apply for Approved Premises (CAS1) anyway')
 
     THEN('I am on the Select offences page')
     Page.verifyOnPage(ApplyPages.SelectOffencePage, this.person, this.offences)
