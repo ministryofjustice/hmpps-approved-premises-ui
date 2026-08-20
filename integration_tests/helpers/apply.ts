@@ -226,7 +226,7 @@ export default class ApplyHelper {
   }
 
   private stubOasys404() {
-    cy.task('stubOasysMetadata404', { person: this.person, suitabilityStrategy: 'completed_in_last_six_months' })
+    cy.task('stubOasysMetadata404', { person: this.person, suitabilityStrategy: 'allow_all' })
     cy.task('stubOasysGroup404', { person: this.person })
 
     this.roshSummaries = oasysStubs.roshSummary
@@ -264,7 +264,7 @@ export default class ApplyHelper {
 
     cy.task('stubOasysMetadata', {
       person: this.person,
-      suitabilityStrategy: 'completed_in_last_six_months',
+      suitabilityStrategy: 'allow_all',
       oasysMetadata,
     })
 
@@ -289,7 +289,7 @@ export default class ApplyHelper {
       cy.task('stubOasysGroup', {
         person: this.person,
         group,
-        suitabilityStrategy: 'completed_in_last_six_months',
+        suitabilityStrategy: 'allow_all',
         includeOptionalSections,
       })
     })

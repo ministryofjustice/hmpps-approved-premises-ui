@@ -1,5 +1,6 @@
 import {
   Cas1Application as Application,
+  type Cas1OASysAssessmentSuitabilityStrategyDto,
   Cas1OASysGroup,
   Cas1OASysGroupName,
   Cas1OASysSupportingInformationQuestionMetaData,
@@ -13,6 +14,7 @@ import { mapApiPersonRisksForUi, sentenceCase } from './utils'
 import { OasysNotFoundError } from '../services/personService'
 import oasysStubs from '../data/stubs/oasysStubs.json'
 import { logToSentry } from '../../logger'
+import config from '../config'
 
 export type Constructor<T> = new (body: unknown) => T
 
@@ -37,12 +39,16 @@ export const getOasysSection = async <T extends OasysPage>(
   let oasysGroup: Cas1OASysGroup
   let oasysSuccess: boolean
 
+  const suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto = config.flags.oasysSixMonthRuleDisabled
+    ? 'allow_all'
+    : 'completed_in_last_six_months'
+
   try {
     oasysGroup = await dataServices.personService.getOasysAnswers(
       token,
       application.person.crn,
       groupName,
-      'completed_in_last_six_months',
+      suitabilityStrategy,
       selectedSections,
     )
     const { hasApplicableAssessment } = oasysGroup.assessmentMetadata
