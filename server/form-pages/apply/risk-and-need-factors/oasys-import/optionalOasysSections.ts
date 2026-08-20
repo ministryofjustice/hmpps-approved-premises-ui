@@ -1,5 +1,6 @@
 import {
   Cas1Application as Application,
+  type Cas1OASysAssessmentSuitabilityStrategyDto,
   Cas1OASysMetadata,
   Cas1OASysSupportingInformationQuestionMetaData,
 } from '@approved-premises/api'
@@ -10,6 +11,7 @@ import TasklistPage from '../../../tasklistPage'
 import { flattenCheckboxInput, isStringOrArrayOfStrings } from '../../../../utils/formUtils'
 import { DataServices, type PageResponse } from '../../../../@types/ui'
 import { sentenceCase } from '../../../../utils/utils'
+import config from '../../../../config'
 
 interface Response {
   needsLinkedToReoffending: Array<string> | string | Array<Cas1OASysSupportingInformationQuestionMetaData>
@@ -48,6 +50,10 @@ export default class OptionalOasysSections implements TasklistPage {
   ) {
     const page = new OptionalOasysSections(body as Body)
 
+    const suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto = config.flags.oasysSixMonthRuleDisabled
+      ? 'allow_all'
+      : 'completed_in_last_six_months'
+
     try {
       const {
         supportingInformation,
@@ -55,7 +61,7 @@ export default class OptionalOasysSections implements TasklistPage {
       }: Cas1OASysMetadata = await dataServices.personService.getOasysMetadata(
         token,
         application.person.crn,
-        'completed_in_last_six_months',
+        suitabilityStrategy,
       )
 
       const allNeedsLinkedToReoffending = supportingInformation.filter(

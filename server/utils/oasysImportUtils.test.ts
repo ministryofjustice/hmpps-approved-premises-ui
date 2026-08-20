@@ -22,15 +22,16 @@ import {
   textareas,
 } from './oasysImportUtils'
 import oasysStubs from '../data/stubs/oasysStubs.json'
-import { Cas1OASysGroup, PersonRisks } from '../@types/shared'
+import { type Cas1OASysAssessmentSuitabilityStrategyDto, Cas1OASysGroup, PersonRisks } from '../@types/shared'
 import { logToSentry } from '../../logger'
+import config from '../config'
 
 jest.mock('../../logger.ts')
 
 type OasysOffencePage = OasysPage & { offenceDetailsSummary: Cas1OASysGroup }
 
 describe('OASysImportUtils', () => {
-  describe('getOasysSections', () => {
+  describe('getOasysSection', () => {
     let getOasysGroupMock: jest.Mock
     let personService: DeepMocked<PersonService>
     let constructor: DeepMocked<Constructor<OasysOffencePage>>
@@ -166,6 +167,49 @@ describe('OASysImportUtils', () => {
           questionNumber: questions[1].questionNumber,
         },
       ])
+    })
+
+    describe('oasys six month rule', () => {
+      afterEach(() => {
+        config.flags.oasysSixMonthRuleDisabled = false
+      })
+
+      it.each([
+        ['does', false, 'completed_in_last_six_months'],
+        ['does not', true, 'allow_all'],
+      ])(
+        '%s use the 6 month rule when the oasysSixMonthRuleDisabled feature flag is set to %s',
+        async (_: string, flag: boolean, suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto) => {
+          config.flags.oasysSixMonthRuleDisabled = flag
+
+          const personRisks = risksFactory.build()
+          const application = applicationFactory.build({ risks: personRisks })
+
+          const oasysSections = cas1OasysGroupFactory.build()
+          getOasysGroupMock.mockResolvedValue(oasysSections)
+
+          await getOasysSection<OasysOffencePage>(
+            {},
+            application,
+            'some-token',
+            fromPartial({ personService }),
+            constructor,
+            {
+              groupName: 'offenceDetails',
+              summaryKey: 'offenceDetailsSummary',
+              answerKey: 'offenceDetailsAnswers',
+            },
+          )
+
+          expect(personService.getOasysAnswers).toHaveBeenCalledWith(
+            'some-token',
+            application.person.crn,
+            'offenceDetails',
+            suitabilityStrategy,
+            [],
+          )
+        },
+      )
     })
   })
 

@@ -53,6 +53,7 @@ export default {
     oasysDisabled: getFlag('OASYS_DISABLED'),
     ndeliusRiskFlagsEnabled: getFlag('NDELIUS_RISK_FLAGS_ENABLED'),
     useLiveTiers: getFlag('USE_LIVE_TIER'),
+    oasysSixMonthRuleDisabled: getFlag('OASYS_SIX_MONTH_RULE_DISABLED'),
   },
   paths: {
     ndeliusDeeplink: get('NDELIUS_DEEPLINK', ''),
