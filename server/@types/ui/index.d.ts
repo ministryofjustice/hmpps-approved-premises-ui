@@ -38,6 +38,7 @@ import {
   type Cas1Application as Application,
   type SentenceTypeOption,
   Cas1RequestsForPlacementDurationsCalculationResponseDto,
+  Cas1OASysAssessmentMetadata,
 } from '@approved-premises/api'
 import type { Request } from 'express'
 import { Session } from 'express-session'
@@ -644,3 +645,5 @@ export type ApprovedPremises = {
 }
 
 type v2SortField = Exclude<Cas1SpaceBookingSummarySortField, 'personTier'>
+
+type OasysMetaData = Cas1OASysAssessmentMetadata & { importedDate: string }

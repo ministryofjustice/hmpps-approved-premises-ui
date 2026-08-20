@@ -67,7 +67,8 @@
   "oasys-import": [
     {
       "Needs linked to reoffending": "1. , 2. ",
-      "Needs not linked to risk of serious harm or reoffending": "3. , 4. "
+      "Needs not linked to risk of serious harm or reoffending": "3. , 4. ",
+      "OASys assessment": "OASys could not be imported"
     },
     {
       "Q1: The first RoSH question": "Some answer for the first RoSH question. With an extra comment Q1",

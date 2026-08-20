@@ -12,6 +12,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 
 import OptionalOasysSections from './optionalOasysSections'
 import config from '../../../../config'
+import { DateFormats } from '../../../../utils/dateUtils'
 
 jest.mock('../../../../services/personService.ts')
 
@@ -146,6 +147,7 @@ describe('OptionalOasysSections', () => {
       expect(page.oasysSuccess).toEqual(false)
       expect(page.body.needsLinkedToReoffending).toEqual([])
       expect(page.body.otherNeeds).toEqual([])
+      expect(page.body.metaData).toEqual(undefined)
     })
 
     it('sets oasysSuccess to false if the API returns hasApplicableAssessment=false', async () => {
@@ -154,6 +156,20 @@ describe('OptionalOasysSections', () => {
       const page = await callInitialize()
 
       expect(page.oasysSuccess).toEqual(false)
+    })
+
+    it('stores the OASys metedata and current date in the body', async () => {
+      jest.useFakeTimers()
+      const importedDate = '2026-08-14'
+      jest.setSystemTime(new Date(importedDate))
+      const metaData = cas1OASysMetadataFactory.build()
+      getOasysMetadataMock.mockResolvedValue(metaData)
+
+      const page = await callInitialize()
+
+      expect(page.oasysSuccess).toEqual(true)
+      expect(page.body.metaData).toEqual({ ...metaData.assessmentMetadata, importedDate })
+      jest.useRealTimers()
     })
   })
 
@@ -181,12 +197,21 @@ describe('OptionalOasysSections', () => {
     const otherNeedB = cas1OASysSupportingInformationMetaDataFactory
       .needsNotLinkedToReoffending()
       .build({ section: 4, sectionLabel: 'Bar Section' })
+    const metaData = { ...cas1OASysMetadataFactory.build().assessmentMetadata, importedDate: '2026-08-14' }
+
+    const notImportedMetaDataRow = { 'OASys assessment': 'OASys could not be imported' }
+
+    const metaDataRows = {
+      'OASys assessment': `Imported from OASys ${DateFormats.isoDateToUIDate('2026-08-14')}`,
+      'OASys last updated': DateFormats.isoDateToUIDate(metaData.dateCompleted),
+    }
 
     describe('should return a translated version of the OASys sections', () => {
       it('when every need is selected', () => {
         const page = new OptionalOasysSections({
           needsLinkedToReoffending: [needLinkedToReoffendingA, needLinkedToReoffendingB],
           otherNeeds: [otherNeedA, otherNeedB],
+          metaData,
         })
 
         page.allNeedsLinkedToReoffending = [needLinkedToReoffendingA, needLinkedToReoffendingB]
@@ -196,6 +221,7 @@ describe('OptionalOasysSections', () => {
         expect(page.response()).toEqual({
           [page.needsLinkedToReoffendingHeading]: '1. Some section, 2. Some other section',
           [page.otherNeedsHeading]: '3. Foo section, 4. Bar section',
+          ...metaDataRows,
         })
       })
 
@@ -210,6 +236,7 @@ describe('OptionalOasysSections', () => {
         const page = new OptionalOasysSections({
           needsLinkedToReoffending: [needLinkedToReoffending],
           otherNeeds: [otherNeed],
+          metaData,
         })
 
         page.allNeedsLinkedToReoffending = [needLinkedToReoffending]
@@ -218,15 +245,16 @@ describe('OptionalOasysSections', () => {
         expect(page.response()).toEqual({
           [page.needsLinkedToReoffendingHeading]: `1. Some section`,
           [page.otherNeedsHeading]: `2. Some other section`,
+          ...metaDataRows,
         })
       })
 
-      it('returns an empty object when no needs are selected', () => {
+      it('returns only metadata when no needs are selected', () => {
         const page = new OptionalOasysSections({})
-        expect(page.response()).toEqual({})
+        expect(page.response()).toEqual(notImportedMetaDataRow)
       })
 
-      it('returns an object with only one key if only needsLinkedToReoffending or otherNeeds are given', () => {
+      it('returns an object with only one non-metadata key if only needsLinkedToReoffending or otherNeeds are given', () => {
         const needLinkedToReoffending = cas1OASysSupportingInformationMetaDataFactory
           .needsLinkedToReoffending()
           .build({ section: 1, sectionLabel: 'Some section' })
@@ -238,6 +266,7 @@ describe('OptionalOasysSections', () => {
 
         expect(pageWithOnlyNeedsLinkedToReoffending.response()).toEqual({
           [pageWithOnlyNeedsLinkedToReoffending.needsLinkedToReoffendingHeading]: '1. Some section',
+          ...notImportedMetaDataRow,
         })
 
         const otherNeed = cas1OASysSupportingInformationMetaDataFactory
@@ -251,6 +280,7 @@ describe('OptionalOasysSections', () => {
 
         expect(pageWithOnlyOtherNeeds.response()).toEqual({
           [pageWithOnlyOtherNeeds.otherNeedsHeading]: '2. Some other section',
+          ...notImportedMetaDataRow,
         })
       })
 
@@ -263,6 +293,7 @@ describe('OptionalOasysSections', () => {
         expect(page.response()).toEqual({
           [page.needsLinkedToReoffendingHeading]: '1. Some section, 2. Some other section',
           [page.otherNeedsHeading]: '3. Foo section, 4. Bar section',
+          ...notImportedMetaDataRow,
         })
       })
     })

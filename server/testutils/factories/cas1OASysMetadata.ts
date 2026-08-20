@@ -17,13 +17,15 @@ class Cas1OASysMetadataFactory extends Factory<Cas1OASysMetadata> {
 }
 
 export default Cas1OASysMetadataFactory.define(() => {
-  const dateCompleted = DateFormats.dateObjToIsoDateTime(faker.date.recent({ days: 5 }))
+  const lastUpdatedDate = DateFormats.dateObjToIsoDateTime(faker.date.recent({ days: 5 }))
+  const dateCompleted = DateFormats.dateObjToIsoDateTime(faker.date.recent({ days: 5, refDate: lastUpdatedDate }))
   const dateStarted = DateFormats.dateObjToIsoDateTime(faker.date.recent({ days: 5, refDate: dateCompleted }))
   return {
     supportingInformation: cas1OASysSupportingInformationMetaDataFactory.buildList(5),
     assessmentMetadata: {
       dateCompleted,
       dateStarted,
+      lastUpdatedDate,
       hasApplicableAssessment: true,
     },
   } as Cas1OASysMetadata

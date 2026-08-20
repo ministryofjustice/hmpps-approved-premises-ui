@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { OasysSummariesSection } from '../../@types/ui'
+import { OasysMetaData, OasysSummariesSection } from '../../@types/ui'
 import { Cas1Assessment as Assessment } from '../../@types/shared'
 
 import {
@@ -17,6 +17,7 @@ import SupportingInformationController from './supportingInformationController'
 import { AssessmentService, PersonService } from '../../services'
 import { DateFormats } from '../../utils/dateUtils'
 import config from '../../config'
+import Cas1OASysMetadata from '../../testutils/factories/cas1OASysMetadata'
 
 describe('supportingInformationController', () => {
   const token = 'SOME_TOKEN'
@@ -53,9 +54,11 @@ describe('supportingInformationController', () => {
 
     describe('for "risk-information"', () => {
       let oasysImport: Record<string, OasysSummariesSection>
+      let metaData: OasysMetaData
 
       beforeEach(() => {
         request.params.category = 'risk-information'
+        metaData = { ...Cas1OASysMetadata.build().assessmentMetadata, importedDate: '2026-08-11' }
 
         oasysImport = {
           'offence-details': { offenceDetails: cas1OasysGroupFactory.offenceDetails().build().answers },
@@ -67,7 +70,7 @@ describe('supportingInformationController', () => {
           'risk-management-plan': { riskManagementPlan: cas1OasysGroupFactory.riskManagementPlan().build().answers },
         }
         assessment.application.data = {
-          'oasys-import': { ...oasysImport },
+          'oasys-import': { ...oasysImport, 'optional-oasys-sections': { metaData } },
         }
 
         assessmentService.findAssessment.mockResolvedValue(assessment)
@@ -80,7 +83,8 @@ describe('supportingInformationController', () => {
 
         expect(response.render).toBeCalledWith('assessments/pages/risk-information/oasys-information', {
           assessmentId: assessment.id,
-          dateOfImport: DateFormats.isoDateToUIDate(assessment.application?.submittedAt || ''),
+          dateOfImport: DateFormats.isoDateToUIDate(metaData.importedDate),
+          lastUpdated: DateFormats.isoDateToUIDate(metaData.dateCompleted),
           oasysSections: {
             roshSummary: oasysImport['rosh-summary'].roshSummaries,
             offenceDetails: oasysImport['offence-details'].offenceDetailsSummaries,
