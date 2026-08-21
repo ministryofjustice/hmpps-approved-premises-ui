@@ -284,12 +284,12 @@ export default class ApplicationsController {
     return async (req: Request, res: Response) => {
       const { crn } = req.params
 
-      const env =
-        {
-          test: '-test',
-          preprod: '-preprod',
-          prod: '',
-        }[config.environment] || '-dev'
+      let env = {
+        test: '-test',
+        preprod: '-preprod',
+        prod: '',
+      }[config.environment]
+      env = env === undefined ? '-dev' : env
 
       const cas2Link = `https://community-accommodation-tier-2-bail${env}.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start`
       return res.render('applications/people/cas2Option', {

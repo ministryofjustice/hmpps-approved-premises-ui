@@ -734,7 +734,7 @@ describe('applicationsController', () => {
         'applications/people/cas2Option',
         expect.objectContaining({
           cas2Link:
-            'https://community-accommodation-tier-2-bail-dev.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start',
+            'https://community-accommodation-tier-2-bail.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start',
         }),
       )
     })
