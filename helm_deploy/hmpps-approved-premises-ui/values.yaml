@@ -65,7 +65,8 @@ generic-service:
 
   allowlist:
     groups:
-      - internal
+      - digital_staff_and_mojo
+      - moj_cloud_platform
       - probation
     palo-alto-prisma-access-egress: '128.77.75.64/26'
 
