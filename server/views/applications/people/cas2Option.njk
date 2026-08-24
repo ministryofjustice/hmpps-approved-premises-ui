@@ -1,0 +1,74 @@
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: backLink
+    }) }}
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <form action="#" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+                <h1 class="govuk-heading-l">About Short-term accommodation (CAS2)</h1>
+
+                <h2 class="govuk-heading-m">CAS2 features</h2>
+
+                <p class="govuk-body">CAS2 can offer:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>a mandatory structured accommodation and support package</li>
+                    <li>dedicated support each week: a minimum of 2 hours</li>
+                    <li>electronic monitoring: capability to support at all properties</li>
+                    <li>external CCTV coverage at all properties</li>
+                    <li>practical help with move-on planning</li>
+                    <li>regular collaboration between the provider and probation</li>
+                    <li>routine property visits and welfare monitoring</li>
+                    <li>smartphones provided to all residents (unless exclusions on licence)</li>
+                </ul>
+
+                <h2 class="govuk-heading-m">Who is eligible for CAS2</h2>
+
+                <p class="govuk-body">The applicant must:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>be 18 or over</li>
+                    <li>not be on police bail for, cautioned for, convicted of, or charged with offences mentioned in Schedule 3 of the Sexual Offences Act 2003</li>
+                    <li>not have broken UK immigration laws (except overstaying)</li>
+                    <li>have 'recourse to public funds'</li>
+                </ul>
+
+                <p>For more information, see <a href="https://www.nacro.org.uk/services/community-accommodation-service-cas-2/" target="_blank"">Community Accommodation Services (CAS2) for England and Wales (opens in new tab)</a>.</p>
+
+                <h2 class="govuk-heading-m">Things to consider</h2>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>CAS2 may be suitable if accommodation, practical support and control measures (like location tracking, drug monitoring, or other licence conditions) are enough to manage this person's risks</li>
+                    <li>CAS2 may be suitable if the primary need is avoiding homelessness</li>
+                </ul>
+                <p>Whereas,</p>
+               <ul class="govuk-list govuk-list--bullet">
+                    <li>CAS1's enhanced level of on-site supervision is designed to address a serious and imminent risk of harm to themselves or others on release</li>
+                </ul>
+                <p class="govuk-!-margin-top-8">
+                    {{ govukButton({
+                        text: "Apply for Short-term accommodation (CAS2)",
+                        href:cas2Link,
+                        classes: 'govuk-!-margin-0'
+                    }) }}
+                </p>
+                <p>
+                    <a class="govuk-link" rel="noreferrer noopener" href="{{ continuePath }}">Apply for Approved Premises (CAS1) anyway</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

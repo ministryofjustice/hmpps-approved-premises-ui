@@ -8,7 +8,7 @@ import type {
   PaginatedResponse,
 } from '@approved-premises/ui'
 import { addYears } from 'date-fns'
-import { type Cas1ApplicationSummary } from '@approved-premises/api'
+import { type Cas1ApplicationSummary, TierVersionDto } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController from './applicationsController'
@@ -27,6 +27,7 @@ import {
   requestForPlacementFactory,
   restrictedPersonFactory,
   risksFactory,
+  tierDtoFactory,
 } from '../../testutils/factories'
 
 import paths from '../../paths/apply'
@@ -40,6 +41,7 @@ import { getApplicationTableHeader, getApplicationTableRows } from '../../utils/
 import { applicationKeyDetails, personKeyDetails } from '../../utils/applications/helpers'
 import { statusesLimitedToOne } from '../../utils/applications/statusTag'
 import config from '../../config'
+import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applications/getResponses')
@@ -586,6 +588,7 @@ describe('applicationsController', () => {
           errorSummary: [],
         })
       })
+
       it('renders the form with errors and user input if an error has been sent to the flash', async () => {
         const errorsAndUserInput = createMock<ErrorsAndUserInput>()
         ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
@@ -601,6 +604,139 @@ describe('applicationsController', () => {
           ...errorsAndUserInput.userInput,
         })
       })
+    })
+  })
+
+  describe('eligibilityCheck', () => {
+    const crn: string = '00112233'
+
+    const mockPerson = (version: TierVersionDto, tierScore: string) => {
+      const tierDto = tierDtoFactory.build({ version, tierScore })
+      const person = fullPersonFactory.build({ crn, tier: tierDto })
+      personService.findByCrn.mockResolvedValue(person)
+      return { person }
+    }
+
+    beforeEach(() => {
+      request = createMock<Request>({
+        params: { crn },
+        user: { token },
+      })
+    })
+
+    it('should redirect to the offences page, if the tier is V3 and the person is eligible for AP', async () => {
+      mockPerson('V3', 'A')
+
+      await applicationsController.eligibilityCheck()(request, response, next)
+
+      expect(personService.findByCrn).toHaveBeenCalledWith(token, crn)
+      expect(response.redirect).toHaveBeenCalledWith(paths.applications.people.selectOffence({ crn }))
+    })
+
+    it('should redirect to the offences page, if tier is V2', async () => {
+      mockPerson('V2', 'C1')
+
+      await applicationsController.eligibilityCheck()(request, response, next)
+
+      expect(personService.findByCrn).toHaveBeenCalledWith(token, crn)
+      expect(response.redirect).toHaveBeenCalledWith(paths.applications.people.selectOffence({ crn }))
+    })
+
+    it('should render the CAS2 warning page if the person is not eligible for AP', async () => {
+      const { person } = mockPerson('V3', 'C')
+
+      await applicationsController.eligibilityCheck()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/people/eligibilityCheck', {
+        showStopPage: false,
+        backLink: paths.applications.new({}),
+        continuePath: paths.applications.people.cas2Option({ crn }),
+        dashboardPath: paths.applications.dashboard({}),
+        person,
+        tierScore: 'C',
+      })
+    })
+
+    it('should render the Stop page if the person has a MISSING tier', async () => {
+      const { person } = mockPerson('V3', 'MISSING')
+
+      await applicationsController.eligibilityCheck()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/people/eligibilityCheck', {
+        showStopPage: true,
+        backLink: paths.applications.new({}),
+        continuePath: paths.applications.people.cas2Option({ crn }),
+        dashboardPath: paths.applications.dashboard({}),
+        person,
+        tierScore: 'MISSING',
+      })
+    })
+
+    it('should throw if the person has a V3 tier that is null', () => {
+      mockPerson('V3', null)
+
+      expect(async () => {
+        await applicationsController.eligibilityCheck()(request, response, next)
+      }).rejects.toThrowError(`CRN: ${crn} has no tier`)
+    })
+
+    it('should not throw if the person has a V2 tier that is null', async () => {
+      mockPerson('V2', null)
+
+      await applicationsController.eligibilityCheck()(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(paths.applications.people.selectOffence({ crn }))
+    })
+
+    it('should not throw if the person has no tier', async () => {
+      const person = unknownPersonFactory.build({ crn })
+      personService.findByCrn.mockResolvedValue(person)
+
+      await applicationsController.eligibilityCheck()(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(paths.applications.people.selectOffence({ crn }))
+    })
+  })
+
+  describe('cas2Option', () => {
+    const crn: string = '00112233'
+    const originalEnvironment = config.environment
+    beforeEach(() => {
+      request = createMock<Request>({
+        params: { crn },
+        user: { token },
+      })
+    })
+
+    afterEach(() => {
+      config.environment = originalEnvironment
+    })
+
+    it('should render the CAS2 option page', async () => {
+      config.environment = 'dev'
+
+      await applicationsController.cas2Option()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/people/cas2Option', {
+        continuePath: paths.applications.people.selectOffence({ crn }),
+        backLink: paths.applications.people.eligibilityCheck({ crn }),
+        cas2Link:
+          'https://community-accommodation-tier-2-bail-dev.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start',
+      })
+    })
+
+    it('should use the production CAS2 link in the production environment', async () => {
+      config.environment = 'prod'
+
+      await applicationsController.cas2Option()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith(
+        'applications/people/cas2Option',
+        expect.objectContaining({
+          cas2Link:
+            'https://community-accommodation-tier-2-bail.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start',
+        }),
+      )
     })
   })
 

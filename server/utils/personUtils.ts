@@ -37,12 +37,12 @@ const isApplicableTierDto = (person: FullPerson) => {
   const { version, tierScore } = person.tier || {}
 
   if (version === 'V2') {
-    return isApplicableTier(person.sex, tierScore)
+    return isApplicableV2Tier(person.sex, tierScore)
   }
-  return ['A', 'B', 'C'].includes(tierScore)
+  return tierScore === 'A'
 }
 
-const isApplicableTier = (sex: string, tier: string): boolean => {
+const isApplicableV2Tier = (sex: string, tier: string): boolean => {
   const applicableTiersAll = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3']
   const applicableTiersWomen = ['C3']
 
@@ -155,7 +155,7 @@ export {
   versionedTierBadge,
   getTierOrBlank,
   getVersionedTierOrBlank,
-  isApplicableTier,
+  isApplicableV2Tier,
   isApplicableTierDto,
   isFullPerson,
   displayName,

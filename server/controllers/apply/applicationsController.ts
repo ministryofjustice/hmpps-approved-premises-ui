@@ -1,7 +1,13 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { addYears } from 'date-fns'
-import { ApplicationSortField, Cas1Assessment, Cas1TimelineEvent, RequestForPlacement } from '@approved-premises/api'
+import {
+  ApplicationSortField,
+  Cas1Assessment,
+  Cas1TimelineEvent,
+  FullPerson,
+  RequestForPlacement,
+} from '@approved-premises/api'
 import { statusesLimitedToOne } from '../../utils/applications/statusTag'
 import {
   getApplicationsHeading,
@@ -27,7 +33,7 @@ import { isFullPerson } from '../../utils/personUtils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { ApplicationDashboardSearchOptions } from '../../@types/ui'
 import { getSearchOptions } from '../../utils/getSearchOptions'
-import { RestrictedPersonError } from '../../utils/errors'
+import { NoTierError, RestrictedPersonError } from '../../utils/errors'
 import peoplePaths from '../../paths/people'
 import { applicationKeyDetails, personKeyDetails } from '../../utils/applications/helpers'
 import { getPageBackLink } from '../../utils/backlinks'
@@ -243,6 +249,53 @@ export default class ApplicationsController {
         errorSummary,
         ...userInput,
         restrictedPerson,
+      })
+    }
+  }
+
+  eligibilityCheck(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { crn } = req.params
+      const person = (await this.personService.findByCrn(req.user.token, crn)) as FullPerson
+
+      if (person.tier && person.tier.version === 'V3' && !person.tier.tierScore) {
+        throw new NoTierError(person.crn)
+      }
+
+      const { version, tierScore } = person.tier || {}
+      if (version === 'V3') {
+        if (tierScore === 'A') return res.redirect(paths.applications.people.selectOffence({ crn }))
+
+        return res.render('applications/people/eligibilityCheck', {
+          person,
+          tierScore,
+          showStopPage: tierScore === 'MISSING',
+          continuePath: paths.applications.people.cas2Option({ crn }),
+          backLink: paths.applications.new({}),
+          dashboardPath: paths.applications.dashboard({}),
+        })
+      }
+
+      return res.redirect(paths.applications.people.selectOffence({ crn }))
+    }
+  }
+
+  cas2Option(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { crn } = req.params
+
+      let env = {
+        test: '-test',
+        preprod: '-preprod',
+        prod: '',
+      }[config.environment]
+      env = env === undefined ? '-dev' : env
+
+      const cas2Link = `https://community-accommodation-tier-2-bail${env}.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start`
+      return res.render('applications/people/cas2Option', {
+        continuePath: paths.applications.people.selectOffence({ crn }),
+        backLink: paths.applications.people.eligibilityCheck({ crn }),
+        cas2Link,
       })
     }
   }

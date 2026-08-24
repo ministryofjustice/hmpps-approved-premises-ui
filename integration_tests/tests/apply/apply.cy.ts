@@ -1,4 +1,5 @@
 import { addDays, addMonths, subDays } from 'date-fns'
+import { FullPerson } from '@approved-premises/api'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import {
   activeOffenceFactory,
@@ -431,5 +432,48 @@ context('Apply', () => {
 
     THEN('should display No documents have been imported from Delius message will be displayed')
     apply.verifyNoDocumentsDisplayed()
+  })
+
+  it('Follows the CAS2 interstitial page route', function test() {
+    this.person.tier = tierDtoFactory.build({ version: 'V3', tierScore: 'B' })
+    const apply = new ApplyHelper({ ...this.application, person: this.person }, this.person, this.offences)
+    apply.setupApplicationStubs()
+
+    WHEN('I start an application and confirm the person')
+    apply.enterCrnDetails()
+    Page.verifyOnPage(ApplyPages.ConfirmDetailsPage, this.person as FullPerson).clickSaveAndContinue()
+
+    THEN('I am on the blue interstitial CAS2 page')
+    const eligibilityCheckPAge = Page.verifyOnPage(ApplyPages.EligibilityCheckPage, this.person as FullPerson)
+    eligibilityCheckPAge.checkContent()
+
+    WHEN('I click continue')
+    eligibilityCheckPAge.clickLink('Continue')
+
+    THEN('I am on the CAS2 choice page')
+    const cas2OptionPage = Page.verifyOnPage(ApplyPages.Cas2OptionPage, this.person)
+
+    AND('The page should contain the correct content')
+    cas2OptionPage.checkContent()
+
+    WHEN('I click the link to continue with CAS1 application')
+    cas2OptionPage.clickLink('Apply for Approved Premises (CAS1) anyway')
+
+    THEN('I am on the Select offences page')
+    Page.verifyOnPage(ApplyPages.SelectOffencePage, this.person, this.offences)
+  })
+
+  it('Stops the application if V3 tier is MISSING', function test() {
+    this.person.tier = tierDtoFactory.build({ version: 'V3', tierScore: 'MISSING' })
+    const apply = new ApplyHelper({ ...this.application, person: this.person }, this.person, this.offences)
+    apply.setupApplicationStubs()
+
+    WHEN('I start an application and confirm the person')
+    apply.enterCrnDetails()
+    Page.verifyOnPage(ApplyPages.ConfirmDetailsPage, this.person as FullPerson).clickSaveAndContinue()
+
+    THEN('I am on the blue interstitial CAS2 page')
+    const eligibilityCheckPage = Page.verifyOnPage(ApplyPages.EligibilityCheckPage, this.person as FullPerson)
+    eligibilityCheckPage.checkDashboardLink()
   })
 })

@@ -5,7 +5,7 @@ import { Cas1Application as Application, FullPerson } from '../../../../@types/s
 import { ApAreaService, UserService } from '../../../../services'
 import { apAreaFactory, applicationFactory } from '../../../../testutils/factories'
 import { RestrictedPersonError } from '../../../../utils/errors'
-import { isApplicableTier, isFullPerson } from '../../../../utils/personUtils'
+import { isApplicableV2Tier, isFullPerson } from '../../../../utils/personUtils'
 import { lowerCase } from '../../../../utils/utils'
 import ConfirmYourDetails, { Body, userDetailsKeys } from './confirmYourDetails'
 
@@ -149,17 +149,17 @@ describe('ConfirmYourDetails', () => {
         const page = new ConfirmYourDetails({}, application)
 
         expect(() => page.previous()).toThrowError(RestrictedPersonError)
-        expect(isApplicableTier).not.toHaveBeenCalled()
+        expect(isApplicableV2Tier).not.toHaveBeenCalled()
       })
     })
 
     describe('if the PiP is a full person', () => {
       it('returns "dashboard" if the person is the applicable tier', () => {
         ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-        ;(isApplicableTier as jest.MockedFunction<typeof isApplicableTier>).mockReturnValue(true)
+        ;(isApplicableV2Tier as jest.MockedFunction<typeof isApplicableV2Tier>).mockReturnValue(true)
 
         expect(new ConfirmYourDetails(body, application).previous()).toBe('dashboard')
-        expect(isApplicableTier).toHaveBeenCalledWith(
+        expect(isApplicableV2Tier).toHaveBeenCalledWith(
           (application.person as FullPerson).sex,
           application.risks?.tier?.value?.level,
         )
@@ -167,10 +167,10 @@ describe('ConfirmYourDetails', () => {
 
       it('returns "exception-details" if the person is not in the applicable tier', () => {
         ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-        ;(isApplicableTier as jest.MockedFunction<typeof isApplicableTier>).mockReturnValue(true)
+        ;(isApplicableV2Tier as jest.MockedFunction<typeof isApplicableV2Tier>).mockReturnValue(true)
 
         expect(new ConfirmYourDetails(body, application).previous()).toBe('dashboard')
-        expect(isApplicableTier).toHaveBeenCalledWith(
+        expect(isApplicableV2Tier).toHaveBeenCalledWith(
           (application.person as FullPerson).sex,
           application.risks?.tier?.value?.level,
         )

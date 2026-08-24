@@ -45,6 +45,15 @@ export default function routes(controllers: Controllers, router: Router): Router
   get(paths.applications.people.manageApplications.pattern, applicationsController.manageApplications(), {
     auditEvent: 'MANAGE_APPLICATIONS',
   })
+
+  get(paths.applications.people.eligibilityCheck.pattern, applicationsController.eligibilityCheck(), {
+    auditEvent: 'ELIGIBILITY_CHECK',
+  })
+
+  get(paths.applications.people.cas2Option.pattern, applicationsController.cas2Option(), {
+    auditEvent: 'CAS2_OPTION',
+  })
+
   get(paths.applications.people.selectOffence.pattern, offencesController.selectOffence(), {
     auditEvent: 'SELECT_OFFENCE',
   })
