@@ -62,9 +62,7 @@ describe('personUtils', () => {
     it.each(['A', 'B', 'C'])(
       'returns the correct, consistently coloured tiers badges for version 3 tiers "%s"',
       tier => {
-        expect(versionedTierBadge(tierDtoFactory.v3().build({ tierScore: tier }))).toEqual(
-          `<span class="moj-badge">${tier}</span>`,
-        )
+        expect(versionedTierBadge(tierDtoFactory.v3().build({ tierScore: tier }))).toEqual(`<span>${tier}</span>`)
       },
     )
   })

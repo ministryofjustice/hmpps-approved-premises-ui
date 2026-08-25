@@ -23,7 +23,7 @@ const tierBadge = (tier: string): string => {
 const tierBadgeV3 = (tier: string): string => {
   if (!tier) return ''
 
-  return `<span class="moj-badge">${tier}</span>`
+  return `<span>${tier}</span>`
 }
 
 const versionedTierBadge = (tier: TierDto): string => {
