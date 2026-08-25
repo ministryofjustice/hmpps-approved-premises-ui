@@ -22,9 +22,10 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <div>
-                <p>Imported from OASys: <strong>{{ dateOfImport }}</strong>
-                </p>
-
+                <p>Imported from OASys: <strong>{{ dateOfImport }}</strong></p>
+                {% if lastUpdated %}
+                    <p>Last updated: <strong>{{ lastUpdated }}</strong></p>
+                {% endif %}
             </div>
 
             {{ mojSubNavigation({
