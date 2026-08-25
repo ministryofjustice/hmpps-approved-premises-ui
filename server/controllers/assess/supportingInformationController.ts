@@ -1,5 +1,5 @@
 import { Request, RequestHandler, Response } from 'express'
-
+import { OasysMetaData } from '@approved-premises/ui'
 import { AssessmentService, PersonService } from '../../services'
 import { DateFormats } from '../../utils/dateUtils'
 import config from '../../config'
@@ -28,11 +28,16 @@ export default class SupportingInformationController {
           'supporting-information': { supportingInformationSummaries: unknown }
           'risk-management-plan': { riskManagementSummaries: unknown }
           'risk-to-self': { riskToSelfSummaries: unknown }
+          'optional-oasys-sections': { metaData: OasysMetaData }
         }
 
         const risks = config.flags.useLiveTiers
           ? await this.personService.riskProfile(req.user.token, assessment.application.person.crn)
           : assessment.application.risks
+
+        const dateOfImportIso =
+          oasys['optional-oasys-sections'].metaData?.importedDate || assessment.application.submittedAt
+        const lastUpdatedIso = oasys['optional-oasys-sections'].metaData?.dateCompleted
 
         res.render('assessments/pages/risk-information/oasys-information', {
           pageHeading: 'Review risk information',
@@ -43,7 +48,8 @@ export default class SupportingInformationController {
             riskManagementPlan: oasys['risk-management-plan'].riskManagementSummaries,
             riskToSelf: oasys['risk-to-self'].riskToSelfSummaries,
           },
-          dateOfImport: DateFormats.isoDateToUIDate(assessment.application.submittedAt),
+          dateOfImport: DateFormats.isoDateToUIDate(dateOfImportIso),
+          lastUpdated: lastUpdatedIso && DateFormats.isoDateToUIDate(lastUpdatedIso),
           assessmentId: assessment.id,
           risks,
         })
