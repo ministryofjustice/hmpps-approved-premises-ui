@@ -88,8 +88,7 @@ export default class OptionalOasysSections implements TasklistPage {
 
       page.allNeedsLinkedToReoffending = allNeedsLinkedToReoffending
       page.allOtherNeeds = allOtherNeeds
-      page.oasysSuccess =
-        assessmentMetadata.hasApplicableAssessment === undefined ? true : assessmentMetadata.hasApplicableAssessment
+      page.oasysSuccess = assessmentMetadata.hasApplicableAssessment ?? true
 
       page.body.metaData = { ...assessmentMetadata, importedDate: DateFormats.dateObjToIsoDate(new Date()) }
     } catch (error) {

@@ -1,5 +1,5 @@
 import { Request, RequestHandler, Response } from 'express'
-import { Cas1OASysAssessmentMetadata } from '@approved-premises/api'
+import { OasysMetaData } from '@approved-premises/ui'
 import { AssessmentService, PersonService } from '../../services'
 import { DateFormats } from '../../utils/dateUtils'
 import config from '../../config'
@@ -28,7 +28,7 @@ export default class SupportingInformationController {
           'supporting-information': { supportingInformationSummaries: unknown }
           'risk-management-plan': { riskManagementSummaries: unknown }
           'risk-to-self': { riskToSelfSummaries: unknown }
-          'optional-oasys-sections': { metaData: Cas1OASysAssessmentMetadata & { importedDate: string } }
+          'optional-oasys-sections': { metaData: OasysMetaData }
         }
 
         const risks = config.flags.useLiveTiers
