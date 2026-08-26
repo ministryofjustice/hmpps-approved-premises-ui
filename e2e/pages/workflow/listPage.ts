@@ -2,17 +2,17 @@ import { expect } from '@playwright/test'
 import { PaginatedPage } from '../paginatedPage'
 
 export class ListPage extends PaginatedPage {
-  async getAssignmentWithId(id: string, isAllocated: boolean) {
-    if (!isAllocated) {
-      await this.page
-        .getByRole('link')
-        .filter({ has: this.page.getByText('Unallocated') })
-        .first()
-        .click()
-    }
+async getAssignmentWithId(id: string, isAllocated: boolean) {
+  await this.page.getByLabel('AP area').selectOption({ label: 'All areas' })
+  await this.page.getByRole('button', { name: 'Apply filters' }).click()
 
-    return this.getAssessmentRow(id)
+  if (!isAllocated) {
+    await this.page.getByRole('link', { name: 'Unallocated' }).click()
   }
+
+  return this.getAssessmentRow(id)
+}
+
 
   async getAssessmentRow(id: string) {
     const assessmentRow = this.page
@@ -50,6 +50,9 @@ export class ListPage extends PaginatedPage {
   }
 
   async choosePlacementApplicationWithId(id: string) {
+    await this.page.getByLabel('AP Area').selectOption({ label: 'All areas' })
+    await this.page.getByRole('button', { name: 'Apply filters' }).click()
+    
     const placementApplication = this.page
       .getByRole('row')
       .filter({ has: this.page.locator(`[data-cy-applicationId="${id}"]`) })

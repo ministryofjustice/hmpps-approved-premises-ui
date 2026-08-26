@@ -269,7 +269,7 @@ export const completeLocationFactorsTask = async (
   const thirdChoiceAp = await preferredApsPage.selectFirstPremises('Third choice AP')
   const fourthChoiceAp = await preferredApsPage.selectFirstPremises('Fourth choice AP')
 
-  preferredApsPage.clickSave()
+  await preferredApsPage.clickSave()
 
   return { preferredAps: [firstChoiceAp, secondChoiceAp, thirdChoiceAp, fourthChoiceAp], preferredPostcode }
 }

@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable import/no-extraneous-dependencies, no-console */
 import { BrowserContext, expect, Page } from '@playwright/test'
 import { TestOptions } from '@approved-premises/e2e'
 import {
@@ -164,7 +164,7 @@ const createLayer3Assessment = async (page: Page, person: TestOptions['person'])
   await completeSentencePlan(page)
 }
 
-export const useOasysAssessment = async (
+export const createOasysAssessment = async (
   context: BrowserContext,
   person: TestOptions['person'],
   use: UseOasysSections,
@@ -172,9 +172,11 @@ export const useOasysAssessment = async (
   const page = await context.newPage()
 
   try {
+    console.log(`Creating OASys assessment for CRN ${person.crn}...`)
     await loginOasys(page, UserType.Booking)
     await createLayer3Assessment(page, person)
     await signAndlock(page)
+    console.log(`Created and signed OASys assessment for CRN ${person.crn}`)
   } finally {
     await page.close()
   }

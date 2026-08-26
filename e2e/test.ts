@@ -1,7 +1,7 @@
 import { TestOptions } from '@approved-premises/e2e'
 import { test as base } from '@playwright/test'
 import { useTestPerson } from './fixtures/person'
-import { useOasysAssessment } from './fixtures/oasys'
+import { createOasysAssessment } from './setup/oasys'
 
 export const test = base.extend<TestOptions>({
   person: [
@@ -55,9 +55,9 @@ export const test = base.extend<TestOptions>({
   ],
   oasysSections: [
     async ({ context, person }, use) => {
-      await useOasysAssessment(context, person, use)
+      await createOasysAssessment(context, person, use)
     },
-    { timeout: 15 * 60 * 1000 },
+    { timeout: 2 * 60 * 1000 },
   ],
   emergencyApplicationUser: [process.env.CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO, { option: true }],
 })
