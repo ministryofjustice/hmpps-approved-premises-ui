@@ -1,8 +1,15 @@
 {% if params.level %}
-    <div class="tier-widget">
+
+    {% if params.version === 'V2' %}
+        {% set v2Class="tier-widget-v2" %}
+    {% endif %}
+
+    <div class="tier-widget {{ v2Class }}">
         <h3 class="govuk-heading-m">
             <strong>TIER {{ params.level }}</strong>
         </h3>
-        <p class="govuk-hint govuk-body-m">Last updated: {{ params.lastUpdated | default("Not known") }}</p>
+        {% if params.version === 'V2' %}
+            <p class="govuk-hint govuk-body-m">Last updated: {{ params.lastUpdated | default("Not known") }}</p>
+        {%  endif %}
     </div>
 {% endif %}

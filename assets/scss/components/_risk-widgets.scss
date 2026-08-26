@@ -1,4 +1,4 @@
-@use "govuk-frontend/dist/govuk" as *;
+@use 'govuk-frontend/dist/govuk' as *;
 
 $low-score-colour: #485b10;
 $low-score-border-colour: #85994b;
@@ -120,18 +120,23 @@ $mappa-colour: #4c2c92;
 }
 
 .tier-widget {
-  color: govuk-colour('turquoise');
-  border: 2px solid govuk-colour('turquoise');
+  border: 2px solid black;
   padding: govuk-spacing(3);
   margin-bottom: govuk-spacing(4);
 
   & h3 {
-    color: govuk-colour('turquoise');
     margin-bottom: 0;
     font-weight: 400;
   }
 
   & :last-child {
     margin-bottom: 0;
+  }
+
+  &.tier-widget-v2 {
+    border-color: govuk-colour('turquoise');
+    & h3 {
+      color: govuk-colour('turquoise');
+    }
   }
 }
