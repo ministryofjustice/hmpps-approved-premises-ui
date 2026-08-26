@@ -30,7 +30,7 @@ export const matchAndBookApplication = async ({
   preferredAps,
   preferredPostcode,
 }: {
-  person: { name: string; crn: string; tier: string }
+  person: { name: string; crn: string }
   applicationId: Application['id']
   page: Page
   datesOfPlacement: E2EDatesOfPlacement

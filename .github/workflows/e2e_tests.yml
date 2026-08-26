@@ -10,11 +10,24 @@ permissions:
 jobs:
   e2e_test:
     name: "CAS1 E2E Tests 🧪"
-    runs-on: ubuntu-latest
+    runs-on: [ self-hosted, hmpps-github-actions-runner ]
     strategy:
       fail-fast: false
       matrix:
         shard: [ 1, 2, 3, 4 ]
+    env:
+      TZ: Europe/London
+      DELIUS_URL: https://ndelius.test.probation.service.justice.gov.uk
+      AUTH_URL: https://sign-in-dev.hmpps.service.justice.gov.uk
+      PRISON_API: https://prison-api-dev.prison.service.justice.gov.uk
+      OASYS_URL: https://t2.oasys.service.justice.gov.uk/eor/f?p=100:101
+      DELIUS_USERNAME: ${{ secrets.E2E_DELIUS_USERNAME }}
+      DELIUS_PASSWORD: ${{ secrets.E2E_DELIUS_PASSWORD }}
+      DPS_USERNAME: ${{ secrets.E2E_DPS_USERNAME }}
+      HMPPS_AUTH_CLIENT_ID: ${{ secrets.E2E_HMPPS_AUTH_CLIENT_ID }}
+      HMPPS_AUTH_CLIENT_SECRET: ${{ secrets.E2E_HMPPS_AUTH_CLIENT_SECRET }}
+      OASYS_USERNAME_BOOKING: ${{ secrets.E2E_OASYS_USERNAME_BOOKING }}
+      OASYS_PASSWORD_BOOKING: ${{ secrets.E2E_OASYS_PASSWORD_BOOKING }}
     steps:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

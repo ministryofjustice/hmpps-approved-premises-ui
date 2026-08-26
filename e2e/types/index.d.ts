@@ -17,7 +17,17 @@ declare module '@approved-premises/e2e' {
     person: {
       crn: string
       name: string
-      tier: string
+      nomisId: string
+      convictionDate: Date
+      details: {
+        firstName: string
+        lastName: string
+        sex: string
+        dob: Date
+        pnc?: string
+        ethnicity?: string
+        croNumber?: string
+      }
     }
     personForAdHocBooking: {
       crn: string

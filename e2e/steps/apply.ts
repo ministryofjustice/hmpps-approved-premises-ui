@@ -47,12 +47,21 @@ export const enterAndConfirmCrn = async (page: Page, crn: string) => {
 
 export const completeBasicInformationTask = async (
   page: Page,
+  personName: string,
   withReleaseDate = true,
   applicationType: ApplicationType = 'standard',
   testMappaFlow = false,
   completeCaseManagerSection = false,
 ) => {
-  const notEligiblePage = await ApplyPage.initialize(page, 'Ben Davies is not normally eligible for an AP placement')
+const notEligibleHeading = page.getByRole('heading', {
+  name: `${personName} is not normally eligible for an AP placement`,
+})
+
+if (await notEligibleHeading.isVisible()) {
+  const notEligiblePage = await ApplyPage.initialize(
+    page,
+    `${personName} is not normally eligible for an AP placement`,
+  )
   await notEligiblePage.checkRadio('Yes')
   await notEligiblePage.clickSave()
 
@@ -61,6 +70,7 @@ export const completeBasicInformationTask = async (
   await exemptionApplicationPage.fillDateField({ year: '2022', month: '3', day: '12' })
   await exemptionApplicationPage.fillField('Reason for exceptional case', 'Some text')
   await exemptionApplicationPage.clickSave()
+}
 
   const confirmYourDetailsPage = await ApplyPage.initialize(page, 'Confirm your details')
   await confirmYourDetailsPage.checkCheckBoxes(['Phone number'])
@@ -232,7 +242,7 @@ export const completePrisonNotesTask = async (page: Page) => {
 }
 
 export const completeLocationFactorsTask = async (
-  page: Page,
+  page: Page, sex: string,
 ): Promise<{ preferredAps: Array<string>; preferredPostcode: string }> => {
   const preferredPostcode = 'B71'
   const taskListPage = new TasklistPage(page)
@@ -251,7 +261,8 @@ export const completeLocationFactorsTask = async (
   await locationFactorsPage.checkRadioInGroup('Are there any restrictions linked to placement location?', 'No')
   await locationFactorsPage.clickSave()
 
-  const preferredApsPage = await ApplyPage.initialize(page, 'Select a preferred AP')
+  const preferredApsPageTitle = sex === 'Female' ? 'Select all preferred properties for your women’s AP application' : 'Select a preferred AP'
+  const preferredApsPage = await ApplyPage.initialize(page, preferredApsPageTitle)
 
   const firstChoiceAp = await preferredApsPage.selectFirstPremises('First choice AP')
   const secondChoiceAp = await preferredApsPage.selectFirstPremises('Second choice AP')
@@ -459,7 +470,7 @@ export const createApplication = async (
   await enterAndConfirmCrn(page, person.crn)
 
   // And I complete the basic information Task
-  const releaseType = await completeBasicInformationTask(page, withReleaseDate, applicationType, testMappaFlow)
+  const releaseType = await completeBasicInformationTask(page, person.name, withReleaseDate, applicationType, testMappaFlow)
 
   // And I complete the Type of AP Task
   const apType = await completeTypeOfApTask(page)
@@ -474,7 +485,7 @@ export const createApplication = async (
   await completePrisonNotesTask(page)
 
   // And I complete the Location Factors Task
-  const { preferredAps, preferredPostcode } = await completeLocationFactorsTask(page)
+  const { preferredAps, preferredPostcode } = await completeLocationFactorsTask(page, person.details.sex)
 
   // And I complete the Access, Cultural and Healthcare Task
   await completeAccessCulturalAndHealthcareTask(page)

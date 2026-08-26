@@ -1,14 +1,14 @@
 import { TestOptions } from '@approved-premises/e2e'
 import { test as base } from '@playwright/test'
+import { useTestPerson } from './fixtures/person'
+import { useOasysAssessment } from './fixtures/oasys'
 
 export const test = base.extend<TestOptions>({
   person: [
-    {
-      name: 'Ben Davies',
-      crn: 'X371199',
-      tier: 'B3S',
+    async ({ context }, use) => {
+      await useTestPerson(context, use)
     },
-    { option: true },
+    { timeout: 30 * 60 * 1000 },
   ],
   personForAdHocBooking: [{ crn: process.env.CAS1_E2E_PERSON_FOR_ADHOC_BOOKING_CRN }, { option: true }],
   user: [
@@ -53,6 +53,11 @@ export const test = base.extend<TestOptions>({
     },
     { option: true },
   ],
-  oasysSections: [],
+  oasysSections: [
+    async ({ context, person }, use) => {
+      await useOasysAssessment(context, person, use)
+    },
+    { timeout: 15 * 60 * 1000 },
+  ],
   emergencyApplicationUser: [process.env.CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO, { option: true }],
 })
