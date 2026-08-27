@@ -40,12 +40,10 @@ const isApplicableTierDto = (person: FullPerson) => {
 }
 
 export const isApplicableV3Tier = (sex: string, tier: string) => {
-  const applicableTiersAll = ['A', 'B', 'C']
-  const applicableTiersWomen = ['D']
+  const applicableTiersMen = ['A', 'B', 'C']
 
-  const applicableTiers = sex === 'Female' ? [applicableTiersAll, applicableTiersWomen].flat() : applicableTiersAll
-
-  return applicableTiers.includes(tier)
+  if (sex === 'Female') return ['D', ...applicableTiersMen].includes(tier)
+  return applicableTiersMen.includes(tier)
 }
 
 export const isApplicableV2Tier = (sex: string, tier: string): boolean => {
