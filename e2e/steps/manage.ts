@@ -11,10 +11,12 @@ import { RecordDeparturePage } from '../pages/manage/recordDeparturePage'
 
 export const manageBooking = async ({
   page,
+  person,
   premisesName,
   datesOfPlacement,
 }: {
   page: Page
+  person: { name: string; crn: string }
   premisesName: string
   datesOfPlacement: E2EDatesOfPlacement
 }) => {
@@ -40,6 +42,7 @@ export const manageBooking = async ({
 
   // And I can see the placement in the list of upcoming placements
   const bookingRow = await premisesPage.findRowWithValues([
+    `${person.name}, ${person.crn}`,
     DateFormats.isoDateToUIDate(datesOfPlacement.startDate, { format: 'short' }),
     DateFormats.isoDateToUIDate(datesOfPlacement.endDate, { format: 'short' }),
   ])

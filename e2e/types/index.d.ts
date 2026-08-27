@@ -3,6 +3,8 @@ declare module '@approved-premises/e2e' {
 
   export type ApplicationType = 'standard' | 'emergency' | 'shortNotice'
 
+  export type PersonTier = 'A' | 'B-G' | 'MISSING' | 'NOT_SUPERVISED'
+
   type UserLoginDetails = {
     username: string
     password: string
@@ -32,6 +34,7 @@ declare module '@approved-premises/e2e' {
     personForAdHocBooking: {
       crn: string
     }
+    personTier: PersonTier
     userToAddAndDelete: {
       name: string
     }

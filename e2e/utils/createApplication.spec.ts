@@ -12,11 +12,10 @@ test(`create ${assess ? 'and assess ' : ''}${applicationType} application`, asyn
   page,
   assessor,
   person,
-  oasysSections,
   emergencyApplicationUser,
 }) => {
   await signIn(page, assessor)
-  const { id } = await createApplication({ page, person, oasysSections, applicationType, submit }, true, true)
+  const { id } = await createApplication({ page, person, applicationType, submit }, true, true)
 
   if (assess) {
     const allocatedUser = applicationType !== 'standard' ? emergencyApplicationUser : undefined

@@ -1,17 +1,17 @@
 import { BrowserContext } from '@playwright/test'
-import { TestOptions } from '@approved-premises/e2e'
+import { PersonTier, TestOptions } from '@approved-premises/e2e'
 import { createTestPerson, PersonLifecycle } from '../setup/person'
 import { teardownTestPerson } from '../teardown/person'
 
 type UsePerson = (person: TestOptions['person']) => Promise<void>
 
-export const useTestPerson = async (context: BrowserContext, use: UsePerson) => {
+export const useTestPerson = async (context: BrowserContext, tier: PersonTier, use: UsePerson) => {
   const page = await context.newPage()
   const lifecycle: PersonLifecycle = { booked: false }
   let lifecycleError: unknown
 
   try {
-    const person = await createTestPerson(page, lifecycle)
+    const person = await createTestPerson(page, lifecycle, tier)
     await use(person)
   } catch (error) {
     lifecycleError = error

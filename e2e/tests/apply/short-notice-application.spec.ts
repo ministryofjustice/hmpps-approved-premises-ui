@@ -7,13 +7,12 @@ import { matchAndBookApplication } from '../../steps/match'
 test('Apply, assess, match and book an short notice application for an Approved Premises with a release date', async ({
   page,
   person,
-  oasysSections,
   emergencyApplicationUser,
   assessor,
 }) => {
   await signIn(page, assessor)
   const { id, apType, preferredAps, preferredPostcode, releaseType } = await createApplication(
-    { page, person, oasysSections, applicationType: 'shortNotice' },
+    { page, person, applicationType: 'shortNotice' },
     true,
     true,
   )

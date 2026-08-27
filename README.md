@@ -111,6 +111,13 @@ npm run test:e2e:local
 npm run test:e2e:local:ui
 ```
 
+Generated people default to tier `A`. Set `CAS1_E2E_PERSON_TIER` to `A`, `B-G`, `MISSING` or
+`NOT_SUPERVISED` for a whole test run, or select the tier in an individual test:
+
+```typescript
+test.use({ personTier: 'MISSING' })
+```
+
 ### Testing Emails
 
 The E2E test do not check emails by default. To enable this in the e2e tests update the .env file, changing:

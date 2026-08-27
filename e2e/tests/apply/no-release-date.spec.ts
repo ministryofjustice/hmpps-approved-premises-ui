@@ -7,13 +7,11 @@ import { signIn } from '../../steps/signIn'
 
 test('Apply, assess, match and book an application for an Approved Premises without a release date', async ({
   page,
-
   person,
-  oasysSections,
   assessor,
 }) => {
   await signIn(page, assessor)
-  const { id } = await createApplication({ page, person, oasysSections, applicationType: 'standard' }, false)
+  const { id } = await createApplication({ page, person, applicationType: 'standard' }, false)
   await assessApplication({ page, assessor, person }, id)
   await startAndCreatePlacementApplication({ page }, id)
   await withdrawPlacementApplication(page, id)

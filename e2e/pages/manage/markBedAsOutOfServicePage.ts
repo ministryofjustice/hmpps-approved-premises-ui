@@ -51,8 +51,13 @@ export class MarkBedAsOutOfServicePage extends BasePage {
       .fill('Reasons for bed being out of service')
   }
 
-  async isBedNotAvailableMessageVisible(): Promise<boolean> {
-    return this.page.getByRole('heading', { name: 'This bedspace is not available for the dates entered' }).isVisible()
+  async isDateConflictMessageVisible(): Promise<boolean> {
+    return this.page
+      .getByRole('alert')
+      .getByRole('heading', {
+        name: /^(This bedspace is not available|Out of service bed record cannot be created) for the dates entered$/,
+      })
+      .isVisible()
   }
 
   async addMonthsToStartDate(numberOfMonths: number) {
@@ -60,10 +65,10 @@ export class MarkBedAsOutOfServicePage extends BasePage {
   }
 
   async ensureNoBookingConflict() {
-    if (await this.isBedNotAvailableMessageVisible()) {
+    if (await this.isDateConflictMessageVisible()) {
       await this.addMonthsToStartDate(1)
       await this.completeForm()
-      await this.clickSave()
+      await this.clickSubmit('Save')
 
       await this.ensureNoBookingConflict()
     }

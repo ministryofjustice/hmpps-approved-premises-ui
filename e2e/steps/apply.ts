@@ -53,24 +53,27 @@ export const completeBasicInformationTask = async (
   testMappaFlow = false,
   completeCaseManagerSection = false,
 ) => {
-const notEligibleHeading = page.getByRole('heading', {
-  name: `${personName} is not normally eligible for an AP placement`,
-})
+  const notEligibleHeading = page.getByRole('heading', {
+    name: `${personName} is not normally eligible for an AP placement`,
+  })
+  const confirmDetailsHeading = page.getByRole('heading', { name: 'Confirm your details' })
 
-if (await notEligibleHeading.isVisible()) {
-  const notEligiblePage = await ApplyPage.initialize(
-    page,
-    `${personName} is not normally eligible for an AP placement`,
-  )
-  await notEligiblePage.checkRadio('Yes')
-  await notEligiblePage.clickSave()
+  await expect(notEligibleHeading.or(confirmDetailsHeading)).toBeVisible()
 
-  const exemptionApplicationPage = await ApplyPage.initialize(page, 'Exceptional case details')
-  await exemptionApplicationPage.fillField('Name of senior manager who approved exemption', 'Some text')
-  await exemptionApplicationPage.fillDateField({ year: '2022', month: '3', day: '12' })
-  await exemptionApplicationPage.fillField('Reason for exceptional case', 'Some text')
-  await exemptionApplicationPage.clickSave()
-}
+  if (await notEligibleHeading.isVisible()) {
+    const notEligiblePage = await ApplyPage.initialize(
+      page,
+      `${personName} is not normally eligible for an AP placement`,
+    )
+    await notEligiblePage.checkRadio('Yes')
+    await notEligiblePage.clickSave()
+
+    const exemptionApplicationPage = await ApplyPage.initialize(page, 'Exceptional case details')
+    await exemptionApplicationPage.fillField('Name of senior manager who approved exemption', 'Some text')
+    await exemptionApplicationPage.fillDateField({ year: '2022', month: '3', day: '12' })
+    await exemptionApplicationPage.fillField('Reason for exceptional case', 'Some text')
+    await exemptionApplicationPage.clickSave()
+  }
 
   const confirmYourDetailsPage = await ApplyPage.initialize(page, 'Confirm your details')
   await confirmYourDetailsPage.checkCheckBoxes(['Phone number'])
@@ -166,11 +169,25 @@ export const completeTypeOfApTask = async (page: Page) => {
   return typeOfAp
 }
 
-export const completeOasysImportTask = async (page: Page, oasysSections: Array<string>) => {
+type OasysImportExpectations = {
+  contingencyPlans: string
+  additionalComments: string
+}
+
+export const completeOasysImportTask = async (
+  page: Page,
+  oasysSections: Array<string> = [],
+  expectedImportedValues?: OasysImportExpectations,
+) => {
   const taskListPage = new TasklistPage(page)
   await taskListPage.clickTask('Choose sections of OASys to import')
 
-  const oasysPage = await ApplyPage.initialize(page, 'Which of the following sections of OASys do you want to import?')
+  const oasysPage = await ApplyPage.initialize(page)
+  if (expectedImportedValues) {
+    await expect(
+      page.getByRole('heading', { name: 'Which of the following sections of OASys do you want to import?' }),
+    ).toBeVisible()
+  }
   await oasysPage.checkCheckBoxes(oasysSections)
   await oasysPage.clickSave()
 
@@ -181,10 +198,18 @@ export const completeOasysImportTask = async (page: Page, oasysSections: Array<s
   await offenceAnalysisPage.clickSave()
 
   const supportingInformationPage = await ApplyPage.initialize(page)
-  page.getByLabel('Alcohol misuse issues contributing to risks of offending and harm').fill('Some details')
+  await page.getByLabel('Alcohol misuse issues contributing to risks of offending and harm').fill('Some details')
   await supportingInformationPage.clickSave()
 
   const riskManagementPage = await ApplyPage.initialize(page)
+  if (expectedImportedValues) {
+    await expect(page.getByRole('textbox', { name: 'Contingency plans' })).toHaveValue(
+      expectedImportedValues.contingencyPlans,
+    )
+    await expect(page.getByRole('textbox', { name: 'Additional comments' })).toHaveValue(
+      expectedImportedValues.additionalComments,
+    )
+  }
   await riskManagementPage.clickSave()
 
   const riskToSelfPage = await ApplyPage.initialize(page)
@@ -242,7 +267,7 @@ export const completePrisonNotesTask = async (page: Page) => {
 }
 
 export const completeLocationFactorsTask = async (
-  page: Page, sex: string,
+  page: Page,
 ): Promise<{ preferredAps: Array<string>; preferredPostcode: string }> => {
   const preferredPostcode = 'B71'
   const taskListPage = new TasklistPage(page)
@@ -261,8 +286,7 @@ export const completeLocationFactorsTask = async (
   await locationFactorsPage.checkRadioInGroup('Are there any restrictions linked to placement location?', 'No')
   await locationFactorsPage.clickSave()
 
-  const preferredApsPageTitle = sex === 'Female' ? 'Select all preferred properties for your women’s AP application' : 'Select a preferred AP'
-  const preferredApsPage = await ApplyPage.initialize(page, preferredApsPageTitle)
+  const preferredApsPage = await ApplyPage.initialize(page, 'Select a preferred AP')
 
   const firstChoiceAp = await preferredApsPage.selectFirstPremises('First choice AP')
   const secondChoiceAp = await preferredApsPage.selectFirstPremises('Second choice AP')
@@ -447,13 +471,15 @@ export const createApplication = async (
   {
     page,
     person,
-    oasysSections,
+    oasysSections = [],
+    oasysImportExpectations,
     applicationType,
     submit = 'true',
   }: {
     page: Page
     person: TestOptions['person']
-    oasysSections: Array<string>
+    oasysSections?: Array<string>
+    oasysImportExpectations?: OasysImportExpectations
     applicationType: ApplicationType
     submit?: string
   },
@@ -470,13 +496,19 @@ export const createApplication = async (
   await enterAndConfirmCrn(page, person.crn)
 
   // And I complete the basic information Task
-  const releaseType = await completeBasicInformationTask(page, person.name, withReleaseDate, applicationType, testMappaFlow)
+  const releaseType = await completeBasicInformationTask(
+    page,
+    person.name,
+    withReleaseDate,
+    applicationType,
+    testMappaFlow,
+  )
 
   // And I complete the Type of AP Task
   const apType = await completeTypeOfApTask(page)
 
   // And I complete the Oasys Import Task
-  await completeOasysImportTask(page, oasysSections)
+  await completeOasysImportTask(page, oasysSections, oasysImportExpectations)
 
   // And I complete the the Risks and Needs Task
   await completeRisksAndNeedsTask(page)
@@ -485,7 +517,7 @@ export const createApplication = async (
   await completePrisonNotesTask(page)
 
   // And I complete the Location Factors Task
-  const { preferredAps, preferredPostcode } = await completeLocationFactorsTask(page, person.details.sex)
+  const { preferredAps, preferredPostcode } = await completeLocationFactorsTask(page)
 
   // And I complete the Access, Cultural and Healthcare Task
   await completeAccessCulturalAndHealthcareTask(page)

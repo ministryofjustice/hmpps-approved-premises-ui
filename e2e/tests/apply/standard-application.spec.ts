@@ -15,7 +15,16 @@ test('Apply, assess, match and book an application for an Approved Premises with
 }) => {
   await signIn(page, assessor)
   const { id, apType, preferredAps, preferredPostcode, releaseType } = await createApplication(
-    { page, person, oasysSections, applicationType: 'standard' },
+    {
+      page,
+      person,
+      oasysSections,
+      oasysImportExpectations: {
+        contingencyPlans: 'Test contingency plans',
+        additionalComments: 'Test additional comments',
+      },
+      applicationType: 'standard',
+    },
     true,
     true,
   )
@@ -36,6 +45,7 @@ test('Apply, assess, match and book an application for an Approved Premises with
   await signIn(page, futureManager)
   await manageBooking({
     page,
+    person,
     premisesName,
     datesOfPlacement: newDatesOfPlacement,
   })

@@ -4,16 +4,17 @@ import { assessApplication } from '../../steps/assess'
 import { signIn } from '../../steps/signIn'
 import { matchAndBookApplication } from '../../steps/match'
 
+test.setTimeout(5 * 60 * 1000)
+
 test('Apply, assess, match and book an emergency application for an Approved Premises', async ({
   page,
   person,
-  oasysSections,
   emergencyApplicationUser,
   assessor,
 }) => {
   await signIn(page, assessor)
   const { id, preferredAps, apType, preferredPostcode, releaseType } = await createApplication(
-    { page, person, oasysSections, applicationType: 'emergency' },
+    { page, person, applicationType: 'emergency' },
     true,
   )
   const { datesOfPlacement, duration } = await assessApplication({ page, assessor, person }, id, {

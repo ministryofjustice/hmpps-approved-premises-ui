@@ -1,12 +1,24 @@
-import { TestOptions } from '@approved-premises/e2e'
+import { PersonTier, TestOptions } from '@approved-premises/e2e'
 import { test as base } from '@playwright/test'
 import { useTestPerson } from './fixtures/person'
 import { createOasysAssessment } from './setup/oasys'
 
+const configuredPersonTier = process.env.CAS1_E2E_PERSON_TIER || 'A'
+if (
+  configuredPersonTier !== 'A' &&
+  configuredPersonTier !== 'B-G' &&
+  configuredPersonTier !== 'MISSING' &&
+  configuredPersonTier !== 'NOT_SUPERVISED'
+) {
+  throw new Error('CAS1_E2E_PERSON_TIER must be "A", "B-G", "MISSING" or "NOT_SUPERVISED"')
+}
+const personTier: PersonTier = configuredPersonTier
+
 export const test = base.extend<TestOptions>({
+  personTier: [personTier, { option: true }],
   person: [
-    async ({ context }, use) => {
-      await useTestPerson(context, use)
+    async ({ context, personTier: requestedTier }, use) => {
+      await useTestPerson(context, requestedTier, use)
     },
     { timeout: 30 * 60 * 1000 },
   ],
@@ -54,7 +66,11 @@ export const test = base.extend<TestOptions>({
     { option: true },
   ],
   oasysSections: [
-    async ({ context, person }, use) => {
+    async ({ context, person, personTier: requestedTier }, use) => {
+      if (requestedTier === 'MISSING' || requestedTier === 'NOT_SUPERVISED') {
+        await use([])
+        return
+      }
       await createOasysAssessment(context, person, use)
     },
     { timeout: 2 * 60 * 1000 },
