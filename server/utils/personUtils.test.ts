@@ -141,8 +141,16 @@ describe('personUtils', () => {
       expect(isFullPerson(fullPersonFactory.build())).toEqual(true)
     })
 
+    it('returns true if the person summary is a full person summary', () => {
+      expect(isFullPerson(fullPersonSummaryFactory.build())).toEqual(true)
+    })
+
     it('returns false if the person is a restricted person', () => {
       expect(isFullPerson(restrictedPersonFactory.build())).toEqual(false)
+    })
+
+    it('returns false if the person summary is a restricted person summary', () => {
+      expect(isFullPerson(restrictedPersonSummaryFactory.build())).toEqual(false)
     })
   })
 
