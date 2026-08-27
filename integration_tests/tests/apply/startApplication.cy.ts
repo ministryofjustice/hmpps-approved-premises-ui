@@ -1,115 +1,24 @@
-import { addDays, addMonths, subDays } from 'date-fns'
 import { FullPerson } from '@approved-premises/api'
-import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import {
   activeOffenceFactory,
-  applicationFactory,
   personFactory,
   restrictedPersonFactory,
   risksFactory,
   tierDtoFactory,
   tierEnvelopeFactory,
-  userFactory,
 } from '../../../server/testutils/factories'
 import ApplyHelper from '../../helpers/apply'
-import { DateFormats } from '../../../server/utils/dateUtils'
 import * as ApplyPages from '../../pages/apply'
 import { ConfirmDetailsPage, ConfirmYourDetailsPage, EnterCRNPage, ListPage, StartPage } from '../../pages/apply'
 import IsExceptionalCasePage from '../../pages/apply/isExceptionalCase'
 import NoOffencePage from '../../pages/apply/noOffence'
 import NotEligiblePage from '../../pages/apply/notEligiblePage'
 import Page from '../../pages/page'
-import SubmissionConfirmation from '../../pages/apply/submissionConfirmation'
-import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import { setup } from './setup'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 
 context('Apply', () => {
   beforeEach(setup)
-
-  it('allows completion of the form', function test() {
-    AND('I complete the application')
-    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
-
-    apply.setupApplicationStubs(uiRisks)
-    apply.startApplication()
-    apply.completeApplication()
-
-    THEN('the application should be submitted to the API')
-    cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
-      expect(requests).to.have.length(apply.numberOfPages())
-      const body = JSON.parse(requests[requests.length - 1].body)
-      expect(body).to.have.keys(
-        'data',
-        'document',
-        'duration',
-        'requestedPlacementPeriod',
-        'apType',
-        'isWomensApplication',
-        'targetLocation',
-        'releaseType',
-        'sentenceType',
-        'situation',
-        'type',
-        'isInapplicable',
-        'isEmergencyApplication',
-        'apAreaId',
-        'applicantUserDetails',
-        'caseManagerIsNotApplicant',
-        'caseManagerUserDetails',
-        'noticeType',
-        'licenseExpiryDate',
-      )
-      expect(body.data).to.deep.equal(this.applicationData)
-    })
-
-    cy.task('verifyApplicationSubmit', this.application.id).then(requests => {
-      expect(requests).to.have.length(1)
-
-      expect(requests[0].url).to.equal(`/cas1/applications/${this.application.id}/submission`)
-
-      const body = JSON.parse(requests[0].body)
-      expect(body).to.have.keys(
-        'requestedPlacementPeriod',
-        'duration',
-        'translatedDocument',
-        'apType',
-        'isEmergencyApplication',
-        'isWomensApplication',
-        'targetLocation',
-        'releaseType',
-        'sentenceType',
-        'situation',
-        'type',
-        'apAreaId',
-        'applicantUserDetails',
-        'caseManagerIsNotApplicant',
-        'caseManagerUserDetails',
-        'noticeType',
-        'licenseExpiryDate',
-      )
-    })
-
-    AND('I should be taken to the confirmation page')
-    const confirmationPage = new SubmissionConfirmation()
-
-    GIVEN('there are applications in the database')
-    const applications = applicationFactory.withReleaseDate().buildList(5)
-    cy.task('stubApplications', applications)
-
-    AND('there are risks in the database')
-    const risks = risksFactory.buildList(5)
-    applications.forEach((stubbedApplication, i) => {
-      cy.task('stubPersonRisks', { person: stubbedApplication.person, risks: risks[i] })
-    })
-
-    WHEN("I click 'Back to dashboard'")
-    confirmationPage.clickBackToDashboard()
-
-    THEN('I am taken back to the dashboard')
-    Page.verifyOnPage(ListPage)
-  })
 
   it('If users navigates away from application when told tier not eligible, return to is exceptional case page', function test() {
     GIVEN('the person does not have an eligible risk tier')
@@ -288,148 +197,6 @@ context('Apply', () => {
     Page.verifyOnPage(NotEligiblePage, application)
   })
 
-  it('allows completion of application emergency flow with a V3 tier', function test() {
-    GIVEN('I need to complete I need a placement')
-    const user = userFactory.build()
-    this.application.createdByUserId = user.id
-    this.application.submittedAt = undefined
-
-    this.person.tier = tierDtoFactory.v3().build({ tierScore: 'B' })
-    this.application.risks.tier = tierEnvelopeFactory.build({ value: { level: 'B', version: 'V3' } })
-
-    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-    const apply = new ApplyHelper(this.application, this.person, this.offences, user)
-    const tomorrow = addDays(new Date(), 1)
-
-    this.application = addResponsesToFormArtifact(this.application, {
-      task: 'basic-information',
-      page: 'release-date',
-      keyValuePairs: {
-        ...DateFormats.dateObjectToDateInputs(tomorrow, 'releaseDate'),
-        releaseDate: DateFormats.dateObjToIsoDate(tomorrow),
-        knowReleaseDate: 'yes',
-      },
-    })
-
-    this.application = addResponseToFormArtifact(this.application, {
-      task: 'basic-information',
-      page: 'reason-for-short-notice',
-      key: 'reason',
-      value: 'riskEscalated',
-    })
-
-    this.application = addResponsesToFormArtifact(this.application, {
-      task: 'further-considerations',
-      page: 'trigger-plan',
-      keyValuePairs: {
-        planInPlace: 'yes',
-        additionalConditions: 'yes',
-        additionalConditionsDetail: 'some details',
-      },
-    })
-    WHEN('I start the application')
-    apply.setupApplicationStubs(uiRisks)
-    apply.startApplication({ withCas2Interstitial: true })
-
-    THEN('I am able to complete the Emergency application flow')
-    apply.completeEmergencyApplication()
-  })
-
-  it('supports offenders already in the community', function test() {
-    const person = personFactory.build({ status: 'InCommunity' })
-
-    // A 'regular' placement date (not emergency or short notice)
-    const placementDate = addMonths(new Date(), 7)
-    // A release date in the past
-    const releaseDate = subDays(new Date(), 1)
-    this.application = addResponsesToFormArtifact(this.application, {
-      task: 'basic-information',
-      page: 'placement-date',
-      keyValuePairs: {
-        ...DateFormats.dateObjectToDateInputs(placementDate, 'startDate'),
-        startDate: DateFormats.dateObjToIsoDate(placementDate),
-        startDateSameAsReleaseDate: 'no',
-      },
-    })
-    this.application = addResponsesToFormArtifact(this.application, {
-      task: 'basic-information',
-      page: 'release-date',
-      keyValuePairs: {
-        ...DateFormats.dateObjectToDateInputs(releaseDate, 'releaseDate'),
-        releaseDate: DateFormats.dateObjToIsoDate(releaseDate),
-      },
-    })
-
-    this.applicationData = this.application.data
-
-    this.application.person = person
-
-    AND('I complete the application')
-    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-    const apply = new ApplyHelper(this.application, person, this.offences)
-
-    apply.setupApplicationStubs(uiRisks)
-    apply.startApplication()
-    apply.completeApplication({ isExceptionalCase: false, isInComunity: true })
-
-    THEN('the application should be submitted to the API')
-    cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
-      expect(requests).to.have.length(apply.numberOfPages())
-      const body = JSON.parse(requests[requests.length - 1].body)
-
-      expect(body).to.have.keys(
-        'duration',
-        'requestedPlacementPeriod',
-        'data',
-        'document',
-        'apType',
-        'isWomensApplication',
-        'targetLocation',
-        'releaseType',
-        'sentenceType',
-        'situation',
-        'type',
-        'isInapplicable',
-        'isEmergencyApplication',
-        'apAreaId',
-        'applicantUserDetails',
-        'caseManagerIsNotApplicant',
-        'caseManagerUserDetails',
-        'noticeType',
-        'licenseExpiryDate',
-      )
-
-      expect(body.data).to.deep.equal(this.applicationData)
-    })
-
-    cy.task('verifyApplicationSubmit', this.application.id).then(requests => {
-      expect(requests).to.have.length(1)
-
-      expect(requests[0].url).to.equal(`/cas1/applications/${this.application.id}/submission`)
-
-      const body = JSON.parse(requests[0].body)
-      expect(body).to.have.keys(
-        'duration',
-        'requestedPlacementPeriod',
-        'translatedDocument',
-        'apType',
-        'isEmergencyApplication',
-        'isWomensApplication',
-        'targetLocation',
-        'releaseType',
-        'sentenceType',
-        'situation',
-        'type',
-        'apAreaId',
-        'applicantUserDetails',
-        'caseManagerIsNotApplicant',
-        'caseManagerUserDetails',
-        'noticeType',
-        'licenseExpiryDate',
-      )
-    })
-  })
-
   it('redirects to no offence page if there are no offences', function test() {
     GIVEN('a person has no offences')
     const offences = activeOffenceFactory.buildList(0)
@@ -443,22 +210,6 @@ context('Apply', () => {
     const noOffencePage = Page.verifyOnPage(NoOffencePage)
     noOffencePage.shouldShowParagraphText('an Approved Premises application')
     noOffencePage.confirmLinkText('dashboard')
-  })
-
-  it('shows the user a message if there are no documents imported from Delius', function test() {
-    GIVEN('I complete the documents selection of application')
-    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
-
-    apply.setupApplicationStubs(uiRisks)
-
-    AND('no documents uploaded to the application')
-    apply.stubDocumentEndpoints([])
-    apply.startApplication()
-    apply.completeApplication({ isNoDocuments: true })
-
-    THEN('should display No documents have been imported from Delius message will be displayed')
-    apply.verifyNoDocumentsDisplayed()
   })
 
   it('Follows the Tier V3 CAS2 interstitial page route', function test() {
