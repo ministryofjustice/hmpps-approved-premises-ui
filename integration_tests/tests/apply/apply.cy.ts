@@ -288,11 +288,15 @@ context('Apply', () => {
     Page.verifyOnPage(NotEligiblePage, application)
   })
 
-  it('allows completion of application emergency flow', function test() {
+  it('allows completion of application emergency flow with a V3 tier', function test() {
     GIVEN('I need to complete I need a placement')
     const user = userFactory.build()
     this.application.createdByUserId = user.id
     this.application.submittedAt = undefined
+
+    this.person.tier = tierDtoFactory.v3().build({ tierScore: 'B' })
+    this.application.risks.tier = tierEnvelopeFactory.build({ value: { level: 'B', version: 'V3' } })
+
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
     const apply = new ApplyHelper(this.application, this.person, this.offences, user)
     const tomorrow = addDays(new Date(), 1)
@@ -325,7 +329,7 @@ context('Apply', () => {
     })
     WHEN('I start the application')
     apply.setupApplicationStubs(uiRisks)
-    apply.startApplication()
+    apply.startApplication({ withCas2Interstitial: true })
 
     THEN('I am able to complete the Emergency application flow')
     apply.completeEmergencyApplication()
@@ -457,7 +461,7 @@ context('Apply', () => {
     apply.verifyNoDocumentsDisplayed()
   })
 
-  it('Follows the CAS2 interstitial page route', function test() {
+  it('Follows the Tier V3 CAS2 interstitial page route', function test() {
     this.person.tier = tierDtoFactory.build({ version: 'V3', tierScore: 'B' })
     const apply = new ApplyHelper({ ...this.application, person: this.person }, this.person, this.offences)
     apply.setupApplicationStubs()
