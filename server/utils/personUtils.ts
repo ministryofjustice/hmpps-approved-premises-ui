@@ -60,7 +60,8 @@ export type PersonAny = Person | PersonSummary
 export const isNotRestrictedPerson = (person?: PersonAny): boolean =>
   (person as FullPerson)?.type === 'FullPerson' || (person as FullPersonSummary)?.personType === 'FullPersonSummary'
 
-const isFullPerson = (person?: Person): person is FullPerson => (person as FullPerson)?.type === 'FullPerson'
+const isFullPerson = (person?: PersonAny): person is FullPerson | FullPersonSummary =>
+  (person as FullPerson)?.type === 'FullPerson' || (person as FullPersonSummary)?.personType === 'FullPersonSummary'
 
 const isUnknownPerson = (person?: Person): person is Person => person?.type === 'UnknownPerson'
 
