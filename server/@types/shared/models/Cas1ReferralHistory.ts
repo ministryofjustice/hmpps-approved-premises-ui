@@ -7,6 +7,7 @@ import type { Cas1SpaceBookingStatus } from './Cas1SpaceBookingStatus';
 import type { Cas1StaffDto } from './Cas1StaffDto';
 import type { RequestForPlacementStatus } from './RequestForPlacementStatus';
 import type { ServiceType } from './ServiceType';
+import type { WithdrawPlacementRequestReason } from './WithdrawPlacementRequestReason';
 export type Cas1ReferralHistory = {
     applicationId: string;
     applicationStatus: ApprovedPremisesApplicationStatus;
@@ -21,5 +22,6 @@ export type Cas1ReferralHistory = {
     requestForPlacementStatus?: RequestForPlacementStatus;
     type: ServiceType;
     uiUrl: string;
+    withdrawalReason?: WithdrawPlacementRequestReason;
 };
 
