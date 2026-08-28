@@ -15,6 +15,6 @@ export type Cas1AssessmentRejection = {
     /**
      * An enumeration for the reason the assessment was rejected. This can reliably drive behaviour, such as which email is sent when an application is rejected.
      */
-    rejectionReason?: Cas1AssessmentRejectionReasonDto;
+    rejectionReason: Cas1AssessmentRejectionReasonDto;
 };
 

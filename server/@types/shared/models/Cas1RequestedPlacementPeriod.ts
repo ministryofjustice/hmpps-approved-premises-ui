@@ -5,6 +5,9 @@
 export type Cas1RequestedPlacementPeriod = {
     arrival: string;
     arrivalFlexible?: boolean;
+    /**
+     * Duration requested by the applicant, which may be the default duration if not overidden
+     */
     duration: number;
 };
 
