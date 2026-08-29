@@ -110,7 +110,7 @@
   "dependencies": {
     "@faker-js/faker": "^8.0.0",
     "@microsoft/applicationinsights-web": "^3.3.8",
-    "@ministryofjustice/frontend": "^8.0.0",
+    "@ministryofjustice/frontend": "^10.0.1",
     "@ministryofjustice/hmpps-audit-client": "^1.1.1",
     "@ministryofjustice/hmpps-npm-script-allowlist": "0.0.3",
     "@playwright/test": "^1.56.1",
@@ -134,7 +134,7 @@
     "express-session": "^1.18.1",
     "fishery": "^2.3.1",
     "form-data": "4.0.6",
-    "govuk-frontend": "^5.10.2",
+    "govuk-frontend": "^6.4.0",
     "helmet": "^7.0.0",
     "http-errors": "^2.0.0",
     "jest-diff": "^29.6.2",
