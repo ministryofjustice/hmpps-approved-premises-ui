@@ -15,14 +15,51 @@
 	}) }}
 {% endblock %}
 
-
-
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <form action="{{ paths.applications.new() }}" method="get">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
         <h1>{{ pageHeading }}</h1>
+
+        {% if v3Tiers %}
+            <p class="govuk-body">Use this service to apply for an Approved Premises placement for people in custody or on probation.</p>
+
+            <h2 class="govuk-heading-m">Who is eligible</h2>
+
+            <p class="govuk-body govuk-!-margin-bottom-1">The person is usually eligible for a placement if they are:</p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-1">
+                <li>male: tier A, B or C</li>
+                <li>female: tier A, B, C or D</li>
+            </ul>
+            <p class="govuk-body">In exceptional cases, a person outside these criteria may still be eligible if this has been agreed with a senior manager.</p>
+
+            <h2 class="govuk-heading-m">What you'll need</h2>
+
+            <p class="govuk-body govuk-!-margin-bottom-1">You'll be asked for information about:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>why an AP is needed to manage risk</li>
+                <li>the risks they may pose in an AP</li>
+                <li>how those risks will be managed</li>
+                <li>the location, AP type and room type</li>
+                <li>placement requirements - for example, health needs</li>
+                <li>move-on</li>
+            </ul>
+
+            <h2 class="govuk-heading-m">OASys assessment</h2>
+
+            <p class="govuk-body govuk-!-margin-bottom-1">The most recent OASys assessment will be imported into the application.</p>
+            <p class="govuk-body govuk-!-margin-bottom-1">Before you start, check the assessment:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>is up to date</li>
+                <li>has a complete or locked incomplete status</li>
+            </ul>
+
+            <h2 class="govuk-heading-m">When to apply</h2>
+            <p class="govuk-body govuk-!-margin-bottom-8">Apply at least 6 months before release, unless there are exceptional circumstances.</p>
+
+
+        {% else %}
 
         {% block introContent %}
         <p class="govuk-body">Use this service to apply for a placement in an Approved Premises (AP) for men or women.</p>
@@ -62,7 +99,7 @@
           iconFallbackText: "Warning"
         }) }}
 
-
+        {% endif %}
 
         {{ govukButton({
             text: "Start now",
