@@ -9,6 +9,7 @@ import {
   WithdrawalReason,
 } from '@approved-premises/api'
 
+import { faker } from '@faker-js/faker'
 import { getResponses } from '../utils/applications/getResponses'
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
 import type TasklistPage from '../form-pages/tasklistPage'
@@ -496,12 +497,14 @@ describe('ApplicationService', () => {
       const application = applicationFactory.build()
       const durations = cas1RequestsForPlacementDurationsCalculationResponseDtoFactory.build()
       applicationClient.getPlacementDuration.mockResolvedValue(durations)
+      const exceptionalCase = faker.datatype.boolean()
 
       const result = await service.getPlacementDuration(
         token,
         application.id,
         application.apType,
         application.sentenceType,
+        exceptionalCase,
       )
 
       expect(result).toEqual(durations)

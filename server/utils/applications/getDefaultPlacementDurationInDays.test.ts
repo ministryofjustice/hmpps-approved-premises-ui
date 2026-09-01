@@ -6,6 +6,7 @@ import {
 } from '../../testutils/factories'
 import { getDefaultPlacementDurationInDays } from './getDefaultPlacementDurationInDays'
 import { ApplicationService } from '../../services'
+import { isExceptionalCase } from './utils'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 const applicationService = createMock<ApplicationService>({})
@@ -27,6 +28,7 @@ describe('getDefaultPlacementDurationInDays', () => {
       application.id,
       application.apType,
       'sentence-type',
+      isExceptionalCase(application),
     )
   })
 })
