@@ -23,6 +23,8 @@ export default Factory.define<RequestForPlacement>(() => ({
   ]),
   type: faker.helpers.arrayElement(['automatic', 'manual']),
   requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
+  authorisedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
+  canonicalPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
   document: {
     'request-a-placement': [
       {

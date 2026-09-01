@@ -24,9 +24,9 @@ export type SubmitApprovedPremisesApplication = {
     caseManagerIsNotApplicant?: boolean;
     caseManagerUserDetails?: Cas1ApplicationUserDetails;
     /**
-     * The default duration for any request for placement linked to this application. This will be provided even if requestedPlacementPeriod is null
+     * The placement duration requested by the applicant, which may be the default duration if not overridden. This will be provided even if requestedPlacementPeriod is null (in which case it's the default duration)
      */
-    duration?: number;
+    duration: number;
     /**
      * noticeType should be used to indicate if this an emergency application
      * @deprecated

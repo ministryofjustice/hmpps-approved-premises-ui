@@ -17,10 +17,6 @@ export type PlacementApplication = {
     createdAt: string;
     createdByUserId: string;
     data?: any;
-    /**
-     * please use requestedPlacementPeriod, authorisedPlacementPeriod instead
-     * @deprecated
-     */
     dates?: PlacementDates;
     document?: any;
     /**

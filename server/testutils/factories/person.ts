@@ -61,4 +61,5 @@ export const fullPersonSummaryFactory = Factory.define<FullPersonSummary>(() => 
   personType: 'FullPersonSummary',
   name: faker.person.fullName(),
   isRestricted: false,
+  dateOfBirth: DateFormats.dateObjToIsoDate(faker.date.past()),
 }))
