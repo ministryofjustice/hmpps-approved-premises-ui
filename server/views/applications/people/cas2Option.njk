@@ -17,7 +17,7 @@
 
 {% block content %}
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
             <form action="#" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
                 <h1 class="govuk-heading-l">About Short-term accommodation (CAS2)</h1>
@@ -46,7 +46,7 @@
                     <li>have 'recourse to public funds'</li>
                 </ul>
 
-                <p>For more information, see <a href="https://www.nacro.org.uk/services/community-accommodation-service-cas-2/" target="_blank"">Community Accommodation Services (CAS2) for England and Wales (opens in new tab)</a>.</p>
+                <p>For more information, see <a href="https://www.nacro.org.uk/services/community-accommodation-service-cas-2/" rel="noreferrer noopener" target="_blank"">Community Accommodation Services (CAS2) for England and Wales (opens in new tab)</a>.</p>
 
                 <h2 class="govuk-heading-m">Things to consider</h2>
                 <ul class="govuk-list govuk-list--bullet">
@@ -65,7 +65,7 @@
                     }) }}
                 </p>
                 <p>
-                    <a class="govuk-link" rel="noreferrer noopener" href="{{ continuePath }}">Apply for Approved Premises (CAS1) anyway</a>
+                    <a class="govuk-link govuk-link--no-visited-state" rel="noreferrer noopener" href="{{ continuePath }}">Apply for Approved Premises (CAS1) anyway</a>
                 </p>
             </form>
         </div>
