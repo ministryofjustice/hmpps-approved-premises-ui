@@ -4,7 +4,7 @@ import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import { applicationFactory, assessmentFactory } from '../testutils/factories'
 import { TaskListStatusTag, taskLinkHtml } from './taskListUtils'
-import { isApplicableV2Tier, isFullPerson } from './personUtils'
+import { isApplicableTierDto, isFullPerson } from './personUtils'
 import { fullPersonFactory } from '../testutils/factories/person'
 
 jest.mock('./personUtils')
@@ -13,7 +13,7 @@ beforeEach(() => {
   when(isFullPerson as jest.MockedFunction<typeof isFullPerson>)
     .calledWith(expect.anything())
     .mockReturnValue(true)
-  when(isApplicableV2Tier as jest.Mock)
+  when(isApplicableTierDto as jest.Mock)
     .calledWith(expect.anything(), expect.anything())
     .mockReturnValue(true)
 })
@@ -93,7 +93,7 @@ describe('taskListUtils', () => {
           pages: { foo: 'bar', bar: 'baz' },
           status: 'in_progress',
         } as TaskWithStatus
-        ;(isApplicableV2Tier as jest.MockedFunction<typeof isApplicableV2Tier>).mockReturnValue(false)
+        ;(isApplicableTierDto as jest.MockedFunction<typeof isApplicableTierDto>).mockReturnValue(false)
 
         expect(taskLinkHtml(basicTask, application)).toEqual(
           `<a href="${applyPaths.applications.pages.show({
