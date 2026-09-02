@@ -237,6 +237,7 @@ context('Apply', () => {
 
     THEN('I should be asked whether the application is an exceptional case')
     Page.verifyOnPage(ApplyPages.IsExceptionalCasePage, application)
+    apply.completeExceptionalCase()
 
     AND('I should be on the Confirm Your Details page')
     Page.verifyOnPage(ApplyPages.ConfirmYourDetailsPage, application)
