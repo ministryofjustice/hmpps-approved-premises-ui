@@ -3,7 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Cas1RequestsForPlacementDurationsCalculationResponseDto = {
-    defaultDurationDays: number;
+    /**
+     * If null, a default duration cannot be calculated
+     */
+    defaultDurationDays?: number;
     maxDurationDays?: number;
 };
 
