@@ -8,6 +8,7 @@ import type { ApType } from './ApType';
 import type { AssessmentDecision } from './AssessmentDecision';
 import type { Cas1ApplicationUserDetails } from './Cas1ApplicationUserDetails';
 import type { Cas1CruManagementArea } from './Cas1CruManagementArea';
+import type { Cas1RequestedPlacementPeriod } from './Cas1RequestedPlacementPeriod';
 import type { FullPerson } from './FullPerson';
 import type { PersonRisks } from './PersonRisks';
 import type { PersonStatus } from './PersonStatus';
@@ -19,6 +20,10 @@ export type Cas1Application = {
     apArea?: ApArea;
     apType?: ApType;
     applicantUserDetails?: Cas1ApplicationUserDetails;
+    /**
+     * use requestedPlacementPeriod
+     * @deprecated
+     */
     arrivalDate?: string;
     assessmentDecision?: AssessmentDecision;
     assessmentDecisionDate?: string;
@@ -32,7 +37,8 @@ export type Cas1Application = {
     data?: any;
     document?: any;
     /**
-     * The placement duration requested by the applicant, which may be the default duration if not overridden. This will be available for any submitted application, even if arrivalDate is null
+     * use requestedPlacementDuration
+     * @deprecated
      */
     duration?: number;
     id: string;
@@ -50,6 +56,14 @@ export type Cas1Application = {
     person: (FullPerson | RestrictedPerson | UnknownPerson);
     personStatusOnSubmission?: PersonStatus;
     releaseType?: ReleaseTypeOption;
+    /**
+     * The placement duration requested by the applicant, which may be the default duration if not overridden. This will be available for any submitted application, even if there no is requestedPlacementPeriod is null
+     */
+    requestedPlacementDuration?: number;
+    /**
+     * The applicant can make a single request for placement as part of the initial application
+     */
+    requestedPlacementPeriod?: Cas1RequestedPlacementPeriod;
     /**
      * Contains ROSH Risks, Tier, Risk Flags and MAPPA captured when the application was created
      */
