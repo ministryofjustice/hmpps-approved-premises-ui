@@ -111,11 +111,11 @@ npm run test:e2e:local
 npm run test:e2e:local:ui
 ```
 
-Generated people default to tier `A`. Set `CAS1_E2E_PERSON_TIER` to `A`, `B-G`, `MISSING` or
-`NOT_SUPERVISED` for a whole test run, or select the tier in an individual test:
+Generated people default to V3 tier `A`. Set `CAS1_E2E_PERSON_TIER` to `A`, `B`, `C`, `D`, `E`, `F`, `G`, `MISSING`
+or `NOT_SUPERVISED` for a whole test run, or select the exact V3 tier in an individual test:
 
 ```typescript
-test.use({ personTier: 'MISSING' })
+test.use({ personTier: 'C' })
 ```
 
 ### Testing Emails

@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies, no-console */
-import { Page } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 import { deleteOffender } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/delete-offender.mjs'
 import { releasePrisoner } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/dps/prison-api.mjs'
 import { PersonLifecycle, loginDelius } from '../setup/person'
@@ -23,6 +23,8 @@ export const teardownTestPerson = async (page: Page, lifecycle: PersonLifecycle)
       console.log(`Deleting Delius offender with CRN ${lifecycle.crn}...`)
       await loginDelius(page)
       await deleteOffender(page, lifecycle.crn)
+      await expect(page).toHaveTitle(/National Search/)
+      await expect(page.getByText('No records found.')).toBeVisible()
       console.log(`Deleted Delius offender with CRN ${lifecycle.crn}`)
     } catch (error) {
       console.error(`Could not delete Delius offender with CRN ${lifecycle.crn}`, error)

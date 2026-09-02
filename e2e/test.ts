@@ -3,24 +3,43 @@ import { test as base } from '@playwright/test'
 import { useTestPerson } from './fixtures/person'
 import { createOasysAssessment } from './setup/oasys'
 
+type V3PersonFixtures = {
+  unassessedPerson: TestOptions['person']
+}
+
 const configuredPersonTier = process.env.CAS1_E2E_PERSON_TIER || 'A'
 if (
   configuredPersonTier !== 'A' &&
-  configuredPersonTier !== 'B-G' &&
+  configuredPersonTier !== 'B' &&
+  configuredPersonTier !== 'C' &&
+  configuredPersonTier !== 'D' &&
+  configuredPersonTier !== 'E' &&
+  configuredPersonTier !== 'F' &&
+  configuredPersonTier !== 'G' &&
   configuredPersonTier !== 'MISSING' &&
   configuredPersonTier !== 'NOT_SUPERVISED'
 ) {
-  throw new Error('CAS1_E2E_PERSON_TIER must be "A", "B-G", "MISSING" or "NOT_SUPERVISED"')
+  throw new Error('CAS1_E2E_PERSON_TIER must be "A", "B", "C", "D", "E", "F", "G", "MISSING" or "NOT_SUPERVISED"')
 }
 const personTier: PersonTier = configuredPersonTier
 
-export const test = base.extend<TestOptions>({
+export const test = base.extend<TestOptions & V3PersonFixtures>({
   personTier: [personTier, { option: true }],
-  person: [
+  unassessedPerson: [
     async ({ context, personTier: requestedTier }, use) => {
       await useTestPerson(context, requestedTier, use)
     },
-    { timeout: 30 * 60 * 1000 },
+    { timeout: 3 * 60 * 1000 },
+  ],
+  person: [
+    async ({ context, personTier: requestedTier, unassessedPerson }, use) => {
+      if (requestedTier !== 'MISSING' && requestedTier !== 'NOT_SUPERVISED') {
+        await createOasysAssessment(context, unassessedPerson, requestedTier)
+      }
+
+      await use(unassessedPerson)
+    },
+    { timeout: 2 * 60 * 1000 },
   ],
   personForAdHocBooking: [{ crn: process.env.CAS1_E2E_PERSON_FOR_ADHOC_BOOKING_CRN }, { option: true }],
   user: [
@@ -65,15 +84,6 @@ export const test = base.extend<TestOptions>({
     },
     { option: true },
   ],
-  oasysSections: [
-    async ({ context, person, personTier: requestedTier }, use) => {
-      if (requestedTier === 'MISSING' || requestedTier === 'NOT_SUPERVISED') {
-        await use([])
-        return
-      }
-      await createOasysAssessment(context, person, use)
-    },
-    { timeout: 2 * 60 * 1000 },
-  ],
+  oasysSections: [[], { option: true }],
   emergencyApplicationUser: [process.env.CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO, { option: true }],
 })

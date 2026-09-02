@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies, no-console */
 import { BrowserContext, expect, Page } from '@playwright/test'
-import { TestOptions } from '@approved-premises/e2e'
+import { PersonTier, TestOptions } from '@approved-premises/e2e'
 import {
   login as loginOasys,
   UserType,
@@ -15,6 +15,7 @@ import {
   clickOffenceAnalysis,
   clickRiskManagementPlan,
   clickRoSHScreeningSection1,
+  clickRoSHSummary,
   clickSection1,
   clickSection2to13,
   selfAssessmentForm,
@@ -25,14 +26,15 @@ import {
 } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/create-ofender.mjs'
 import { clickOKForCRNAmendment } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/crn-amendment.mjs'
 import { completeRoSHSection1MarkAllNo } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-1.mjs'
-import { clickSection2To4RoshYes } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-2-4.mjs'
+import {
+  clickSection2To4,
+  clickSection2To4RoshYes,
+} from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-2-4.mjs'
 import { completeRoSHSection5FullAnalysis } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-5.mjs'
 import { completeRoSHSection8FullAnalysisYes } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-8.mjs'
 import { completeRoSHSection9RoSHSummary } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/create-layer3-assessment/section-9.mjs'
 import { completeRoSHSection10RoSHSummary } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-10.mjs'
 import { signAndlock } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/sign-and-lock.mjs'
-
-type UseOasysSections = (sections: TestOptions['oasysSections']) => Promise<void>
 
 const formatOasysDate = (date: Date) =>
   [date.getDate(), date.getMonth() + 1, date.getFullYear()]
@@ -51,7 +53,7 @@ const enterOasysDate = async (page: Page, selector: string, date: Date) => {
   await expect(input).toHaveValue(formattedDate)
 }
 
-const completeRequiredPredictorDates = async (page: Page, person: TestOptions['person']) => {
+const completeRequiredPredictorData = async (page: Page, person: TestOptions['person'], tier: PersonTier) => {
   const firstSanctionDate = new Date(person.details.dob)
   firstSanctionDate.setFullYear(firstSanctionDate.getFullYear() + 15)
 
@@ -62,8 +64,44 @@ const completeRequiredPredictorDates = async (page: Page, person: TestOptions['p
   await enterOasysDate(page, '#itm_1_8_2', firstSanctionDate)
   await page.getByLabel('Date of current conviction').click()
   await enterOasysDate(page, '#itm_1_29', person.convictionDate)
-  await page.getByLabel('Date of most recent sanction involving a sexual/sexually motivated offence').click()
-  await enterOasysDate(page, '#itm_1_33', person.convictionDate)
+
+  if (tier === 'A') {
+    await page.getByLabel('Date of most recent sanction involving a sexual/sexually motivated offence').click()
+    await enterOasysDate(page, '#itm_1_33', person.convictionDate)
+  } else {
+    await page.getByLabel('Total number of sanctions for all offences').fill('1')
+    await page.getByLabel('How many of the total number of sanctions involved violent offences?').fill('0')
+    await page
+      .getByLabel('Number of previous/current sanctions involving contact adult sexual/sexually motivated offences')
+      .fill('0')
+    await page
+      .getByLabel(
+        'Number of previous/current sanctions involving direct contact child sexual/sexually motivated offences',
+      )
+      .fill('0')
+    await page
+      .getByLabel(
+        'Number of previous/current sanctions involving indecent child image or indirect child contact sexual/sexually motivated offences',
+      )
+      .fill('0')
+    await page
+      .getByLabel('Number of previous/current sanctions involving other non-contact sexual/sexually motivated offences')
+      .fill('0')
+
+    const sexualSanctionDate = page.locator('#itm_1_33')
+    await sexualSanctionDate.click()
+    await sexualSanctionDate.press('ControlOrMeta+A')
+    await sexualSanctionDate.press('Backspace')
+    await sexualSanctionDate.press('Tab')
+
+    await page
+      .getByLabel(
+        'Does the current offence involve actual/attempted direct contact against a victim who was a stranger?',
+      )
+      .selectOption('1.44~NO')
+    await page.getByLabel('Does the current offence have a sexual motivation?').selectOption('1.41~NO')
+    await page.locator('tr #itm_1_30').selectOption('1.30~NO')
+  }
 
   await page.click('input[value="Next"]')
 }
@@ -79,6 +117,56 @@ const completeRiskManagementPlan = async (page: Page) => {
   await page.click('input[value="Save"]')
 
   // OASys can leave a resource request open after the page has rendered, so wait for the destination rather than "load".
+  await page.click('input[value="Next"]', { noWaitAfter: true })
+  await expect(page.locator('#contextleft > h3')).toHaveText('Summary Sheet (Layer 3)')
+}
+
+const completeLowRoshSummary = async (page: Page) => {
+  await page.fill('#textarea_SUM1', "OASys Question - 'R10.1 Who is at risk.' - Answer Input - 'Child'")
+  await page.fill(
+    '#textarea_SUM2',
+    "OASys Question - 'R10.2 - What is the nature of the risk' - Answer Input - 'Test Nature'",
+  )
+  await page.fill(
+    '#textarea_SUM9',
+    "OASys Question - 'Further analysis of risk factors' - Answer Input - 'Test Risk Greatest'",
+  )
+  await page.fill(
+    '#textarea_SUM10',
+    "OASys Question - 'R10.5 - What strengths and protective factors are actively present or could be developed and how will they mitigate the risk factors?' - Answer Input - 'Test Factors to mitigate the risk'",
+  )
+  await page.fill(
+    '#textarea_SUM11',
+    "OASys Question - 'R10.3 - In what circumstances or situations would offending be most likely to occur and are any of these currently present' - Answer Input - ' Test lifestyle deterioration & victim proximity circumstances'",
+  )
+  await page.fill(
+    '#textarea_SUM8',
+    "OASys Question - 'If necessary record the details of any key documents or reports used in this analysis:' - Answer Input - ' Test documents'",
+  )
+
+  await Promise.all(
+    [
+      '#itm_SUM6_1_1',
+      '#itm_SUM6_2_1',
+      '#itm_SUM6_3_1',
+      '#itm_SUM6_4_1',
+      '#itm_SUM6_1_2',
+      '#itm_SUM6_2_2',
+      '#itm_SUM6_3_2',
+      '#itm_SUM6_4_2',
+      '#itm_SUM6_5_2',
+    ].map(selector => page.locator(selector).selectOption({ label: 'Low' })),
+  )
+
+  await page.click('input[value="Save"]')
+  await page.click('input[value="Next"]')
+  await expect(page.locator('#contextleft > h3')).toHaveText('Risk Management Plan (Layer 3)')
+}
+
+const completeLowRiskManagementPlan = async (page: Page) => {
+  const mappaQuestions = await page.getByRole('table', { name: 'question R11.1' }).getByRole('combobox').all()
+  await Promise.all(mappaQuestions.map(question => question.selectOption({ label: 'No' })))
+  await page.click('input[value="Save"]')
   await page.click('input[value="Next"]', { noWaitAfter: true })
   await expect(page.locator('#contextleft > h3')).toHaveText('Summary Sheet (Layer 3)')
 }
@@ -116,7 +204,7 @@ const completeSentencePlan = async (page: Page) => {
   await page.getByRole('button', { name: 'Return to OASys' }).click()
 }
 
-const createLayer3Assessment = async (page: Page, person: TestOptions['person']) => {
+const createLayer3Assessment = async (page: Page, person: TestOptions['person'], tier: PersonTier) => {
   const providerHeading = page.locator('#loginbodyheader > h2')
   if ((await providerHeading.isVisible()) && (await providerHeading.innerText()) === 'Provider/Establishment') {
     await setProviderEstablishment(page)
@@ -147,18 +235,32 @@ const createLayer3Assessment = async (page: Page, person: TestOptions['person'])
   const firstOffenceDate = new Date(person.details.dob)
   firstOffenceDate.setFullYear(firstOffenceDate.getFullYear() + 15)
   await clickSection1(page, firstOffenceDate)
-  await completeRequiredPredictorDates(page, person)
-  await clickSection2to13(page, 'Yes')
+  await completeRequiredPredictorData(page, person, tier)
+  await clickSection2to13(page, tier === 'A' ? 'Yes' : 'No')
   await selfAssessmentForm(page)
   await clickRoSHScreeningSection1(page)
   await completeRoSHSection1MarkAllNo(page)
-  await clickSection2To4RoshYes(page, person.details)
-  await completeRoSHSection5FullAnalysis(page)
-  await completeRoSHSection8FullAnalysisYes(page)
-  await completeRoSHSection9RoSHSummary(page)
-  await completeRoSHSection10RoSHSummary(page, true)
+
+  if (tier === 'A') {
+    await clickSection2To4RoshYes(page, person.details)
+    await completeRoSHSection5FullAnalysis(page)
+    await completeRoSHSection8FullAnalysisYes(page)
+    await completeRoSHSection9RoSHSummary(page)
+    await completeRoSHSection10RoSHSummary(page, true)
+  } else {
+    await clickSection2To4(page, person.details)
+    await completeRoSHSection5FullAnalysis(page)
+    await clickRoSHSummary(page)
+    await completeRoSHSection9RoSHSummary(page)
+    await completeLowRoshSummary(page)
+  }
+
   await clickRiskManagementPlan(page)
-  await completeRiskManagementPlan(page)
+  if (tier !== 'A') {
+    await completeLowRiskManagementPlan(page)
+  } else {
+    await completeRiskManagementPlan(page)
+  }
   await clickOffenceAnalysis(page)
   await completeOffenceAnalysisYes(page)
   await completeSentencePlan(page)
@@ -167,19 +269,17 @@ const createLayer3Assessment = async (page: Page, person: TestOptions['person'])
 export const createOasysAssessment = async (
   context: BrowserContext,
   person: TestOptions['person'],
-  use: UseOasysSections,
+  tier: PersonTier,
 ) => {
   const page = await context.newPage()
 
   try {
     console.log(`Creating OASys assessment for CRN ${person.crn}...`)
     await loginOasys(page, UserType.Booking)
-    await createLayer3Assessment(page, person)
+    await createLayer3Assessment(page, person, tier)
     await signAndlock(page)
     console.log(`Created and signed OASys assessment for CRN ${person.crn}`)
   } finally {
     await page.close()
   }
-
-  await use([])
 }
