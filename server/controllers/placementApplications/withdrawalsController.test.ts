@@ -8,7 +8,7 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 
 import placementApplicationPaths from '../../paths/placementApplications'
 import WithdrawalsController from './withdrawalsController'
-import { placementApplicationFactory, placementDatesFactory } from '../../testutils/factories'
+import { cas1RequestedPlacementPeriodFactory, placementApplicationFactory } from '../../testutils/factories'
 import { applicationShowPageTab, placementApplicationWithdrawalReasons } from '../../utils/applications/utils'
 import { withdrawalMessage } from '../../utils/placementRequests/utils'
 
@@ -74,7 +74,10 @@ describe('withdrawalsController', () => {
     it('calls the service method, redirects to the application screen and shows a confirmation message', async () => {
       const placementApplication = placementApplicationFactory.build({
         applicationId,
-        placementDates: [placementDatesFactory.build({ duration: 22, expectedArrival: '2024-02-02' })],
+        requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({
+          duration: 22,
+          arrival: '2024-02-02',
+        }),
       })
       const withdrawalMessageContent = 'some message'
       request.body.applicationId = applicationId
@@ -94,8 +97,8 @@ describe('withdrawalsController', () => {
       await requestHandler(request, response, next)
 
       expect(withdrawalMessage).toHaveBeenCalledWith(
-        placementApplication.placementDates[0].duration,
-        placementApplication.placementDates[0].expectedArrival,
+        placementApplication.requestedPlacementPeriod.duration,
+        placementApplication.requestedPlacementPeriod.arrival,
       )
       expect(placementApplicationService.withdraw).toHaveBeenCalledWith(
         token,
@@ -108,7 +111,10 @@ describe('withdrawalsController', () => {
     })
 
     it('shows a fallback confirmation message if the placement application doesnt have placementDates', async () => {
-      const placementApplication = placementApplicationFactory.build({ applicationId, placementDates: [] })
+      const placementApplication = placementApplicationFactory.build({
+        applicationId,
+        requestedPlacementPeriod: undefined,
+      })
 
       request.body.applicationId = applicationId
       request.params.id = placementApplicationId
