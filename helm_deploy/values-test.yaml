@@ -28,6 +28,7 @@ generic-service:
     NDELIUS_RISK_FLAGS_ENABLED: 'true'
     OASYS_SIX_MONTH_RULE_DISABLED: 'true'
     USE_LIVE_TIER: 'true'
+    V3_TIERS: 'true'
 
 generic-prometheus-alerts:
   alertSeverity: hmpps-approved-premises-nonprod

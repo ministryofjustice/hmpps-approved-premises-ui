@@ -10,9 +10,6 @@ import type { ReleaseTypeOption } from './ReleaseTypeOption';
 import type { SentenceTypeOption } from './SentenceTypeOption';
 import type { SituationOption } from './SituationOption';
 export type SubmitApprovedPremisesApplication = {
-    /**
-     * If the user's ap area id is incorrect, they can optionally override it for the application
-     */
     apAreaId?: string;
     apType: ApType;
     applicantUserDetails?: Cas1ApplicationUserDetails;
@@ -21,10 +18,15 @@ export type SubmitApprovedPremisesApplication = {
      * @deprecated
      */
     arrivalDate?: string;
+    /**
+     * Default placement duration in days. Should be provided even if no requestedPlacementPeriod is defined. Can be null if calculation is not possible
+     */
+    calculatedPlacementDuration?: number;
     caseManagerIsNotApplicant?: boolean;
     caseManagerUserDetails?: Cas1ApplicationUserDetails;
     /**
-     * The default duration for any request for placement linked to this application. This will be provided even if requestedPlacementPeriod is null
+     * Use requestedPlacementDuration instead, which a better named version of this field
+     * @deprecated
      */
     duration?: number;
     /**
@@ -32,12 +34,20 @@ export type SubmitApprovedPremisesApplication = {
      * @deprecated
      */
     isEmergencyApplication?: boolean;
+    /**
+     * If true this is an exceptional application (The case does not meet the CAS1 eligibility criteria, but a senior manager has agreed that the application can proceed)
+     */
+    isExceptional?: boolean;
     isWomensApplication?: boolean;
     licenseExpiryDate?: string;
     noticeType?: Cas1ApplicationTimelinessCategory;
     reasonForShortNotice?: string;
     reasonForShortNoticeOther?: string;
     releaseType: ReleaseTypeOption;
+    /**
+     * The placement duration requested by the applicant, which may be the default duration if not overridden. This will be provided even if requestedPlacementPeriod is null. Required on submission. nullable until 'duration' is removed
+     */
+    requestedPlacementDuration?: number;
     /**
      * The applicant can make a single request for placement as part of the initial application
      */

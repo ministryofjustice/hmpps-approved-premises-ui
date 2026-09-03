@@ -344,8 +344,14 @@ export default class Page {
   }
 
   shouldShowTier = (tier: PersonRisksUI['tier']): void => {
-    cy.get('h3').contains(`TIER ${tier.level}`)
-    cy.get('p').contains(`Last updated: ${tier.lastUpdated}`)
+    cy.get('h3').contains(`TIER ${tier.level}`).parents('div.tier-widget').as('container')
+    if (tier.version === 'V2') {
+      cy.get('@container').get('p').contains(`Last updated: ${tier.lastUpdated}`)
+      cy.get('@container').should('have.class', 'tier-widget-v2')
+    } else {
+      cy.get('@container').get('p').contains(`Last updated: ${tier.lastUpdated}`).should('not.exist')
+      cy.get('@container').should('not.have.class', 'tier-widget-v2')
+    }
   }
 
   shouldShowDeliusRiskFlags = (flags: Array<string>): void => {

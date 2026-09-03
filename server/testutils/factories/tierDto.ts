@@ -31,6 +31,10 @@ class TierDtoFactory extends Factory<TierDto> {
   v2Ineligible() {
     return this.params({ tierScore: faker.helpers.arrayElement(v2IneligibleTiers), version: 'V2' })
   }
+
+  v3Ineligible() {
+    return this.params({ tierScore: faker.helpers.arrayElement(v3IneligibleTiers), version: 'V3' })
+  }
 }
 
 export default TierDtoFactory.define(() => ({

@@ -643,7 +643,7 @@ describe('applicationsController', () => {
     })
 
     it('should render the CAS2 warning page if the person is not eligible for AP', async () => {
-      const { person } = mockPerson('V3', 'C')
+      const { person } = mockPerson('V3', 'E')
 
       await applicationsController.eligibilityCheck()(request, response, next)
 
@@ -653,7 +653,7 @@ describe('applicationsController', () => {
         continuePath: paths.applications.people.cas2Option({ crn }),
         dashboardPath: paths.applications.dashboard({}),
         person,
-        tierScore: 'C',
+        tierScore: 'E',
       })
     })
 

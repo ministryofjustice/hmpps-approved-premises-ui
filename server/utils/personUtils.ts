@@ -36,10 +36,14 @@ const versionedTierBadge = (tier: TierDto): string => {
 const isApplicableTierDto = (person: FullPerson) => {
   const { version, tierScore } = person.tier || {}
 
-  if (version === 'V2') {
-    return isApplicableV2Tier(person.sex, tierScore)
-  }
-  return tierScore === 'A'
+  return version === 'V2' ? isApplicableV2Tier(person.sex, tierScore) : isApplicableV3Tier(person.sex, tierScore)
+}
+
+const isApplicableV3Tier = (sex: string, tier: string) => {
+  const applicableTiersMen = ['A', 'B', 'C']
+
+  if (sex === 'Female') return ['D', ...applicableTiersMen].includes(tier)
+  return applicableTiersMen.includes(tier)
 }
 
 const isApplicableV2Tier = (sex: string, tier: string): boolean => {
@@ -56,7 +60,8 @@ export type PersonAny = Person | PersonSummary
 export const isNotRestrictedPerson = (person?: PersonAny): boolean =>
   (person as FullPerson)?.type === 'FullPerson' || (person as FullPersonSummary)?.personType === 'FullPersonSummary'
 
-const isFullPerson = (person?: Person): person is FullPerson => (person as FullPerson)?.type === 'FullPerson'
+const isFullPerson = (person?: PersonAny): person is FullPerson | FullPersonSummary =>
+  (person as FullPerson)?.type === 'FullPerson' || (person as FullPersonSummary)?.personType === 'FullPersonSummary'
 
 const isUnknownPerson = (person?: Person): person is Person => person?.type === 'UnknownPerson'
 
@@ -155,7 +160,6 @@ export {
   versionedTierBadge,
   getTierOrBlank,
   getVersionedTierOrBlank,
-  isApplicableV2Tier,
   isApplicableTierDto,
   isFullPerson,
   displayName,

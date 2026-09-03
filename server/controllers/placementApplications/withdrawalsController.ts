@@ -1,6 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import { Application, PlacementDates, WithdrawPlacementRequestReason } from '@approved-premises/api'
+import { Application, Cas1RequestedPlacementPeriod, WithdrawPlacementRequestReason } from '@approved-premises/api'
 import { PlacementApplicationService } from '../../services'
 
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
@@ -49,11 +49,8 @@ export default class WithdrawalsController {
         )
 
         try {
-          const placementApplicationDate: PlacementDates = placementApplication.placementDates[0]
-          req.flash(
-            'success',
-            withdrawalMessage(placementApplicationDate.duration, placementApplicationDate.expectedArrival),
-          )
+          const placementApplicationDate: Cas1RequestedPlacementPeriod = placementApplication.requestedPlacementPeriod
+          req.flash('success', withdrawalMessage(placementApplicationDate.duration, placementApplicationDate.arrival))
         } catch (error) {
           req.flash('success', 'Placement application withdrawn')
         }

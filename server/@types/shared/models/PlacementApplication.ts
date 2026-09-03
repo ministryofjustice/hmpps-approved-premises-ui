@@ -2,9 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Cas1RequestedPlacementPeriod } from './Cas1RequestedPlacementPeriod';
 import type { PlacementApplicationType } from './PlacementApplicationType';
 import type { PlacementDates } from './PlacementDates';
 import type { WithdrawPlacementRequestReason } from './WithdrawPlacementRequestReason';
+/**
+ * The API model used when constructing, submitting and approving a PlacementApplication. Once approved this is represented by a RequestForPlacement type
+ */
 export type PlacementApplication = {
     applicationCompletedAt: string;
     applicationId: string;
@@ -18,7 +22,7 @@ export type PlacementApplication = {
     createdByUserId: string;
     data?: any;
     /**
-     * please use requestedPlacementPeriod, authorisedPlacementPeriod instead
+     * Use requestedPlacementPeriod
      * @deprecated
      */
     dates?: PlacementDates;
@@ -29,10 +33,11 @@ export type PlacementApplication = {
     id: string;
     isWithdrawn: boolean;
     /**
-     * Deprecated, use dates. Only populated with values after the placement application has been submitted
+     * Use requestedPlacementPeriod
      * @deprecated
      */
     placementDates: Array<PlacementDates>;
+    requestedPlacementPeriod?: Cas1RequestedPlacementPeriod;
     submittedAt?: string;
     type: PlacementApplicationType;
     withdrawalReason?: WithdrawPlacementRequestReason;
