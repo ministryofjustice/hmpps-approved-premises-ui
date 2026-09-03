@@ -212,6 +212,37 @@ context('Apply', () => {
     noOffencePage.confirmLinkText('dashboard')
   })
 
+  it('allows the user to proceed if they are a female with Tier D without confirming exceptional case', function test() {
+    const tier = tierDtoFactory.build({ version: 'V3', tierScore: 'D' })
+    this.person.tier = tier
+    this.person.sex = 'Female'
+    const apply = new ApplyHelper({ ...this.application, person: this.person }, this.person, this.offences)
+    const application = { ...this.application, person: { ...this.person, tier } }
+    apply.setupApplicationStubs()
+    apply.startApplication({ withCas2Interstitial: true })
+
+    THEN('I am on the Confirm your details page')
+    Page.verifyOnPage(ApplyPages.ConfirmYourDetailsPage, application)
+  })
+
+  it('allows the user to specify if the case is exceptional for a male with a V3 tier D', function test() {
+    const tier = tierDtoFactory.build({ version: 'V3', tierScore: 'D' })
+    this.person.tier = tier
+    this.person.sex = 'Male'
+    const application = { ...this.application, person: { ...this.person, tier } }
+
+    const apply = new ApplyHelper({ ...this.application, person: this.person }, this.person, this.offences)
+    apply.setupApplicationStubs()
+    apply.startApplication({ withCas2Interstitial: true })
+
+    THEN('I should be asked whether the application is an exceptional case')
+    Page.verifyOnPage(ApplyPages.IsExceptionalCasePage, application)
+    apply.completeExceptionalCase()
+
+    AND('I should be on the Confirm Your Details page')
+    Page.verifyOnPage(ApplyPages.ConfirmYourDetailsPage, application)
+  })
+
   it('Follows the Tier V3 CAS2 interstitial page route', function test() {
     this.person.tier = tierDtoFactory.build({ version: 'V3', tierScore: 'B' })
     const apply = new ApplyHelper({ ...this.application, person: this.person }, this.person, this.offences)
