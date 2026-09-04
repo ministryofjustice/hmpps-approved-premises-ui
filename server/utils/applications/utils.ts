@@ -68,7 +68,7 @@ const applicationTableRows = (applications: Array<Cas1ApplicationSummary>): Arra
       attributes: { 'data-sort-value': displayName(application.person) },
     },
     textCell(application.person.crn),
-    htmlCell(getVersionedTierOrBlank(application.person, application.risks?.tier?.value)),
+    htmlCell(getVersionedTierOrBlank(application.person)),
     {
       ...textCell(getArrivalDateorNA(application.arrivalDate)),
       attributes: { 'data-sort-value': application.arrivalDate || '' },
@@ -143,7 +143,7 @@ const dashboardTableRows = (
     (application): TableRow => [
       createNameAnchorElement(application.person, application, { linkInProgressApplications }),
       textCell(application.person.crn),
-      versionedTierCell(application.person, application.risks?.tier?.value),
+      versionedTierCell(application.person),
       textCell(getArrivalDateorNA(application.arrivalDate)),
       textCell(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
       htmlCell(new ApplicationStatusTag(application.status).html()),

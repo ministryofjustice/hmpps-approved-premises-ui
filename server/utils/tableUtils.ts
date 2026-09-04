@@ -1,8 +1,7 @@
-import { Person, PersonSummary, RiskTier } from '../@types/shared'
+import { Person, PersonSummary } from '../@types/shared'
 import { TableCell } from '../@types/ui'
-import config from '../config'
 import { DateFormats } from './dateUtils'
-import { displayName, getVersionedTierOrBlank, personTier, tierBadge } from './personUtils'
+import { displayName, getVersionedTierOrBlank, personTier } from './personUtils'
 import { pluralize } from './utils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
@@ -27,22 +26,18 @@ export const dateCellSortable = (date: string): TableCell => ({
 
 export const crnCell = (item: { crn?: string }): TableCell => ({ text: item.crn })
 
-const tierSortKey = (tier: string) =>
-  /^[A-Z][0-9]/.test(tier) ? tier.charAt(0).concat(String(9 - +tier.charAt(1)), tier.slice(2)) : tier || ''
+const tierSortKey = (person: Person | PersonSummary) => {
+  const { tierScore, version } = personTier(person) || {}
+  if (version === 'V2' && /^[A-Z][0-9]/.test(tierScore))
+    return tierScore.charAt(0).concat(String(9 - +tierScore.charAt(1)), tierScore.slice(2))
 
-export const tierCell = (value: string) => ({
-  html: tierBadge(value),
-  attributes: { 'data-sort-value': tierSortKey(value) },
-})
-
-export const versionedTierCell = (person: Person | PersonSummary, tierOnApplicationCreation?: Partial<RiskTier>) => {
-  const tierScore = config.flags.useLiveTiers ? personTier(person)?.tierScore : tierOnApplicationCreation?.level
-
-  return {
-    html: getVersionedTierOrBlank(person, tierOnApplicationCreation),
-    attributes: { 'data-sort-value': tierSortKey(tierScore || '') },
-  }
+  return tierScore || ''
 }
+
+export const versionedTierCell = (person: Person | PersonSummary) => ({
+  html: getVersionedTierOrBlank(person),
+  attributes: { 'data-sort-value': tierSortKey(person) },
+})
 
 export const nameCellLink = (person: Person, link?: string) =>
   htmlCell(

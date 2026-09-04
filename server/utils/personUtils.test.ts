@@ -1,4 +1,4 @@
-import { RiskTier, TierDto } from '@approved-premises/api'
+import { TierDto } from '@approved-premises/api'
 import { personFactory, tierEnvelopeFactory } from '../testutils/factories'
 import {
   fullPersonFactory,
@@ -10,7 +10,6 @@ import {
 } from '../testutils/factories/person'
 import {
   displayName,
-  getTierOrBlank,
   getVersionedTierOrBlank,
   getVersionedTierValue,
   isApplicableTierDto,
@@ -267,43 +266,7 @@ describe('personUtils', () => {
     })
   })
 
-  describe('getTierOrBlank', () => {
-    it('returns the tier badge when a tier is present', () => {
-      expect(getTierOrBlank('A1')).toEqual(tierBadge('A1'))
-    })
-
-    it('returns an empty string when undefined', () => {
-      expect(getTierOrBlank(undefined)).toEqual('')
-    })
-
-    it('returns an empty string when null', () => {
-      expect(getTierOrBlank(null)).toEqual('')
-    })
-  })
-
   describe('getVersionedTierOrBlank', () => {
-    const tierOnApplicationCreation = { level: 'static' } as RiskTier
-
-    afterEach(() => {
-      config.flags.useLiveTiers = false
-    })
-
-    describe('when live tiers are disabled', () => {
-      const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
-
-      beforeEach(() => {
-        config.flags.useLiveTiers = false
-      })
-
-      it('returns the tier badge from application creation when present', () => {
-        expect(getVersionedTierOrBlank(person, tierOnApplicationCreation)).toEqual(tierBadge('static'))
-      })
-
-      it('returns an empty string when the application tier is undefined', () => {
-        expect(getVersionedTierOrBlank(person, undefined)).toEqual('')
-      })
-    })
-
     describe('when live tiers are enabled', () => {
       beforeEach(() => {
         config.flags.useLiveTiers = true
@@ -313,13 +276,13 @@ describe('personUtils', () => {
         const tier = tierDtoFactory.v2().build({ tierScore: 'live' })
         const person = fullPersonFactory.build({ tier })
 
-        expect(getVersionedTierOrBlank(person, tierOnApplicationCreation)).toEqual(versionedTierBadge(tier))
+        expect(getVersionedTierOrBlank(person)).toEqual(versionedTierBadge(tier))
       })
 
       it('returns an empty string when the person tier is undefined', () => {
         const person = fullPersonFactory.build({ tier: undefined })
 
-        expect(getVersionedTierOrBlank(person, tierOnApplicationCreation)).toEqual('')
+        expect(getVersionedTierOrBlank(person)).toEqual('')
       })
     })
   })

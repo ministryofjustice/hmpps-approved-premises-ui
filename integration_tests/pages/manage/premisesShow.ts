@@ -3,7 +3,7 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 
 import Page from '../page'
 import paths from '../../../server/paths/manage'
-import { displayName } from '../../../server/utils/personUtils'
+import { displayName, personTier } from '../../../server/utils/personUtils'
 import { canonicalDates } from '../../../server/utils/placements'
 import { detailedStatus, statusTextMap } from '../../../server/utils/placements/status'
 import { PremisesTab } from '../../../server/utils/premises'
@@ -50,13 +50,14 @@ export default class PremisesShowPage extends Page {
     })
 
     placements.forEach(placement => {
-      const { person, tier } = placement
+      const { person } = placement
+      const { tierScore } = personTier(person)
       const { arrivalDate, departureDate } = canonicalDates(placement)
 
       cy.get('.govuk-table__body').contains(person.crn).closest('.govuk-table__row').as('row')
       cy.get('@row').contains(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }))
       cy.get('@row').contains(DateFormats.isoDateToUIDate(departureDate, { format: 'short' }))
-      cy.get('@row').contains(tier)
+      cy.get('@row').contains(tierScore)
       cy.get('@row').contains(displayName(person))
       cy.get('@row').contains(statusTextMap[detailedStatus(placement)])
     })
