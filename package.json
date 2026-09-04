@@ -108,7 +108,7 @@
     "ext": "js,json,html,njk"
   },
   "dependencies": {
-    "@faker-js/faker": "^8.0.0",
+    "@faker-js/faker": "^10.0.0",
     "@microsoft/applicationinsights-web": "^3.3.8",
     "@ministryofjustice/frontend": "^8.0.0",
     "@ministryofjustice/hmpps-audit-client": "^1.1.1",
