@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ApprovedPremisesApplication, Cas1Assessment } from '@approved-premises/api'
+import { Cas1Application as Application, Cas1Assessment } from '@approved-premises/api'
 import 'reflect-metadata'
 
 type Constructor = new (...args: Array<any>) => object
@@ -16,7 +16,7 @@ const Page = (options: {
 
       body: Record<string, unknown>
 
-      document: ApprovedPremisesApplication | Cas1Assessment
+      document: Application | Cas1Assessment
 
       constructor(...args: Array<any>) {
         super(...args)

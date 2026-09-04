@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication, PrisonCaseNote } from '@approved-premises/api'
+import { Cas1Application as Application, PrisonCaseNote } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import { DateFormats } from '../../../server/utils/dateUtils'
@@ -8,7 +8,7 @@ import ApplyPage from './applyPage'
 export default class CaseNotesPage extends ApplyPage {
   prisonCaseNotes: Array<PrisonCaseNote>
 
-  constructor(application: ApprovedPremisesApplication, prisonCaseNotes: Array<PrisonCaseNote>) {
+  constructor(application: Application, prisonCaseNotes: Array<PrisonCaseNote>) {
     super(
       'Prison information',
       application,

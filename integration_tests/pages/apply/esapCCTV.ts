@@ -1,8 +1,8 @@
-import { ApprovedPremisesApplication } from '../../../server/@types/shared'
+import { Cas1Application as Application } from '../../../server/@types/shared'
 import ApplyPage from './applyPage'
 
 export default class EsapCCTV extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Application) {
     super('Enhanced CCTV Provision', application, 'type-of-ap', 'esap-placement-cctv')
   }
 

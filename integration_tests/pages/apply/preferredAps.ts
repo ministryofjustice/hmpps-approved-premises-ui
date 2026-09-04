@@ -1,10 +1,10 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application as Application } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
 
 export default class PreferredAps extends ApplyPage {
-  constructor(private readonly application: ApprovedPremisesApplication) {
+  constructor(private readonly application: Application) {
     super(
       application.isWomensApplication
         ? 'Select all preferred properties for your women’s AP application'
