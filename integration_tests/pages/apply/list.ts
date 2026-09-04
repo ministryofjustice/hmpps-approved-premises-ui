@@ -2,7 +2,7 @@ import Page from '../page'
 import paths from '../../../server/paths/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { Cas1Application as Application, Cas1ApplicationSummary } from '../../../server/@types/shared'
-import { displayName } from '../../../server/utils/personUtils'
+import { displayName, personTier } from '../../../server/utils/personUtils'
 
 export default class ListPage extends Page {
   constructor(
@@ -84,7 +84,7 @@ export default class ListPage extends Page {
         .within(() => {
           cy.get('th').eq(0).contains(name)
           cy.get('td').eq(0).contains(application.person.crn)
-          cy.get('td').eq(1).contains(application.risks.tier.value.level)
+          cy.get('td').eq(1).contains(personTier(application.person)?.tierScore)
           cy.get('td')
             .eq(2)
             .contains(

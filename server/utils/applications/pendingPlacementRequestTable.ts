@@ -4,8 +4,8 @@ import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
 import { allReleaseTypes } from './releaseTypeUtils'
 import { createNameAnchorElement } from './helpers'
-import { getTierOrBlank } from '../personUtils'
 import { htmlCell, textCell } from '../tableUtils'
+import { getVersionedTierOrBlank } from '../personUtils'
 
 export const pendingPlacementRequestTableHeader = (
   sortBy: ApplicationSortField,
@@ -25,7 +25,7 @@ export const pendingPlacementRequestTableHeader = (
 export const pendingPlacementRequestTableRows = (applications: Array<Cas1ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => [
     createNameAnchorElement(application.person, application, { showCrn: true }),
-    htmlCell(getTierOrBlank(application.risks?.tier?.value?.level)),
+    htmlCell(getVersionedTierOrBlank(application.person)),
     textCell(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
     textCell(application.releaseType ? allReleaseTypes[application.releaseType] : ''),
   ])

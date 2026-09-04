@@ -138,7 +138,7 @@ const awaitingAssessmentTableRows = (assessments: Array<AssessmentSummary>): Arr
       rows.push([
         linkCell(assessment, assessment.person),
         crnCell({ crn: assessment.person.crn }),
-        versionedTierCell(assessment.person, assessment.risks?.tier?.value),
+        versionedTierCell(assessment.person),
         arrivalDateCell(assessment),
         prisonCell(assessment.person),
         daysUntilDueCell(assessment, 'assessments--index__warning'),
@@ -167,7 +167,7 @@ const completedTableRows = (assessments: Array<AssessmentSummary>): Array<TableR
       rows.push([
         linkCell(assessment, assessment.person),
         crnCell({ crn: assessment.person.crn }),
-        versionedTierCell(assessment.person, assessment.risks?.tier?.value),
+        versionedTierCell(assessment.person),
         arrivalDateCell(assessment),
         statusCell(assessment),
       ])
@@ -191,7 +191,7 @@ const requestedFurtherInformationTableRows = (assessments: Array<AssessmentSumma
       rows.push([
         linkCell(assessment, assessment.person),
         crnCell({ crn: assessment.person.crn }),
-        versionedTierCell(assessment.person, assessment.risks?.tier?.value),
+        versionedTierCell(assessment.person),
         prisonCell(assessment.person),
         arrivalDateCell(assessment),
         daysSinceReceivedCell(assessment),

@@ -135,15 +135,7 @@ const personTier = (person: Person | PersonSummary): TierDto => {
   }
 }
 
-/**
- * @deprecated Use getVersionedTierOrBlank instead
- */
-const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(tier) : '')
-
-const getVersionedTierOrBlank = (person: Person | PersonSummary, tierOnApplicationCreation?: Partial<RiskTier>) => {
-  if (!config.flags.useLiveTiers) {
-    return getTierOrBlank(tierOnApplicationCreation?.level)
-  }
+const getVersionedTierOrBlank = (person: Person | PersonSummary) => {
   const tier = personTier(person)
   return tier ? versionedTierBadge(tier) : ''
 }
@@ -158,7 +150,6 @@ const getVersionedTierValue = (person: Person | PersonSummary, tierOnApplication
 export {
   tierBadge,
   versionedTierBadge,
-  getTierOrBlank,
   getVersionedTierOrBlank,
   isApplicableTierDto,
   isFullPerson,

@@ -4,7 +4,7 @@ import paths from '../../paths/apply'
 import placementApplicationPaths from '../../paths/placementApplications'
 import { ApplicationStatusShortTag, placementRequestAllowed } from './statusTag'
 import { createQueryString, linkTo } from '../utils'
-import { dateCellSortable, htmlCell, nameCellLink, textCell, tierCell } from '../tableUtils'
+import { dateCellSortable, htmlCell, nameCellLink, textCell, versionedTierCell } from '../tableUtils'
 
 export const nameCell = ({ id, person, status }: Partial<Cas1ApplicationSummary>) =>
   nameCellLink(person, status !== 'started' ? paths.applications.show({ id }) : undefined)
@@ -45,11 +45,11 @@ export const getApplicationTableRows = (
   userId: string,
 ): Array<TableRow> => {
   return applicationList.map(application => {
-    const { createdAt, arrivalDate, status, createdByUserName, tier } = application
+    const { createdAt, arrivalDate, status, createdByUserName, person } = application
 
     return [
       nameCell(application),
-      tierCell(tier),
+      versionedTierCell(person),
       dateCellSortable(createdAt),
       textCell(createdByUserName),
       dateCellSortable(arrivalDate),
