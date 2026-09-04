@@ -86,7 +86,7 @@ export const getOasysSection = async <T extends OasysPage>(
   page[summaryKey as keyof OasysPage] = summaries as never
   page.oasysCompleted = oasysGroup?.assessmentMetadata?.dateCompleted || oasysGroup?.assessmentMetadata?.dateStarted
   page.oasysSuccess = oasysSuccess
-  page.risks = mapApiPersonRisksForUi(application.risks)
+  page.risks = mapApiPersonRisksForUi(await dataServices.personService.riskProfile(token, application.person.crn))
 
   return page
 }

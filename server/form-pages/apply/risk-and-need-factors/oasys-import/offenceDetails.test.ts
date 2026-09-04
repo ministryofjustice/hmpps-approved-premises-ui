@@ -14,7 +14,7 @@ jest.mock('../../../../services/personService.ts')
 describe('OffenceDetails', () => {
   const oasysGroup = cas1OasysGroupFactory.build()
   const personRisks = risksFactory.build()
-  const application = applicationFactory.build({ risks: personRisks })
+  const application = applicationFactory.build()
 
   describe('initialize', () => {
     const getOasysAnswersMock = jest.fn()
@@ -24,6 +24,7 @@ describe('OffenceDetails', () => {
     beforeEach(() => {
       personService = createMock<PersonService>({
         getOasysAnswers: getOasysAnswersMock,
+        riskProfile: jest.fn().mockResolvedValue(personRisks),
       })
       getOasysAnswersMock.mockResolvedValue(oasysGroup)
     })

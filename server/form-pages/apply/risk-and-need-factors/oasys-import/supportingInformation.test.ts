@@ -19,7 +19,7 @@ jest.mock('../../../../services/personService.ts')
 describe('SupportingInformation', () => {
   const oasysGroup = cas1OasysGroupFactory.supportingInformation().build()
   const personRisks = risksFactory.build()
-  let application = applicationFactory.withOptionalOasysSectionsSelected([], []).build({ risks: personRisks })
+  let application = applicationFactory.withOptionalOasysSectionsSelected([], []).build()
 
   describe('initialize', () => {
     const getOasysGroupMock = jest.fn()
@@ -29,6 +29,7 @@ describe('SupportingInformation', () => {
     beforeEach(() => {
       personService = createMock<PersonService>({
         getOasysAnswers: getOasysGroupMock,
+        riskProfile: jest.fn().mockResolvedValue(personRisks),
       })
       getOasysGroupMock.mockResolvedValue(oasysGroup)
     })

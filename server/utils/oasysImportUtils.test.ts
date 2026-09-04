@@ -22,7 +22,7 @@ import {
   textareas,
 } from './oasysImportUtils'
 import oasysStubs from '../data/stubs/oasysStubs.json'
-import { type Cas1OASysAssessmentSuitabilityStrategyDto, Cas1OASysGroup, PersonRisks } from '../@types/shared'
+import { type Cas1OASysAssessmentSuitabilityStrategyDto, Cas1OASysGroup } from '../@types/shared'
 import { logToSentry } from '../../logger'
 import config from '../config'
 
@@ -35,6 +35,8 @@ describe('OASysImportUtils', () => {
     let getOasysGroupMock: jest.Mock
     let personService: DeepMocked<PersonService>
     let constructor: DeepMocked<Constructor<OasysOffencePage>>
+    const personRisks = risksFactory.build()
+    const application = applicationFactory.build()
 
     afterEach(() => {
       jest.resetAllMocks()
@@ -47,13 +49,12 @@ describe('OASysImportUtils', () => {
       getOasysGroupMock = jest.fn()
       personService = createMock<PersonService>({
         getOasysAnswers: getOasysGroupMock,
+        riskProfile: jest.fn(),
       })
+      personService.riskProfile.mockResolvedValue(personRisks)
     })
 
     it('sets oasysSuccess to false along with the stubs if there is an OasysNotFoundError', async () => {
-      const personRisks = risksFactory.build()
-      const application = applicationFactory.build({ risks: personRisks })
-
       getOasysGroupMock.mockImplementation(() => {
         throw new OasysNotFoundError()
       })
@@ -74,15 +75,12 @@ describe('OASysImportUtils', () => {
       expect(result.oasysSuccess).toEqual(false)
       expect(result.body.offenceDetailsSummary).toEqual(sortOasysImportSummaries(oasysStubs.offenceDetails))
       expect(result.offenceDetailsSummary).toEqual(oasysStubs.offenceDetails)
-      expect(result.risks).toEqual(mapApiPersonRisksForUi(application.risks as PersonRisks))
+      expect(result.risks).toEqual(mapApiPersonRisksForUi(personRisks))
+      expect(personService.riskProfile).toHaveBeenCalledWith('some-token', application.person.crn)
     })
 
     it('sets oasysSuccess to true along with the marshalled oasys data if there is not an OasysNotFoundError', async () => {
-      const personRisks = risksFactory.build()
-      const application = applicationFactory.build({ risks: personRisks })
-
       const oasysSections = cas1OasysGroupFactory.build()
-
       getOasysGroupMock.mockResolvedValue(oasysSections)
 
       const result = await getOasysSection<OasysOffencePage>(
@@ -101,15 +99,11 @@ describe('OASysImportUtils', () => {
       expect(result.oasysSuccess).toEqual(true)
       expect(result.body.offenceDetailsSummary).toEqual(sortOasysImportSummaries(oasysSections.answers))
       expect(result.offenceDetailsSummary).toEqual(oasysSections.answers)
-      expect(result.risks).toEqual(mapApiPersonRisksForUi(application.risks as PersonRisks))
+      expect(result.risks).toEqual(mapApiPersonRisksForUi(personRisks))
     })
 
     it('sets oasysSuccess to false along with the marshalled oasys data if the API returns hasApplicableAssessment false ', async () => {
-      const personRisks = risksFactory.build()
-      const application = applicationFactory.build({ risks: personRisks })
-
       const oasysSections = cas1OasysGroupFactory.build({ assessmentMetadata: { hasApplicableAssessment: false } })
-
       getOasysGroupMock.mockResolvedValue(oasysSections)
 
       const result = await getOasysSection<OasysOffencePage>(
@@ -128,13 +122,10 @@ describe('OASysImportUtils', () => {
       expect(result.oasysSuccess).toEqual(false)
       expect(result.body.offenceDetailsSummary).toEqual(sortOasysImportSummaries(oasysSections.answers))
       expect(result.offenceDetailsSummary).toEqual(oasysSections.answers)
-      expect(result.risks).toEqual(mapApiPersonRisksForUi(application.risks as PersonRisks))
+      expect(result.risks).toEqual(mapApiPersonRisksForUi(personRisks))
     })
 
     it('prioritises the body over the Oasys data if the body is provided', async () => {
-      const personRisks = risksFactory.build()
-      const application = applicationFactory.build({ risks: personRisks })
-
       const questions = [
         oasysQuestionFactory.build({ questionNumber: '1' }),
         oasysQuestionFactory.build({ questionNumber: '2' }),
@@ -181,9 +172,6 @@ describe('OASysImportUtils', () => {
         '%s use the 6 month rule when the oasysSixMonthRuleDisabled feature flag is set to %s',
         async (_: string, flag: boolean, suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto) => {
           config.flags.oasysSixMonthRuleDisabled = flag
-
-          const personRisks = risksFactory.build()
-          const application = applicationFactory.build({ risks: personRisks })
 
           const oasysSections = cas1OasysGroupFactory.build()
           getOasysGroupMock.mockResolvedValue(oasysSections)
