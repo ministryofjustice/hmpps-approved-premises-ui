@@ -10,6 +10,7 @@ import {
   placementApplicationSubmissionData,
 } from '../../utils/placementRequests/placementApplicationSubmissionData'
 import { getSentenceType } from '../../utils/placementApplications'
+import { isExceptionalCase } from '../../utils/applications/utils'
 
 export default class PlacementRequestsController {
   constructor(
@@ -79,6 +80,7 @@ export default class PlacementRequestsController {
             application.id,
             application.apType,
             sentenceType,
+            isExceptionalCase(application),
           )
         }
 

@@ -549,6 +549,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
       const apType: ApType = 'esap'
 
       const durations = cas1RequestsForPlacementDurationsCalculationResponseDtoFactory.build()
+      const exceptionalApplication: 'true' | 'false' = faker.helpers.arrayElement(['true', 'false'])
 
       await provider.addInteraction({
         state: 'Server is healthy',
@@ -559,7 +560,7 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
           headers: {
             authorization: `Bearer ${token}`,
           },
-          query: { sentenceType, apType },
+          query: { sentenceType, apType, exceptionalApplication },
         },
         willRespondWith: {
           status: 200,
@@ -567,7 +568,12 @@ describeCas1NamespaceClient('Cas1ApplicationClient', provider => {
         },
       })
 
-      await applicationClient.getPlacementDuration(applicationId, apType, sentenceType)
+      await applicationClient.getPlacementDuration(
+        applicationId,
+        apType,
+        sentenceType,
+        exceptionalApplication === 'true',
+      )
     })
   })
 })

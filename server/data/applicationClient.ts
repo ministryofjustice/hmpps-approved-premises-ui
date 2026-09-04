@@ -136,10 +136,11 @@ export default class ApplicationClient {
     applicationId: string,
     apType: ApType,
     sentenceType: SentenceTypeOption,
+    exceptionalApplication: boolean,
   ): Promise<Cas1RequestsForPlacementDurationsCalculationResponseDto> {
     return this.restClient.get<Cas1RequestsForPlacementDurationsCalculationResponseDto>({
       path: paths.applications.calc.durations({ id: applicationId }),
-      query: { apType, sentenceType },
+      query: { apType, sentenceType, exceptionalApplication: exceptionalApplication ? 'true' : 'false' },
     })
   }
 }

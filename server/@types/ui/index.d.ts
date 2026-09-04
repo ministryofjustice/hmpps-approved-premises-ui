@@ -354,6 +354,7 @@ export type DataServices = Partial<{
       applicationId: string,
       apType: ApType,
       sentenceType: SentenceTypeOption,
+      isExceptionalCase: boolean,
     ) => Promise<Cas1RequestsForPlacementDurationsCalculationResponseDto>
   }
   userService: {
