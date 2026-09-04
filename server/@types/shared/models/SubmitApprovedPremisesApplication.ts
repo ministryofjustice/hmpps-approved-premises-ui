@@ -14,11 +14,6 @@ export type SubmitApprovedPremisesApplication = {
     apType: ApType;
     applicantUserDetails?: Cas1ApplicationUserDetails;
     /**
-     * If the applicant has requested a placement, this is the requested arrival date
-     * @deprecated
-     */
-    arrivalDate?: string;
-    /**
      * Default placement duration in days. Should be provided even if no requestedPlacementPeriod is defined. Can be null if calculation is not possible
      */
     calculatedPlacementDuration?: number;
