@@ -21,6 +21,7 @@ import {
   restrictedPersonFactory,
   tierEnvelopeFactory,
   tierDtoFactory,
+  cas1RequestedPlacementPeriodFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/apply'
 import managePaths from '../../paths/manage'
@@ -629,8 +630,8 @@ describe('utils', () => {
       const application = applicationFactory.build({
         createdAt: '2025-11-05',
         createdByUserName: 'Anne Elk',
-        arrivalDate: '2025-11-06',
         status: 'started',
+        requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({ arrival: '2025-11-06' }),
       })
       expect(getApplicationSummary(application)).toEqual([
         summaryListItem('Created on', 'Wed 5 Nov 2025'),
