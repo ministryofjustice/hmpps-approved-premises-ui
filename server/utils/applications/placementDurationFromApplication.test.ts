@@ -8,7 +8,7 @@ jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('./getDefaultPlacementDurationInDays')
 
 describe('placementDurationFromApplication', () => {
-  const application = applicationFactory.build({ duration: undefined })
+  const application = applicationFactory.build({ requestedPlacementDuration: undefined })
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -48,7 +48,7 @@ describe('placementDurationFromApplication', () => {
   })
 
   it('should return the duration from the application body. if populated', () => {
-    const submittedApplication = applicationFactory.build({ duration: 80 })
+    const submittedApplication = applicationFactory.build({ requestedPlacementDuration: 80 })
 
     expect(placementDurationFromApplication(submittedApplication)).toEqual(80)
     expect(retrieveOptionalQuestionResponseFromFormArtifact).not.toHaveBeenCalled()

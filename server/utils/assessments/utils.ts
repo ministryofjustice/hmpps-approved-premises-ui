@@ -132,6 +132,7 @@ const rejectionRationaleFromAssessmentResponses = (assessment: Assessment): stri
 }
 
 const assessmentKeyDetails = (assessment: Assessment): KeyDetailsArgs => {
+  const arrivalDate = assessment.application.requestedPlacementPeriod?.arrival
   return {
     header: {
       key: 'Name',
@@ -145,12 +146,7 @@ const assessmentKeyDetails = (assessment: Assessment): KeyDetailsArgs => {
         getVersionedTierValue(assessment.application.person, assessment.application.risks?.tier?.value) ||
           'Not available',
       ),
-      summaryListItem(
-        'Arrival Date',
-        assessment.application.arrivalDate
-          ? DateFormats.isoDateToUIDate(assessment.application.arrivalDate)
-          : 'Not provided',
-      ),
+      summaryListItem('Arrival Date', arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate) : 'Not provided'),
       {
         value: {
           html: linkTo(applyPaths.applications.show({ id: assessment.application.id }), {

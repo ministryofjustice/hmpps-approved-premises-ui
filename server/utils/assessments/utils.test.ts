@@ -22,6 +22,7 @@ import {
   applicationFactory,
   assessmentFactory,
   assessmentSummaryFactory,
+  cas1RequestedPlacementPeriodFactory,
   personFactory,
   prisonCaseNotesFactory,
   risksFactory,
@@ -337,7 +338,12 @@ describe('utils', () => {
     })
 
     it('should return key details for an assessment when an arrival date is provided', () => {
-      const application = applicationFactory.build({ arrivalDate: '2022-01-01', person, risks })
+      const arrival = '2022-01-01'
+      const application = applicationFactory.build({
+        requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({ arrival }),
+        person,
+        risks,
+      })
       const assessment = assessmentFactory.build({ application })
 
       expect(assessmentKeyDetails(assessment)).toEqual({
@@ -358,7 +364,7 @@ describe('utils', () => {
           {
             key: { text: 'Arrival Date' },
             value: {
-              text: DateFormats.isoDateToUIDate(application.arrivalDate),
+              text: DateFormats.isoDateToUIDate(arrival),
             },
           },
           {
@@ -374,7 +380,11 @@ describe('utils', () => {
     })
 
     it('should return key details for an assessment when an arrival date is not provided', () => {
-      const application = applicationFactory.build({ arrivalDate: undefined, person, risks })
+      const application = applicationFactory.build({
+        requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({ arrival: undefined }),
+        person,
+        risks,
+      })
       const assessment = assessmentFactory.build({ application })
 
       expect(assessmentKeyDetails(assessment)).toEqual({
