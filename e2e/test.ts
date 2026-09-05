@@ -1,7 +1,7 @@
 import { PersonTier, TestOptions } from '@approved-premises/e2e'
 import { test as base } from '@playwright/test'
 import { useTestPerson } from './fixtures/person'
-import { createOasysAssessment } from './setup/oasys'
+import { createOasysAssessment } from './steps/oasys'
 
 type V3PersonFixtures = {
   unassessedPerson: TestOptions['person']

@@ -26,6 +26,13 @@ export class SearchPage extends MatchBasePage {
     return premisesName
   }
 
+  async selectAp(premisesName: string) {
+    await this.page
+      .locator('.govuk-summary-card', { has: this.page.getByRole('heading', { name: premisesName }) })
+      .getByRole('link', { name: 'View spaces' })
+      .click()
+  }
+
   async shouldShowApplicationDetails({
     preferredAps,
     datesOfPlacement,

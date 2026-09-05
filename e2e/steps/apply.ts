@@ -36,6 +36,23 @@ export const enterAndConfirmCrn = async (page: Page, crn: string) => {
   const confirmPersonPage = new ConfirmPersonPage(page)
   await confirmPersonPage.clickSave()
 
+  const cas2InterstitialHeading = page.getByRole('heading', {
+    name: /may be eligible for Short-term accommodation \(CAS2\)/i,
+  })
+  const cas2OptionHeading = page.getByRole('heading', { name: /About Short-term accommodation \(CAS2\)/i })
+  const selectOffenceHeading = page.getByRole('heading', { name: /Select index offence for/i })
+
+  await expect(cas2InterstitialHeading.or(selectOffenceHeading).first()).toBeVisible()
+
+  if (await cas2InterstitialHeading.isVisible()) {
+    await page.getByRole('button', { name: 'Continue' }).click()
+    await expect(cas2OptionHeading.or(selectOffenceHeading).first()).toBeVisible()
+  }
+
+  if (await cas2OptionHeading.isVisible()) {
+    await page.getByRole('link', { name: 'Apply for Approved Premises (CAS1) anyway' }).click()
+  }
+
   const selectIndexOffencePage = new SelectIndexOffencePage(page)
   await selectIndexOffencePage.selectFirstOffence()
   await selectIndexOffencePage.clickSave()

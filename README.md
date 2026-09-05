@@ -117,6 +117,7 @@ or `NOT_SUPERVISED` for a whole test run, or select the exact V3 tier in an indi
 ```typescript
 test.use({ personTier: 'C' })
 ```
+To retain the generated test person, set `CAS1_E2E_KEEP_TEST_PERSON` in `e2e.env` to `true`
 
 ### Testing Emails
 

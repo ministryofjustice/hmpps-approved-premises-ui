@@ -4,7 +4,15 @@ import { deleteOffender } from '@ministryofjustice/hmpps-probation-integration-e
 import { releasePrisoner } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/dps/prison-api.mjs'
 import { PersonLifecycle, loginDelius } from '../setup/person'
 
+export const shouldKeepTestPerson = () => {
+  return process.env.CAS1_E2E_KEEP_TEST_PERSON === 'true'
+}
+
 export const teardownTestPerson = async (page: Page, lifecycle: PersonLifecycle): Promise<Array<unknown>> => {
+  if (shouldKeepTestPerson()) {
+    return []
+  }
+
   const cleanupErrors: Array<unknown> = []
 
   if (lifecycle.nomisId && lifecycle.booked) {

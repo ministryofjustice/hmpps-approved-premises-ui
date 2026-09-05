@@ -1,13 +1,14 @@
 import { BrowserContext } from '@playwright/test'
 import { PersonTier, TestOptions } from '@approved-premises/e2e'
 import { createTestPerson, PersonLifecycle } from '../setup/person'
-import { teardownTestPerson } from '../teardown/person'
+import { shouldKeepTestPerson, teardownTestPerson } from '../teardown/person'
 
 type UsePerson = (person: TestOptions['person']) => Promise<void>
 
 export const useTestPerson = async (context: BrowserContext, tier: PersonTier, use: UsePerson) => {
   const page = await context.newPage()
   const lifecycle: PersonLifecycle = { booked: false }
+  const keepTestPerson = shouldKeepTestPerson()
   let lifecycleError: unknown
 
   try {
@@ -17,7 +18,7 @@ export const useTestPerson = async (context: BrowserContext, tier: PersonTier, u
     lifecycleError = error
   }
 
-  const cleanupErrors = await teardownTestPerson(page, lifecycle)
+  const cleanupErrors = keepTestPerson ? [] : await teardownTestPerson(page, lifecycle)
   await page.close()
 
   if (cleanupErrors.length) {
