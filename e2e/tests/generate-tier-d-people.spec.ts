@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop, no-console */
 import { writeFileSync } from 'node:fs'
 import { test } from '@playwright/test'
-import { createOasysAssessment } from '../setup/oasys'
+import { createOasysAssessment } from '../steps/oasys'
 import { createTestPerson, PersonLifecycle } from '../setup/person'
 
 const outputFile = process.env.CRN_OUTPUT_FILE

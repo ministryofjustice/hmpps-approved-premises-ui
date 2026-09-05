@@ -3,7 +3,7 @@ import { writeFileSync } from 'node:fs'
 import { PersonTier } from '@approved-premises/e2e'
 import { expect, test } from '@playwright/test'
 import { deleteOffender } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/delete-offender.mjs'
-import { createOasysAssessment } from '../setup/oasys'
+import { createOasysAssessment } from '../steps/oasys'
 import { createTestPerson, loginDelius, PersonLifecycle } from '../setup/person'
 
 const tiers: Array<PersonTier> = ['B', 'C', 'D', 'E', 'F', 'G']
