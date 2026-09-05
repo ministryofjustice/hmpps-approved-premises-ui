@@ -1,0 +1,75 @@
+name: '* Setup tier data'
+
+on:
+  workflow_dispatch:
+    inputs:
+      tier:
+        description: Which person tier should be created?
+        type: choice
+        required: true
+        default: A
+        options:
+          - A
+          - B
+          - C
+          - MISSING
+          - NOT SUPERVISED
+
+permissions:
+  contents: read
+
+jobs:
+  setup-tier-person:
+    name: 'Generate one person for selected tier'
+    runs-on: [ self-hosted, hmpps-github-actions-runner ]
+    env:
+      TZ: Europe/London
+      DELIUS_URL: https://ndelius.test.probation.service.justice.gov.uk
+      AUTH_URL: https://sign-in-dev.hmpps.service.justice.gov.uk
+      PRISON_API: https://prison-api-dev.prison.service.justice.gov.uk
+      OASYS_URL: https://t2.oasys.service.justice.gov.uk/eor/f?p=100:101
+      DELIUS_USERNAME: ${{ secrets.E2E_DELIUS_USERNAME }}
+      DELIUS_PASSWORD: ${{ secrets.E2E_DELIUS_PASSWORD }}
+      DPS_USERNAME: ${{ secrets.E2E_DPS_USERNAME }}
+      HMPPS_AUTH_CLIENT_ID: ${{ secrets.E2E_HMPPS_AUTH_CLIENT_ID }}
+      HMPPS_AUTH_CLIENT_SECRET: ${{ secrets.E2E_HMPPS_AUTH_CLIENT_SECRET }}
+      OASYS_USERNAME_BOOKING: ${{ secrets.E2E_OASYS_USERNAME_BOOKING }}
+      OASYS_PASSWORD_BOOKING: ${{ secrets.E2E_OASYS_PASSWORD_BOOKING }}
+      CRN_OUTPUT_FILE: tier-generation-output.json
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: 'false'
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit
+
+      - name: Install Playwright
+        run: npx playwright install chromium
+
+      - name: Normalise tier input
+        run: |
+          if [ "${{ inputs.tier }}" = "NOT SUPERVISED" ]; then
+            echo "CAS1_E2E_PERSON_TIER=NOT_SUPERVISED" >> "$GITHUB_ENV"
+          else
+            echo "CAS1_E2E_PERSON_TIER=${{ inputs.tier }}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Generate person
+        run: npm run test:e2e:ci -- e2e/tests/generate-person-for-tier.spec.ts
+
+      - name: Upload generated tier data
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: generated-tier-person
+          path: tier-generation-output.json
+          retention-days: 30
+          if-no-files-found: error
