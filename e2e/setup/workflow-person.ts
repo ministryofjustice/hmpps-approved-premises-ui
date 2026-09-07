@@ -1,11 +1,12 @@
 export type WorkflowPersonTier = 'A' | 'B' | 'C' | 'MISSING' | 'NOT_SUPERVISED'
+export type WorkflowPersonGender = 'Male' | 'Female'
 
 export type WorkflowOasysTier = Extract<WorkflowPersonTier, 'A' | 'B' | 'C'>
 
 export type WorkflowPersonDetails = {
   firstName: string
   lastName: string
-  sex: string
+  gender: string
   dob: Date
   pnc?: string
   ethnicity?: string

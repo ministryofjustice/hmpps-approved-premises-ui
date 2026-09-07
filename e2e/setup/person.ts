@@ -9,7 +9,7 @@ import { createAndBookPrisoner } from '@ministryofjustice/hmpps-probation-integr
 import { findOffenderByCRN } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/find-offender'
 import { selectOption } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/inputs'
 import { doUntil } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/refresh'
-import { WorkflowPerson, WorkflowPersonTier } from './workflow-person'
+import { WorkflowPerson, WorkflowPersonGender, WorkflowPersonTier } from './workflow-person'
 
 export type PersonLifecycle = {
   crn?: string
@@ -106,11 +106,11 @@ export const createTestPerson = async (
   page: Page,
   lifecycle: PersonLifecycle,
   tier: WorkflowPersonTier,
-  sex: 'Male' | 'Female' = 'Male',
+  gender: WorkflowPersonGender = 'Male',
 ): Promise<WorkflowPerson> => {
   await loginDelius(page)
 
-  const person = deliusPerson({ sex })
+  const person = deliusPerson({ sex: gender })
   const convictionDate = new Date()
   convictionDate.setDate(convictionDate.getDate() - 1)
   convictionDate.setHours(12, 0, 0, 0)
@@ -152,7 +152,10 @@ export const createTestPerson = async (
   return {
     crn: lifecycle.crn,
     name: `${person.firstName} ${person.lastName}`,
-    details: person,
+    details: {
+      ...person,
+      gender,
+    },
     nomisId: lifecycle.nomisId,
     convictionDate,
   }

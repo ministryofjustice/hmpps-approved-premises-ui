@@ -14,6 +14,14 @@ on:
           - C
           - MISSING
           - NOT_SUPERVISED
+      gender:
+        description: Which gender should be generated?
+        type: choice
+        required: true
+        default: Male
+        options:
+          - Male
+          - Female
 
 permissions:
   contents: read
@@ -61,6 +69,7 @@ jobs:
           else
             echo "CAS1_E2E_PERSON_TIER=${{ inputs.tier }}" >> "$GITHUB_ENV"
           fi
+          echo "CAS1_E2E_PERSON_GENDER=${{ inputs.gender }}" >> "$GITHUB_ENV"
 
       - name: Generate person
         run: npm run test:e2e:ci -- e2e/tests/generate-crn-with-tier.spec.ts
