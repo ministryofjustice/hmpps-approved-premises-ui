@@ -3,7 +3,7 @@ import { Page } from '@playwright/test'
 import {
   login as loginOasys,
   UserType,
-} from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/login.mjs'
+} from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/login'
 
 export const loginOasysWithRetry = async (page: Page, attempt = 1): Promise<void> => {
   process.env.OASYS_USERNAME_BOOKING = process.env.OASYS_USERNAME || process.env.OASYS_USERNAME_BOOKING

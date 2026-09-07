@@ -35,7 +35,7 @@ const clickSection2To4WithSelections = async (
     .selectOption(selections.controlIssues)
   await page.getByLabel('Risks to other prisoners').selectOption(selections.risksToOtherPrisoners)
 
-  await page.keyboard.down('End')
+  await page.keyboard.press('End')
   await page.click('input[value="Save"]')
   await page.click('input[value="Next"]')
 }

@@ -75,7 +75,7 @@ export const completeRoSHSection10RoSHSummary = async (page: Page, tier: OasysTi
   await page.locator('select[id^="itm_SUM6_"]').first().waitFor()
   await setRoSHSummaryScores(page, tier)
 
-  await page.keyboard.down('End')
+  await page.keyboard.press('End')
   await page.click('input[value="Save"]')
   await page.click('input[value="Next"]')
   await expect(page.locator('#contextleft > h3')).toHaveText('Risk Management Plan (Layer 3)')

@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Page } from '@playwright/test'
-import { fillDateOasys } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/inputs.mjs'
+import { fillDateOasys } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/inputs'
 import { WorkflowPerson } from '../../../setup/workflow-person'
 
 const formatOasysDate = (date: Date) =>

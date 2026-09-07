@@ -1,14 +1,14 @@
 /* eslint-disable import/no-extraneous-dependencies, no-console */
 import { expect, Page } from '@playwright/test'
-import { createOffender } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/create-offender.mjs'
-import { deliusPerson } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/person.mjs'
-import { createCustodialEvent } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/event/create-event.mjs'
-import { createRegistration } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/registration/create-registration.mjs'
-import { createRelease } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/release/create-release.mjs'
-import { createAndBookPrisoner } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/dps/prison-api.mjs'
-import { findOffenderByCRN } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/find-offender.mjs'
-import { selectOption } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/inputs.mjs'
-import { doUntil } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/refresh.mjs'
+import { createOffender } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/create-offender'
+import { deliusPerson } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/person'
+import { createCustodialEvent } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/event/create-event'
+import { createRegistration } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/registration/create-registration'
+import { createRelease } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/release/create-release'
+import { createAndBookPrisoner } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/dps/prison-api'
+import { findOffenderByCRN } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/find-offender'
+import { selectOption } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/inputs'
+import { doUntil } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/refresh'
 import { WorkflowPerson, WorkflowPersonTier } from './workflow-person'
 
 export type PersonLifecycle = {

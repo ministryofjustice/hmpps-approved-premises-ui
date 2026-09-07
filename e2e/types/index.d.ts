@@ -138,6 +138,106 @@ declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/o
   export const UserType: any
 }
 
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/create-offender' {
+  export const createOffender: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/person' {
+  export const deliusPerson: (...args: Array<any>) => any
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/event/create-event' {
+  export const createCustodialEvent: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/registration/create-registration' {
+  export const createRegistration: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/release/create-release' {
+  export const createRelease: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/dps/prison-api' {
+  export const createAndBookPrisoner: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/find-offender' {
+  export const findOffenderByCRN: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/inputs' {
+  export const selectOption: (...args: Array<any>) => Promise<any>
+  export const fillDateOasys: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/refresh' {
+  export const doUntil: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/sign-and-lock' {
+  export const signAndlock: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/cms-offender-details' {
+  export const clickCreateOffenderButton: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/offender-search' {
+  export const offenderSearchWithCRN: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/set-provider-establishment' {
+  export const setProviderEstablishment: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/task-manager' {
+  export const clickSearch: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/analysis-of-offences-layer3' {
+  export const completeOffenceAnalysisYes: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/cms-search-results' {
+  export const clickCMSRecord: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/create-assessment' {
+  export const clickOffenceAnalysis: (...args: Array<any>) => Promise<any>
+  export const clickRiskManagementPlan: (...args: Array<any>) => Promise<any>
+  export const clickRoSHSummary: (...args: Array<any>) => Promise<any>
+  export const clickRoSHScreeningSection1: (...args: Array<any>) => Promise<any>
+  export const clickSection2to13: (...args: Array<any>) => Promise<any>
+  export const selfAssessmentForm: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/create-ofender' {
+  export const clickCreateAssessmentButton: (...args: Array<any>) => Promise<any>
+  export const clickUpdateOffenderButton: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/crn-amendment' {
+  export const clickOKForCRNAmendment: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-1' {
+  export const completeRoSHSection1MarkAllNo: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-5' {
+  export const completeRoSHSection5FullAnalysis: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-8' {
+  export const completeRoSHSection8FullAnalysisYes: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/login' {
+  export const login: (...args: Array<any>) => Promise<any>
+  export const UserType: any
+}
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare module 'notifications-node-client' {
   class NotifyClient {

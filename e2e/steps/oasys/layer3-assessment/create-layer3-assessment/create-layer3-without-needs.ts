@@ -1,11 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { expect, Page } from '@playwright/test'
-import { clickCreateOffenderButton } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/cms-offender-details.mjs'
-import { offenderSearchWithCRN } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/offender-search.mjs'
-import { setProviderEstablishment } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/set-provider-establishment.mjs'
-import { clickSearch } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/task-manager.mjs'
-import { completeOffenceAnalysisYes } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/analysis-of-offences-layer3.mjs'
-import { clickCMSRecord } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/cms-search-results.mjs'
+import { clickCreateOffenderButton } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/cms-offender-details'
+import { offenderSearchWithCRN } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/offender-search'
+import { setProviderEstablishment } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/set-provider-establishment'
+import { clickSearch } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/task-manager'
+import { completeOffenceAnalysisYes } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/analysis-of-offences-layer3'
+import { clickCMSRecord } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/cms-search-results'
 import {
   clickOffenceAnalysis,
   clickRiskManagementPlan,
@@ -13,15 +13,15 @@ import {
   clickRoSHScreeningSection1,
   clickSection2to13,
   selfAssessmentForm,
-} from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/create-assessment.mjs'
+} from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/create-assessment'
 import {
   clickCreateAssessmentButton,
   clickUpdateOffenderButton,
-} from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/create-ofender.mjs'
-import { clickOKForCRNAmendment } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/crn-amendment.mjs'
-import { completeRoSHSection1MarkAllNo } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-1.mjs'
-import { completeRoSHSection5FullAnalysis } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-5.mjs'
-import { completeRoSHSection8FullAnalysisYes } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-8.mjs'
+} from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/create-ofender'
+import { clickOKForCRNAmendment } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/crn-amendment'
+import { completeRoSHSection1MarkAllNo } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-1'
+import { completeRoSHSection5FullAnalysis } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-5'
+import { completeRoSHSection8FullAnalysisYes } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-8'
 import { completeOffenderInformationLayer3 } from '../offender-information-layer3'
 import { completeRiskManagementPlan } from '../risk-management-plan'
 import { completeRoSHSection9RoSHSummary } from '../section-9'
