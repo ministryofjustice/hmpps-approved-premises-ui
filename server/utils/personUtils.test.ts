@@ -14,8 +14,6 @@ import {
   getVersionedTierOrBlank,
   getVersionedTierValue,
   isApplicableTierDto,
-  isApplicableV2Tier,
-  isApplicableV3Tier,
   isFullPerson,
   isNotRestrictedPerson,
   isUnknownPerson,
@@ -25,7 +23,6 @@ import {
 } from './personUtils'
 import tierDtoFactory from '../testutils/factories/tierDto'
 import config from '../config'
-import * as personUtils from './personUtils'
 
 describe('personUtils', () => {
   describe('tierBadge', () => {
@@ -70,28 +67,6 @@ describe('personUtils', () => {
   })
 
   describe('isApplicableTierDto', () => {
-    afterEach(() => {
-      jest.restoreAllMocks()
-    })
-
-    it('Evaluates eligibility for a V2 tier', () => {
-      jest.spyOn(personUtils, 'isApplicableV2Tier').mockReturnValue(true)
-      const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build() })
-
-      expect(isApplicableTierDto(person)).toBe(true)
-      expect(personUtils.isApplicableV2Tier).toHaveBeenCalledWith(person.sex, person.tier.tierScore)
-    })
-
-    it('Evaluates eligibility for a V3 tier', () => {
-      jest.spyOn(personUtils, 'isApplicableV3Tier').mockReturnValue(false)
-      const person = fullPersonFactory.build({ tier: tierDtoFactory.v3().build() })
-
-      expect(isApplicableTierDto(person)).toBe(false)
-      expect(personUtils.isApplicableV3Tier).toHaveBeenCalledWith(person.sex, person.tier.tierScore)
-    })
-  })
-
-  describe('isApplicableV3Tier', () => {
     it.each([
       ['Male', 'A', true],
       ['Female', 'A', true],
@@ -105,34 +80,21 @@ describe('personUtils', () => {
       ['Female', 'G', false],
       ['Male', 'MISSING', false],
       ['Female', 'NOT_SUPERVISED', false],
-    ])('for tier version %s, tier of %s returns %s', (sex, tierScore, result) => {
-      expect(isApplicableV3Tier(sex, tierScore)).toBe(result)
-    })
-  })
-
-  describe('isApplicableV2Tier', () => {
-    it(`returns true if the person's sex is male and has an applicable tier`, () => {
-      expect(isApplicableV2Tier('Male', 'A1')).toBeTruthy()
+    ])('for tier version V3 sex:%s, tier:%s returns %s', (sex, tierScore, result) => {
+      const person = fullPersonFactory.build({ tier: tierDtoFactory.v3().build({ tierScore }), sex })
+      expect(isApplicableTierDto(person)).toBe(result)
     })
 
-    it(`returns false if the person's sex is male and has a tier that is not applicable to males`, () => {
-      expect(isApplicableV2Tier('Male', 'C3')).toBeFalsy()
-    })
-
-    it(`returns false if the person's sex is male and has an inapplicable tier`, () => {
-      expect(isApplicableV2Tier('Male', 'D1')).toBeFalsy()
-    })
-
-    it(`returns true if the person's sex is female and has an applicable tier`, () => {
-      expect(isApplicableV2Tier('Female', 'A3')).toBeTruthy()
-    })
-
-    it(`returns true if the person's sex is female and has a tier that is applicable to females`, () => {
-      expect(isApplicableV2Tier('Female', 'C3')).toBeTruthy()
-    })
-
-    it(`returns false if the person's sex is female and has an inapplicable tier`, () => {
-      expect(isApplicableV2Tier('Female', 'D1')).toBeFalsy()
+    it.each([
+      ['Male', 'A1', true],
+      ['Male', 'C3', false],
+      ['Male', 'D1', false],
+      ['Female', 'A3', true],
+      ['Female', 'C3', true],
+      ['Female', 'D1', false],
+    ])('for tier version V2 sex:%s, tier:%s returns %s', (sex, tierScore, result) => {
+      const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore }), sex })
+      expect(isApplicableTierDto(person)).toBe(result)
     })
   })
 

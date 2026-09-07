@@ -39,14 +39,14 @@ const isApplicableTierDto = (person: FullPerson) => {
   return version === 'V2' ? isApplicableV2Tier(person.sex, tierScore) : isApplicableV3Tier(person.sex, tierScore)
 }
 
-export const isApplicableV3Tier = (sex: string, tier: string) => {
+const isApplicableV3Tier = (sex: string, tier: string) => {
   const applicableTiersMen = ['A', 'B', 'C']
 
   if (sex === 'Female') return ['D', ...applicableTiersMen].includes(tier)
   return applicableTiersMen.includes(tier)
 }
 
-export const isApplicableV2Tier = (sex: string, tier: string): boolean => {
+const isApplicableV2Tier = (sex: string, tier: string): boolean => {
   const applicableTiersAll = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3']
   const applicableTiersWomen = ['C3']
 
