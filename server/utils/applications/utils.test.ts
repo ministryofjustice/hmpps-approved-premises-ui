@@ -46,6 +46,7 @@ import {
   getApplicationSummary,
   getApplicationTierValue,
   getApplicationType,
+  isExceptionalCase,
   isInapplicable,
   isWomensApplication,
   lengthOfStayForUI,
@@ -539,6 +540,23 @@ describe('utils', () => {
         `CRN: ${restrictedPerson.crn} is restricted`,
       )
       expect(() => firstPageOfApplicationJourney(applicationId, restrictedPerson)).toThrowError(RestrictedPersonError)
+    })
+  })
+
+  describe('isExceptionalCase', () => {
+    const application = applicationFactory.build()
+    it('should return true is applicant has answered "yes" to the exceptional case question', () => {
+      mockOptionalQuestionResponse({ isExceptionalCase: 'yes' })
+
+      expect(isExceptionalCase(application)).toEqual(true)
+    })
+    it('should return false is applicant has answered "no" to the exceptional case question', () => {
+      mockOptionalQuestionResponse({ isExceptionalCase: 'no' })
+
+      expect(isExceptionalCase(application)).toEqual(false)
+    })
+    it('should return false if the exceptional case question has not been answered', () => {
+      expect(isExceptionalCase(application)).toEqual(false)
     })
   })
 
