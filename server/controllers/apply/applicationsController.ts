@@ -291,7 +291,7 @@ export default class ApplicationsController {
       }[config.environment]
       env = env === undefined ? '-dev' : env
 
-      const cas2Link = `https://community-accommodation-tier-2-bail${env}.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start`
+      const cas2Link = `https://community-accommodation-tier-2-bail${env}.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start?referred_by=cas1_interstitial`
       return res.render('applications/people/cas2Option', {
         continuePath: paths.applications.people.selectOffence({ crn }),
         backLink: paths.applications.people.eligibilityCheck({ crn }),
