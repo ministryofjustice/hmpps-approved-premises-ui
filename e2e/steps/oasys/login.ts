@@ -6,8 +6,8 @@ import {
 } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/login'
 
 export const loginOasysWithRetry = async (page: Page, attempt = 1): Promise<void> => {
-  process.env.OASYS_USERNAME_BOOKING = process.env.OASYS_USERNAME || process.env.OASYS_USERNAME_BOOKING
-  process.env.OASYS_PASSWORD_BOOKING = process.env.OASYS_PASSWORD || process.env.OASYS_PASSWORD_BOOKING
+  if (process.env.OASYS_USERNAME) process.env.OASYS_USERNAME_BOOKING = process.env.OASYS_USERNAME
+  if (process.env.OASYS_PASSWORD) process.env.OASYS_PASSWORD_BOOKING = process.env.OASYS_PASSWORD
 
   try {
     await loginOasys(page, UserType.Booking)
