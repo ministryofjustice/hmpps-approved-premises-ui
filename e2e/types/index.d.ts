@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare module '@approved-premises/e2e' {
   export type AppealDecision = 'Appeal successful' | 'Appeal unsuccessful'
 
@@ -238,7 +239,6 @@ declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/o
   export const UserType: any
 }
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 declare module 'notifications-node-client' {
   class NotifyClient {
     constructor(apiKey: string)
