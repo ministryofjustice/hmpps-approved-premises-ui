@@ -111,6 +111,10 @@ npm run test:e2e:local
 npm run test:e2e:local:ui
 ```
 
+For creating a person with a specific Tier (including local runs of that flow), set `CAS1_E2E_PERSON_TIER` to one of:
+`A`, `B`, `C`, `MISSING`, `NOT_SUPERVISED`.
+This is used by `.github/workflows/setup-tier-data.yml`, which runs `e2e/tests/generate-crn-with-tier.spec.ts`.
+
 ### Testing Emails
 
 The E2E test do not check emails by default. To enable this in the e2e tests update the .env file, changing:
