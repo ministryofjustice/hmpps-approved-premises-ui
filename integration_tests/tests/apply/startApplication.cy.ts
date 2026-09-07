@@ -148,7 +148,25 @@ context('Apply', () => {
     apply.completeExceptionalCase()
 
     AND('I should be on the Confirm Your Details page')
-    Page.verifyOnPage(ConfirmYourDetailsPage, application)
+    const confirmYourDetailsPage = Page.verifyOnPage(ConfirmYourDetailsPage, application)
+
+    WHEN('I follow the backlink')
+    confirmYourDetailsPage.clickBack()
+
+    THEN('I should be on the exception details page')
+    const exceptionDetailsPage = Page.verifyOnPage(ApplyPages.ExceptionDetailsPage, this.application)
+
+    WHEN('I follow the backlink')
+    exceptionDetailsPage.clickBack()
+
+    THEN('I should be on the exception page')
+    const exceptionPage = Page.verifyOnPage(ApplyPages.IsExceptionalCasePage, this.application)
+
+    WHEN('I follow the backlink')
+    exceptionPage.clickBack()
+
+    THEN('I should be on the tasklist page')
+    Page.verifyOnPage(ApplyPages.TaskListPage, this.application)
   })
 
   it('tells the user that their application is not applicable if the V2 tier is not eligible and it is not an exceptional case', function test() {
@@ -174,7 +192,7 @@ context('Apply', () => {
     Page.verifyOnPage(NotEligiblePage, application)
   })
 
-  it('tells the user that their application is not applicable if the V3 tier is not eligible and it is not an exceptional case', function test() {
+  it('tells the user that their application is not eligible if the V3 tier is not eligible and it is not an exceptional case', function test() {
     GIVEN('the person does not have an eligible risk tier')
     const tier = tierDtoFactory.v3Ineligible().build()
     this.person.sex = 'Male'
@@ -197,6 +215,27 @@ context('Apply', () => {
     Page.verifyOnPage(NotEligiblePage, application)
   })
 
+  it('skips the not-eligible page if the V2 tier is eligible and back-links to the task-list', function test() {
+    GIVEN('the person does not have an eligible risk tier')
+    this.person.sex = 'Male'
+    this.person.tier = tierDtoFactory.v2Eligible().build()
+    const application = { ...this.application, person: { ...this.person, tier: this.person.tier } }
+
+    cy.task('stubApplicationGet', { application })
+    const apply = new ApplyHelper(application, application.person, this.offences)
+    apply.setupApplicationStubs()
+    apply.startApplication()
+
+    THEN('I am on the Confirm your details page')
+    const confirmYourDetailsPage = Page.verifyOnPage(ApplyPages.ConfirmYourDetailsPage, this.application)
+
+    WHEN('I follow the backlink')
+    confirmYourDetailsPage.clickBack()
+
+    THEN('I should be on the tasklist page')
+    Page.verifyOnPage(ApplyPages.TaskListPage, this.application)
+  })
+
   it('redirects to no offence page if there are no offences', function test() {
     GIVEN('a person has no offences')
     const offences = activeOffenceFactory.buildList(0)
@@ -210,6 +249,37 @@ context('Apply', () => {
     const noOffencePage = Page.verifyOnPage(NoOffencePage)
     noOffencePage.shouldShowParagraphText('an Approved Premises application')
     noOffencePage.confirmLinkText('dashboard')
+  })
+
+  it('allows the user to proceed if they are a female with Tier D without confirming exceptional case', function test() {
+    const tier = tierDtoFactory.build({ version: 'V3', tierScore: 'D' })
+    this.person.tier = tier
+    this.person.sex = 'Female'
+    const apply = new ApplyHelper({ ...this.application, person: this.person }, this.person, this.offences)
+    const application = { ...this.application, person: { ...this.person, tier } }
+    apply.setupApplicationStubs()
+    apply.startApplication({ withCas2Interstitial: true })
+
+    THEN('I am on the Confirm your details page')
+    Page.verifyOnPage(ApplyPages.ConfirmYourDetailsPage, application)
+  })
+
+  it('allows the user to specify if the case is exceptional for a male with a V3 tier D', function test() {
+    const tier = tierDtoFactory.build({ version: 'V3', tierScore: 'D' })
+    this.person.tier = tier
+    this.person.sex = 'Male'
+    const application = { ...this.application, person: { ...this.person, tier } }
+
+    const apply = new ApplyHelper({ ...this.application, person: this.person }, this.person, this.offences)
+    apply.setupApplicationStubs()
+    apply.startApplication({ withCas2Interstitial: true })
+
+    THEN('I should be asked whether the application is an exceptional case')
+    Page.verifyOnPage(ApplyPages.IsExceptionalCasePage, application)
+    apply.completeExceptionalCase()
+
+    AND('I should be on the Confirm Your Details page')
+    Page.verifyOnPage(ApplyPages.ConfirmYourDetailsPage, application)
   })
 
   it('Follows the Tier V3 CAS2 interstitial page route', function test() {

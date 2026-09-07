@@ -6,6 +6,7 @@ import type { PlacementApplicationTask } from '@approved-premises/api'
 import taskFactory from './task'
 import { tierEnvelopeFactory } from './risks'
 import placementDatesFactory from './placementDates'
+import cas1RequestedPlacementPeriodFactory from './cas1RequestedPlacementPeriod'
 
 export default Factory.define<PlacementApplicationTask>(() => ({
   ...taskFactory.build(),
@@ -17,4 +18,5 @@ export default Factory.define<PlacementApplicationTask>(() => ({
   placementDates: placementDatesFactory.buildList(1),
   dates: placementDatesFactory.build(),
   outcome: faker.helpers.arrayElement(['accepted', 'rejected', 'withdraw', 'withdrawn_by_pp']),
+  requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
 }))

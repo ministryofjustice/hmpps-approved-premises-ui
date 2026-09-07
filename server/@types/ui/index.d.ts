@@ -39,6 +39,7 @@ import {
   type SentenceTypeOption,
   Cas1RequestsForPlacementDurationsCalculationResponseDto,
   Cas1OASysAssessmentMetadata,
+  type PersonRisks,
 } from '@approved-premises/api'
 import type { Request } from 'express'
 import { Session } from 'express-session'
@@ -345,7 +346,9 @@ export type DataServices = Partial<{
       suitabilityStrategy: Cas1OASysAssessmentSuitabilityStrategyDto,
       selectedSections?: Array<number>,
     ) => Promise<Cas1OASysGroup>
+    riskProfile: (token: string, crn: string) => Promise<PersonRisks>
   }
+
   applicationService: {
     getDocuments: (token: string, application: Application) => Promise<Array<Document>>
     findApplication: (token: string, id: string) => Promise<Application>

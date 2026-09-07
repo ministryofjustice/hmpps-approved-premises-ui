@@ -125,7 +125,7 @@ describe('checkYourAnswersUtils', () => {
 
     it('should show date responses from the document', () => {
       const placementApp = placementApplicationFactory.build({
-        placementDates: undefined,
+        requestedPlacementPeriod: undefined,
         document: {
           'request-a-placement': [
             {

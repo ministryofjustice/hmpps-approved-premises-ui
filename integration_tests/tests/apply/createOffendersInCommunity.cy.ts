@@ -38,6 +38,7 @@ context('Apply', () => {
     this.applicationData = this.application.data
 
     this.application.person = person
+    cy.task('stubRiskProfile', { person, personRisks: this.application.risks })
 
     AND('I complete the application')
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
