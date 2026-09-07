@@ -76,8 +76,5 @@ const roshSelectionsByTier: Record<OasysTierProfile, Parameters<typeof clickSect
   },
 }
 
-export const clickSection2To4ForTier = async (
-  page: Page,
-  person: WorkflowPersonDetails,
-  tier: OasysTierProfile,
-) => clickSection2To4WithSelections(page, person, roshSelectionsByTier[tier])
+export const clickSection2To4ForTier = async (page: Page, person: WorkflowPersonDetails, tier: OasysTierProfile) =>
+  clickSection2To4WithSelections(page, person, roshSelectionsByTier[tier])

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { Page } from '@playwright/test'
 import { fillDateOasys } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/inputs.mjs'
 import { WorkflowPerson } from '../../../setup/workflow-person'
@@ -33,13 +34,6 @@ const fillOasysDate = async (page: Page, label: string, selector: string, date: 
   await setInputValueEverywhere(page, selector, formattedDate)
 }
 
-const fillIfPresent = async (page: Page, label: string, value: string) => {
-  const input = page.getByLabel(label)
-  if (await input.count()) {
-    await input.first().fill(value)
-  }
-}
-
 const selectIfPresent = async (page: Page, label: string, value: string) => {
   const select = page.getByLabel(label)
   if (await select.count()) {
@@ -59,7 +53,7 @@ export const completeOffenderInformationLayer3 = async (page: Page, person: Work
   await page.getByLabel('Total number of sanctions for all offences').fill('11')
   await page.getByLabel('How many of the total number of sanctions involved violent offences?').fill('4')
 
-  const convictionDate = person.convictionDate
+  const { convictionDate } = person
   await fillOasysDate(page, 'Date of current conviction', '#itm_1_29', convictionDate)
 
   const sexualOffenceDropdown = page.locator('tr #itm_1_30')
@@ -84,7 +78,9 @@ export const completeOffenderInformationLayer3 = async (page: Page, person: Work
     .getByLabel('Number of previous/current sanctions involving contact adult sexual/sexually motivated offences')
     .fill('1')
   await page
-    .getByLabel('Number of previous/current sanctions involving direct contact child sexual/sexually motivated offences')
+    .getByLabel(
+      'Number of previous/current sanctions involving direct contact child sexual/sexually motivated offences',
+    )
     .fill('0')
   await page
     .getByLabel(
