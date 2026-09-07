@@ -38,6 +38,46 @@ declare module '@approved-premises/e2e' {
   }
 }
 
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/create-offender.mjs' {
+  export const createOffender: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/person.mjs' {
+  export const deliusPerson: (...args: Array<any>) => any
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/event/create-event.mjs' {
+  export const createCustodialEvent: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/registration/create-registration.mjs' {
+  export const createRegistration: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/release/create-release.mjs' {
+  export const createRelease: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/dps/prison-api.mjs' {
+  export const createAndBookPrisoner: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/find-offender.mjs' {
+  export const findOffenderByCRN: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/inputs.mjs' {
+  export const selectOption: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/refresh.mjs' {
+  export const doUntil: (...args: Array<any>) => Promise<any>
+}
+
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/sign-and-lock.mjs' {
+  export const signAndlock: (...args: Array<any>) => Promise<any>
+}
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare module 'notifications-node-client' {
   class NotifyClient {
