@@ -90,6 +90,7 @@ import cas1OasysGroupFactory, { roshSummaryFactory } from './cas1OASysGroup'
 import cas1PremisesLocalRestrictionSummaryFactory from './cas1PremisesLocalRestrictionSummary'
 import cas1PremisesNewLocalRestrictionFactory from './cas1PremisesNewLocalRestriction'
 import cas1RequestedPlacementPeriodFactory from './cas1RequestedPlacementPeriod'
+import cas1AuthorisedPlacementPeriodFactory from './cas1AuthorisedPlacementPeriod'
 import cas1CurrentKeyworkerFactory from './cas1CurrentKeyworker'
 import caseDetailFactory, { registrationFactory } from './caseDetail'
 import licenceFactory from './licence'
@@ -147,6 +148,7 @@ export {
   cas1KeyworkerAllocationFactory,
   cas1UpdateSpaceBookingFactory,
   cas1RequestedPlacementPeriodFactory,
+  cas1AuthorisedPlacementPeriodFactory,
   caseDetailFactory,
   clarificationNoteFactory,
   contingencyPlanPartnerFactory,

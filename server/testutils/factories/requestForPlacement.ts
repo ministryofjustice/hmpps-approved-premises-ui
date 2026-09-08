@@ -5,6 +5,7 @@ import type { RequestForPlacement } from '@approved-premises/api'
 import placementDatesFactory from './placementDates'
 import cas1RequestedPlacementPeriodFactory from './cas1RequestedPlacementPeriod'
 import cas1SpaceBookingShortSummaryFactory from './cas1SpaceBookingShortSummary'
+import cas1AuthorisedPlacementPeriodFactory from './cas1AuthorisedPlacementPeriod'
 
 export default Factory.define<RequestForPlacement>(() => ({
   id: faker.string.uuid(),
@@ -23,7 +24,7 @@ export default Factory.define<RequestForPlacement>(() => ({
   ]),
   type: faker.helpers.arrayElement(['automatic', 'manual']),
   requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
-  authorisedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
+  authorisedPlacementPeriod: cas1AuthorisedPlacementPeriodFactory.build(),
   canonicalPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
   document: {
     'request-a-placement': [

@@ -55,6 +55,7 @@ export type { Cas1AssessmentSortField } from './models/Cas1AssessmentSortField';
 export type { Cas1AssessmentStatus } from './models/Cas1AssessmentStatus';
 export type { Cas1AssessmentSummary } from './models/Cas1AssessmentSummary';
 export type { Cas1AssignKeyWorker } from './models/Cas1AssignKeyWorker';
+export type { Cas1AuthorisedPlacementPeriod } from './models/Cas1AuthorisedPlacementPeriod';
 export type { Cas1BedDetail } from './models/Cas1BedDetail';
 export type { Cas1BookingCancelledContentPayload } from './models/Cas1BookingCancelledContentPayload';
 export type { Cas1BookingChangedContentPayload } from './models/Cas1BookingChangedContentPayload';
