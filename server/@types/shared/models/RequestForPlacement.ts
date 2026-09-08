@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Cas1AuthorisedPlacementPeriod } from './Cas1AuthorisedPlacementPeriod';
 import type { Cas1RequestedPlacementPeriod } from './Cas1RequestedPlacementPeriod';
 import type { Cas1SpaceBookingShortSummary } from './Cas1SpaceBookingShortSummary';
 import type { Cas1StaffDto } from './Cas1StaffDto';
@@ -13,7 +14,7 @@ import type { SentenceTypeOption } from './SentenceTypeOption';
 import type { SituationOption } from './SituationOption';
 import type { WithdrawPlacementRequestReason } from './WithdrawPlacementRequestReason';
 export type RequestForPlacement = {
-    authorisedPlacementPeriod?: Cas1RequestedPlacementPeriod;
+    authorisedPlacementPeriod?: Cas1AuthorisedPlacementPeriod;
     /**
      * If true, the user making this request can withdraw this request for placement.  If false, it may still be possible to indirectly withdraw this request for placement by withdrawing the application.
      */

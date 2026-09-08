@@ -7,6 +7,7 @@ import type { ReleaseTypeOption } from './ReleaseTypeOption';
 import type { SentenceTypeOption } from './SentenceTypeOption';
 import type { SituationOption } from './SituationOption';
 export type SubmitPlacementApplication = {
+    calculatedPlacementDuration?: number;
     releaseType: ReleaseTypeOption;
     requestedPlacementPeriods: Array<Cas1RequestedPlacementPeriod>;
     sentenceType?: SentenceTypeOption;
