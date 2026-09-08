@@ -12,7 +12,7 @@ describe('calculatedPlacementDurationFromApplication', () => {
     jest.clearAllMocks()
   })
 
-  it('returns the default duration by theendpoint', () => {
+  it('returns the default duration from the endpoint', () => {
     ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue(12)
 
     expect(calculatedPlacementDurationFromApplication(application)).toEqual(12)
