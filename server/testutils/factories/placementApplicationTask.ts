@@ -15,8 +15,7 @@ export default Factory.define<PlacementApplicationTask>(() => ({
   tier: tierEnvelopeFactory.build(),
   releaseType: 'rotl',
   placementType: 'rotl',
-  placementDates: placementDatesFactory.buildList(1),
-  dates: placementDatesFactory.build(),
   outcome: faker.helpers.arrayElement(['accepted', 'rejected', 'withdraw', 'withdrawn_by_pp']),
+  dates: placementDatesFactory.build(),
   requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
 }))
