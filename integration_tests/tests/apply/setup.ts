@@ -42,6 +42,7 @@ export const setup = () => {
       applicationId: application.id,
       durationObj: cas1RequestsForPlacementDurationsCalculationResponseDtoFactory.build(),
     })
+    cy.task('stubRiskProfile', { person, personRisks: risks })
 
     cy.wrap(person).as('person')
     cy.wrap(offences).as('offences')

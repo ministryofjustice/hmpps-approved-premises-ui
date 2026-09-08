@@ -52,15 +52,18 @@ export const completeBasicInformationTask = async (
   testMappaFlow = false,
   completeCaseManagerSection = false,
 ) => {
-  const notEligiblePage = await ApplyPage.initialize(page, 'Ben Davies is not normally eligible for an AP placement')
-  await notEligiblePage.checkRadio('Yes')
-  await notEligiblePage.clickSave()
+  const pageTitle = await page.locator('h1').first().innerText()
+  if (pageTitle !== 'Confirm your details') {
+    const notEligiblePage = await ApplyPage.initialize(page, 'Ben Davies is not normally eligible for an AP placement')
+    await notEligiblePage.checkRadio('Yes')
+    await notEligiblePage.clickSave()
 
-  const exemptionApplicationPage = await ApplyPage.initialize(page, 'Exceptional case details')
-  await exemptionApplicationPage.fillField('Name of senior manager who approved exemption', 'Some text')
-  await exemptionApplicationPage.fillDateField({ year: '2022', month: '3', day: '12' })
-  await exemptionApplicationPage.fillField('Reason for exceptional case', 'Some text')
-  await exemptionApplicationPage.clickSave()
+    const exemptionApplicationPage = await ApplyPage.initialize(page, 'Exceptional case details')
+    await exemptionApplicationPage.fillField('Name of senior manager who approved exemption', 'Some text')
+    await exemptionApplicationPage.fillDateField({ year: '2022', month: '3', day: '12' })
+    await exemptionApplicationPage.fillField('Reason for exceptional case', 'Some text')
+    await exemptionApplicationPage.clickSave()
+  }
 
   const confirmYourDetailsPage = await ApplyPage.initialize(page, 'Confirm your details')
   await confirmYourDetailsPage.checkCheckBoxes(['Phone number'])

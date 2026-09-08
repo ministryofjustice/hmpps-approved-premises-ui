@@ -158,7 +158,7 @@ const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
 export const getApplicationSummary = (application: Cas1Application) => [
   summaryListItem('Created on', application.createdAt, 'date'),
   summaryListItem('Created by', application.createdByUserName),
-  summaryListItem('Requested arrival date', application.arrivalDate, 'date'),
+  summaryListItem('Requested arrival date', application.requestedPlacementPeriod?.arrival, 'date'),
   summaryListItem('Status', new ApplicationStatusTag(application.status).html(), 'html'),
 ]
 
@@ -186,20 +186,20 @@ export const actionsLink = (application: Cas1ApplicationSummary) => {
 
 export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>
 
-const isInapplicable = (application: Application): boolean => {
-  const isExceptionalCase = retrieveOptionalQuestionResponseFromFormArtifact(
-    application,
-    IsExceptionalCase,
-    'isExceptionalCase',
-  )
+const getExceptionalCase = (application: Application): string =>
+  retrieveOptionalQuestionResponseFromFormArtifact(application, IsExceptionalCase, 'isExceptionalCase')
 
+export const isExceptionalCase = (application: Application): boolean => getExceptionalCase(application) === 'yes'
+
+const isInapplicable = (application: Application): boolean => {
+  const exceptionalCase = getExceptionalCase(application)
   const agreedCaseWithManager = retrieveOptionalQuestionResponseFromFormArtifact(
     application,
     ExceptionDetails,
     'agreedCaseWithManager',
   )
 
-  return isExceptionalCase === 'no' || (isExceptionalCase === 'yes' && agreedCaseWithManager === 'no')
+  return exceptionalCase === 'no' || (exceptionalCase === 'yes' && agreedCaseWithManager === 'no')
 }
 
 const firstPageOfApplicationJourney = (applicationId: string, person: Person) => {

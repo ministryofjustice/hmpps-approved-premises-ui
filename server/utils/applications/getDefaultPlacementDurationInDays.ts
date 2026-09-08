@@ -4,6 +4,7 @@ import {
   SentenceTypeOption,
 } from '@approved-premises/api'
 import { DataServices } from '@approved-premises/ui'
+import { isExceptionalCase } from './utils'
 
 const sentenceTypeFromApplication = (application: Application): SentenceTypeOption => {
   const basicInformation = application.data?.['basic-information']
@@ -25,4 +26,5 @@ export const getDefaultPlacementDurationInDays = async (
     application.id,
     application.apType,
     sentenceTypeFromApplication(application),
+    isExceptionalCase(application),
   )
