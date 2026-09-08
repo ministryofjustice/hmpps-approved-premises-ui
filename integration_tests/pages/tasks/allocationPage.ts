@@ -1,5 +1,5 @@
 import type {
-  ApprovedPremisesApplication as Application,
+  Cas1Application as Application,
   FullPerson,
   Task,
   ApprovedPremisesUser as User,

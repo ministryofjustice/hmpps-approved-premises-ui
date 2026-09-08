@@ -1,7 +1,7 @@
 import {
   ActiveOffence,
   Adjudication,
-  ApprovedPremisesApplication as Application,
+  Cas1Application as Application,
   Document,
   FullPerson,
   OASysQuestion,

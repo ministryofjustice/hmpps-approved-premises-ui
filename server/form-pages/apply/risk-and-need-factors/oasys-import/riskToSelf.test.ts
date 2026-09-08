@@ -24,6 +24,7 @@ describe('RiskToSelf', () => {
     beforeEach(() => {
       personService = createMock<PersonService>({
         getOasysAnswers: getOasysGroupMock,
+        riskProfile: jest.fn().mockResolvedValue(personRisks),
       })
     })
 

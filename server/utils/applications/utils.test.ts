@@ -21,6 +21,7 @@ import {
   restrictedPersonFactory,
   tierEnvelopeFactory,
   tierDtoFactory,
+  cas1RequestedPlacementPeriodFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/apply'
 import managePaths from '../../paths/manage'
@@ -45,6 +46,7 @@ import {
   getApplicationSummary,
   getApplicationTierValue,
   getApplicationType,
+  isExceptionalCase,
   isInapplicable,
   isWomensApplication,
   lengthOfStayForUI,
@@ -522,6 +524,23 @@ describe('utils', () => {
     })
   })
 
+  describe('isExceptionalCase', () => {
+    const application = applicationFactory.build()
+    it('should return true is applicant has answered "yes" to the exceptional case question', () => {
+      mockOptionalQuestionResponse({ isExceptionalCase: 'yes' })
+
+      expect(isExceptionalCase(application)).toEqual(true)
+    })
+    it('should return false is applicant has answered "no" to the exceptional case question', () => {
+      mockOptionalQuestionResponse({ isExceptionalCase: 'no' })
+
+      expect(isExceptionalCase(application)).toEqual(false)
+    })
+    it('should return false if the exceptional case question has not been answered', () => {
+      expect(isExceptionalCase(application)).toEqual(false)
+    })
+  })
+
   describe('isInapplicable', () => {
     const application = applicationFactory.build()
 
@@ -610,8 +629,8 @@ describe('utils', () => {
       const application = applicationFactory.build({
         createdAt: '2025-11-05',
         createdByUserName: 'Anne Elk',
-        arrivalDate: '2025-11-06',
         status: 'started',
+        requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({ arrival: '2025-11-06' }),
       })
       expect(getApplicationSummary(application)).toEqual([
         summaryListItem('Created on', 'Wed 5 Nov 2025'),

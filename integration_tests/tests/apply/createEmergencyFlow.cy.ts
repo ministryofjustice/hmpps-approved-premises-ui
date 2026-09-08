@@ -18,6 +18,7 @@ context('Apply', () => {
 
     this.person.tier = tierDtoFactory.v3().build({ tierScore: 'B' })
     this.application.risks.tier = tierEnvelopeFactory.build({ value: { level: 'B', version: 'V3' } })
+    cy.task('stubRiskProfile', { person: this.person, personRisks: this.application.risks })
 
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
     const apply = new ApplyHelper(this.application, this.person, this.offences, user)
