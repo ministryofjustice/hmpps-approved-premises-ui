@@ -1,11 +1,11 @@
-import { ApprovedPremisesApplication, OASysQuestion } from '@approved-premises/api'
+import { Cas1Application as Application, OASysQuestion } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
 
 export default class RiskManagementPlan extends ApplyPage {
   constructor(
-    application: ApprovedPremisesApplication,
+    application: Application,
     private readonly riskRiskManagementPlanSummaries: Array<OASysQuestion>,
     private readonly oasysMissing: boolean,
   ) {

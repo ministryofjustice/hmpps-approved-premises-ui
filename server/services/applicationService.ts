@@ -180,9 +180,10 @@ export default class ApplicationService {
     applicationId: Application['id'],
     apType: ApType,
     sentenceType: SentenceTypeOption,
+    isExceptionalApplication: boolean,
   ) {
     const client = this.applicationClientFactory(token)
 
-    return client.getPlacementDuration(applicationId, apType, sentenceType)
+    return client.getPlacementDuration(applicationId, apType, sentenceType, isExceptionalApplication)
   }
 }

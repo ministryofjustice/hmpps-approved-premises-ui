@@ -6,7 +6,7 @@ import 'reflect-metadata'
 import { TaskNames } from '@approved-premises/ui'
 import * as utils from './index'
 import TasklistPage, { TasklistPageInterface } from '../tasklistPage'
-import { ApprovedPremisesApplication } from '../../@types/shared'
+import { Cas1Application as Application } from '../../@types/shared'
 
 import { applicationFactory } from '../../testutils/factories'
 
@@ -166,15 +166,13 @@ describe('utils', () => {
     it('if there is userInput it returns it', () => {
       const input = { user: 'input' }
 
-      expect(
-        utils.getBody({} as TasklistPageInterface, {} as ApprovedPremisesApplication, {} as Request, input),
-      ).toEqual(input)
+      expect(utils.getBody({} as TasklistPageInterface, {} as Application, {} as Request, input)).toEqual(input)
     })
 
     it('if there isnt userInput and there is a request body the request body is returned', () => {
       const request: DeepMocked<Request> = createMock<Request>()
 
-      expect(utils.getBody({} as TasklistPageInterface, {} as ApprovedPremisesApplication, request, {}))
+      expect(utils.getBody({} as TasklistPageInterface, {} as Application, request, {}))
     })
 
     it('if there is neither a request body or userInput then getPageFromApplicationData is called and returns the data for that page', () => {

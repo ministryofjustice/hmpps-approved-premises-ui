@@ -9,7 +9,7 @@ import {
 } from './pendingPlacementRequestTable'
 import { allReleaseTypes } from './releaseTypeUtils'
 import { createNameAnchorElement } from './helpers'
-import { getTierOrBlank } from '../personUtils'
+import { getVersionedTierOrBlank } from '../personUtils'
 import { htmlCell, textCell } from '../tableUtils'
 
 describe('pendingPlacementRequestTable', () => {
@@ -50,13 +50,13 @@ describe('pendingPlacementRequestTable', () => {
       expect(pendingPlacementRequestTableRows(summaries)).toEqual([
         [
           createNameAnchorElement(summaries[0].person, summaries[0], { showCrn: true }),
-          htmlCell(getTierOrBlank(summaries[0].risks?.tier?.value?.level)),
+          htmlCell(getVersionedTierOrBlank(summaries[0].person)),
           textCell(DateFormats.isoDateToUIDate(summaries[0].createdAt, { format: 'short' })),
           textCell(allReleaseTypes[summaries[0].releaseType]),
         ],
         [
           createNameAnchorElement(summaries[1].person, summaries[1], { showCrn: true }),
-          htmlCell(getTierOrBlank(summaries[1].risks?.tier?.value?.level)),
+          htmlCell(getVersionedTierOrBlank(summaries[1].person)),
           textCell(DateFormats.isoDateToUIDate(summaries[1].createdAt, { format: 'short' })),
           textCell(''),
         ],

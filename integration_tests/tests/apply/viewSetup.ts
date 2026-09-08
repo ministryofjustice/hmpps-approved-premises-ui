@@ -1,5 +1,5 @@
 import {
-  ApprovedPremisesApplication,
+  Cas1Application as Application,
   ApprovedPremisesApplicationStatus,
   Cas1Assessment,
   Cas1ApplicationSummary,
@@ -23,7 +23,7 @@ import assessmentDocument from '../../fixtures/assessmentDocument.json'
 
 export const setup = (
   settings: {
-    application?: Partial<ApprovedPremisesApplication>
+    application?: Partial<Application>
     assessment?: Partial<Cas1Assessment>
   } = {},
 ) => {

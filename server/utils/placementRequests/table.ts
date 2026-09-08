@@ -21,7 +21,7 @@ export const dashboardTableRows = (
   placementRequests.map(placementRequest =>
     [
       nameCell(placementRequest),
-      versionedTierCell(placementRequest.person, { level: placementRequest.personTier }),
+      versionedTierCell(placementRequest.person),
       textCell(placementRequest.isParole ? 'Parole' : 'Standard release'),
       status === 'matched' && dateCell(placementRequest.firstBookingArrivalDate),
       status === 'matched' && textCell(placementRequest.firstBookingPremisesName),

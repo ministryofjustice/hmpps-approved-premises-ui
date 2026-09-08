@@ -1,6 +1,6 @@
 import { when } from 'jest-when'
 import { assessmentSummaryFactory, taskFactory } from '../testutils/factories'
-import { displayName, tierBadge, versionedTierBadge } from './personUtils'
+import { displayName, versionedTierBadge } from './personUtils'
 import {
   crnCell,
   dateCell,
@@ -10,14 +10,12 @@ import {
   emailCell,
   nameCellLink,
   textCellNoWrap,
-  tierCell,
   versionedTierCell,
 } from './tableUtils'
 import { DateFormats } from './dateUtils'
 import { fullPersonFactory } from '../testutils/factories/person'
 import tierDtoFactory from '../testutils/factories/tierDto'
-import config from '../config'
-import { RiskTier } from '../@types/shared'
+import { TierVersionDto } from '../@types/shared'
 
 describe('tableUtils', () => {
   describe('dateCell', () => {
@@ -74,34 +72,19 @@ describe('tableUtils', () => {
     })
   })
 
-  describe('tierCell', () => {
-    it.each([
-      ['A1', 'A8'],
-      ['B3S', 'B6S'],
-      ['BzS', 'BzS'],
-      ['Q', 'Q'],
-      ['', ''],
-      [undefined, ''],
-    ])('returns the tier badge and sort key for the tier %s', (tier, sortKey) => {
-      expect(tierCell(tier)).toEqual({ html: tierBadge(tier), attributes: { 'data-sort-value': sortKey } })
-    })
-  })
-
   describe('versionedTierCell', () => {
-    afterEach(() => {
-      config.flags.useLiveTiers = false
-    })
-
     it.each([
-      ['A1', 'A8'],
-      ['B3S', 'B6S'],
-      ['BzS', 'BzS'],
-      ['Q', 'Q'],
-      ['', ''],
-      [undefined, ''],
-    ])('returns the live tier badge and sort key for the tier %s', (tierScore, sortKey) => {
-      config.flags.useLiveTiers = true
-      const tier = tierDtoFactory.build({ tierScore })
+      ['V2', 'A1', 'A8'],
+      ['V2', 'B3S', 'B6S'],
+      ['V2', 'BzS', 'BzS'],
+      ['V2', 'Q', 'Q'],
+      ['V2', '', ''],
+      ['V2', undefined, ''],
+      ['V3', 'A', 'A'],
+      ['V3', 'C', 'C'],
+      ['V3', 'MISSING', 'MISSING'],
+    ])('returns the Version %s tier badge and sort key for the tier %s', (version, tierScore, sortKey) => {
+      const tier = tierDtoFactory.build({ version: version as TierVersionDto, tierScore })
       const person = fullPersonFactory.build({ tier })
 
       expect(versionedTierCell(person)).toEqual({
@@ -110,22 +93,10 @@ describe('tableUtils', () => {
       })
     })
 
-    it('returns the tier badge from application when live tiers are disabled', () => {
-      const person = fullPersonFactory.build({ tier: tierDtoFactory.build({ tierScore: 'B2' }) })
-      const tierOnApplicationCreation = { level: 'A1' } as RiskTier
-
-      expect(versionedTierCell(person, tierOnApplicationCreation)).toEqual({
-        html: tierBadge(tierOnApplicationCreation.level),
-        attributes: { 'data-sort-value': 'A8' },
-      })
-    })
-
     it('returns the updated live tier instead of the tier from application creation', () => {
-      config.flags.useLiveTiers = true
-      const tierOnApplicationCreation = { level: 'C1' } as RiskTier
       const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'A1' }) })
 
-      expect(versionedTierCell(person, tierOnApplicationCreation)).toEqual({
+      expect(versionedTierCell(person)).toEqual({
         html: versionedTierBadge(person.tier),
         attributes: { 'data-sort-value': 'A8' },
       })

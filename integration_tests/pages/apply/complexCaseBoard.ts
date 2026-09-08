@@ -1,10 +1,10 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application as Application } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
 
 export default class ComplexCaseBoardPage extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Application) {
     super(
       `Does this person require a complex case board?`,
       application,

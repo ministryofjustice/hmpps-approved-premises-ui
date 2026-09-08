@@ -95,7 +95,7 @@ describe('tableUtils', () => {
         expect(dashboardTableRows([placementRequest], status)).toEqual([
           [
             nameCell(placementRequest),
-            versionedTierCell(placementRequest.person, { level: placementRequest.personTier }),
+            versionedTierCell(placementRequest.person),
             textCell('Parole'),
             textCell(DateFormats.isoDateToUIDate(placementRequest.applicationSubmittedDate, { format: 'short' })),
             textCell(DateFormats.isoDateToUIDate(placementRequest.requestedPlacementArrivalDate, { format: 'short' })),
@@ -111,7 +111,7 @@ describe('tableUtils', () => {
       expect(dashboardTableRows([placementRequest], 'matched')).toEqual([
         [
           nameCell(placementRequest),
-          versionedTierCell(placementRequest.person, { level: placementRequest.personTier }),
+          versionedTierCell(placementRequest.person),
           textCell('Parole'),
           textCell(DateFormats.isoDateToUIDate(placementRequest.firstBookingArrivalDate, { format: 'short' })),
           textCell(placementRequest.firstBookingPremisesName),
@@ -137,7 +137,7 @@ describe('tableUtils', () => {
       expect(dashboardTableRows([placementRequest], undefined)).toEqual([
         [
           nameCell(placementRequest),
-          versionedTierCell(placementRequest.person, { level: placementRequest.personTier }),
+          versionedTierCell(placementRequest.person),
           textCell('Parole'),
           textCell(DateFormats.isoDateToUIDate(placementRequest.requestedPlacementArrivalDate, { format: 'short' })),
           durationCell(placementRequest.requestedPlacementDuration),
@@ -153,7 +153,7 @@ describe('tableUtils', () => {
       expect(dashboardTableRows([placementRequest], 'matched')).toEqual([
         [
           nameCell(placementRequest),
-          versionedTierCell(placementRequest.person, { level: placementRequest.personTier }),
+          versionedTierCell(placementRequest.person),
           textCell('Parole'),
           textCell(DateFormats.isoDateToUIDate(placementRequest.firstBookingArrivalDate, { format: 'short' })),
           textCell(placementRequest.firstBookingPremisesName),

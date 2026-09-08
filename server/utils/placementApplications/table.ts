@@ -45,7 +45,7 @@ export const tableRows = (tasks: Array<PlacementApplicationTask>): Array<TableRo
     return [
       nameCell(task),
       crnCell(task),
-      versionedTierCell(task.personSummary, task.tier?.value),
+      versionedTierCell(task.personSummary),
       arrivalDateCell(task),
       placementTypeCell(task),
       statusCell(task),

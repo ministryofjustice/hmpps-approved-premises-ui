@@ -1,6 +1,6 @@
 import { add } from 'date-fns'
 import {
-  ApprovedPremisesApplication,
+  Cas1Application as Application,
   Cas1Application,
   OASysQuestion,
   OASysSupportingInformationQuestion,
@@ -9,22 +9,20 @@ import { TableCell, TableRow } from '@approved-premises/ui'
 
 import { DateFormats } from '../../server/utils/dateUtils'
 
-const offenceDetailSummariesFromApplication = (application: ApprovedPremisesApplication): Array<OASysQuestion> => {
+const offenceDetailSummariesFromApplication = (application: Application): Array<OASysQuestion> => {
   return application.data['oasys-import']['offence-details'].offenceDetailsSummaries as Array<OASysQuestion>
 }
 
-const supportInformationFromApplication = (
-  application: ApprovedPremisesApplication,
-): Array<OASysSupportingInformationQuestion> => {
+const supportInformationFromApplication = (application: Application): Array<OASysSupportingInformationQuestion> => {
   return application.data['oasys-import']['supporting-information']
     .supportingInformationSummaries as Array<OASysSupportingInformationQuestion>
 }
 
-const riskManagementPlanFromApplication = (application: ApprovedPremisesApplication): Array<OASysQuestion> => {
+const riskManagementPlanFromApplication = (application: Application): Array<OASysQuestion> => {
   return application.data['oasys-import']['risk-management-plan'].riskManagementSummaries as Array<OASysQuestion>
 }
 
-const riskToSelfSummariesFromApplication = (application: ApprovedPremisesApplication): Array<OASysQuestion> => {
+const riskToSelfSummariesFromApplication = (application: Application): Array<OASysQuestion> => {
   return application.data['oasys-import']['risk-to-self'].riskToSelfSummaries as Array<OASysQuestion>
 }
 
