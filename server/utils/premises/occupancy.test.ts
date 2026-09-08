@@ -29,7 +29,7 @@ import {
 } from './occupancy'
 import { DateFormats } from '../dateUtils'
 import { premiseCharacteristicAvailability } from '../../testutils/factories/cas1PremiseCapacity'
-import { displayName, getTierOrBlank } from '../personUtils'
+import { displayName, getVersionedTierOrBlank } from '../personUtils'
 import { roomCharacteristicMap } from '../characteristicsUtils'
 import { sortHeader } from '../sortHeader'
 import { canonicalDates } from '../placements'
@@ -300,7 +300,7 @@ describe('apOccupancy utils', () => {
       expect(row[0].html).toMatchStringIgnoringWhitespace(
         `<a href="/manage/premises/premises-Id/placements/${placement.id}" data-cy-id="${placement.id}">${displayName(placement.person)}, ${placement.person.crn}</a>`,
       )
-      expect(row[1].html).toEqual(getTierOrBlank(placement.tier))
+      expect(row[1].html).toEqual(getVersionedTierOrBlank(placement.person))
       expect(row[2].text).toEqual(DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }))
       expect(row[3].text).toEqual(DateFormats.isoDateToUIDate(departureDate, { format: 'short' }))
       expect(row[4].html).toMatchStringIgnoringWhitespace(

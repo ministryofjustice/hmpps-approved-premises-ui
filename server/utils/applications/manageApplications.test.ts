@@ -7,7 +7,7 @@ import {
   getApplicationTableRows,
   nameCell,
 } from './manageApplications'
-import { cas1ApplicationSummaryFactory } from '../../testutils/factories'
+import { cas1ApplicationSummaryFactory, tierDtoFactory } from '../../testutils/factories'
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { ApplicationStatusTag } from './statusTag'
 import paths from '../../paths/apply'
@@ -52,10 +52,10 @@ describe('manageApplications', () => {
 
   describe('getApplicationTableRows', () => {
     it('should return the table rows', () => {
-      const person = fullPersonFactory.build()
+      const tier = tierDtoFactory.v2().build({ tierScore: 'A3' })
+      const person = fullPersonFactory.build({ tier })
       const application = cas1ApplicationSummaryFactory.build({
         person,
-        tier: 'A3',
         createdAt: '2024-12-16T15:35',
         arrivalDate: '2025-02-03T09:15',
       })

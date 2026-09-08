@@ -21,6 +21,7 @@ import {
   restrictedPersonFactory,
   tierEnvelopeFactory,
   tierDtoFactory,
+  cas1RequestedPlacementPeriodFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/apply'
 import managePaths from '../../paths/manage'
@@ -45,6 +46,7 @@ import {
   getApplicationSummary,
   getApplicationTierValue,
   getApplicationType,
+  isExceptionalCase,
   isInapplicable,
   isWomensApplication,
   lengthOfStayForUI,
@@ -192,14 +194,12 @@ describe('utils', () => {
     it('returns an array of applications as table rows', async () => {
       const applicationA = cas1ApplicationSummaryFactory.build({
         arrivalDate: undefined,
-        person,
+        person: { ...person, tier: tierDtoFactory.v2().build({ tierScore: 'A1' }) },
         submittedAt: null,
-        risks: { tier: tierEnvelopeFactory.build({ value: { level: 'A1' } }) },
       })
       const applicationB = cas1ApplicationSummaryFactory.build({
         arrivalDate,
-        person,
-        risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
+        person: { ...person, tier: tierDtoFactory.v2().build({ tierScore: null }) },
       })
 
       const result = applicationTableRows([applicationA, applicationB])
@@ -264,25 +264,8 @@ describe('utils', () => {
       it('returns a blank tier badge', async () => {
         const application = cas1ApplicationSummaryFactory.build({
           arrivalDate,
-          person,
-          risks: { tier: undefined },
+          person: { ...person, tier: tierDtoFactory.v2().build({ tierScore: undefined }) },
           status: 'started',
-        })
-
-        const result = applicationTableRows([application])
-
-        expect(result[0][2]).toEqual({
-          html: '',
-        })
-      })
-    })
-
-    describe('when risks is undefined', () => {
-      it('returns a blank tier badge', async () => {
-        const application = cas1ApplicationSummaryFactory.build({
-          arrivalDate,
-          person,
-          risks: undefined,
         })
 
         const result = applicationTableRows([application])
@@ -399,7 +382,7 @@ describe('utils', () => {
           {
             text: applicationA.person.crn,
           },
-          versionedTierCell(applicationA.person, applicationA.risks?.tier?.value),
+          versionedTierCell(applicationA.person),
           {
             text: 'N/A',
           },
@@ -422,7 +405,7 @@ describe('utils', () => {
           {
             text: applicationB.person.crn,
           },
-          versionedTierCell(applicationB.person, applicationB.risks?.tier?.value),
+          versionedTierCell(applicationB.person),
           {
             text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
           },
@@ -450,7 +433,7 @@ describe('utils', () => {
 
         const result = dashboardTableRows([application])
 
-        expect(result[0][2]).toEqual(versionedTierCell(application.person, application.risks?.tier?.value))
+        expect(result[0][2]).toEqual(versionedTierCell(application.person))
       })
     })
 
@@ -464,7 +447,7 @@ describe('utils', () => {
 
         const result = dashboardTableRows([application])
 
-        expect(result[0][2]).toEqual(versionedTierCell(application.person, application.risks?.tier?.value))
+        expect(result[0][2]).toEqual(versionedTierCell(application.person))
       })
     })
 
@@ -482,7 +465,7 @@ describe('utils', () => {
             {
               text: application.person.crn,
             },
-            versionedTierCell(application.person, application.risks?.tier?.value),
+            versionedTierCell(application.person),
             {
               text: DateFormats.isoDateToUIDate(application.arrivalDate, { format: 'short' }),
             },
@@ -538,6 +521,23 @@ describe('utils', () => {
         `CRN: ${restrictedPerson.crn} is restricted`,
       )
       expect(() => firstPageOfApplicationJourney(applicationId, restrictedPerson)).toThrowError(RestrictedPersonError)
+    })
+  })
+
+  describe('isExceptionalCase', () => {
+    const application = applicationFactory.build()
+    it('should return true is applicant has answered "yes" to the exceptional case question', () => {
+      mockOptionalQuestionResponse({ isExceptionalCase: 'yes' })
+
+      expect(isExceptionalCase(application)).toEqual(true)
+    })
+    it('should return false is applicant has answered "no" to the exceptional case question', () => {
+      mockOptionalQuestionResponse({ isExceptionalCase: 'no' })
+
+      expect(isExceptionalCase(application)).toEqual(false)
+    })
+    it('should return false if the exceptional case question has not been answered', () => {
+      expect(isExceptionalCase(application)).toEqual(false)
     })
   })
 
@@ -629,8 +629,8 @@ describe('utils', () => {
       const application = applicationFactory.build({
         createdAt: '2025-11-05',
         createdByUserName: 'Anne Elk',
-        arrivalDate: '2025-11-06',
         status: 'started',
+        requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({ arrival: '2025-11-06' }),
       })
       expect(getApplicationSummary(application)).toEqual([
         summaryListItem('Created on', 'Wed 5 Nov 2025'),

@@ -1,12 +1,12 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application as Application } from '@approved-premises/api'
 
 import ApplyPage from './applyPage'
 import paths from '../../../server/paths/apply'
 
 export default class PlacementDurationPage extends ApplyPage {
-  application: ApprovedPremisesApplication
+  application: Application
 
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: Application) {
     super(
       'Placement duration and move on',
       application,

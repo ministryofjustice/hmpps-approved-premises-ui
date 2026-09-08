@@ -19,6 +19,7 @@ import risksFactory from './risks'
 import { DateFormats } from '../../utils/dateUtils'
 import { BackwardsCompatibleApplyApType, PartnerAgencyDetails } from '../../@types/ui'
 import { apAreaFactory } from './referenceData'
+import cas1RequestedPlacementPeriodFactory from './cas1RequestedPlacementPeriod'
 
 class ApplicationFactory extends Factory<Cas1Application> {
   withReleaseDate(releaseDate = DateFormats.dateObjToIsoDate(faker.date.soon())) {
@@ -143,7 +144,7 @@ export default ApplicationFactory.define(() => ({
   submittedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   data: {},
   document: {},
-  duration: faker.number.int({ min: 1, max: 365 }),
+  requestedPlacementDuration: faker.number.int({ min: 1, max: 365 }),
   outdatedSchema: faker.datatype.boolean(),
   isWomensApplication: faker.datatype.boolean(),
   risks: risksFactory.build(),
@@ -155,4 +156,5 @@ export default ApplicationFactory.define(() => ({
   applicantUserDetails: applicationUserDetailsFactory.build(),
   licenceExpiryDate: DateFormats.dateObjToIsoDateTime(faker.date.future()),
   apType: faker.helpers.arrayElement(['normal', 'esap', 'mhapElliottHouse', 'mhapStJosephs', 'pipe', 'rfap']) as ApType,
+  requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
 }))

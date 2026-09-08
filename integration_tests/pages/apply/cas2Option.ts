@@ -15,7 +15,7 @@ export default class Cas2Option extends Page {
     )
     this.shouldShowLink(
       'Apply for Short-term accommodation (CAS2)',
-      'https://community-accommodation-tier-2-bail-dev.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start',
+      'https://community-accommodation-tier-2-bail-dev.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start?referred_by=cas1_interstitial',
     )
     this.shouldHaveBackLink(paths.applications.people.eligibilityCheck({ crn: this.person.crn }))
   }

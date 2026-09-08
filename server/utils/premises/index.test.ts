@@ -324,7 +324,7 @@ describe('premisesUtils', () => {
             {
               html: legacyLink(placement),
             },
-            versionedTierCell(placement.person, { level: placement.tier }),
+            versionedTierCell(placement.person),
             { text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) },
             { text: DateFormats.isoDateToUIDate(departureDate, { format: 'short' }) },
           ]

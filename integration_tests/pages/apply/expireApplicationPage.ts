@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application as Application } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import paths from '../../../server/paths/apply'
 
@@ -9,7 +9,7 @@ import apiPaths from '../../../server/paths/api'
 const reason = faker.lorem.words(50)
 
 export default class ExpireApplicationPage extends Page {
-  constructor(private readonly application: ApprovedPremisesApplication) {
+  constructor(private readonly application: Application) {
     super('Expire application')
     this.checkForBackButton(paths.applications.show({ id: application.id }))
   }
