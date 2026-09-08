@@ -206,12 +206,12 @@ export const mapPlacementTableRows = (
   request: RequestWithSession,
 ): Array<TableRow> =>
   placements.map(placement => {
-    const { id, person, tier, keyWorkerAllocation, characteristics } = placement
+    const { id, person, keyWorkerAllocation, characteristics } = placement
     const { arrivalDate, departureDate } = canonicalDates(placement)
     const link = getPlacementLink({ request, premisesId, person, placementId: placement.id })
     const fieldValues: Record<ColumnField, TableCell> = {
       personName: htmlCell(`<a href="${link}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`),
-      tier: versionedTierCell(person, tier ? { level: tier } : undefined),
+      tier: versionedTierCell(person),
       canonicalArrivalDate: dateCell(arrivalDate),
       canonicalDepartureDate: dateCell(departureDate),
       keyWorkerName: textCell(keyWorkerAllocation?.name || 'Not assigned'),
