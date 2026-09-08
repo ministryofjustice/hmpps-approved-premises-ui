@@ -15,6 +15,9 @@ const assessedTiers: Array<WorkflowPersonTier> = ['A', 'B', 'C']
 test('generate one persistent person for requested tier', async ({ browser }) => {
   test.setTimeout(30 * 60 * 1000)
 
+  if (!requestedTier) {
+    test.skip(true, 'only run via setup-tier-data workflow')
+  }
   if (!validTiers.includes(requestedTier)) {
     throw new Error('CAS1_E2E_PERSON_TIER must be one of: A, B, C, MISSING, NOT_SUPERVISED')
   }
