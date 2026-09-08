@@ -1,6 +1,6 @@
 import { differenceInDays, format } from 'date-fns'
 import {
-  ApprovedPremisesApplication as Application,
+  Cas1Application as Application,
   Cas1Assessment as Assessment,
   Cas1AssessmentSummary as AssessmentSummary,
 } from '@approved-premises/api'

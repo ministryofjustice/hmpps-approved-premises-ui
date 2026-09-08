@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express'
-import type { ApprovedPremisesApplication as Application, Withdrawable } from '@approved-premises/api'
+import type { Cas1Application as Application, Withdrawable } from '@approved-premises/api'
 import { ApplicationService, PlacementService } from '../../services'
 import applyPaths from '../../paths/apply'
 import adminPaths from '../../paths/admin'

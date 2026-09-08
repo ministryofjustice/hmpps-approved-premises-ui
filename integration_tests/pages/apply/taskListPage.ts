@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application as Application } from '@approved-premises/api'
 import TaskList from '../taskListPage'
 
 export default class TaskListPage extends TaskList {
@@ -6,7 +6,7 @@ export default class TaskListPage extends TaskList {
     super('Apply for an Approved Premises (AP) placement')
   }
 
-  static visit(application: ApprovedPremisesApplication) {
+  static visit(application: Application) {
     cy.visit(`/applications/${application.id}`)
     return new TaskListPage()
   }

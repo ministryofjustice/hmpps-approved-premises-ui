@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { Cas1Application as Application } from '@approved-premises/api'
 import ApplyPage from './applyPage'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../server/utils/retrieveQuestionResponseFromFormArtifact'
@@ -7,7 +7,7 @@ import paths from '../../../server/paths/apply'
 
 export default class PlacementStartPage extends ApplyPage {
   constructor(
-    application: ApprovedPremisesApplication,
+    application: Application,
     private readonly releaseDatePast: boolean,
   ) {
     const releaseDate = retrieveOptionalQuestionResponseFromFormArtifact(application, ReleaseDate) as string
