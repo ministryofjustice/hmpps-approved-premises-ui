@@ -37,7 +37,6 @@
     "create-application:emergency:assess": "ASSESS_APPLICATION='true' npm run create-application:emergency",
     "create-application:short-notice": "APPLICATION_TYPE='shortNotice' npx playwright test --config ./e2e/playwright.config.ts --project=local utils/createApplication.spec.ts",
     "create-application:short-notice:assess": "ASSESS_APPLICATION='true' npm run create-application:short-notice",
-
     "setup": "npm ci && hmpps-npm-script-run-allowlist"
   },
   "engines": {
@@ -162,6 +161,7 @@
     "@golevelup/ts-jest": "3.0.0",
     "@jgoz/esbuild-plugin-typecheck": "^4.0.4",
     "@ministryofjustice/eslint-config-hmpps": "^1.0.1",
+    "@ministryofjustice/hmpps-probation-integration-e2e-tests": "1.265.0",
     "@pact-foundation/pact": "^16.0.2",
     "@pactflow/openapi-pact-comparator": "^1.4.0",
     "@types/bunyan": "^1.8.8",
