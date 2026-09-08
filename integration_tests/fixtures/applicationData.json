@@ -515,7 +515,8 @@
       "differentDuration": "yes",
       "durationDays": "0",
       "durationWeeks": "6",
-      "reason": "some reason"
+      "reason": "some reason",
+      "defaultDurationDays": 12
     },
     "relocation-region": {
       "postcodeArea": "SW11"
