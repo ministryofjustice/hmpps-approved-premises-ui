@@ -34,5 +34,4 @@ export default Factory.define<PlacementApplication>(() => ({
     undefined,
   ]),
   requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
-  placementDates: [],
 }))

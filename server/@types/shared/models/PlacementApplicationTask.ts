@@ -27,11 +27,6 @@ export type PlacementApplicationTask = (Task & {
      */
     tier?: RiskTierEnvelope;
 } & {
-    /**
-     * Use requestedPlacementPeriod
-     * @deprecated
-     */
-    dates: PlacementDates;
     placementType: PlacementType;
     requestedPlacementPeriod: Cas1RequestedPlacementPeriod;
     /**
