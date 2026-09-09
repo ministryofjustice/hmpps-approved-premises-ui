@@ -1,6 +1,6 @@
 import { expect, Page } from '@playwright/test'
 
-type OasysTierProfile = 'A' | 'B' | 'C'
+type OasysTierProfile = 'A' | 'B' | 'C' | 'D'
 type RiskScore = 'Low' | 'Medium' | 'High' | 'Very High'
 
 const roshSummaryScoresByTier: Record<OasysTierProfile, Record<string, RiskScore>> = {
@@ -36,6 +36,17 @@ const roshSummaryScoresByTier: Record<OasysTierProfile, Record<string, RiskScore
     itm_SUM6_3_2: 'Medium',
     itm_SUM6_4_2: 'Medium',
     itm_SUM6_5_2: 'Medium',
+  },
+  D: {
+    itm_SUM6_1_1: 'Low',
+    itm_SUM6_2_1: 'Low',
+    itm_SUM6_3_1: 'Low',
+    itm_SUM6_4_1: 'Low',
+    itm_SUM6_1_2: 'Low',
+    itm_SUM6_2_2: 'Low',
+    itm_SUM6_3_2: 'Low',
+    itm_SUM6_4_2: 'Low',
+    itm_SUM6_5_2: 'Low',
   },
 }
 

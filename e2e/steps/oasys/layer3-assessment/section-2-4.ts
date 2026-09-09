@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test'
 import { WorkflowPersonDetails } from '../../../setup/workflow-person'
 
-type OasysTierProfile = 'A' | 'B' | 'C'
+type OasysTierProfile = 'A' | 'B' | 'C' | 'D'
 
 const clickSection2To4WithSelections = async (
   page: Page,
@@ -72,6 +72,17 @@ const roshSelectionsByTier: Record<OasysTierProfile, Parameters<typeof clickSect
     vulnerability: 'R3.4~NO',
     escapeAbscond: 'R4.1~YES',
     controlIssues: 'R4.6~YES',
+    risksToOtherPrisoners: 'R4.4~NO',
+  },
+  D: {
+    identifiableChildren: 'R2.4.1~NO',
+    childrenInGeneral: 'R2.4.2~NO',
+    riskOfSuicide: 'R3.1~NO',
+    riskOfSelfHarm: 'R3.2~NO',
+    copingInCustody: 'R3.3~NO',
+    vulnerability: 'R3.4~NO',
+    escapeAbscond: 'R4.1~NO',
+    controlIssues: 'R4.6~NO',
     risksToOtherPrisoners: 'R4.4~NO',
   },
 }

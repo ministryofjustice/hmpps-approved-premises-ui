@@ -112,7 +112,7 @@ npm run test:e2e:local:ui
 ```
 
 For creating a person with a specific Tier (including local runs of that flow), set `CAS1_E2E_PERSON_TIER` to one of:
-`A`, `B`, `C`, `MISSING`, `NOT_SUPERVISED` (GitHub Actions input label: `NOT SUPERVISED`).
+`A`, `B`, `C`, `D`, `MISSING`, `NOT_SUPERVISED` (GitHub Actions input label: `NOT SUPERVISED`).
 This is used by `.github/workflows/setup-tier-data.yml`, which runs `e2e/tests/generate-crn-with-tier.spec.ts`.
 
 ### Testing Emails

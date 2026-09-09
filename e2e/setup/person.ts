@@ -44,6 +44,8 @@ const ROSH_REGISTRATION_BY_TIER = {
   A: 'Very High RoSH',
   B: 'Low RoSH',
   C: 'High RoSH',
+  // Tier D is the lowest tier: Low RoSH with no MAPPA, Lifer or recent release registration.
+  D: 'Low RoSH',
 } as const
 
 const createRegistrationForTestProvider = async (
@@ -92,12 +94,13 @@ export const loginDelius = async (page: Page) => {
   await expect(page).toHaveTitle(homePageTitle, { timeout: 60_000 })
 }
 
-export const createTierRegistration = async (page: Page, crn: string, tier: 'A' | 'B' | 'C') => {
+export const createTierRegistration = async (page: Page, crn: string, tier: 'A' | 'B' | 'C' | 'D') => {
   if (tier === 'A' || tier === 'C') {
     await createRegistration(page, crn, 'MAPPA', TEST_TEAM.provider)
   } else if (tier === 'B') {
     await createRegistrationForTestProvider(page, crn, 'Lifer', 'Lifer - Life Imprisonment', 'Lifer - Supervised')
   }
+  // Tier D gets no MAPPA or Lifer registration - just the Low RoSH registration below.
 
   await createRegistrationForTestProvider(page, crn, ROSH_REGISTRATION_BY_TIER[tier])
 }
@@ -131,7 +134,7 @@ export const createTestPerson = async (
     console.log(`Created custodial event for CRN ${lifecycle.crn}`)
   }
 
-  if (tier === 'A' || tier === 'B' || tier === 'C') {
+  if (tier === 'A' || tier === 'B' || tier === 'C' || tier === 'D') {
     console.log(`Creating Tier ${tier} registration for CRN ${lifecycle.crn}...`)
     await createTierRegistration(page, lifecycle.crn, tier)
     console.log(`Created Tier ${tier} registration for CRN ${lifecycle.crn}`)

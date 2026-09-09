@@ -12,6 +12,7 @@ on:
           - A
           - B
           - C
+          - D
           - MISSING
           - NOT_SUPERVISED
       gender:

@@ -8,9 +8,9 @@ import { WorkflowPersonGender, WorkflowPersonTier } from '../setup/workflow-pers
 const outputFile = process.env.CRN_OUTPUT_FILE
 const requestedTier = process.env.CAS1_E2E_PERSON_TIER as WorkflowPersonTier
 const requestedGender = (process.env.CAS1_E2E_PERSON_GENDER || 'Male') as WorkflowPersonGender
-const validTiers: Array<WorkflowPersonTier> = ['A', 'B', 'C', 'MISSING', 'NOT_SUPERVISED']
+const validTiers: Array<WorkflowPersonTier> = ['A', 'B', 'C', 'D', 'MISSING', 'NOT_SUPERVISED']
 const validGenders: Array<WorkflowPersonGender> = ['Male', 'Female']
-const assessedTiers: Array<WorkflowPersonTier> = ['A', 'B', 'C']
+const assessedTiers: Array<WorkflowPersonTier> = ['A', 'B', 'C', 'D']
 
 test('generate one persistent person for requested tier', async ({ browser }) => {
   test.setTimeout(30 * 60 * 1000)
@@ -19,7 +19,7 @@ test('generate one persistent person for requested tier', async ({ browser }) =>
     test.skip(true, 'only run via setup-tier-data workflow')
   }
   if (!validTiers.includes(requestedTier)) {
-    throw new Error('CAS1_E2E_PERSON_TIER must be one of: A, B, C, MISSING, NOT_SUPERVISED')
+    throw new Error('CAS1_E2E_PERSON_TIER must be one of: A, B, C, D, MISSING, NOT_SUPERVISED')
   }
   if (!validGenders.includes(requestedGender)) {
     throw new Error('CAS1_E2E_PERSON_GENDER must be one of: Male, Female')
