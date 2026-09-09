@@ -42,8 +42,8 @@ const groupByAllocation = (tasks: Array<Task>) => {
 }
 
 const getArrivalDate = (task: Task, application: Application) => {
-  if (isPlacementApplicationTask(task) && task.placementDates && task.placementDates.length > 0) {
-    return task.placementDates[0].expectedArrival
+  if (isPlacementApplicationTask(task) && task.requestedPlacementPeriod?.arrival) {
+    return task.requestedPlacementPeriod.arrival
   }
 
   return arrivalDateFromApplication(application)

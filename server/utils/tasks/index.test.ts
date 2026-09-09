@@ -1,6 +1,11 @@
 import { groupByAllocation, taskSummary, userQualificationsSelectOptions } from '.'
 import { type Cas1Application as Application, Task } from '../../@types/shared'
-import { applicationFactory, placementDatesFactory, taskFactory, userFactory } from '../../testutils/factories'
+import {
+  applicationFactory,
+  cas1RequestedPlacementPeriodFactory,
+  taskFactory,
+  userFactory,
+} from '../../testutils/factories'
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { getApplicationType } from '../applications/utils'
@@ -171,10 +176,7 @@ describe('index', () => {
 
     describe('when taskType is placementApplication with a PDU', () => {
       const placementApplication = placementApplicationTask.build({
-        placementDates: [
-          placementDatesFactory.build({ expectedArrival: '2023-05-08' }),
-          placementDatesFactory.build({ expectedArrival: '2023-06-12' }),
-        ],
+        requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({ arrival: '2023-05-08' }),
         probationDeliveryUnit: { id: '1', name: 'test' },
       })
 
