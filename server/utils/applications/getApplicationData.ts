@@ -27,6 +27,7 @@ import { reasonForShortNoticeDetails } from './reasonForShortNoticeDetails'
 import { isWomensApplication } from './isWomensApplication'
 import { licenceExpiryDateFromApplication } from './licenceExpiryDateFromApplication'
 import { placementDurationFromApplication } from './placementDurationFromApplication'
+import { calculatedPlacementDurationFromApplication } from './calculatedPlacementDurationFromApplication'
 import { substituteReleaseType } from '../placementApplications'
 
 type FirstClassFields<T> = T extends UpdateApprovedPremisesApplication
@@ -49,6 +50,7 @@ export const getApplicationUpdateData = (application: Application): UpdateApprov
 export const getApplicationSubmissionData = (application: Application): SubmitApprovedPremisesApplication => {
   return {
     translatedDocument: application.document,
+    calculatedPlacementDuration: calculatedPlacementDurationFromApplication(application),
     ...getSubmitFirstClassFields(application),
   }
 }
@@ -65,9 +67,11 @@ const firstClassFields = <T>(
   const releaseType = getReleaseType(application, sentenceType)
   const situation =
     releaseType === 'in_community' ? retrieveQuestionResponse(application, Situation, 'situation') : null
-  const duration = placementDurationFromApplication(application)
+  const requestedPlacementDuration = placementDurationFromApplication(application)
   const arrival = arrivalDateFromApplication(application)
-  const requestedPlacementPeriod: Cas1RequestedPlacementPeriod = arrival ? { arrival, duration } : undefined
+  const requestedPlacementPeriod: Cas1RequestedPlacementPeriod = arrival
+    ? { arrival, duration: requestedPlacementDuration }
+    : undefined
   const isEmergencyApplication = noticeType === 'emergency'
   const apAreaId = retrieveQuestionResponse(application, ConfirmYourDetails, 'area')
   const { applicantUserDetails, caseManagerUserDetails, caseManagerIsNotApplicant } =
@@ -82,7 +86,7 @@ const firstClassFields = <T>(
     releaseType,
     sentenceType,
     situation,
-    duration,
+    requestedPlacementDuration,
     requestedPlacementPeriod,
     isEmergencyApplication,
     apAreaId,

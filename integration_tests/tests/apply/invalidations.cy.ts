@@ -39,7 +39,7 @@ context('Apply', () => {
       expect(body).to.have.keys(
         'data',
         'document',
-        'duration',
+        'requestedPlacementDuration',
         'requestedPlacementPeriod',
         'apType',
         'isWomensApplication',
@@ -84,7 +84,7 @@ context('Apply', () => {
         'data',
         'document',
         'apType',
-        'duration',
+        'requestedPlacementDuration',
         'requestedPlacementPeriod',
         'isWomensApplication',
         'targetLocation',

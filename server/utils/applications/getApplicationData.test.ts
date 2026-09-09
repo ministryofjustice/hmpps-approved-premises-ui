@@ -10,6 +10,7 @@ import {
 } from '../../testutils/mockQuestionResponse'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { placementDurationFromApplication } from './placementDurationFromApplication'
+import { calculatedPlacementDurationFromApplication } from './calculatedPlacementDurationFromApplication'
 import { isInapplicable } from './utils'
 import { isWomensApplication } from './isWomensApplication'
 import { reasonForShortNoticeDetails } from './reasonForShortNoticeDetails'
@@ -21,6 +22,7 @@ jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/applicantAndCaseManagerDetails')
 jest.mock('./arrivalDateFromApplication')
 jest.mock('./placementDurationFromApplication')
+jest.mock('./calculatedPlacementDurationFromApplication')
 jest.mock('./utils')
 jest.mock('./isWomensApplication')
 jest.mock('./reasonForShortNoticeDetails')
@@ -62,11 +64,13 @@ describe('getApplicationData', () => {
       arrival: '2023-01-01',
       duration: 84,
     }
+    const calculatedPlacementDuration = 70
     const licenceExpiryDate = DateFormats.dateObjToIsoDate(faker.date.soon())
 
     beforeEach(() => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(requestedPlacementPeriod.arrival)
       ;(placementDurationFromApplication as jest.Mock).mockReturnValue(requestedPlacementPeriod.duration)
+      ;(calculatedPlacementDurationFromApplication as jest.Mock).mockReturnValue(calculatedPlacementDuration)
       ;(isWomensApplication as jest.Mock).mockReturnValue(false)
       ;(licenceExpiryDateFromApplication as jest.Mock).mockReturnValue(licenceExpiryDate)
       mockOptionalQuestionResponse({
@@ -90,7 +94,8 @@ describe('getApplicationData', () => {
         sentenceType,
         situation: null,
         targetLocation,
-        duration: 84,
+        requestedPlacementDuration: 84,
+        calculatedPlacementDuration,
         requestedPlacementPeriod,
         isEmergencyApplication: true,
         apAreaId,
@@ -189,7 +194,7 @@ describe('getApplicationData', () => {
         sentenceType: undefined,
         targetLocation: undefined,
         arrivalDate: undefined,
-        duration: undefined,
+        requestedPlacementDuration: undefined,
         isEmergencyApplication: false,
         apAreaId: undefined,
         caseManagerIsNotApplicant: undefined,
@@ -225,7 +230,7 @@ describe('getApplicationData', () => {
         sentenceType: 'standardDeterminate',
         situation: null,
         targetLocation,
-        duration: 56,
+        requestedPlacementDuration: 56,
         requestedPlacementPeriod: { arrival: '2023-01-01', duration: 56 },
         isEmergencyApplication: true,
         apAreaId,
