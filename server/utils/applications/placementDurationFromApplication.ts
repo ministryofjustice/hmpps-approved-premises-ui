@@ -8,7 +8,8 @@ Before submission, it will come fron the application data, either 'duration' if 
 'defaultDurationDays' which will be populated from the API calculation endpoint.
 After submission, it will come from the duration first-class field persisted in the application
 */
-export const placementDurationFromApplication = (application: Application): number =>
+export const placementDurationFromApplication = (application: Application): number | undefined =>
   application.requestedPlacementDuration ||
   Number(retrieveOptionalQuestionResponseFromFormArtifact(application, PlacementDuration, 'duration')) ||
-  Number(retrieveOptionalQuestionResponseFromFormArtifact(application, PlacementDuration, 'defaultDurationDays'))
+  Number(retrieveOptionalQuestionResponseFromFormArtifact(application, PlacementDuration, 'defaultDurationDays')) ||
+  undefined

@@ -9,5 +9,5 @@ export const calculatedPlacementDurationFromApplication = (application: Applicat
     'defaultDurationDays',
   )
 
-  return defaultDurationDays ? Number(defaultDurationDays) : undefined
+  return Number(defaultDurationDays) || undefined
 }
