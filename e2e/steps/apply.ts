@@ -1,6 +1,7 @@
 import { Page, expect } from '@playwright/test'
 
 import { AppealDecision, ApplicationType, TestOptions } from '@approved-premises/e2e'
+import { Cas2InterstitialPage } from 'e2e/pages/apply/cas2InterstitialPage'
 import {
   ApplyPage,
   CRNPage,
@@ -17,7 +18,6 @@ import { ShowPage } from '../pages/apply/showPage'
 import { assessmentShouldHaveCorrectDeadlineAndAllocatedUser } from './workflow'
 import { SelectIndexOffencePage } from '../pages/apply/selectIndexOffencePage'
 import { visitDashboard } from './signIn'
-import { Cas2InterstitialPage } from 'e2e/pages/apply/cas2InterstitialPage'
 
 export const startAnApplication = async (dashboard: DashboardPage, page: Page) => {
   await dashboard.clickApply()
