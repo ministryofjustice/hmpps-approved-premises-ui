@@ -176,6 +176,34 @@ describe('PlacementDuration', () => {
       })
     })
 
+    it('uses v3-specific validation messages', () => {
+      const page = new PlacementDuration({}, application)
+
+      expect(page.errors()).toEqual({
+        differentDuration: 'You must specify if you want to change the placement length',
+      })
+
+      const pageYes = new PlacementDuration({ differentDuration: 'yes' }, application)
+
+      expect(pageYes.errors()).toEqual({
+        duration: 'You must specify the new placement length',
+        reason: 'You must specify the reason for the change',
+      })
+    })
+
+    it('uses v3-specific response keys', () => {
+      const page = new PlacementDuration(
+        { differentDuration: 'yes' as const, durationDays: '4', durationWeeks: '1', reason: 'Some reason' },
+        application,
+      )
+
+      expect(page.response()).toEqual({
+        'Do you want to change the placement length?': 'Yes',
+        'New placement length': '1 week, 4 days',
+        'Reason for change': 'Some reason',
+      })
+    })
+
     it('labels the keep-duration option with the calculated placement length', () => {
       const page = new PlacementDuration({ defaultDurationDays: 112 }, application)
 
@@ -187,5 +215,4 @@ describe('PlacementDuration', () => {
 
       expect(page.keepDurationLabel).toEqual('No')
     })
-  })
 })
