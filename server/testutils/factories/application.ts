@@ -126,6 +126,13 @@ class ApplicationFactory extends Factory<Cas1Application> {
       assessmentId: faker.string.uuid(),
     })
   }
+
+  withNoDuration() {
+    return this.params({
+      requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({ duration: undefined }),
+      requestedPlacementDuration: undefined,
+    })
+  }
 }
 
 export const applicationUserDetailsFactory = new Factory<Cas1ApplicationUserDetails>(() => ({
@@ -134,27 +141,37 @@ export const applicationUserDetailsFactory = new Factory<Cas1ApplicationUserDeta
   telephoneNumber: faker.phone.number(),
 }))
 
-export default ApplicationFactory.define(() => ({
-  type: 'CAS1',
-  id: faker.string.uuid(),
-  person: faker.helpers.arrayElement([fullPersonFactory.build(), restrictedPersonFactory.build()]),
-  createdByUserId: faker.string.uuid(),
-  schemaVersion: faker.string.uuid(),
-  createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
-  submittedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
-  data: {},
-  document: {},
-  requestedPlacementDuration: faker.number.int({ min: 1, max: 365 }),
-  outdatedSchema: faker.datatype.boolean(),
-  isWomensApplication: faker.datatype.boolean(),
-  risks: risksFactory.build(),
-  status: 'started' as const,
-  personStatusOnSubmission: 'InCustody' as const,
-  apArea: apAreaFactory.build(),
-  caseManagerIsNotApplicant: faker.datatype.boolean(),
-  caseManagerUserDetails: applicationUserDetailsFactory.build(),
-  applicantUserDetails: applicationUserDetailsFactory.build(),
-  licenceExpiryDate: DateFormats.dateObjToIsoDateTime(faker.date.future()),
-  apType: faker.helpers.arrayElement(['normal', 'esap', 'mhapElliottHouse', 'mhapStJosephs', 'pipe', 'rfap']) as ApType,
-  requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build(),
-}))
+export default ApplicationFactory.define(() => {
+  const requestedPlacementDuration = faker.number.int({ min: 1, max: 365 })
+  return {
+    type: 'CAS1',
+    id: faker.string.uuid(),
+    person: faker.helpers.arrayElement([fullPersonFactory.build(), restrictedPersonFactory.build()]),
+    createdByUserId: faker.string.uuid(),
+    schemaVersion: faker.string.uuid(),
+    createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
+    submittedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
+    data: {},
+    document: {},
+    requestedPlacementDuration,
+    outdatedSchema: faker.datatype.boolean(),
+    isWomensApplication: faker.datatype.boolean(),
+    risks: risksFactory.build(),
+    status: 'started' as const,
+    personStatusOnSubmission: 'InCustody' as const,
+    apArea: apAreaFactory.build(),
+    caseManagerIsNotApplicant: faker.datatype.boolean(),
+    caseManagerUserDetails: applicationUserDetailsFactory.build(),
+    applicantUserDetails: applicationUserDetailsFactory.build(),
+    licenceExpiryDate: DateFormats.dateObjToIsoDateTime(faker.date.future()),
+    apType: faker.helpers.arrayElement([
+      'normal',
+      'esap',
+      'mhapElliottHouse',
+      'mhapStJosephs',
+      'pipe',
+      'rfap',
+    ]) as ApType,
+    requestedPlacementPeriod: cas1RequestedPlacementPeriodFactory.build({ duration: requestedPlacementDuration }),
+  }
+})
