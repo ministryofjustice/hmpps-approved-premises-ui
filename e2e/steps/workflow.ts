@@ -23,6 +23,7 @@ export const assignAssessmentToMe = async (
   isAllocated?: boolean,
 ) => {
   const workflowListPage = new ListPage(page)
+  await workflowListPage.updateAreaFilter()
   await workflowListPage.chooseAssessmentWithId(id, isAllocated)
 
   const assessmentPage = new AssessmentPage(page)

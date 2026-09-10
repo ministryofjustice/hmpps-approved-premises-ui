@@ -14,11 +14,14 @@ export class SearchPage extends MatchBasePage {
     await this.page.getByRole('button', { name: 'Update' }).click()
   }
 
-  async selectAp(premisesName: string) {
-    await this.page
-      .locator('.govuk-summary-card', { has: this.page.getByRole('heading', { name: premisesName }) })
-      .getByRole('link', { name: 'View spaces' })
-      .click()
+  async selectAp(): Promise<string> {
+    const card = this.page.locator('.govuk-summary-card').first()
+
+    const premiseName = (await card.getByRole('heading').innerText()).trim()
+
+    await card.getByRole('link', { name: 'View spaces' }).click()
+
+    return premiseName
   }
 
   async shouldShowApplicationDetails({

@@ -1,4 +1,4 @@
-name: '* Setup tier data'
+name: 'Setup tier data'
 
 on:
   workflow_dispatch:

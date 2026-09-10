@@ -18,7 +18,6 @@ declare module '@approved-premises/e2e' {
     person: {
       crn: string
       name: string
-      tier: string
     }
     personForAdHocBooking: {
       crn: string

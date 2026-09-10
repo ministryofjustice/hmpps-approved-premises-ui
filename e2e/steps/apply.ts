@@ -17,6 +17,7 @@ import { ShowPage } from '../pages/apply/showPage'
 import { assessmentShouldHaveCorrectDeadlineAndAllocatedUser } from './workflow'
 import { SelectIndexOffencePage } from '../pages/apply/selectIndexOffencePage'
 import { visitDashboard } from './signIn'
+import { Cas2InterstitialPage } from 'e2e/pages/apply/cas2InterstitialPage'
 
 export const startAnApplication = async (dashboard: DashboardPage, page: Page) => {
   await dashboard.clickApply()
@@ -36,6 +37,12 @@ export const enterAndConfirmCrn = async (page: Page, crn: string) => {
   const confirmPersonPage = new ConfirmPersonPage(page)
   await confirmPersonPage.clickSave()
 
+  const cas2InterstitalPage = new Cas2InterstitialPage(page)
+  if (await page.getByRole('heading', { name: 'may be eligible for Short-term accomodation (CAS2)' }).isVisible()) {
+    await cas2InterstitalPage.clickContinue()
+    await cas2InterstitalPage.shouldShowInformationHeading()
+    await cas2InterstitalPage.clickApplyForCas1()
+  }
   const selectIndexOffencePage = new SelectIndexOffencePage(page)
   await selectIndexOffencePage.selectFirstOffence()
   await selectIndexOffencePage.clickSave()
@@ -54,7 +61,7 @@ export const completeBasicInformationTask = async (
 ) => {
   const pageTitle = await page.locator('h1').first().innerText()
   if (pageTitle !== 'Confirm your details') {
-    const notEligiblePage = await ApplyPage.initialize(page, 'Ben Davies is not normally eligible for an AP placement')
+    const notEligiblePage = await ApplyPage.initialize(page, /is not normally eligible for an AP placement/)
     await notEligiblePage.checkRadio('Yes')
     await notEligiblePage.clickSave()
 
@@ -66,8 +73,6 @@ export const completeBasicInformationTask = async (
   }
 
   const confirmYourDetailsPage = await ApplyPage.initialize(page, 'Confirm your details')
-  await confirmYourDetailsPage.checkCheckBoxes(['Phone number'])
-  await confirmYourDetailsPage.fillField('Phone number', '01234567890')
   await confirmYourDetailsPage.checkRadio('Yes')
   await confirmYourDetailsPage.clickSave()
 

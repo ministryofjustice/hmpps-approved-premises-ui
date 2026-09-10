@@ -5,8 +5,7 @@ export const test = base.extend<TestOptions>({
   person: [
     {
       name: 'Ben Davies',
-      crn: 'X371199',
-      tier: 'B3S',
+      crn: 'X371199'
     },
     { option: true },
   ],
