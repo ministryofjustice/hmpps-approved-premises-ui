@@ -4,7 +4,7 @@ import { BasePage } from '../basePage'
 export class Cas2InterstitialPage extends BasePage {
   async shouldShowInterstitialHeading() {
     await expect(
-      this.page.getByRole('heading', { name: 'may be eligible for Short-term accommodation (CAS2)' }),
+      this.page.getByRole('heading', { name: /may be eligible for Short-term accommodation \(CAS2\)/i }),
     ).toBeVisible()
   }
 
