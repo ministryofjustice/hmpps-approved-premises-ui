@@ -4,7 +4,7 @@ import { createMock } from '@golevelup/ts-jest'
 import { getDefaultPlacementDurationInDays } from '../../../utils/applications/getDefaultPlacementDurationInDays'
 
 import PlacementDuration from './placementDuration'
-import { applicationFactory } from '../../../testutils/factories'
+import { applicationFactory, personFactory, tierDtoFactory } from '../../../testutils/factories'
 import { addResponsesToFormArtifact } from '../../../testutils/addToApplication'
 import { arrivalDateFromApplication } from '../../../utils/applications/arrivalDateFromApplication'
 import { DateFormats } from '../../../utils/dateUtils'
@@ -20,11 +20,14 @@ const token = 'test_token'
 describe('PlacementDuration', () => {
   let application: Cas1Application
 
-  beforeEach(() => {
-    application = applicationFactory
+  const buildApplication = (tierVersion: 'V2' | 'V3') =>
+    applicationFactory
       .withReleaseDate()
       .withPageResponse({ task: 'type-of-ap', page: 'ap-type', key: 'type', value: 'normal' })
-      .build()
+      .build({ person: personFactory.build({ tier: tierDtoFactory.build({ version: tierVersion }) }) })
+
+  beforeEach(() => {
+    application = buildApplication('V2')
   })
 
   describe('body', () => {
@@ -153,6 +156,36 @@ describe('PlacementDuration', () => {
       const page = new PlacementDuration({ differentDuration: 'no' as const, duration: '' }, application)
 
       expect(page.response()).toEqual({ 'Does this application require a different placement duration?': 'No' })
+    })
+  })
+
+  describe('when the person has a version 3 tier', () => {
+    beforeEach(() => {
+      application = buildApplication('V3')
+    })
+
+    it('shows the placement length content', () => {
+      const page = new PlacementDuration({}, application)
+
+      expect(page.isV3Tier).toEqual(true)
+      expect(page.title).toEqual('Placement length and dates')
+      expect(page.questions).toEqual({
+        differentDuration: 'Do you want to change the placement length?',
+        duration: 'New placement length',
+        reason: 'Reason for change',
+      })
+    })
+
+    it('labels the keep-duration option with the calculated placement length', () => {
+      const page = new PlacementDuration({ defaultDurationDays: 112 }, application)
+
+      expect(page.keepDurationLabel).toEqual('No, apply for 16 weeks')
+    })
+
+    it('labels the keep-duration option with a bare No when the API returns no default duration', () => {
+      const page = new PlacementDuration({ defaultDurationDays: undefined }, application)
+
+      expect(page.keepDurationLabel).toEqual('No')
     })
   })
 })
