@@ -37,11 +37,14 @@ export const enterAndConfirmCrn = async (page: Page, crn: string) => {
   const confirmPersonPage = new ConfirmPersonPage(page)
   await confirmPersonPage.clickSave()
 
-  const cas2InterstitalPage = new Cas2InterstitialPage(page)
-  if (await page.getByRole('heading', { name: 'may be eligible for Short-term accommodation (CAS2)' }).isVisible()) {
-    await cas2InterstitalPage.clickContinue()
-    await cas2InterstitalPage.shouldShowInformationHeading()
-    await cas2InterstitalPage.clickApplyForCas1()
+  const cas2InterstitialPage = new Cas2InterstitialPage(page)
+  const cas2InterstitialHeading = page.getByRole('heading', {
+    name: /may be eligible for Short-term accommodation \(CAS2\)/i,
+  })
+  if (await cas2InterstitialHeading.isVisible()) {
+    await cas2InterstitialPage.clickContinue()
+    await cas2InterstitialPage.shouldShowInformationHeading()
+    await cas2InterstitialPage.clickApplyForCas1()
   }
   const selectIndexOffencePage = new SelectIndexOffencePage(page)
   await selectIndexOffencePage.selectFirstOffence()
