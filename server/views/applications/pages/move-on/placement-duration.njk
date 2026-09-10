@@ -2,9 +2,17 @@
 
 {% extends "../layout.njk" %}
 
+{% set submitButtonText = "Continue" if page.body.durationCannotBeCalculated else "Save and continue" %}
+
 {% block questions %}
 
-  <h1 class="govuk-heading-l">{{ page.title }}</h2>
+  <h1 class="govuk-heading-l">{{ page.title }}</h1>
+
+  {% if page.body.durationCannotBeCalculated %}
+
+  <p class="govuk-body">{{ page.noDurationMessage }}</p>
+
+  {% else %}
 
   {% if page.arrivalDate %}
     <h2 class="govuk-heading-m"> Expected dates of stay in Approved Premises:</h2>
@@ -78,5 +86,7 @@
   fetchContext()
   )
 }}
+
+  {% endif %}
 
 {% endblock %}

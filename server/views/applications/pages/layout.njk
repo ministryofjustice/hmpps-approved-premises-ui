@@ -47,7 +47,7 @@
         {% block questions %}{% endblock %}
 
         {{ govukButton({
-            text: "Save and continue",
+            text: submitButtonText | default("Save and continue"),
             preventDoubleClick: true
         }) }}
       </form>

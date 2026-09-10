@@ -68,6 +68,22 @@ describe('PlacementDuration', () => {
       expect(page.arrivalDate).toEqual(DateFormats.isoDateToUIDate(arrivalDate))
       const arrivalDatePlus30Days = addDays(new Date(arrivalDate), 30)
       expect(page.departureDate).toEqual(DateFormats.dateObjtoUIDate(arrivalDatePlus30Days))
+      expect(page.body.durationCannotBeCalculated).toEqual(false)
+    })
+
+    it('sets durationCannotBeCalculated and no dates if no duration is returned', async () => {
+      const arrivalDate = '2026-01-01'
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(arrivalDate)
+      ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValue({
+        defaultDurationDays: undefined,
+        maxDurationDays: undefined,
+      })
+
+      const page = await PlacementDuration.initialize({}, application, token, { applicationService })
+
+      expect(page.body.durationCannotBeCalculated).toEqual(true)
+      expect(page.arrivalDate).toEqual(undefined)
+      expect(page.departureDate).toEqual(undefined)
     })
 
     it('sets the dates to undefined if the dates are not specified', () => {
@@ -77,6 +93,20 @@ describe('PlacementDuration', () => {
 
       expect(page.arrivalDate).toEqual(undefined)
       expect(page.departureDate).toEqual(undefined)
+    })
+  })
+
+  describe('title', () => {
+    it('should return the title', () => {
+      const page = new PlacementDuration({ differentDuration: 'no' }, application)
+
+      expect(page.title).toEqual('Placement duration and move on')
+    })
+
+    it('should return a different title if the duration cannot be calculated', () => {
+      const page = new PlacementDuration({ durationCannotBeCalculated: true }, application)
+
+      expect(page.title).toEqual('Placement length cannot be calculated')
     })
   })
 
@@ -115,6 +145,12 @@ describe('PlacementDuration', () => {
       })
     })
 
+    it('returns no errors if the duration cannot be calculated', () => {
+      const page = new PlacementDuration({ durationCannotBeCalculated: true }, application)
+
+      expect(page.errors()).toEqual({})
+    })
+
     it('validates the duration fields', () => {
       jest.spyOn(formUtils, 'validWeeksAndDaysDuration')
 
@@ -146,6 +182,14 @@ describe('PlacementDuration', () => {
         'Does this application require a different placement duration?': 'Yes',
         'How many weeks will the person stay at the AP?': '1 week, 4 days',
         'Why does this person require a different placement duration?': 'Some reason',
+      })
+    })
+
+    it('should return a message instead of answers if the duration cannot be calculated', () => {
+      const page = new PlacementDuration({ durationCannotBeCalculated: true }, application)
+
+      expect(page.response()).toEqual({
+        'Placement length cannot be calculated': 'The assessor will enter the length of stay.',
       })
     })
 

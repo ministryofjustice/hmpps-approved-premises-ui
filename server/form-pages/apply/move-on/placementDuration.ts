@@ -18,6 +18,7 @@ type PlacementDurationBody = {
   reason?: string
   defaultDurationDays?: number
   maxDurationDays?: number
+  durationCannotBeCalculated?: boolean
 }
 
 @Page({
@@ -30,10 +31,17 @@ type PlacementDurationBody = {
     'reason',
     'defaultDurationDays',
     'maxDurationDays',
+    'durationCannotBeCalculated',
   ],
 })
 export default class PlacementDuration implements TasklistPage {
-  title = 'Placement duration and move on'
+  noDurationTitle = 'Placement length cannot be calculated'
+
+  noDurationMessage = 'The assessor will enter the length of stay.'
+
+  get title(): string {
+    return this.body.durationCannotBeCalculated ? this.noDurationTitle : 'Placement duration and move on'
+  }
 
   arrivalDate: string | undefined
 
@@ -77,6 +85,12 @@ export default class PlacementDuration implements TasklistPage {
   response() {
     const response: PageResponse = {}
 
+    if (this.body.durationCannotBeCalculated) {
+      response[this.noDurationTitle] = this.noDurationMessage
+
+      return response
+    }
+
     response[this.questions.differentDuration] = sentenceCase(this.body.differentDuration)
 
     if (this.body.differentDuration === 'yes') {
@@ -91,6 +105,10 @@ export default class PlacementDuration implements TasklistPage {
 
   errors() {
     const errors: TaskListErrors<this> = {}
+
+    if (this.body.durationCannotBeCalculated) {
+      return errors
+    }
 
     if (!this.body.differentDuration) {
       errors.differentDuration = 'You must specify if this application requires a different placement length'
@@ -133,8 +151,9 @@ export default class PlacementDuration implements TasklistPage {
     )
     this.body.maxDurationDays = maxDurationDays
     this.body.defaultDurationDays = defaultDurationDays
+    this.body.durationCannotBeCalculated = !defaultDurationDays
 
-    if (arrivalDateIso) {
+    if (arrivalDateIso && defaultDurationDays) {
       const arrivalDate = DateFormats.isoToDateObj(arrivalDateIso)
       const departureDate = addDays(arrivalDate, defaultDurationDays)
 
