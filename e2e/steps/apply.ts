@@ -38,7 +38,7 @@ export const enterAndConfirmCrn = async (page: Page, crn: string) => {
   await confirmPersonPage.clickSave()
 
   const cas2InterstitalPage = new Cas2InterstitialPage(page)
-  if (await page.getByRole('heading', { name: 'may be eligible for Short-term accomodation (CAS2)' }).isVisible()) {
+  if (await page.getByRole('heading', { name: 'may be eligible for Short-term accommodation (CAS2)' }).isVisible()) {
     await cas2InterstitalPage.clickContinue()
     await cas2InterstitalPage.shouldShowInformationHeading()
     await cas2InterstitalPage.clickApplyForCas1()
