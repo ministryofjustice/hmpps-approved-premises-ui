@@ -39,31 +39,43 @@
         {{ govukSummaryList(page.suggestedStaySummaryListOptions) }}
     {% endset %}
 
-    {{ formPageRadios({
-        fieldName: "lengthOfStayAgreed",
-        fieldset: {
-            legend: {
-                text: page.questions.lengthOfStayAgreed,
-                classes: "govuk-fieldset__legend--m"
-            }
-        },
-        hint: {
-            html: lengthOfStayAgreedHint
-        },
-        items: [
-            {
-                value: "yes",
-                text: "Yes"
+    {% if page.isUnknownDuration %}
+      <h2 class="govuk-heading-m">Placement length</h2>
+
+      <p>We could not calculate the placement length automatically.</p>
+
+      {{ lengthOfStayAgreedHint | safe }}
+
+      {{ formPageDaysAndWeeksInput("lengthOfStay", "govuk-fieldset__legend--s", fetchContext()) | safe }}
+
+    {% else %}
+        {{ formPageRadios({
+            fieldName: "lengthOfStayAgreed",
+            fieldset: {
+                legend: {
+                    text: page.questions.lengthOfStayAgreed,
+                    classes: "govuk-fieldset__legend--m"
+                }
             },
-            {
-                value: "no",
-                text: "No",
-                conditional: {
-                html: formPageDaysAndWeeksInput("lengthOfStay", "govuk-label--s", fetchContext())
-            }
-            }
-        ]
-    }, fetchContext()) }}
+            hint: {
+                html: lengthOfStayAgreedHint
+            },
+            items: [
+                {
+                    value: "yes",
+                    text: "Yes"
+                },
+                {
+                    value: "no",
+                    text: "No",
+                    conditional: {
+                    html: formPageDaysAndWeeksInput("lengthOfStay", "govuk-label--s", fetchContext())
+                }
+                }
+            ]
+        }, fetchContext()) }}
+
+    {% endif %}
 
     {{ formPageTextarea({
         fieldName: "cruInformation",

@@ -25,7 +25,7 @@ import { OffenceAndRiskCriteria, PlacementRequirementCriteria } from '../../util
 import SelectApType from '../apply/reasons-for-placement/type-of-ap/apType'
 import PlacementDate from '../apply/reasons-for-placement/basic-information/placementDate'
 import ReleaseDate from '../apply/reasons-for-placement/basic-information/releaseDate'
-import { validWeeksAndDaysDuration } from '../../utils/formUtils'
+import { summaryListItem, summaryListItemNoBlankRows, validWeeksAndDaysDuration } from '../../utils/formUtils'
 
 export interface TaskListPageField {
   name: string
@@ -59,17 +59,12 @@ const apType = (body: MatchingInformationBody, application: Application): Matchi
 export const lengthOfStay = ({
   lengthOfStayWeeks,
   lengthOfStayDays,
-  lengthOfStayAgreed,
-}: MatchingInformationBody): string | undefined => {
-  if (lengthOfStayAgreed === 'no') {
-    if (!validWeeksAndDaysDuration(lengthOfStayWeeks, lengthOfStayDays)) return undefined
+}: Partial<MatchingInformationBody>): string | undefined => {
+  if (!validWeeksAndDaysDuration(lengthOfStayWeeks, lengthOfStayDays)) return undefined
 
-    const lengthOfStayWeeksInDays = weeksToDays(Number(lengthOfStayWeeks || 0))
-    const totalLengthInDays = lengthOfStayWeeksInDays + Number(lengthOfStayDays || 0)
-    return String(totalLengthInDays)
-  }
-
-  return undefined
+  const lengthOfStayWeeksInDays = weeksToDays(Number(lengthOfStayWeeks || 0))
+  const totalLengthInDays = lengthOfStayWeeksInDays + Number(lengthOfStayDays || 0)
+  return String(totalLengthInDays)
 }
 
 type YesNoCurrentPrevious = 'yes' | 'no' | 'current' | 'previous'
@@ -262,36 +257,43 @@ export const remapArsonAssessmentData = (assessmentData: Assessment['data']): As
   return assessmentData
 }
 
-const suggestedStaySummaryListOptions = (application: Application): SummaryList => {
-  const duration = placementDurationFromApplication(application)
-  const formattedDuration = DateFormats.formatDuration(duration)
-  const rows: SummaryList['rows'] = [
-    { key: { text: 'Placement duration' }, value: { text: formattedDuration, classes: 'placement-duration' } },
-  ]
-
+const getPlacementStartDate = (application: Application): string | undefined => {
   const knownReleaseDate = retrieveQuestionResponseFromFormArtifact(application, ReleaseDate, 'knowReleaseDate')
-
   if (knownReleaseDate === 'yes') {
     const startDateSameAsReleaseDate = retrieveQuestionResponseFromFormArtifact(
       application,
       PlacementDate,
       'startDateSameAsReleaseDate',
     )
-    const placementStartDate =
-      startDateSameAsReleaseDate === 'yes'
-        ? retrieveOptionalQuestionResponseFromFormArtifact(application, ReleaseDate)
-        : retrieveOptionalQuestionResponseFromFormArtifact(application, PlacementDate, 'startDate')
-
-    const placementDatesObject = placementDates(placementStartDate, duration.toString())
-    const formattedStartDate = DateFormats.isoDateToUIDate(placementDatesObject.startDate)
-    const formattedEndDate = DateFormats.isoDateToUIDate(placementDatesObject.endDate)
-    rows.push({
-      key: { text: 'Dates of placement' },
-      value: { text: `${formattedStartDate} - ${formattedEndDate}`, classes: 'dates-of-placement' },
-    })
+    return startDateSameAsReleaseDate === 'yes'
+      ? retrieveOptionalQuestionResponseFromFormArtifact(application, ReleaseDate)
+      : retrieveOptionalQuestionResponseFromFormArtifact(application, PlacementDate, 'startDate')
   }
+  return undefined
+}
+
+const suggestedStaySummaryListOptions = (application: Application): SummaryList => {
+  const rows: SummaryList['rows'] = []
+  const duration = placementDurationFromApplication(application)
+  const placementStartDate = getPlacementStartDate(application)
+
+  if (duration) {
+    rows.push(summaryListItem('Placement duration', DateFormats.formatDuration(duration)))
+    if (placementStartDate) {
+      const placementDatesObject = placementDates(placementStartDate, duration.toString())
+      const formattedStartDate = DateFormats.isoDateToUIDate(placementDatesObject.startDate)
+      const formattedEndDate = DateFormats.isoDateToUIDate(placementDatesObject.endDate)
+      rows.push({
+        key: { text: 'Dates of placement' },
+        value: { text: `${formattedStartDate} - ${formattedEndDate}`, classes: 'dates-of-placement' },
+      })
+    }
+  } else {
+    rows.push(summaryListItemNoBlankRows('Arrival date', placementStartDate, 'date'))
+  }
+
   return {
-    rows,
+    rows: rows.filter(Boolean),
   }
 }
 

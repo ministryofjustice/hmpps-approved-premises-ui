@@ -19,6 +19,7 @@ import {
   ShowPage,
   SuitabilityAssessmentPage,
   TaskListPage,
+  MatchingInformationPage,
 } from '../../pages/assess'
 import Page from '../../pages/page'
 import { awaitingAssessmentStatuses } from '../../../server/utils/assessments/utils'
@@ -27,16 +28,16 @@ import applicationDocument from '../../fixtures/applicationDocument.json'
 import paths from '../../../server/paths/assess'
 import { signIn } from '../signIn'
 import { getResponses } from '../../../server/utils/applications/getResponses'
-import { updateApplicationReleaseDate } from '../../helpers'
+import { AND, GIVEN, THEN, updateApplicationReleaseDate, WHEN } from '../../helpers'
 
 context('Assess', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am signed in as an assessor
+    GIVEN('I am signed in as an assessor')
     signIn('assessor')
 
-    // And there is an application awaiting assessment
+    AND('there is an application awaiting assessment')
     cy.fixture('applicationData.json').then(applicationData => {
       cy.fixture('assessmentData.json').then(assessmentData => {
         const clarificationNote = clarificationNoteFactory.build({ response: undefined })
@@ -79,13 +80,13 @@ context('Assess', () => {
     assessHelper.setupStubs()
     this.assessment.application.apType = 'normal'
 
-    // And I start an assessment
+    AND('I start an assessment')
     assessHelper.startAssessment()
 
-    // And I complete an assessment
+    AND('I complete an assessment')
     assessHelper.completeAssessment()
 
-    // Then the API should have received the correct data
+    THEN('the API should have received the correct data')
     cy.task('verifyAssessmentAcceptance', this.assessment).then(requests => {
       expect(requests).to.have.length(1)
 
@@ -104,15 +105,15 @@ context('Assess', () => {
   })
 
   it('shows a banner when the assessment has come from an appeal', function test() {
-    // Given there is an assessment that has come from an appeal
+    GIVEN('there is an assessment that has come from an appeal')
     const assessmentFromAppeal = { ...this.assessment, createdFromAppeal: true }
     const assessHelper = new AssessHelper(assessmentFromAppeal, this.documents, this.user, this.clarificationNote)
     assessHelper.setupStubs()
 
-    // And I start an assessment
+    AND('I start an assessment')
     const taskList = assessHelper.startAssessment()
 
-    // Then I should see a banner telling me that the assessment has come from an appeal
+    THEN('I should see a banner telling me that the assessment has come from an appeal')
     taskList.shouldShowAppealBanner()
   })
 
@@ -153,45 +154,45 @@ context('Assess', () => {
     )
     assessHelper.setupStubs()
 
-    // And I start an assessment
+    AND('I start an assessment')
     assessHelper.startAssessment()
 
-    // And I add a clarification note
+    AND('I add a clarification note')
     assessHelper.addClarificationNote()
 
     cy.task('verifyClarificationNoteCreate', assessmentNeedingClarification)
       .then(requests => {
-        // Then the API should have had a clarification note added
+        THEN('the API should have had a clarification note added')
         expect(requests).to.have.length(1)
         const body = JSON.parse(requests[0].body)
 
         expect(body.query).equal('clarification note text')
       })
       .then(() => {
-        // Given my assessment is put into an awaiting response state
+        GIVEN('my assessment is put into an awaiting response state')
         assessHelper.updateAssessmentStatus('awaiting_response')
       })
       .then(() => {
-        // When I am redirected to the dashboard
+        WHEN('I am redirected to the dashboard')
         const listPage = Page.verifyOnPage(ListPage)
 
-        // And I click on my assessment
+        AND('I click on my assessment')
         listPage.clickAssessment(assessmentNeedingClarification)
 
-        // And I complete the form
+        AND('I complete the form')
         assessHelper.updateClarificationNote('yes')
 
-        // Then I should be redirected to the tasklist page
+        THEN('I should be redirected to the tasklist page')
         const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
 
-        // And the sufficient information task should show a completed status
+        AND('the sufficient information task should show a completed status')
         tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
       })
       .then(() => {
         cy.task('verifyClarificationNoteUpdate', assessmentNeedingClarification)
       })
       .then(requests => {
-        // And the API should have had a clarification note update request
+        AND('the API should have had a clarification note update request')
         expect(requests).to.have.length(1)
         const body = JSON.parse(requests[0].body)
 
@@ -238,39 +239,39 @@ context('Assess', () => {
 
     assessHelper.setupStubs()
 
-    // Given I start an assessment
+    GIVEN('I start an assessment')
     assessHelper.startAssessment()
 
-    // And I add a clarification note
+    AND('I add a clarification note')
     assessHelper
       .addClarificationNote()
       .then(() => {
         const listPage = Page.verifyOnPage(ListPage)
 
-        // When I click on my assessment
+        WHEN('I click on my assessment')
         listPage.clickAssessment(this.assessment)
-        // And I respond 'no' to the 'informationReceived' question
+        AND('I respond "no" to the "informationReceived" question')
         assessHelper.updateClarificationNote('no')
-        // Then I should be redirected to the tasklist page
+        THEN('I should be redirected to the tasklist page')
         const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
 
-        // And the sufficient information task should show a completed status
+        AND('the sufficient information task should show a completed status')
         tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
 
-        // When I make a decision
+        WHEN('I make a decision')
         assessHelper.completeMakeADecisionPage()
 
-        // Then I should not see the MatchingInformation section
+        THEN('I should not see the MatchingInformation section')
         tasklistPage.shouldNotShowSection('Information for matching')
 
-        // When I check my answers
+        WHEN('I check my answers')
         assessHelper.completeCheckYourAnswersPage()
 
-        // And I submit the application
+        AND('I submit the application')
         assessHelper.submitAssessment(false)
       })
       .then(() => {
-        // Then the API should have received the correct data
+        THEN('the API should have received the correct data')
         cy.task('verifyAssessmentRejection', assessment).then(requests => {
           expect(requests).to.have.length(1)
 
@@ -281,7 +282,7 @@ context('Assess', () => {
   })
 
   it('shows a read-only version of the assessment', function test() {
-    // Given I have completed an assessment
+    GIVEN('I have completed an assessment')
     const updatedAssessment = { ...this.assessment, status: 'completed', document: getResponses(this.assessment) }
     const updatedAssessmentSummary = assessmentSummaryFactory.build({
       id: this.assessment.id,
@@ -292,16 +293,16 @@ context('Assess', () => {
     cy.task('stubAssessments', { assessments: [], statuses: awaitingAssessmentStatuses })
     cy.task('stubAssessments', { assessments: [updatedAssessmentSummary], statuses: ['completed'] })
 
-    // And I visit the list page
+    AND('I visit the list page')
     const listPage = ListPage.visit()
 
-    // When I click on the Completed tab
+    WHEN('I click on the Completed tab')
     listPage.clickCompleted()
 
-    // And I click on my assessment
+    AND('I click on my assessment')
     listPage.clickAssessment(this.assessment)
 
-    // Then I should see a read-only version of the assessment
+    THEN('I should see a read-only version of the assessment')
     const showPage = Page.verifyOnPage(ShowPage, this.assessment)
 
     showPage.shouldShowPersonInformation()
@@ -309,7 +310,7 @@ context('Assess', () => {
   })
 
   it('invalidates the check your answers step if an answer is changed', function test() {
-    // Given there is a complete application in the database
+    GIVEN('there is a complete application in the database')
     cy.fixture('assessmentData.json').then(assessmentData => {
       const assessment = assessmentFactory.build({ data: assessmentData, status: 'in_progress' })
       assessment.application.person = personFactory.build()
@@ -317,18 +318,18 @@ context('Assess', () => {
       cy.task('stubAssessment', assessment)
       cy.task('stubAssessmentUpdate', assessment)
 
-      // And I visit the tasklist
+      AND('I visit the tasklist')
       TaskListPage.visit(assessment)
 
-      // And I click on a task
+      AND('I click on a task')
       cy.get('[data-cy-task-name="suitability-assessment"]').click()
 
-      // And I change my response
+      AND('I change my response')
       const suitabilityAssessmentPage = new SuitabilityAssessmentPage(assessment)
       suitabilityAssessmentPage.completeForm()
       suitabilityAssessmentPage.clickSubmit()
 
-      // Then the application should be updated with the Check Your Answers section removed
+      THEN('the application should be updated with the Check Your Answers section removed')
       cy.task('verifyAssessmentUpdate', assessment).then((requests: Array<{ body: string }>) => {
         expect(requests).to.have.length(1)
         const body = JSON.parse(requests[0].body)
@@ -339,7 +340,7 @@ context('Assess', () => {
   })
 
   it('does not invalidate the check your answers step if an answer is reviewed and not changed', function test() {
-    // Given there is a complete application in the database
+    GIVEN('there is a complete application in the database')
 
     const assessment = addResponsesToFormArtifact<Assessment>(this.assessment, {
       page: 'application-timeliness',
@@ -356,13 +357,13 @@ context('Assess', () => {
     cy.task('stubAssessment', assessment)
     cy.task('stubAssessmentUpdate', assessment)
 
-    // And I visit the tasklist
+    AND('I visit the tasklist')
     TaskListPage.visit(assessment)
 
-    // And I click on a task
+    AND('I click on a task')
     cy.get('[data-cy-task-name="suitability-assessment"]').click()
 
-    // And I review a section
+    AND('I review a section')
     const suitabilityAssessmentPage = new SuitabilityAssessmentPage(assessment)
     suitabilityAssessmentPage.clickSubmit()
     const pipeSuitabilityAssessmentPage = new PipeSuitabilityPage(assessment)
@@ -372,12 +373,37 @@ context('Assess', () => {
 
     Page.verifyOnPage(TaskListPage, assessment)
 
-    // Then the application should be updated with the Check Your Answers section removed
+    THEN('the application should be updated with the Check Your Answers section removed')
     cy.task('verifyAssessmentUpdate', assessment).then((requests: Array<{ body: string }>) => {
       expect(requests).to.have.length(3)
       const body = JSON.parse(requests[0].body)
 
       expect(body.data).to.have.any.keys(['check-your-answers'])
     })
+  })
+
+  it('forces me to add a placement duration when the application does not contain a duration', function test() {
+    const assessHelper = new AssessHelper(this.assessment, this.documents, this.user, this.clarificationNote)
+    assessHelper.setupStubs()
+    const { application } = this.assessment
+
+    application.apType = 'normal'
+    application.requestedPlacementDuration = undefined
+    application.data['move-on']['placement-duration'] = undefined
+
+    WHEN('I start an assessment')
+    const taskList = assessHelper.startAssessment()
+
+    WHEN('I visit the matching information page')
+    const page = MatchingInformationPage.visit(this.assessment)
+
+    AND('I Have to complete the duration fields')
+    page.checkPageNoDuration()
+
+    WHEN('I submit the form')
+    page.clickSubmit()
+
+    THEN('I am back on the tasklist')
+    taskList.checkOnPage()
   })
 })
