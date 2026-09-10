@@ -15,7 +15,7 @@ import { qualifications, roles } from '../../utils/users'
 
 const userFactory = Factory.define<User>(() => ({
   name: faker.person.fullName(),
-  deliusUsername: faker.internet.userName(),
+  deliusUsername: faker.internet.username(),
   email: faker.internet.email(),
   telephoneNumber: faker.phone.number(),
   roles: roleFactory.buildList(Math.floor(Math.random() * 10)),
@@ -45,7 +45,7 @@ export const userWithWorkloadFactory = Factory.define<UserWithWorkload>(({ param
 }))
 
 export const userProfileFactory = Factory.define<Cas1ProfileResponse>(() => ({
-  deliusUsername: faker.internet.userName(),
+  deliusUsername: faker.internet.username(),
   user: userFactory.build(),
 }))
 
