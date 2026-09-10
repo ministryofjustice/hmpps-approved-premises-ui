@@ -5,7 +5,7 @@ import { addDays, addMonths } from 'date-fns'
 import { BasePage } from '../basePage'
 
 export class ApplyPage extends BasePage {
-  static async initialize(page: Page, title?: string) {
+  static async initialize(page: Page, title?: string | RegExp) {
     if (title) {
       await expect(page.locator('h1').first()).toContainText(title)
     }
