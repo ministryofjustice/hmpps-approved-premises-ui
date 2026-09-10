@@ -123,7 +123,7 @@
     "case": "^1.6.3",
     "compression": "^1.8.0",
     "connect-flash": "^0.1.1",
-    "connect-redis": "^8.0.0",
+    "connect-redis": "^9.0.0",
     "csrf-sync": "^4.2.1",
     "date-fns": "^3.0.0",
     "dotenv": "^16.5.0",
