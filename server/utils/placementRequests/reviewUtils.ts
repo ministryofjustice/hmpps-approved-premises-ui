@@ -10,6 +10,7 @@ import {
 } from '../retrieveQuestionResponseFromFormArtifact'
 import { getResponseForPage } from '../applications/getResponseForPage'
 import { embeddedSummaryListItemCompact } from '../applications/summaryListUtils/embeddedSummaryListItem'
+import { summaryListItem } from '../formUtils'
 
 export const mapPageForSummaryList = (
   placementApplication: PlacementApplication,
@@ -40,22 +41,32 @@ export const placementApplicationQuestionsForReview = (placementApplication: Pla
 
 const placementApplicationResponsesAsSummaryListItems = (placementApplication: PlacementApplication) => {
   const listItems: Array<SummaryListItem> = []
-  ;(
-    placementApplication.document['request-a-placement'] as Array<
-      Record<string, string | Array<Record<string, string>>>
-    >
-  ).forEach(questions => {
-    const keys = Object.keys(questions)
-    keys.forEach(key => {
-      listItems.push({
-        key: {
-          text: key,
-        },
-        value:
-          typeof questions[key] === 'string' || questions[key] instanceof String
-            ? { text: questions[key] as string }
-            : { html: embeddedSummaryListItemCompact(questions[key] as Array<Record<string, unknown>>) },
-      })
+  const placementPeriodRows: Array<SummaryListItem> = []
+  if (placementApplication.requestedPlacementPeriod) {
+    const { arrival, duration } = placementApplication.requestedPlacementPeriod
+    placementPeriodRows.push(summaryListItem('Arrival date', arrival, 'date'))
+    placementPeriodRows.push(summaryListItem('Placement duration', `${duration}`, 'duration'))
+  }
+
+  placementApplication.document['request-a-placement'].forEach((questions: Record<string, unknown>) => {
+    const qDatesOfPlacement = 'Dates of placement'
+    const qDateOfDecision = 'Enter the date of decision'
+
+    Object.keys(questions).forEach(key => {
+      if (key !== qDatesOfPlacement) {
+        listItems.push({
+          key: {
+            text: key,
+          },
+          value:
+            typeof questions[key] === 'string' || questions[key] instanceof String
+              ? { text: questions[key] as string }
+              : { html: embeddedSummaryListItemCompact(questions[key] as Array<Record<string, unknown>>) },
+        })
+      }
+      if ([qDateOfDecision, qDatesOfPlacement].includes(key)) {
+        listItems.push(...placementPeriodRows)
+      }
     })
   })
   return listItems
