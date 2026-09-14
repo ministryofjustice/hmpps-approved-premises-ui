@@ -81,8 +81,7 @@ export const matchAndBookApplication = async ({
   })
 
   // And I select an AP
-  const premisesName = 'SWSC Men Premise 1'
-  await searchScreen.selectAp(premisesName)
+  const premisesName = await searchScreen.selectAp()
 
   // Then I should see the occupancy view screen for that AP
   const occupancyViewPage = await OccupancyViewPage.initialize(page, premisesName)
@@ -118,6 +117,8 @@ export const matchAndBookApplication = async ({
 
   // Then I should see the Booked tab on the CRU dashboard
   cruDashboard = new ListPage(page)
+
+  await cruDashboard.updateAreaFilter()
 
   // And the placement should be listed
   await cruDashboard.findRowWithValues([

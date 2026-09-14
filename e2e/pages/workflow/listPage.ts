@@ -3,6 +3,7 @@ import { PaginatedPage } from '../paginatedPage'
 
 export class ListPage extends PaginatedPage {
   async getAssignmentWithId(id: string, isAllocated: boolean) {
+    await this.updateAreaFilter()
     if (!isAllocated) {
       await this.page
         .getByRole('link')
@@ -47,6 +48,11 @@ export class ListPage extends PaginatedPage {
     if (user) {
       await expect(row.locator('td').nth(2)).toContainText(user)
     }
+  }
+
+  async updateAreaFilter() {
+    await this.page.getByLabel('AP area').selectOption({ label: 'All areas' })
+    await this.page.getByRole('button', { name: 'Apply filters' }).click()
   }
 
   async choosePlacementApplicationWithId(id: string) {
