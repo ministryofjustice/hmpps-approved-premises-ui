@@ -70,14 +70,18 @@ jobs:
         run: npx playwright install chromium
 
       - name: Normalise tier input
+        env:
+          INPUT_TIER: ${{ inputs.tier }}
+          INPUT_GENDER: ${{ inputs.gender }}
+          INPUT_DOB: ${{ inputs.dob }}
         run: |
-          if [ "${{ inputs.tier }}" = "NOT_SUPERVISED" ]; then
+          if [ "$INPUT_TIER" = "NOT_SUPERVISED" ]; then
             echo "CAS1_E2E_PERSON_TIER=NOT_SUPERVISED" >> "$GITHUB_ENV"
           else
-            echo "CAS1_E2E_PERSON_TIER=${{ inputs.tier }}" >> "$GITHUB_ENV"
+            echo "CAS1_E2E_PERSON_TIER=$INPUT_TIER" >> "$GITHUB_ENV"
           fi
-          echo "CAS1_E2E_PERSON_GENDER=${{ inputs.gender }}" >> "$GITHUB_ENV"
-          echo "CAS1_E2E_PERSON_DOB=${{ inputs.dob }}" >> "$GITHUB_ENV"
+          echo "CAS1_E2E_PERSON_GENDER=$INPUT_GENDER" >> "$GITHUB_ENV"
+          echo "CAS1_E2E_PERSON_DOB=$INPUT_DOB" >> "$GITHUB_ENV"
 
       - name: Generate person
         timeout-minutes: 10
