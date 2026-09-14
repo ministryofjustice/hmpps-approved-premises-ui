@@ -12,7 +12,7 @@
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: pageProps.backLink
+        href: page.backLink
     }) }}
 {% endblock %}
 
@@ -20,7 +20,7 @@
 
     <div class="govuk-grid-row">
         <h1 class="govuk-heading-l">
-            {{ pageProps.pageHeading }}
+            {{ page.pageHeading }}
         </h1>
 
         {{ showErrorSummary(errorSummary) }}

@@ -21,6 +21,10 @@
     })
  %}
 
+    {% if context.page.hints[fieldName] %}
+        <p class="govuk-hint">{{ context.page.hints[fieldName] }}</p>
+    {% endif %}
+
     {% if context.errors[fieldName] %}
       <p id="{{ fieldName }}-error" class="govuk-error-message" data-cy-error-{{ fieldName }}="true">
         <span class="govuk-visually-hidden">Error:</span>

@@ -4,6 +4,7 @@
 {% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "../../../components/formFields/form-page-textarea/macro.njk" import formPageTextarea %}
 {% from "../../../components/formFields/form-page-radios/macro.njk" import formPageRadios %}
+{% from "../../../components/formFields/form-page-day-weeks-input/macro.njk" import formPageDaysAndWeeksInput %}
 
 
 {% extends "../../../partials/layout.njk" %}
@@ -13,7 +14,7 @@
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: pageProps.backLink
+        href: page.backLink
     }) }}
 {% endblock %}
 
@@ -22,8 +23,12 @@
     <div class="govuk-grid-row">
         <div class="govuk-width-container govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">
-                {{ pageProps.pageHeading }}
+                {{ page.pageHeading }}
             </h1>
+
+            {% if not placementApplication.requestedPlacementPeriod.duration %}
+               {% set durationInput = { html:formPageDaysAndWeeksInput('duration','govuk-fieldset__legend--s', fetchContext()) } %}
+            {% endif %}
 
             <form action="{{ paths.placementApplications.review.submission({ id: placementApplication.id }) }}"
                   method="post">
@@ -43,7 +48,8 @@
                         items: [
                             {
                                 value: "accepted",
-                                text: "Accept - proceed to match"
+                                text: "Accept - proceed to match",
+                                conditional: durationInput
                             },
                             {
                                 value: "rejected",
