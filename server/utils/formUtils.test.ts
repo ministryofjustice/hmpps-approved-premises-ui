@@ -639,6 +639,7 @@ describe('formUtils', () => {
     const label = 'label'
     const value = 'test value'
     const isoDate = DateFormats.dateObjToIsoDate(faker.date.anytime())
+    const duration = `${faker.number.int({ min: 0, max: 100 })}`
 
     it('should return a summary list item', () => {
       expect(summaryListItem(label, value)).toEqual({ key: { text: label }, value: { text: value } })
@@ -648,6 +649,10 @@ describe('formUtils', () => {
         value: { text: DateFormats.isoDateToUIDate(isoDate) },
       })
       expect(summaryListItem(label, undefined, 'date')).toEqual({ key: { text: label }, value: { text: '' } })
+      expect(summaryListItem(label, duration, 'duration')).toEqual({
+        key: { text: label },
+        value: { text: DateFormats.formatDuration(duration) },
+      })
       expect(summaryListItem(label, value, 'textBlock')).toEqual({
         key: { text: label },
         value: { html: `<span class="govuk-summary-list__textblock">${value}</span>` },

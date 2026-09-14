@@ -2,29 +2,15 @@ import { PlacementApplication } from '../../@types/shared'
 import paths from '../../paths/placementApplications'
 import { addResponseToFormArtifact } from '../../testutils/addToApplication'
 import { applicationFactory, documentFactory, placementApplicationFactory } from '../../testutils/factories'
-import { embeddedSummaryListItemCompact } from '../applications/summaryListUtils/embeddedSummaryListItem'
-import { DateFormats } from '../dateUtils'
 import {
   getPageTitle,
   mapPageForSummaryList,
   pageResponsesAsSummaryListItems,
   placementApplicationQuestionsForReview,
 } from './reviewUtils'
+import { summaryListItem } from '../formUtils'
 
 jest.mock('../applications/forPagesInTask')
-
-const datesMarkup = embeddedSummaryListItemCompact([
-  {
-    'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date('2023-08-01')),
-    'Is the date flexible?': 'Yes',
-    'How long should the Approved Premises placement last?': '5 days',
-  },
-  {
-    'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date('2024-08-01')),
-    'Is the date flexible?': 'No',
-    'How long should the Approved Premises placement last?': '3 weeks, 4 days',
-  },
-])
 
 describe('checkYourAnswersUtils', () => {
   const application = applicationFactory.build()
@@ -103,17 +89,24 @@ describe('checkYourAnswersUtils', () => {
   })
 
   describe('placementApplicationQuestionsForReview', () => {
+    let placementApp: PlacementApplication
+    const card = {
+      card: {
+        title: {
+          text: 'Placement application information',
+        },
+      },
+    }
+
+    beforeEach(() => {
+      placementApp = placementApplicationFactory.build({ document: { 'request-a-placement': {} } })
+    })
+
     it('should return the responses in the correct format when the values are primitives', () => {
-      const placementApp = placementApplicationFactory.build({
-        document: { 'request-a-placement': [{ 'question 1': 'answer 1', 'question 2': 'answer 2' }] },
-      })
+      placementApp.document['request-a-placement'] = [{ 'question 1': 'answer 1', 'question 2': 'answer 2' }]
 
       const expected = {
-        card: {
-          title: {
-            text: 'Placement application information',
-          },
-        },
+        ...card,
         rows: [
           { key: { text: 'question 1' }, value: { text: 'answer 1' } },
           { key: { text: 'question 2' }, value: { text: 'answer 2' } },
@@ -123,41 +116,28 @@ describe('checkYourAnswersUtils', () => {
       expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
     })
 
-    it('should show date responses from the document', () => {
-      const placementApp = placementApplicationFactory.build({
-        requestedPlacementPeriod: undefined,
-        document: {
-          'request-a-placement': [
-            {
-              'Dates of placement': [
-                {
-                  'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date(2023, 7, 1)),
-                  'Is the date flexible?': 'Yes',
-                  'How long should the Approved Premises placement last?': '5 days',
-                },
-                {
-                  'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date(2024, 7, 1)),
-                  'Is the date flexible?': 'No',
-                  'How long should the Approved Premises placement last?': '3 weeks, 4 days',
-                },
-              ],
-            },
-          ],
-        },
-      })
+    it('replaces date responses with requestedPlacementPeriod', () => {
+      placementApp.document['request-a-placement'] = [{ 'Dates of placement': [{ 'some question': 'some answer' }] }]
       const expected = {
-        card: {
-          title: {
-            text: 'Placement application information',
-          },
-        },
+        ...card,
         rows: [
-          {
-            key: { text: 'Dates of placement' },
-            value: {
-              html: datesMarkup,
-            },
-          },
+          summaryListItem('Arrival date', placementApp.requestedPlacementPeriod.arrival, 'date'),
+          summaryListItem('Placement duration', `${placementApp.requestedPlacementPeriod.duration}`, 'duration'),
+        ],
+      }
+
+      expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
+    })
+
+    it('injects requestedPlacementPeriod details for parole cases', () => {
+      placementApp.document['request-a-placement'] = [{ 'Enter the date of decision': 'dd mmm yyyy' }]
+
+      const expected = {
+        ...card,
+        rows: [
+          summaryListItem('Enter the date of decision', 'dd mmm yyyy'),
+          summaryListItem('Arrival date', placementApp.requestedPlacementPeriod.arrival, 'date'),
+          summaryListItem('Placement duration', `${placementApp.requestedPlacementPeriod.duration}`, 'duration'),
         ],
       }
 
