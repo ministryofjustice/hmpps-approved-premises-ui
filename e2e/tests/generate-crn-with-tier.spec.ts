@@ -29,7 +29,7 @@ test('generate one persistent person for requested tier', async ({ browser }) =>
   const page = await context.newPage()
   const lifecycle: PersonLifecycle = { booked: false }
   const person = await createTestPerson(page, lifecycle, requestedTier, requestedGender)
-  const result = { requestedTier, requestedGender, crn: person.crn, nomisId: person.nomisId, assessmentCreated: false }
+  const result = { requestedTier, requestedGender, crn: person.crn, name: person.name, nomisId: person.nomisId, assessmentCreated: false }
 
   if (assessedTiers.includes(requestedTier)) {
     await createOasysAssessment(context, person, requestedTier)

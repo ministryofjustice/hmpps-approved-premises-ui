@@ -1,0 +1,118 @@
+name: 'Create CAS Booking'
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate-tier-a-person:
+    name: 'Generate CRN with Tier A'
+    runs-on: [ self-hosted, hmpps-github-actions-runner ]
+    env:
+      TZ: Europe/London
+      DELIUS_URL: https://ndelius.test.probation.service.justice.gov.uk
+      AUTH_URL: https://sign-in-dev.hmpps.service.justice.gov.uk
+      PRISON_API: https://prison-api-dev.prison.service.justice.gov.uk
+      OASYS_URL: https://t2.oasys.service.justice.gov.uk/eor/f?p=100:101
+      DELIUS_USERNAME: ${{ secrets.E2E_DELIUS_USERNAME }}
+      DELIUS_PASSWORD: ${{ secrets.E2E_DELIUS_PASSWORD }}
+      DPS_USERNAME: ${{ secrets.E2E_DPS_USERNAME }}
+      HMPPS_AUTH_CLIENT_ID: ${{ secrets.E2E_HMPPS_AUTH_CLIENT_ID }}
+      HMPPS_AUTH_CLIENT_SECRET: ${{ secrets.E2E_HMPPS_AUTH_CLIENT_SECRET }}
+      OASYS_USERNAME_BOOKING: ${{ secrets.E2E_OASYS_USERNAME_BOOKING }}
+      OASYS_PASSWORD_BOOKING: ${{ secrets.E2E_OASYS_PASSWORD_BOOKING }}
+      CAS1_E2E_PERSON_TIER: A
+      CAS1_E2E_PERSON_GENDER: Male
+      CRN_OUTPUT_FILE: tier-generation-output.json
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: 'false'
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit
+
+      - name: Install Playwright
+        run: npx playwright install chromium
+
+      - name: Generate person
+        timeout-minutes: 10
+        run: npm run test:e2e:ci -- e2e/tests/generate-crn-with-tier.spec.ts
+
+      - name: Upload generated user data
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: generated-tier-person
+          path: tier-generation-output.json
+          retention-days: 5
+          if-no-files-found: error
+
+  run-standard-application:
+    name: 'Apply, assess, match and book (Tier A)'
+    needs: generate-tier-a-person
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: 'false'
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit
+
+      - name: Install Playwright
+        run: npx playwright install chromium
+
+      - name: Download generated person artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: generated-tier-person
+
+      - name: Export generated person as env vars
+        run: |
+          echo "CAS1_E2E_PERSON_CRN=$(jq -r .crn tier-generation-output.json)" >> "$GITHUB_ENV"
+          echo "CAS1_E2E_PERSON_NAME=$(jq -r .name tier-generation-output.json)" >> "$GITHUB_ENV"
+
+      - name: Run standard application E2E test
+        env:
+          CAS1_E2E_ASSESSOR_EMAIL: stuart.harrison2+test1@digital.justice.gov.uk
+          CAS1_E2E_ASSESSOR_NAME: AP_USER TEST_1
+          CAS1_E2E_ASSESSOR_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_1_PASSWORD }}
+          CAS1_E2E_ASSESSOR_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_1_USERNAME }}
+          CAS1_E2E_FUTURE_MANAGER_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_4_PASSWORD }}
+          CAS1_E2E_FUTURE_MANAGER_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_4_USERNAME }}
+        run: npm run test:e2e:ci -- e2e/tests/apply/standard-application.spec.ts
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: standard-application-playwright-report
+          path: playwright-report
+          retention-days: 5
+          if-no-files-found: ignore
+
+      - name: Upload E2E artefacts
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: standard-application-artefacts
+          path: test-results
+          retention-days: 5
+          if-no-files-found: ignore        
