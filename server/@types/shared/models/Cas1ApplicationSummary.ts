@@ -3,11 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ApprovedPremisesApplicationStatus } from './ApprovedPremisesApplicationStatus';
-import type { FullPerson } from './FullPerson';
+import type { FullPersonSummary } from './FullPersonSummary';
 import type { PersonRisks } from './PersonRisks';
 import type { ReleaseTypeOption } from './ReleaseTypeOption';
-import type { RestrictedPerson } from './RestrictedPerson';
-import type { UnknownPerson } from './UnknownPerson';
+import type { RestrictedPersonSummary } from './RestrictedPersonSummary';
+import type { UnknownPersonSummary } from './UnknownPersonSummary';
 export type Cas1ApplicationSummary = {
     arrivalDate?: string;
     createdAt: string;
@@ -20,7 +20,7 @@ export type Cas1ApplicationSummary = {
     isPipeApplication?: boolean;
     isWithdrawn: boolean;
     isWomensApplication?: boolean;
-    person: (FullPerson | RestrictedPerson | UnknownPerson);
+    person: (FullPersonSummary | RestrictedPersonSummary | UnknownPersonSummary);
     releaseType?: ReleaseTypeOption;
     risks?: PersonRisks;
     status: ApprovedPremisesApplicationStatus;
