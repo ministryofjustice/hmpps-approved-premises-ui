@@ -6,7 +6,7 @@ import {
 } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { DateFormats } from '../../utils/dateUtils'
-import { fullPersonFactory } from './person'
+import { fullPersonSummaryFactory } from './person'
 import risksFactory from './risks'
 import cas1SpaceBookingSummaryFactory from './cas1SpaceBookingSummary'
 
@@ -61,7 +61,7 @@ export default Cas1PlacementRequestSummaryFactory.define(() => {
     applicationId: faker.string.uuid(),
     applicationSubmittedDate: DateFormats.dateObjToIsoDate(applicationDate),
     isParole: faker.datatype.boolean(),
-    person: fullPersonFactory.build(),
+    person: fullPersonSummaryFactory.build(),
     personTier: risksFactory.build().tier.value.level,
     placementRequestStatus: 'notMatched' as PlacementRequestStatus,
     requestedPlacementArrivalDate: DateFormats.dateObjToIsoDate(requestedPlacementArrivalDate),

@@ -101,7 +101,7 @@ const unknownPersonName = (person: UnknownPerson | UnknownPersonSummary, showCrn
  * @returns {string}  The name or text to display
  */
 const displayName = (
-  person: Person | PersonSummary,
+  person: PersonAny,
   options: { showCrn?: boolean; laoPrefix?: boolean; laoSuffix?: boolean } = {},
 ): string => {
   const { showCrn = false, laoPrefix = true, laoSuffix = false } = options
@@ -120,7 +120,7 @@ const displayName = (
   }
 }
 
-const personTier = (person: Person | PersonSummary): TierDto => {
+const personTier = (person: PersonAny): TierDto => {
   const personType: string = (person as Person).type || (person as PersonSummary).personType
 
   switch (personType) {
@@ -135,12 +135,12 @@ const personTier = (person: Person | PersonSummary): TierDto => {
   }
 }
 
-const getVersionedTierOrBlank = (person: Person | PersonSummary) => {
+const getVersionedTierOrBlank = (person: PersonAny) => {
   const tier = personTier(person)
   return tier ? versionedTierBadge(tier) : ''
 }
 
-const getVersionedTierValue = (person: Person | PersonSummary, tierOnApplicationCreation?: RiskTier): string => {
+const getVersionedTierValue = (person: PersonAny, tierOnApplicationCreation?: RiskTier): string => {
   if (!config.flags.useLiveTiers) {
     return tierOnApplicationCreation?.level || ''
   }
