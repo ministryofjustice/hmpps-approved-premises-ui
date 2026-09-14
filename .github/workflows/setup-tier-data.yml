@@ -12,6 +12,7 @@ on:
           - A
           - B
           - C
+          - D
           - MISSING
           - NOT_SUPERVISED
       gender:
@@ -22,6 +23,11 @@ on:
         options:
           - Male
           - Female
+      dob:
+        description: 'DOB for the generated person (YYYY-MM-DD). Leave blank for default.'
+        type: string
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -36,6 +42,7 @@ jobs:
       AUTH_URL: https://sign-in-dev.hmpps.service.justice.gov.uk
       PRISON_API: https://prison-api-dev.prison.service.justice.gov.uk
       OASYS_URL: https://t2.oasys.service.justice.gov.uk/eor/f?p=100:101
+      TIER_API_URL: https://hmpps-tier-dev.hmpps.service.justice.gov.uk
       DELIUS_USERNAME: ${{ secrets.E2E_DELIUS_USERNAME }}
       DELIUS_PASSWORD: ${{ secrets.E2E_DELIUS_PASSWORD }}
       DPS_USERNAME: ${{ secrets.E2E_DPS_USERNAME }}
@@ -70,6 +77,7 @@ jobs:
             echo "CAS1_E2E_PERSON_TIER=${{ inputs.tier }}" >> "$GITHUB_ENV"
           fi
           echo "CAS1_E2E_PERSON_GENDER=${{ inputs.gender }}" >> "$GITHUB_ENV"
+          echo "CAS1_E2E_PERSON_DOB=${{ inputs.dob }}" >> "$GITHUB_ENV"
 
       - name: Generate person
         timeout-minutes: 10

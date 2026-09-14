@@ -163,6 +163,10 @@ declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/a
   export const createAndBookPrisoner: (...args: Array<any>) => Promise<any>
 }
 
+declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/auth/get-token' {
+  export const getToken: () => Promise<string>
+}
+
 declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/find-offender' {
   export const findOffenderByCRN: (...args: Array<any>) => Promise<any>
 }

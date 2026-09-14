@@ -22,7 +22,9 @@ const TEST_TEAM = {
   provider: 'London',
 }
 
-const TEST_EVENT = {
+const DEFAULT_DOB = new Date(1975, 0, 1)
+
+const SA_EVENT = {
   appearanceType: 'Sentence',
   outcome: 'Adult Custody < 12m',
   length: '6',
@@ -31,20 +33,46 @@ const TEST_EVENT = {
   plea: 'Guilty',
 }
 
-const LOW_RISK_TEST_EVENT = {
+const INDECENT_EXPOSURE_EVENT = {
   appearanceType: 'Sentence',
   outcome: 'Adult Custody < 12m',
   length: '6',
-  mainOffence: 'Stealing by an employee - 04100',
+  mainOffence: 'Indecent exposure with intent to insult any female - 13900',
   plea: 'Guilty',
 }
 
-const ROSH_REGISTRATION_BY_TIER = {
-  // V3 takes the highest applicable rule. These RoSH levels combine with MAPPA for A and C.
-  A: 'Very High RoSH',
-  B: 'Low RoSH',
-  C: 'High RoSH',
-} as const
+const ABUSE_OF_TRUST_EVENT = {
+  appearanceType: 'Sentence',
+  outcome: 'Adult Custody < 12m',
+  length: '6',
+  mainOffence: 'Abuse of Trust - Sexual Offences - 07300',
+  plea: 'Guilty',
+}
+
+export type AssessedTier = 'A' | 'B' | 'C' | 'D'
+
+// Business rules for determining V3 tiers defined here https://dsdmoj.atlassian.net/wiki/spaces/PINT/pages/6105498753/Tiering+V3+-+Business+Rules
+type TierRule = {
+  rosh: 'Very High RoSH' | 'High RoSH' | 'Medium RoSH' | 'Low RoSH'
+  mappa: boolean
+  extra?: 'lifer-recent-release'
+  dob?: Date
+  event: {
+    appearanceType?: string
+    outcome?: string
+    length?: string
+    mainOffence?: string
+    subOffence?: string
+    plea?: string
+  }
+}
+
+const TIER_RULES: Record<AssessedTier, TierRule> = {
+  A: { rosh: 'Very High RoSH', mappa: true, event: SA_EVENT },
+  B: { rosh: 'Low RoSH', mappa: false, extra: 'lifer-recent-release', event: INDECENT_EXPOSURE_EVENT },
+  C: { rosh: 'High RoSH', mappa: true, event: INDECENT_EXPOSURE_EVENT },
+  D: { rosh: 'Medium RoSH', mappa: true, dob: new Date(1958, 0, 1), event: ABUSE_OF_TRUST_EVENT },
+}
 
 const createRegistrationForTestProvider = async (
   page: Page,
@@ -92,14 +120,23 @@ export const loginDelius = async (page: Page) => {
   await expect(page).toHaveTitle(homePageTitle, { timeout: 60_000 })
 }
 
-export const createTierRegistration = async (page: Page, crn: string, tier: 'A' | 'B' | 'C') => {
-  if (tier === 'A' || tier === 'C') {
+const assessedTiers: Array<AssessedTier> = ['A', 'B', 'C', 'D']
+export const isAssessedTier = (tier: WorkflowPersonTier): tier is AssessedTier =>
+  assessedTiers.includes(tier as AssessedTier)
+
+export const createTierRegistration = async (page: Page, crn: string, tier: AssessedTier) => {
+  const rule = TIER_RULES[tier]
+
+  if (rule.mappa) {
     await createRegistration(page, crn, 'MAPPA', TEST_TEAM.provider)
-  } else if (tier === 'B') {
-    await createRegistrationForTestProvider(page, crn, 'Lifer', 'Lifer - Life Imprisonment', 'Lifer - Supervised')
   }
 
-  await createRegistrationForTestProvider(page, crn, ROSH_REGISTRATION_BY_TIER[tier])
+  if (rule.extra === 'lifer-recent-release') {
+    await createRegistrationForTestProvider(page, crn, 'Lifer', 'Lifer - Life Imprisonment', 'Lifer - Supervised')
+    await createRelease(page, crn)
+  }
+
+  await createRegistrationForTestProvider(page, crn, rule.rosh)
 }
 
 export const createTestPerson = async (
@@ -107,10 +144,12 @@ export const createTestPerson = async (
   lifecycle: PersonLifecycle,
   tier: WorkflowPersonTier,
   gender: WorkflowPersonGender = 'Male',
+  dobOverride?: Date,
 ): Promise<WorkflowPerson> => {
   await loginDelius(page)
 
-  const person = deliusPerson({ sex: gender })
+  const dob = dobOverride ?? ((isAssessedTier(tier) && TIER_RULES[tier].dob) || DEFAULT_DOB)
+  const person = deliusPerson({ sex: gender, dob })
   const convictionDate = new Date()
   convictionDate.setDate(convictionDate.getDate() - 1)
   convictionDate.setHours(12, 0, 0, 0)
@@ -125,22 +164,16 @@ export const createTestPerson = async (
     await createCustodialEvent(page, {
       crn: lifecycle.crn,
       allocation: { team: TEST_TEAM },
-      event: tier === 'A' ? TEST_EVENT : LOW_RISK_TEST_EVENT,
+      event: isAssessedTier(tier) ? TIER_RULES[tier].event : SA_EVENT,
       date: convictionDate,
     })
     console.log(`Created custodial event for CRN ${lifecycle.crn}`)
   }
 
-  if (tier === 'A' || tier === 'B' || tier === 'C') {
+  if (isAssessedTier(tier)) {
     console.log(`Creating Tier ${tier} registration for CRN ${lifecycle.crn}...`)
     await createTierRegistration(page, lifecycle.crn, tier)
     console.log(`Created Tier ${tier} registration for CRN ${lifecycle.crn}`)
-
-    if (tier === 'B') {
-      console.log(`Creating recent release for Tier B CRN ${lifecycle.crn}...`)
-      await createRelease(page, lifecycle.crn)
-      console.log(`Created recent release for Tier B CRN ${lifecycle.crn}`)
-    }
   }
 
   console.log(`Creating and booking prisoner for CRN ${lifecycle.crn} at SWI...`)
