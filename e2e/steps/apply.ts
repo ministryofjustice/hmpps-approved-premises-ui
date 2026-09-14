@@ -1,6 +1,7 @@
 import { Page, expect } from '@playwright/test'
 
 import { AppealDecision, ApplicationType, TestOptions } from '@approved-premises/e2e'
+import { Cas2InterstitialPage } from 'e2e/pages/apply/cas2InterstitialPage'
 import {
   ApplyPage,
   CRNPage,
@@ -36,6 +37,15 @@ export const enterAndConfirmCrn = async (page: Page, crn: string) => {
   const confirmPersonPage = new ConfirmPersonPage(page)
   await confirmPersonPage.clickSave()
 
+  const cas2InterstitialPage = new Cas2InterstitialPage(page)
+  const cas2InterstitialHeading = page.getByRole('heading', {
+    name: /may be eligible for Short-term accommodation \(CAS2\)/i,
+  })
+  if (await cas2InterstitialHeading.isVisible()) {
+    await cas2InterstitialPage.clickContinue()
+    await cas2InterstitialPage.shouldShowInformationHeading()
+    await cas2InterstitialPage.clickApplyForCas1()
+  }
   const selectIndexOffencePage = new SelectIndexOffencePage(page)
   await selectIndexOffencePage.selectFirstOffence()
   await selectIndexOffencePage.clickSave()
@@ -54,7 +64,7 @@ export const completeBasicInformationTask = async (
 ) => {
   const pageTitle = await page.locator('h1').first().innerText()
   if (pageTitle !== 'Confirm your details') {
-    const notEligiblePage = await ApplyPage.initialize(page, 'Ben Davies is not normally eligible for an AP placement')
+    const notEligiblePage = await ApplyPage.initialize(page, /is not normally eligible for an AP placement/)
     await notEligiblePage.checkRadio('Yes')
     await notEligiblePage.clickSave()
 
@@ -66,8 +76,6 @@ export const completeBasicInformationTask = async (
   }
 
   const confirmYourDetailsPage = await ApplyPage.initialize(page, 'Confirm your details')
-  await confirmYourDetailsPage.checkCheckBoxes(['Phone number'])
-  await confirmYourDetailsPage.fillField('Phone number', '01234567890')
   await confirmYourDetailsPage.checkRadio('Yes')
   await confirmYourDetailsPage.clickSave()
 
