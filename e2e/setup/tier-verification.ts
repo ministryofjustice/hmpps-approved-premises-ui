@@ -41,7 +41,7 @@ const fetchLatestTier = async (crn: string): Promise<TierCalculationResult | nul
 /**
  * Polls the tier API for the CRN's calculated tier so we verify the actual output
  * rather  than assuming our NDelius/OASys setup steps produced the requested
- * tier. Throws if the tier doesn't return the expected value wthin the window.
+ * tier. Throws if the tier doesn't return the expected value within the window.
  */
 export const verifyGeneratedTier = async (
   crn: string,
