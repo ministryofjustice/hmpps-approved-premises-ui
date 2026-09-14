@@ -4,79 +4,163 @@
 
 {% block questions %}
 
-  <h1 class="govuk-heading-l">{{ page.title }}</h2>
+  <h1 class="govuk-heading-l">{{ page.title }}</h1>
 
-  {% if page.arrivalDate %}
-    <h2 class="govuk-heading-m"> Expected dates of stay in Approved Premises:</h2>
+  {% if page.isV3Tier %}
 
-    <p class="govuk-body">
-      <strong>Arrival date:</strong>
-      {{ page.arrivalDate }}
-    </p>
+    {% if page.body.defaultDurationDays %}
+      <p class="govuk-body">You can apply for a placement of <strong>{{ formatDuration(page.body.defaultDurationDays) }}</strong> for this person.</p>
+    {% endif %}
 
-    <p class="govuk-body">
-      <strong>Departure date:</strong>
-      {{ page.departureDate }}
-    </p>
-  {% endif %}
-
-  {{ govukDetails({
-      summaryText: "View guidance on AP placement duration",
-      html: "<p>The typical placement duration for each type of AP is as follows: </p>
-   <ul>
-    <li>Standard AP, 12 weeks</li>
-    <li>Psychologically Informed Planned Environment (PIPE), 26 weeks</li>
-    <li>Enhanced Security AP, 52 weeks</li>
-   </ul>
-   <p>Placements can be longer or shorter in exceptional circumstances when required for risk management purposes.</p>
-   <p>Consider the level of support and risk management you expect the AP to provide and how long it will take to be effective.</p>"
+    {{ govukDetails({
+      summaryText: "How we calculated the placement length",
+      text: "The placement length is based on the person's tier, sex, sentence type and Approved Premises (AP) type."
     }) }}
 
-  {% set yesDetails %}
+    {% if page.arrivalDate %}
+      <h2 class="govuk-heading-m">Placement dates</h2>
 
-  {{
-    formPageDaysAndWeeksInput("duration", "govuk-label", fetchContext())
-  }}
+      <p class="govuk-body">The placement dates are based on their release date and the placement length.</p>
 
-  {{
-    formPageTextarea(
-      {
-        fieldName: "reason",
-        label: {
-        text: page.questions.reason
-        }
+      {{ govukSummaryList({
+        rows: [
+          {
+            key: { text: "Arrival date" },
+            value: { text: page.arrivalDate }
+          },
+          {
+            key: { text: "Departure date" },
+            value: { text: page.departureDate }
+          }
+        ]
+      }) }}
+    {% endif %}
+
+    <h2 class="govuk-heading-m">Change placement length</h2>
+
+    {% if page.body.maxDurationDays %}
+      <p class="govuk-body govuk-!-margin-bottom-7">It must not be longer than {{ formatDuration(page.body.maxDurationDays) }}.</p>
+    {% endif %}
+
+    {% set yesDetails %}
+
+      {{ formPageDaysAndWeeksInput("duration", "govuk-fieldset__legend--s", fetchContext()) }}
+
+      {{
+        formPageTextarea(
+          {
+            fieldName: "reason",
+            label: {
+              text: page.questions.reason,
+              classes: "govuk-label--s"
+            }
+          },
+          fetchContext()
+        )
+      }}
+
+    {% endset -%}
+
+    {{
+      formPageRadios({
+        fieldName: 'differentDuration',
+        fieldset: {
+          legend: {
+            text: page.questions.differentDuration,
+            classes: "govuk-fieldset__legend--s"
+          }
+        },
+        items: [
+          {
+            value: "no",
+            text: page.keepDurationLabel
+          },
+          {
+            value: "yes",
+            text: "Yes",
+            conditional: {
+              html: yesDetails
+            }
+          }
+        ]
       },
       fetchContext()
-    )
-  }}
+      )
+    }}
 
-  {% endset -%}
+  {% else %}
 
-  {{
-  formPageRadios({
-    fieldName: 'differentDuration',
-    fieldset: {
-      legend: {
-        text: page.questions.differentDuration,
-        classes: "govuk-fieldset__legend--m"
-      }
-    },
-    items: [
-      {
-        value: "yes",
-        text: "Yes",
-        conditional: {
-          html: yesDetails
-        }
+    {% if page.arrivalDate %}
+      <h2 class="govuk-heading-m"> Expected dates of stay in Approved Premises:</h2>
+
+      <p class="govuk-body">
+        <strong>Arrival date:</strong>
+        {{ page.arrivalDate }}
+      </p>
+
+      <p class="govuk-body">
+        <strong>Departure date:</strong>
+        {{ page.departureDate }}
+      </p>
+    {% endif %}
+
+    {{ govukDetails({
+        summaryText: "View guidance on AP placement duration",
+        html: "<p>The typical placement duration for each type of AP is as follows: </p>
+    <ul>
+      <li>Standard AP, 12 weeks</li>
+      <li>Psychologically Informed Planned Environment (PIPE), 26 weeks</li>
+      <li>Enhanced Security AP, 52 weeks</li>
+    </ul>
+    <p>Placements can be longer or shorter in exceptional circumstances when required for risk management purposes.</p>
+    <p>Consider the level of support and risk management you expect the AP to provide and how long it will take to be effective.</p>"
+      }) }}
+
+    {% set yesDetails %}
+
+      {{ formPageDaysAndWeeksInput("duration", "govuk-label", fetchContext()) }}
+
+      {{
+        formPageTextarea(
+          {
+            fieldName: "reason",
+            label: {
+              text: page.questions.reason
+            }
+          },
+          fetchContext()
+        )
+      }}
+
+    {% endset -%}
+
+    {{
+      formPageRadios({
+        fieldName: 'differentDuration',
+        fieldset: {
+          legend: {
+            text: page.questions.differentDuration,
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes",
+            conditional: {
+              html: yesDetails
+            }
+          },
+          {
+            value: "no",
+            text: "No"
+          }
+        ]
       },
-      {
-        value: "no",
-        text: "No"
-      }
-    ]
-  },
-  fetchContext()
-  )
-}}
+      fetchContext()
+      )
+    }}
+
+  {% endif %}
 
 {% endblock %}

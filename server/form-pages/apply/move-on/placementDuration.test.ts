@@ -1,10 +1,10 @@
-import { Cas1Application } from '@approved-premises/api'
+import { Cas1Application, TierVersionDto } from '@approved-premises/api'
 import { addDays } from 'date-fns'
 import { createMock } from '@golevelup/ts-jest'
 import { getDefaultPlacementDurationInDays } from '../../../utils/applications/getDefaultPlacementDurationInDays'
 
 import PlacementDuration from './placementDuration'
-import { applicationFactory } from '../../../testutils/factories'
+import { applicationFactory, personFactory, tierDtoFactory } from '../../../testutils/factories'
 import { addResponsesToFormArtifact } from '../../../testutils/addToApplication'
 import { arrivalDateFromApplication } from '../../../utils/applications/arrivalDateFromApplication'
 import { DateFormats } from '../../../utils/dateUtils'
@@ -20,11 +20,14 @@ const token = 'test_token'
 describe('PlacementDuration', () => {
   let application: Cas1Application
 
-  beforeEach(() => {
-    application = applicationFactory
+  const buildApplication = (tierVersion: TierVersionDto) =>
+    applicationFactory
       .withReleaseDate()
       .withPageResponse({ task: 'type-of-ap', page: 'ap-type', key: 'type', value: 'normal' })
-      .build()
+      .build({ person: personFactory.build({ tier: tierDtoFactory.build({ version: tierVersion }) }) })
+
+  beforeEach(() => {
+    application = buildApplication('V2')
   })
 
   describe('body', () => {
@@ -153,6 +156,107 @@ describe('PlacementDuration', () => {
       const page = new PlacementDuration({ differentDuration: 'no' as const, duration: '' }, application)
 
       expect(page.response()).toEqual({ 'Does this application require a different placement duration?': 'No' })
+    })
+  })
+
+  describe('when the person has a version 3 tier', () => {
+    beforeEach(() => {
+      application = buildApplication('V3')
+    })
+
+    it('shows the placement length content', () => {
+      const page = new PlacementDuration({}, application)
+
+      expect(page.isV3Tier).toEqual(true)
+      expect(page.title).toEqual('Placement length and dates')
+      expect(page.questions).toEqual({
+        differentDuration: 'Do you want to change the placement length?',
+        duration: 'New placement length',
+        reason: 'Reason for change',
+      })
+    })
+
+    describe('errors', () => {
+      it('returns an error if the different duration response is not defined', () => {
+        const page = new PlacementDuration({}, application)
+
+        expect(page.errors()).toEqual({
+          differentDuration: 'You must specify if you want to change the placement length',
+        })
+      })
+
+      it('returns an error if the different duration response is yes but the reason and duration arent defined', () => {
+        const page = new PlacementDuration({ differentDuration: 'yes' }, application)
+
+        expect(page.errors()).toEqual({
+          duration: 'You must specify the new placement length',
+          reason: 'You must specify the reason for the change',
+        })
+      })
+
+      it('validates the duration fields', () => {
+        jest.spyOn(formUtils, 'validWeeksAndDaysDuration')
+
+        const page = new PlacementDuration(
+          {
+            differentDuration: 'yes',
+            durationWeeks: 'a',
+            durationDays: 'b',
+            reason: 'Some reason',
+          },
+          application,
+        )
+
+        expect(page.errors()).toEqual({
+          duration: 'You must specify the new placement length',
+        })
+        expect(formUtils.validWeeksAndDaysDuration).toHaveBeenCalledWith('a', 'b')
+      })
+
+      it('returns an error if the duration has not been calculated for a kept placement length', () => {
+        const page = new PlacementDuration({ differentDuration: 'no' }, application)
+
+        expect(page.errors()).toEqual({ defaultDurationDays: 'Calculate duration' })
+      })
+
+      it('returns no errors when the placement length is kept and has been calculated', () => {
+        const page = new PlacementDuration({ differentDuration: 'no', defaultDurationDays: 112 }, application)
+
+        expect(page.errors()).toEqual({})
+      })
+    })
+
+    describe('response', () => {
+      it('should return a translated version of the response', () => {
+        const page = new PlacementDuration(
+          { differentDuration: 'yes' as const, durationDays: '4', durationWeeks: '1', reason: 'Some reason' },
+          application,
+        )
+
+        expect(page.response()).toEqual({
+          'Do you want to change the placement length?': 'Yes',
+          'New placement length': '1 week, 4 days',
+          'Reason for change': 'Some reason',
+        })
+      })
+
+      it("should not include the detail if it's blank", () => {
+        const page = new PlacementDuration({ differentDuration: 'no' as const, duration: '' }, application)
+
+        expect(page.response()).toEqual({ 'Do you want to change the placement length?': 'No' })
+      })
+    })
+
+    it('labels the keep-duration option with the calculated placement length', () => {
+      const page = new PlacementDuration({ defaultDurationDays: 112 }, application)
+
+      expect(page.keepDurationLabel).toEqual('No, apply for 16 weeks')
+    })
+
+    it('labels the keep-duration option with a bare No when the API returns no default duration', () => {
+      const page = new PlacementDuration({ defaultDurationDays: undefined }, application)
+
+      expect(page.keepDurationLabel).toEqual('No')
     })
   })
 })

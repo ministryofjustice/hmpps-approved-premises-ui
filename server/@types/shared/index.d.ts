@@ -110,6 +110,7 @@ export type { Cas1OutOfServiceBedStatus } from './models/Cas1OutOfServiceBedStat
 export type { Cas1OutOfServiceBedSummary } from './models/Cas1OutOfServiceBedSummary';
 export type { Cas1OverbookingRange } from './models/Cas1OverbookingRange';
 export type { Cas1PersonalTimeline } from './models/Cas1PersonalTimeline';
+export type { Cas1PlacementApplicationDecisionAcceptanceDto } from './models/Cas1PlacementApplicationDecisionAcceptanceDto';
 export type { Cas1PlacementChangeRequestCreatedPayload } from './models/Cas1PlacementChangeRequestCreatedPayload';
 export type { Cas1PlacementChangeRequestRejectedPayload } from './models/Cas1PlacementChangeRequestRejectedPayload';
 export type { Cas1PlacementPairDto } from './models/Cas1PlacementPairDto';

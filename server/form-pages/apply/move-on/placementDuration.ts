@@ -8,6 +8,7 @@ import TasklistPage from '../../tasklistPage'
 import { sentenceCase } from '../../../utils/utils'
 import { getDefaultPlacementDurationInDays } from '../../../utils/applications/getDefaultPlacementDurationInDays'
 import { arrivalDateFromApplication } from '../../../utils/applications/arrivalDateFromApplication'
+import { personTier } from '../../../utils/personUtils'
 import { validWeeksAndDaysDuration } from '../../../utils/formUtils'
 
 type PlacementDurationBody = {
@@ -18,6 +19,21 @@ type PlacementDurationBody = {
   reason?: string
   defaultDurationDays?: number
   maxDurationDays?: number
+}
+
+const title = 'Placement duration and move on'
+const titleV3 = 'Placement length and dates'
+
+const questions = {
+  differentDuration: 'Does this application require a different placement duration?',
+  duration: 'How many weeks will the person stay at the AP?',
+  reason: 'Why does this person require a different placement duration?',
+}
+
+const questionsV3 = {
+  differentDuration: 'Do you want to change the placement length?',
+  duration: 'New placement length',
+  reason: 'Reason for change',
 }
 
 @Page({
@@ -33,17 +49,15 @@ type PlacementDurationBody = {
   ],
 })
 export default class PlacementDuration implements TasklistPage {
-  title = 'Placement duration and move on'
+  title: string
 
   arrivalDate: string | undefined
 
   departureDate: string | undefined
 
-  questions = {
-    differentDuration: 'Does this application require a different placement duration?',
-    duration: 'How many weeks will the person stay at the AP?',
-    reason: 'Why does this person require a different placement duration?',
-  }
+  isV3Tier: boolean
+
+  questions: typeof questions
 
   dataServices: DataServices
 
@@ -51,6 +65,9 @@ export default class PlacementDuration implements TasklistPage {
     public body: Partial<PlacementDurationBody>,
     private readonly application: Cas1Application,
   ) {
+    this.isV3Tier = personTier(application.person)?.version === 'V3'
+    this.title = this.isV3Tier ? titleV3 : title
+    this.questions = this.isV3Tier ? questionsV3 : questions
     this.body.duration = this.lengthInDays()
   }
 
@@ -74,6 +91,12 @@ export default class PlacementDuration implements TasklistPage {
     return 'relocation-region'
   }
 
+  get keepDurationLabel(): string {
+    return this.body.defaultDurationDays !== undefined
+      ? `No, apply for ${DateFormats.formatDuration(this.body.defaultDurationDays)}`
+      : 'No'
+  }
+
   response() {
     const response: PageResponse = {}
 
@@ -93,16 +116,22 @@ export default class PlacementDuration implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.differentDuration) {
-      errors.differentDuration = 'You must specify if this application requires a different placement length'
+      errors.differentDuration = this.isV3Tier
+        ? 'You must specify if you want to change the placement length'
+        : 'You must specify if this application requires a different placement length'
     }
 
     if (this.body.differentDuration === 'yes') {
       if (!validWeeksAndDaysDuration(this.body.durationWeeks, this.body.durationDays)) {
-        errors.duration = 'You must specify the duration of the placement'
+        errors.duration = this.isV3Tier
+          ? 'You must specify the new placement length'
+          : 'You must specify the duration of the placement'
       }
 
       if (!this.body.reason) {
-        errors.reason = 'You must specify the reason for the different placement duration'
+        errors.reason = this.isV3Tier
+          ? 'You must specify the reason for the change'
+          : 'You must specify the reason for the different placement duration'
       }
     }
     if (this.body.differentDuration === 'no') {
