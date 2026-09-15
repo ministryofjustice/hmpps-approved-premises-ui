@@ -9,7 +9,6 @@ import { clickCMSRecord } from '@ministryofjustice/hmpps-probation-integration-e
 import {
   clickOffenceAnalysis,
   clickRiskManagementPlan,
-  clickRoSHSummary,
   clickRoSHScreeningSection1,
   clickSection2to13,
   selfAssessmentForm,
@@ -30,11 +29,16 @@ import { clickSection2To4ForTier } from '../section-2-4'
 import { completeReviewSentencePlan } from './review-sentenceplan'
 import { WorkflowOasysTier, WorkflowPerson } from '../../../../setup/workflow-person'
 
+type OasysProfile = 'A' | 'B' | 'C'
+
+const toOasysProfile = (tier: WorkflowOasysTier): OasysProfile => (tier === 'A' || tier === 'B' ? tier : 'C')
+
 export const createLayer3AssessmentWithoutNeeds = async (
   page: Page,
   person: WorkflowPerson,
-  tier: WorkflowOasysTier,
+  workflowTier: WorkflowOasysTier,
 ) => {
+  const tier = toOasysProfile(workflowTier)
   const providerHeading = page.locator('#loginbodyheader > h2')
   if ((await providerHeading.isVisible()) && (await providerHeading.innerText()) === 'Provider/Establishment') {
     await setProviderEstablishment(page)
@@ -69,11 +73,7 @@ export const createLayer3AssessmentWithoutNeeds = async (
   await completeRoSHSection1MarkAllNo(page)
   await clickSection2To4ForTier(page, person.details, tier)
   await completeRoSHSection5FullAnalysis(page)
-  if (tier === 'A' || tier === 'B') {
-    await completeRoSHSection8FullAnalysisYes(page)
-  } else {
-    await clickRoSHSummary(page)
-  }
+  await completeRoSHSection8FullAnalysisYes(page)
   await completeRoSHSection9RoSHSummary(page)
   await completeRoSHSection10RoSHSummary(page, tier)
   await clickRiskManagementPlan(page)
