@@ -4,12 +4,12 @@ import { Cas1ApplicationSummary } from '@approved-premises/api'
 
 import { DateFormats } from '../../utils/dateUtils'
 import risksFactory from './risks'
-import { personSummaryFactory } from './person'
+import { fullPersonSummaryFactory } from './person'
 
 export default Factory.define<Cas1ApplicationSummary>(() => ({
   id: faker.string.uuid(),
   type: 'CAS1',
-  person: personSummaryFactory.build(),
+  person: fullPersonSummaryFactory.build(),
   createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   submittedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   isWomensApplication: false,

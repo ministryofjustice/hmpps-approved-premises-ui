@@ -1,4 +1,4 @@
-import { Cas1ApplicationSummary, FullPerson } from '@approved-premises/api'
+import { FullPerson } from '@approved-premises/api'
 import { setup } from './setup'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
@@ -8,19 +8,13 @@ import * as ApplyPages from '../../pages/apply'
 import Page from '../../pages/page'
 import apiPaths from '../../../server/paths/api'
 import { statusesLimitedToOne } from '../../../server/utils/applications/statusTag'
-import { fullPersonSummaryFactory } from '../../../server/testutils/factories/person'
-
-const applicationSummaryFactory = (count: number, params: Partial<Cas1ApplicationSummary>) =>
-  Array.from(Array(count)).map(() =>
-    cas1ApplicationSummaryFactory.build({ person: fullPersonSummaryFactory.build(), ...params }),
-  )
 
 context('Single application per CRN', () => {
   beforeEach(setup)
 
   it('blocks the user from creating an application if there are already applications for the crn', function test() {
     GIVEN('There is an application for the crn')
-    const applications = applicationSummaryFactory(2, {})
+    const applications = cas1ApplicationSummaryFactory.buildList(2)
     cy.task('stubAllApplications', { applications, anyQuery: true })
 
     WHEN('I try to create an application')
