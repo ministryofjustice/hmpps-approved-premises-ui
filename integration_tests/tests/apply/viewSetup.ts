@@ -20,6 +20,7 @@ import { signIn } from '../signIn'
 import applicationDocument from '../../fixtures/applicationDocument.json'
 import applicationData from '../../fixtures/applicationData.json'
 import assessmentDocument from '../../fixtures/assessmentDocument.json'
+import { personSummaryFactory } from '../../../server/testutils/factories/person'
 
 export const setup = (
   settings: {
@@ -72,6 +73,7 @@ export const setup = (
 
   const applicationSummary: Cas1ApplicationSummary = {
     ...application,
+    person: personSummaryFactory.build({ ...person }),
     hasRequestsForPlacement: true,
     isWithdrawn: status === 'withdrawn',
   }

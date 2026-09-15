@@ -1,5 +1,5 @@
 import { PlacementRequestSortField, PlacementRequestStatus } from '@approved-premises/api'
-import { cas1PlacementRequestSummaryFactory, restrictedPersonFactory } from '../../testutils/factories'
+import { cas1PlacementRequestSummaryFactory } from '../../testutils/factories'
 import { dashboardTableHeader, dashboardTableRows, durationCell, nameCell } from './table'
 import { DateFormats } from '../dateUtils'
 import { textCell, versionedTierCell } from '../tableUtils'
@@ -7,7 +7,7 @@ import { sortHeader } from '../sortHeader'
 import { displayName } from '../personUtils'
 import * as utils from '../utils'
 import adminPaths from '../../paths/admin'
-import { fullPersonFactory } from '../../testutils/factories/person'
+import { fullPersonFactory, restrictedPersonSummaryFactory } from '../../testutils/factories/person'
 import { placementRequestStatus } from '../formUtils'
 import config from '../../config'
 
@@ -42,7 +42,7 @@ describe('tableUtils', () => {
 
     it("returns 'LAO:' and CRN with no link if the person is a restrictedPerson", () => {
       const restrictedPersonPlacementRequest = cas1PlacementRequestSummaryFactory.build({
-        person: restrictedPersonFactory.build({ crn: 'K888666' }),
+        person: restrictedPersonSummaryFactory.build({ crn: 'K888666' }),
       })
 
       expect(nameCell(restrictedPersonPlacementRequest)).toEqual({
@@ -52,7 +52,7 @@ describe('tableUtils', () => {
 
     it('returns the crn cell with no link if the person is a unknown person', () => {
       const unknownPersonPlacementRequest = cas1PlacementRequestSummaryFactory.build({
-        person: restrictedPersonFactory.build({ type: 'UnknownPerson' }),
+        person: restrictedPersonSummaryFactory.build({ personType: 'UnknownPersonSummary' }),
       })
 
       expect(nameCell(unknownPersonPlacementRequest)).toEqual({

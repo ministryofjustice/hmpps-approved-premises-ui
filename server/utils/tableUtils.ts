@@ -1,7 +1,7 @@
 import { Person, PersonSummary } from '../@types/shared'
 import { TableCell } from '../@types/ui'
 import { DateFormats } from './dateUtils'
-import { displayName, getVersionedTierOrBlank, personTier } from './personUtils'
+import { displayName, getVersionedTierOrBlank, PersonAny, personTier } from './personUtils'
 import { pluralize } from './utils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
@@ -39,7 +39,7 @@ export const versionedTierCell = (person: Person | PersonSummary) => ({
   attributes: { 'data-sort-value': tierSortKey(person) },
 })
 
-export const nameCellLink = (person: Person, link?: string) =>
+export const nameCellLink = (person: PersonAny, link?: string) =>
   htmlCell(
     `${link ? `<a href="${link}">${displayName(person)}</a>` : `<span>${displayName(person)}</span>`}<br/><span>${person.crn}</span>`,
   )

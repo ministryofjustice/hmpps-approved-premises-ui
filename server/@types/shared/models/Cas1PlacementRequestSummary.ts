@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { FullPerson } from './FullPerson';
+import type { FullPersonSummary } from './FullPersonSummary';
 import type { PlacementRequestStatus } from './PlacementRequestStatus';
-import type { RestrictedPerson } from './RestrictedPerson';
-import type { UnknownPerson } from './UnknownPerson';
+import type { RestrictedPersonSummary } from './RestrictedPersonSummary';
+import type { UnknownPersonSummary } from './UnknownPersonSummary';
 export type Cas1PlacementRequestSummary = {
     applicationId?: string;
     applicationSubmittedDate?: string;
@@ -13,7 +13,7 @@ export type Cas1PlacementRequestSummary = {
     firstBookingPremisesName?: string;
     id: string;
     isParole: boolean;
-    person: (FullPerson | RestrictedPerson | UnknownPerson);
+    person: (FullPersonSummary | RestrictedPersonSummary | UnknownPersonSummary);
     /**
      * This is the tier captured when the application was created. For the person's live tier use `person.tier`
      */

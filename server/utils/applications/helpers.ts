@@ -1,13 +1,13 @@
 import { KeyDetailsArgs } from '@approved-premises/ui'
-import { Cas1Application, Cas1ApplicationSummary, Person, RiskTier } from '../../@types/shared'
-import { displayName, getVersionedTierValue, isFullPerson } from '../personUtils'
+import { Cas1Application, Cas1ApplicationSummary, RiskTier } from '../../@types/shared'
+import { displayName, getVersionedTierValue, isFullPerson, PersonAny } from '../personUtils'
 import paths from '../../paths/apply'
 import { DateFormats } from '../dateUtils'
 import { htmlCell, textCell } from '../tableUtils'
 import { summaryListItem } from '../formUtils'
 
 export const createNameAnchorElement = (
-  person: Person,
+  person: PersonAny,
   applicationSummary: Cas1ApplicationSummary,
   {
     linkInProgressApplications,
@@ -32,7 +32,7 @@ export const createNameAnchorElement = (
     : textCell(name)
 }
 
-export const personKeyDetails = (person: Person, tierOnApplicationCreation?: RiskTier): KeyDetailsArgs => ({
+export const personKeyDetails = (person: PersonAny, tierOnApplicationCreation?: RiskTier): KeyDetailsArgs => ({
   header: { value: displayName(person), key: '', showKey: false },
   items: [
     summaryListItem('CRN', person.crn),
@@ -43,5 +43,5 @@ export const personKeyDetails = (person: Person, tierOnApplicationCreation?: Ris
   ],
 })
 
-export const applicationKeyDetails = (application: Cas1Application): KeyDetailsArgs =>
+export const applicationKeyDetails = (application: Cas1Application | Cas1ApplicationSummary): KeyDetailsArgs =>
   personKeyDetails(application.person, application.risks?.tier?.value)

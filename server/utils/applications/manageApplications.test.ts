@@ -8,7 +8,7 @@ import {
   nameCell,
 } from './manageApplications'
 import { cas1ApplicationSummaryFactory, tierDtoFactory } from '../../testutils/factories'
-import { fullPersonFactory } from '../../testutils/factories/person'
+import { fullPersonFactory, fullPersonSummaryFactory } from '../../testutils/factories/person'
 import { ApplicationStatusTag } from './statusTag'
 import paths from '../../paths/apply'
 import { createQueryString } from '../utils'
@@ -18,7 +18,7 @@ import * as tableUtils from '../tableUtils'
 describe('manageApplications', () => {
   describe('nameCell', () => {
     const id = 'some-id'
-    const person = fullPersonFactory.build()
+    const person = fullPersonSummaryFactory.build()
     const mockCell: TableCell = { html: 'output' }
 
     beforeEach(() => {
