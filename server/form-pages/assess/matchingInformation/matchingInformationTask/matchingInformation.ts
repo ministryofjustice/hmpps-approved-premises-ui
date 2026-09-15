@@ -27,6 +27,7 @@ import {
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
 import { womensApTypes } from '../../../apply/reasons-for-placement/type-of-ap/apType'
 import { radioMatrixTable } from '../../../../utils/radioMatrixTable'
+import { placementDurationFromApplication } from '../../../../utils/applications/placementDurationFromApplication'
 
 const placementRequirementPreferences = ['required' as const, 'notRequired' as const]
 export type PlacementRequirementPreference = (typeof placementRequirementPreferences)[number]
@@ -73,12 +74,15 @@ export default class MatchingInformation implements TasklistPage {
 
   suggestedStaySummaryListOptions: SummaryList
 
+  isUnknownDuration: boolean
+
   static async initialize(
     body: Partial<MatchingInformationBody>,
     assessment: Assessment,
   ): Promise<MatchingInformation> {
     const page = new MatchingInformation(body, assessment)
     page.suggestedStaySummaryListOptions = suggestedStaySummaryListOptions(assessment.application)
+
     return page
   }
 
@@ -125,6 +129,11 @@ export default class MatchingInformation implements TasklistPage {
           {} as Record<ApTypeCriteria, string>,
         )
       : apTypeCriteriaLabels
+
+    this.isUnknownDuration = !placementDurationFromApplication(assessment.application)
+    if (this.isUnknownDuration) {
+      this.questions.lengthOfStay = 'Recommended placement length'
+    }
   }
 
   set body(value: MatchingInformationBody) {
@@ -166,10 +175,11 @@ export default class MatchingInformation implements TasklistPage {
         this.body[offenceOrRiskCriterion],
       )}`
     })
+    if (!this.isUnknownDuration) {
+      response['Do you agree with the suggested length of stay?'] = sentenceCase(this.body.lengthOfStayAgreed)
+    }
 
-    response['Do you agree with the suggested length of stay?'] = sentenceCase(this.body.lengthOfStayAgreed)
-
-    if (this.body.lengthOfStayAgreed === 'no') {
+    if (this.body.lengthOfStayAgreed === 'no' || this.isUnknownDuration) {
       response['Recommended length of stay'] = DateFormats.formatDuration(lengthOfStay(this.body))
     }
 
@@ -183,12 +193,11 @@ export default class MatchingInformation implements TasklistPage {
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    if (!Object.keys(this.availableApTypes).includes(this.body.apType))
-      errors.apType = 'You must select the type of AP required'
+    if (!Object.keys(this.availableApTypes).includes(this.body.apType)) errors.apType = 'Select the type of AP required'
 
     placementRequirementCriteria.forEach(placementRequirementCriterion => {
       if (!this.body[placementRequirementCriterion]) {
-        errors[placementRequirementCriterion] = `You must specify a preference for ${placementCriteriaLabels[
+        errors[placementRequirementCriterion] = `Specify a preference for ${placementCriteriaLabels[
           placementRequirementCriterion
         ].toLowerCase()}`
       }
@@ -196,19 +205,27 @@ export default class MatchingInformation implements TasklistPage {
 
     offenceAndRiskCriteria.forEach(offenceOrRiskCriterion => {
       if (!this.body[offenceOrRiskCriterion]) {
-        errors[offenceOrRiskCriterion] = `You must specify if ${lowerCase(
+        errors[offenceOrRiskCriterion] = `Specify if ${lowerCase(
           placementCriteriaLabels[offenceOrRiskCriterion],
         )} is relevant`
       }
     })
 
-    if (!this.body.lengthOfStayAgreed) {
-      errors.lengthOfStayAgreed = 'You must state if you agree with the length of the stay'
-    }
+    if (this.isUnknownDuration) {
+      if (!(Number(lengthOfStay(this.body)) > 0)) errors.lengthOfStay = 'Enter the recommended placement length'
+      this.body.lengthOfStayAgreed = undefined
+    } else {
+      if (!this.body.lengthOfStayAgreed) {
+        errors.lengthOfStayAgreed = 'State if you agree with the length of the stay'
+      }
 
-    if (this.body.lengthOfStayAgreed === 'no') {
-      if (!(Number(lengthOfStay(this.body)) > 0)) {
-        errors.lengthOfStay = 'You must provide a recommended length of stay'
+      if (this.body.lengthOfStayAgreed === 'no') {
+        if (!(Number(lengthOfStay(this.body)) > 0)) {
+          errors.lengthOfStay = 'Provide a recommended length of stay'
+        }
+      } else {
+        this.body.lengthOfStayDays = undefined
+        this.body.lengthOfStayWeeks = undefined
       }
     }
 
