@@ -167,6 +167,7 @@ export type { Cas1UpdatedClarificationNote } from './models/Cas1UpdatedClarifica
 export type { Cas1UpdateSpaceBooking } from './models/Cas1UpdateSpaceBooking';
 export type { Cas1UpdateUser } from './models/Cas1UpdateUser';
 export type { Cas1UrlTemplates } from './models/Cas1UrlTemplates';
+export type { Cas1WithdrawableDatePeriodDto } from './models/Cas1WithdrawableDatePeriodDto';
 export type { Cas1WithdrawPlacementRequest } from './models/Cas1WithdrawPlacementRequest';
 export type { Cas2Application } from './models/Cas2Application';
 export type { Cas2Assessment } from './models/Cas2Assessment';
@@ -181,7 +182,6 @@ export type { Characteristic } from './models/Characteristic';
 export type { ClassesToInclude } from './models/ClassesToInclude';
 export type { CodeDescriptionDto } from './models/CodeDescriptionDto';
 export type { CsraSummary } from './models/CsraSummary';
-export type { DatePeriod } from './models/DatePeriod';
 export type { DepartureReason } from './models/DepartureReason';
 export type { DestinationProvider } from './models/DestinationProvider';
 export type { DietAndAllergyDto } from './models/DietAndAllergyDto';

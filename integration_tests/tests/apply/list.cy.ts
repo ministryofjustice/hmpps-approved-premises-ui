@@ -1,3 +1,4 @@
+import { Cas1ApplicationSummary } from '@approved-premises/api'
 import { ListPage, StartPage } from '../../pages/apply'
 
 import {
@@ -13,6 +14,12 @@ import CheckSentenceTypePage from '../../pages/match/placementRequestForm/checkS
 import { defaultUserId } from '../../mockApis/auth'
 import applicationDocument from '../../fixtures/applicationDocument.json'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
+import { fullPersonSummaryFactory } from '../../../server/testutils/factories/person'
+
+const applicationSummaryFactory = (count: number, params: Partial<Cas1ApplicationSummary>) =>
+  Array.from(Array(count)).map(() =>
+    cas1ApplicationSummaryFactory.build({ person: fullPersonSummaryFactory.build(), ...params }),
+  )
 
 context('Applications dashboard', () => {
   beforeEach(() => {
@@ -24,15 +31,16 @@ context('Applications dashboard', () => {
 
   it('shows the dashboard ', () => {
     GIVEN('there are applications in the database')
-    const inProgressApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'started' })
-    const submittedApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'awaitingAssesment' })
-    const requestedFurtherInformationApplications = cas1ApplicationSummaryFactory.buildList(5, {
+
+    const inProgressApplications = applicationSummaryFactory(5, { status: 'started' })
+    const submittedApplications = applicationSummaryFactory(5, { status: 'awaitingAssesment' })
+    const requestedFurtherInformationApplications = applicationSummaryFactory(5, {
       status: 'requestedFurtherInformation',
     })
-    const awaitingPlacementApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'awaitingPlacement' })
+    const awaitingPlacementApplications = applicationSummaryFactory(5, { status: 'awaitingPlacement' })
     const inactiveApplications = [
-      ...cas1ApplicationSummaryFactory.buildList(3, { status: 'expired' }),
-      ...cas1ApplicationSummaryFactory.buildList(3, { status: 'withdrawn' }),
+      ...applicationSummaryFactory(3, { status: 'expired' }),
+      ...applicationSummaryFactory(3, { status: 'withdrawn' }),
     ]
 
     cy.task(
@@ -87,11 +95,11 @@ context('Applications dashboard', () => {
       status: 'started',
       person: personFactory.build({ isRestricted: true }),
     })
-    const submittedApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'awaitingAssesment' })
-    const requestedFurtherInformationApplications = cas1ApplicationSummaryFactory.buildList(5, {
+    const submittedApplications = applicationSummaryFactory(5, { status: 'awaitingAssesment' })
+    const requestedFurtherInformationApplications = applicationSummaryFactory(5, {
       status: 'requestedFurtherInformation',
     })
-    const awaitingPlacementApplications = cas1ApplicationSummaryFactory.buildList(5, { status: 'awaitingPlacement' })
+    const awaitingPlacementApplications = applicationSummaryFactory(5, { status: 'awaitingPlacement' })
 
     cy.task(
       'stubApplications',
@@ -130,15 +138,15 @@ context('Applications dashboard', () => {
   it('request for placement for my application status awaiting placement ', () => {
     cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
       GIVEN('there are applications in the database')
-      const inProgressApplications = cas1ApplicationSummaryFactory.buildList(5, {
+      const inProgressApplications = applicationSummaryFactory(5, {
         status: 'started',
         hasRequestsForPlacement: false,
       })
-      const requestedFurtherInformationApplications = cas1ApplicationSummaryFactory.buildList(5, {
+      const requestedFurtherInformationApplications = applicationSummaryFactory(5, {
         status: 'requestedFurtherInformation',
         hasRequestsForPlacement: false,
       })
-      const awaitingPlacementApplications = cas1ApplicationSummaryFactory.buildList(5, {
+      const awaitingPlacementApplications = applicationSummaryFactory(5, {
         status: 'awaitingPlacement',
         hasRequestsForPlacement: false,
       })
