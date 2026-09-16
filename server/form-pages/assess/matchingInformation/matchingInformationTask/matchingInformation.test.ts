@@ -11,7 +11,6 @@ import {
 } from '../../../../utils/placementCriteriaUtils'
 import { radioMatrixTable } from '../../../../utils/radioMatrixTable'
 
-jest.mock('../../../../utils/applications/placementDurationFromApplication')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
 
 const assessment = assessmentFactory.build({
@@ -19,6 +18,9 @@ const assessment = assessmentFactory.build({
 })
 const weAssessment = assessmentFactory.build({
   application: applicationFactory.build({ isWomensApplication: true }),
+})
+const assessmentNoDuration = assessmentFactory.build({
+  application: applicationFactory.withNoDuration().build(),
 })
 
 const defaultArguments = {
@@ -75,12 +77,23 @@ describe('MatchingInformation', () => {
     })
   })
 
+  describe('isUnknownDuration', () => {
+    it('should set isUnknownDuration flag if application has no duration', () => {
+      const page = new MatchingInformation(defaultArguments, assessment)
+      expect(page.isUnknownDuration).toBe(false)
+    })
+    it('should set isUnknownDuration flag if application has no duration', () => {
+      const page = new MatchingInformation(defaultArguments, assessmentNoDuration)
+      expect(page.isUnknownDuration).toBe(true)
+    })
+  })
+
   itShouldHaveNextValue(new MatchingInformation(defaultArguments, assessment), '')
 
   itShouldHavePreviousValue(new MatchingInformation(defaultArguments, assessment), 'dashboard')
 
   describe('errors', () => {
-    it('should have an error if there are no answers', () => {
+    it('should have an error if there are no answers for application with a duration', () => {
       jest
         .spyOn(matchingInformtionUtils, 'defaultMatchingInformationValues')
         .mockReturnValue(defaultMatchingInformationValuesReturnValue)
@@ -88,9 +101,22 @@ describe('MatchingInformation', () => {
       const page = new MatchingInformation({}, assessment)
 
       expect(page.errors()).toEqual({
-        isStepFreeDesignated: 'You must specify a preference for step-free access',
-        hasEnSuite: 'You must specify a preference for en-suite bathroom',
-        lengthOfStayAgreed: 'You must state if you agree with the length of the stay',
+        isStepFreeDesignated: 'Specify a preference for step-free access',
+        hasEnSuite: 'Specify a preference for en-suite bathroom',
+        lengthOfStayAgreed: 'State if you agree with the length of the stay',
+      })
+    })
+
+    it('should validate duration fields if application is without duration', () => {
+      jest
+        .spyOn(matchingInformtionUtils, 'defaultMatchingInformationValues')
+        .mockReturnValue(defaultMatchingInformationValuesReturnValue)
+
+      const page = new MatchingInformation({}, assessmentNoDuration)
+      expect(page.errors()).toEqual({
+        isStepFreeDesignated: 'Specify a preference for step-free access',
+        hasEnSuite: 'Specify a preference for en-suite bathroom',
+        lengthOfStay: 'Enter the recommended placement length',
       })
     })
 
@@ -103,16 +129,27 @@ describe('MatchingInformation', () => {
       )
 
       expect(page.errors()).toEqual({
-        lengthOfStay: 'You must provide a recommended length of stay',
+        lengthOfStay: 'Provide a recommended length of stay',
       })
       expect(formUtils.validWeeksAndDaysDuration).toHaveBeenCalledWith('a', 'b')
+    })
+
+    it('removes orphaned duration fields', () => {
+      const page = new MatchingInformation(
+        { ...defaultArguments, lengthOfStayAgreed: 'yes', lengthOfStayWeeks: 'a', lengthOfStayDays: 'b' },
+        assessment,
+      )
+
+      page.errors()
+
+      expect(page.body).toEqual(expect.objectContaining({ lengthOfStayDays: undefined, lengthOfStayWeeks: undefined }))
     })
 
     it("should return an error if the type is not available for a women's application", () => {
       const page = new MatchingInformation({ ...defaultArguments, apType: 'isMHAPElliottHouse' }, weAssessment)
 
       expect(page.errors()).toEqual({
-        apType: 'You must select the type of AP required',
+        apType: 'Select the type of AP required',
       })
     })
   })
@@ -141,6 +178,23 @@ describe('MatchingInformation', () => {
     })
 
     it('adds the recommended length of stay if lengthOfStayAgreed is no', () => {
+      const page = new MatchingInformation(
+        {
+          ...defaultArguments,
+          lengthOfStayAgreed: 'no',
+          lengthOfStayWeeks: '5',
+          lengthOfStayDays: '4',
+        },
+        assessment,
+      )
+
+      const response = page.response()
+
+      expect(response['Do you agree with the suggested length of stay?']).toEqual('No')
+      expect(response['Recommended length of stay']).toEqual('5 weeks, 4 days')
+    })
+
+    it('adds the recommended length of stay if no duration in application', () => {
       const page = new MatchingInformation(
         {
           ...defaultArguments,
