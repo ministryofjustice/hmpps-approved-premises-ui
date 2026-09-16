@@ -25,7 +25,7 @@ import { OffenceAndRiskCriteria, PlacementRequirementCriteria } from '../../util
 import SelectApType from '../apply/reasons-for-placement/type-of-ap/apType'
 import PlacementDate from '../apply/reasons-for-placement/basic-information/placementDate'
 import ReleaseDate from '../apply/reasons-for-placement/basic-information/releaseDate'
-import { summaryListItem, summaryListItemNoBlankRows, validWeeksAndDaysDuration } from '../../utils/formUtils'
+import { summaryListItemNoBlankRows, validWeeksAndDaysDuration } from '../../utils/formUtils'
 
 export interface TaskListPageField {
   name: string
@@ -278,7 +278,11 @@ const suggestedStaySummaryListOptions = (application: Application): SummaryList 
   const placementStartDate = getPlacementStartDate(application)
 
   if (duration) {
-    rows.push(summaryListItem('Placement duration', DateFormats.formatDuration(duration)))
+    rows.push({
+      key: { text: 'Placement duration' },
+      value: { text: DateFormats.formatDuration(duration), classes: 'placement-duration' },
+    })
+
     if (placementStartDate) {
       const placementDatesObject = placementDates(placementStartDate, duration.toString())
       const formattedStartDate = DateFormats.isoDateToUIDate(placementDatesObject.startDate)

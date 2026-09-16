@@ -496,7 +496,10 @@ describe('matchingInformationUtils', () => {
 
             expect(suggestedStaySummaryListOptions(application)).toEqual({
               rows: [
-                { key: { text: 'Placement duration' }, value: { text: '1 week, 5 days' } },
+                {
+                  key: { text: 'Placement duration' },
+                  value: { text: '1 week, 5 days', classes: 'placement-duration' },
+                },
                 {
                   key: { text: 'Dates of placement' },
                   value: { text: 'Thu 7 Mar 2024 - Tue 19 Mar 2024', classes: 'dates-of-placement' },
@@ -528,7 +531,10 @@ describe('matchingInformationUtils', () => {
 
             expect(suggestedStaySummaryListOptions(application)).toEqual({
               rows: [
-                { key: { text: 'Placement duration' }, value: { text: '1 week, 5 days' } },
+                {
+                  key: { text: 'Placement duration' },
+                  value: { text: '1 week, 5 days', classes: 'placement-duration' },
+                },
                 {
                   key: { text: 'Dates of placement' },
                   value: { text: 'Tue 7 May 2024 - Sun 19 May 2024', classes: 'dates-of-placement' },
@@ -558,7 +564,9 @@ describe('matchingInformationUtils', () => {
             .mockReturnValue('no')
 
           expect(suggestedStaySummaryListOptions(application)).toEqual({
-            rows: [{ key: { text: 'Placement duration' }, value: { text: '1 week, 5 days' } }],
+            rows: [
+              { key: { text: 'Placement duration' }, value: { text: '1 week, 5 days', classes: 'placement-duration' } },
+            ],
           })
 
           expect(placementDurationFromApplication).toHaveBeenCalledWith(application)
