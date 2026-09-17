@@ -23,6 +23,7 @@ type PlacementDurationBody = {
 
 const title = 'Placement duration and move on'
 const titleV3 = 'Placement length and dates'
+const titleV3NullDuration = 'Placement length cannot be calculated'
 
 const questions = {
   differentDuration: 'Does this application require a different placement duration?',
@@ -57,9 +58,13 @@ export default class PlacementDuration implements TasklistPage {
 
   isV3Tier: boolean
 
+  isNullDuration: boolean
+
   questions: typeof questions
 
   dataServices: DataServices
+
+  submitLabel: string
 
   constructor(
     public body: Partial<PlacementDurationBody>,
@@ -100,6 +105,11 @@ export default class PlacementDuration implements TasklistPage {
   response() {
     const response: PageResponse = {}
 
+    if (this.isNullDuration) {
+      response[titleV3] = titleV3NullDuration
+      return response
+    }
+
     response[this.questions.differentDuration] = sentenceCase(this.body.differentDuration)
 
     if (this.body.differentDuration === 'yes') {
@@ -114,6 +124,8 @@ export default class PlacementDuration implements TasklistPage {
 
   errors() {
     const errors: TaskListErrors<this> = {}
+
+    if (this.isNullDuration) return errors
 
     if (!this.body.differentDuration) {
       errors.differentDuration = this.isV3Tier
@@ -160,8 +172,14 @@ export default class PlacementDuration implements TasklistPage {
       dataServices,
       token,
     )
+
     this.body.maxDurationDays = maxDurationDays
     this.body.defaultDurationDays = defaultDurationDays
+    this.isNullDuration = this.isV3Tier && defaultDurationDays === null
+    if (this.isNullDuration) {
+      this.title = titleV3NullDuration
+      this.submitLabel = 'Continue'
+    }
 
     if (arrivalDateIso) {
       const arrivalDate = DateFormats.isoToDateObj(arrivalDateIso)

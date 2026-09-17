@@ -27,6 +27,7 @@ describe('PlacementDuration', () => {
       .build({ person: personFactory.build({ tier: tierDtoFactory.build({ version: tierVersion }) }) })
 
   beforeEach(() => {
+    jest.resetAllMocks()
     application = buildApplication('V2')
   })
 
@@ -74,7 +75,10 @@ describe('PlacementDuration', () => {
     })
 
     it('sets the dates to undefined if the dates are not specified', () => {
-      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(undefined)
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue({
+        defaultDurationDays: null,
+        maxDurationDays: null,
+      })
 
       const page = new PlacementDuration({}, application)
 
@@ -173,6 +177,36 @@ describe('PlacementDuration', () => {
         differentDuration: 'Do you want to change the placement length?',
         duration: 'New placement length',
         reason: 'Reason for change',
+      })
+    })
+
+    describe('null duration', () => {
+      beforeEach(() => {
+        ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValue({
+          defaultDurationDays: null,
+          maxDurationDays: null,
+        })
+      })
+      it('sets the null duration flag, title and submit label if the duration is null', async () => {
+        const page = await PlacementDuration.initialize({}, application, 'test-token', { applicationService })
+
+        expect(page.isV3Tier).toEqual(true)
+        expect(page.isNullDuration).toEqual(true)
+        expect(page.title).toEqual('Placement length cannot be calculated')
+        expect((page.submitLabel = 'Continue'))
+      })
+
+      it('adjusts response when duration is null', async () => {
+        const page = await PlacementDuration.initialize({}, application, 'test-token', { applicationService })
+
+        expect(page.response()).toEqual({ 'Placement length and dates': 'Placement length cannot be calculated' })
+      })
+
+      it('suppresses error checking on the null duration page as the post will be empty', async () => {
+        const page = await PlacementDuration.initialize({}, application, 'test-token', {
+          applicationService,
+        })
+        expect(page.errors()).toEqual({})
       })
     })
 
