@@ -2,15 +2,11 @@ import { Cas1Application as Application } from '@approved-premises/api'
 
 import ApplyPage from './applyPage'
 import paths from '../../../server/paths/apply'
-import { personTier } from '../../../server/utils/personUtils'
 
 export default class PlacementDurationPage extends ApplyPage {
   application: Application
 
-  constructor(application: Application) {
-    const title =
-      personTier(application.person)?.version === 'V3' ? 'Placement length and dates' : 'Placement duration and move on'
-
+  constructor(application: Application, title = 'Placement length and dates') {
     super(title, application, 'move-on', 'placement-duration', paths.applications.show({ id: application.id }))
     this.application = application
   }

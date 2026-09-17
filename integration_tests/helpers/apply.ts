@@ -953,7 +953,10 @@ export default class ApplyHelper {
     cy.get('[data-cy-task-name="move-on"]').click()
 
     AND('I complete the Placement Duration page')
-    const placementDurationPage = new ApplyPages.PlacementDurationPage(this.application)
+    const placementDurationPage = new ApplyPages.PlacementDurationPage(
+      this.application,
+      'Placement duration and move on',
+    )
     placementDurationPage.completeForm()
     placementDurationPage.clickSubmit()
 

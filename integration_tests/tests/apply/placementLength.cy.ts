@@ -41,4 +41,29 @@ context('Apply - placement length and dates', () => {
       DateFormats.dateObjtoUIDate(addDays(arrivalDate, defaultDurationDays)),
     )
   })
+
+  it('shows no duration skip page if the calculated duration is null', function test() {
+    GIVEN('there is an application for a person with a version 3 tier')
+    const application = { ...this.application, status: 'started' }
+    application.person = { ...this.person, tier: tierDtoFactory.v3().build({ tierScore: 'B' }) }
+    cy.task('stubApplicationGet', { application })
+
+    AND('a placement duration has been calculated for the application')
+    cy.task('stubGetPlacementDuration', {
+      applicationId: application.id,
+      durationObj: { defaultDurationDays: null, maxDurationDays: null },
+    })
+
+    WHEN('I visit the tasklist')
+    ApplyPages.TaskListPage.visit(application)
+
+    AND(`I click the 'Add move on information' task`)
+    cy.get('[data-cy-task-name="move-on"]').click()
+
+    THEN('I am shown the skip page')
+    Page.verifyOnPage(ApplyPages.PlacementDurationPage, application, 'Placement length cannot be calculated')
+
+    AND('The submit button is labelled continue')
+    cy.get('button').contains('Continue')
+  })
 })
