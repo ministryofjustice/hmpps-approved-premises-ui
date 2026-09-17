@@ -61,9 +61,16 @@ describe('reviewController', () => {
 
   describe('show', () => {
     const expectedRenderParameters = {
-      pageProps: {
+      page: {
         pageHeading: 'Review information',
-        backLink: `${assessPaths.assessments.index({})}?activeTab=requests_for_placement`,
+        backLink: placementApplicationPaths.placementApplications.review.show({ id }),
+        hints: {
+          duration: 'We could not calculate the placement length automatically.',
+        },
+        noDuration: false,
+        questions: {
+          duration: 'Recommended placement length',
+        },
       },
       reviewQuestions,
       placementApplication,
@@ -82,10 +89,13 @@ describe('reviewController', () => {
 
       await reviewController.show('review')(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith(
-        'placement-applications/pages/review/review',
-        expectedRenderParameters,
-      )
+      expect(response.render).toHaveBeenCalledWith('placement-applications/pages/review/review', {
+        ...expectedRenderParameters,
+        page: {
+          pageHeading: 'Review information',
+          backLink: `${assessPaths.assessments.index({})}?activeTab=requests_for_placement`,
+        },
+      })
     })
 
     it('renders the decision page', async () => {
@@ -102,9 +112,16 @@ describe('reviewController', () => {
 
       expect(response.render).toHaveBeenCalledWith('placement-applications/pages/review/decision', {
         ...expectedRenderParameters,
-        pageProps: {
+        page: {
           pageHeading: 'Make a decision',
-          backLink: placementApplicationPaths.placementApplications.show({ id }),
+          backLink: placementApplicationPaths.placementApplications.review.show({ id }),
+          hints: {
+            duration: 'We could not calculate the placement length automatically.',
+          },
+          noDuration: false,
+          questions: {
+            duration: 'Recommended placement length',
+          },
         },
       })
     })
@@ -122,6 +139,10 @@ describe('reviewController', () => {
 
       expect(response.render).toHaveBeenCalledWith('placement-applications/pages/review/review', {
         ...expectedRenderParameters,
+        page: {
+          pageHeading: 'Review information',
+          backLink: `${assessPaths.assessments.index({})}?activeTab=requests_for_placement`,
+        },
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,
@@ -141,9 +162,10 @@ describe('reviewController', () => {
 
       expect(response.render).toHaveBeenCalledWith('placement-applications/pages/review/decision', {
         ...expectedRenderParameters,
-        pageProps: {
+        page: {
+          ...expectedRenderParameters.page,
           pageHeading: 'Make a decision',
-          backLink: placementApplicationPaths.placementApplications.show({ id }),
+          backLink: placementApplicationPaths.placementApplications.review.show({ id }),
         },
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
@@ -241,29 +263,36 @@ describe('reviewController', () => {
   })
 
   describe('submit', () => {
+    let update: jest.Mock
+    let getSubmissionData: jest.Mock
+    const submissionData = {
+      summaryOfChanges: 'some changes',
+    }
+
     beforeEach(() => {
+      placementApplicationService.getPlacementApplication.mockResolvedValue(placementApplication)
       request = createMock<Request>({
         ...request,
         session: {
           placementApplicationDecisions: { [id]: { summaryOfChanges: 'some changes' } },
         },
       })
-    })
 
-    it('redirects to the confirm path on success', async () => {
-      const update = jest.fn()
+      update = jest.fn()
+      getSubmissionData = jest.fn().mockReturnValue(submissionData)
       ;(PlacementApplicationReview as jest.Mock).mockImplementation(() => {
         return {
           applicationId: id,
           update,
+          getSubmissionData,
         }
       })
 
       placementApplicationService.submitDecision.mockResolvedValue(placementApplication)
+    })
 
-      const requestHandler = reviewController.submit()
-
-      await requestHandler(
+    it('redirects to the confirm path on success', async () => {
+      await reviewController.submit()(
         {
           ...request,
           body: {
@@ -275,9 +304,8 @@ describe('reviewController', () => {
       )
 
       expect(update).toHaveBeenCalled()
-      expect(placementApplicationService.submitDecision).toHaveBeenCalledWith('token', 'some-uuid', {
-        summaryOfChanges: 'some changes',
-      })
+      expect(getSubmissionData).toHaveBeenCalledWith(placementApplication)
+      expect(placementApplicationService.submitDecision).toHaveBeenCalledWith('token', 'some-uuid', submissionData)
       expect(response.redirect).toHaveBeenCalledWith(
         placementApplicationPaths.placementApplications.review.confirm({ id }),
       )
@@ -320,12 +348,6 @@ describe('reviewController', () => {
     })
 
     it('throws an error if submit decision returns an error', async () => {
-      ;(PlacementApplicationReview as jest.Mock).mockImplementation(() => {
-        return {
-          applicationId: id,
-          update: jest.fn(),
-        }
-      })
       const err = { status: 403 }
       placementApplicationService.submitDecision.mockImplementationOnce(() => {
         throw err
