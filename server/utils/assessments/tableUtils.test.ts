@@ -83,9 +83,6 @@ describe('tableUtils', () => {
             text: 'Tier',
           },
           sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
-          {
-            text: 'Current location',
-          },
           sortHeader<AssessmentSortField>('Days until assessment due', 'dueAt', sortBy, sortDirection, hrefPrefix),
           sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
@@ -101,9 +98,6 @@ describe('tableUtils', () => {
           sortHeader<AssessmentSortField>('CRN', 'crn', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Tier',
-          },
-          {
-            text: 'Current location',
           },
           sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
           {
@@ -145,7 +139,6 @@ describe('tableUtils', () => {
           crnCell({ crn: assessment.person.crn }),
           versionedTierCell(assessment.person),
           { text: formattedArrivalDate(assessment) },
-          { text: person.prisonName },
           daysUntilDueCell(assessment, 'assessments--index__warning'),
           { html: new AssessmentStatusTag(assessment.status, assessment.decision).html() },
         ],
@@ -158,15 +151,7 @@ describe('tableUtils', () => {
       assessment.person = restrictedPerson
 
       expect(awaitingAssessmentTableRows([assessment])).toEqual([
-        [
-          restrictedPersonCell(assessment.person),
-          emptyCell(),
-          emptyCell(),
-          emptyCell(),
-          emptyCell(),
-          emptyCell(),
-          emptyCell(),
-        ],
+        [restrictedPersonCell(assessment.person), emptyCell(), emptyCell(), emptyCell(), emptyCell(), emptyCell()],
       ])
     })
   })
@@ -187,7 +172,6 @@ describe('tableUtils', () => {
           { html: assessmentLink(assessment, person) },
           crnCell({ crn: assessment.person.crn }),
           versionedTierCell(assessment.person),
-          { text: person.prisonName },
           { text: formattedArrivalDate(assessment) },
           { text: formatDays(daysSinceReceived(assessment)) },
           { text: formatDays(daysSinceInfoRequest(assessment)) },
