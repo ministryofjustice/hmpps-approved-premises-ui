@@ -19,6 +19,7 @@ type PlacementDurationBody = {
   reason?: string
   defaultDurationDays?: number
   maxDurationDays?: number
+  isNullDuration?: boolean
 }
 
 const title = 'Placement duration and move on'
@@ -47,6 +48,7 @@ const questionsV3 = {
     'reason',
     'defaultDurationDays',
     'maxDurationDays',
+    'isNullDuration',
   ],
 })
 export default class PlacementDuration implements TasklistPage {
@@ -57,8 +59,6 @@ export default class PlacementDuration implements TasklistPage {
   departureDate: string | undefined
 
   isV3Tier: boolean
-
-  isNullDuration: boolean
 
   questions: typeof questions
 
@@ -83,6 +83,7 @@ export default class PlacementDuration implements TasklistPage {
     dataServices: DataServices,
   ): Promise<PlacementDuration> {
     const page = new PlacementDuration(body, application)
+
     await page.initializeDates(dataServices, token)
 
     return page
@@ -105,7 +106,7 @@ export default class PlacementDuration implements TasklistPage {
   response() {
     const response: PageResponse = {}
 
-    if (this.isNullDuration) {
+    if (this.body.isNullDuration) {
       response[titleV3] = titleV3NullDuration
       return response
     }
@@ -125,7 +126,7 @@ export default class PlacementDuration implements TasklistPage {
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    if (this.isNullDuration) return errors
+    if (this.body.isNullDuration) return errors
 
     if (!this.body.differentDuration) {
       errors.differentDuration = this.isV3Tier
@@ -175,8 +176,8 @@ export default class PlacementDuration implements TasklistPage {
 
     this.body.maxDurationDays = maxDurationDays
     this.body.defaultDurationDays = defaultDurationDays
-    this.isNullDuration = this.isV3Tier && defaultDurationDays === null
-    if (this.isNullDuration) {
+    this.body.isNullDuration = this.isV3Tier && defaultDurationDays === null
+    if (this.body.isNullDuration) {
       this.title = titleV3NullDuration
       this.submitLabel = 'Continue'
     }

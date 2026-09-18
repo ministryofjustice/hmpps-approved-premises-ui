@@ -191,7 +191,7 @@ describe('PlacementDuration', () => {
         const page = await PlacementDuration.initialize({}, application, 'test-token', { applicationService })
 
         expect(page.isV3Tier).toEqual(true)
-        expect(page.isNullDuration).toEqual(true)
+        expect(page.body.isNullDuration).toEqual(true)
         expect(page.title).toEqual('Placement length cannot be calculated')
         expect((page.submitLabel = 'Continue'))
       })
@@ -206,6 +206,11 @@ describe('PlacementDuration', () => {
         const page = await PlacementDuration.initialize({}, application, 'test-token', {
           applicationService,
         })
+        expect(page.errors()).toEqual({})
+      })
+
+      it('suppresses error checking on the null duration page even when the page initilizer is not called but isNullDuration is set in the body', async () => {
+        const page = new PlacementDuration({ isNullDuration: true }, application)
         expect(page.errors()).toEqual({})
       })
     })
