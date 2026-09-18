@@ -28,7 +28,30 @@ on:
         type: string
         required: false
         default: ''
-
+  workflow_call:
+    inputs:
+      tier:
+        description: Which tier should be generated?
+        type: string
+        required: true
+        default: A
+      gender:
+        description: Which gender should be generated?
+        type: string
+        required: true
+        default: Male
+      dob:
+        description: 'DOB for the generated person (YYYY-MM-DD). Leave blank for default.'
+        type: string
+        required: false
+        default: ''
+    outputs:
+      crn:
+        description: The CRN of the generated test person
+        value: ${{ jobs.setup-tier-person.outputs.crn }}
+      name:
+        description: The name of the generated test person
+        value: ${{ jobs.setup-tier-person.outputs.name }}
 permissions:
   contents: read
 
@@ -36,6 +59,9 @@ jobs:
   setup-tier-person:
     name: 'Generate CRN with the selected tier'
     runs-on: [ self-hosted, hmpps-github-actions-runner ]
+    outputs:
+      crn: ${{ steps.read-output.outputs.crn }}
+      name: ${{ steps.read-output.outputs.name }}
     env:
       TZ: Europe/London
       DELIUS_URL: https://ndelius.test.probation.service.justice.gov.uk
@@ -95,3 +121,9 @@ jobs:
           path: tier-generation-output.json
           retention-days: 5
           if-no-files-found: error
+
+      - name: Read generated CRN
+        id: read-output
+        run: |
+          echo "crn=$(jq -r '.crn' "$CRN_OUTPUT_FILE")" >> "$GITHUB_OUTPUT"
+          echo "name=$(jq -r '.name' "$CRN_OUTPUT_FILE")" >> "$GITHUB_OUTPUT"

@@ -1,0 +1,68 @@
+name: 'Create CAS1 Booking'
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate-tier-a-person:
+    name: 'Generate CRN with Tier A'
+    uses: ./.github/workflows/setup-tier-data.yml
+    with:
+      tier: A
+      gender: Male
+    secrets: inherit
+
+  run-standard-application:
+    name: 'Apply, assess, match and book (Tier A)'
+    needs: generate-tier-a-person
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: 'false'
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: '.node-version'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --no-audit
+
+      - name: Install Playwright
+        run: npx playwright install chromium
+
+      - name: Run standard application E2E test
+        env:
+          CAS1_E2E_PERSON_CRN: ${{ needs.generate-tier-a-person.outputs.crn }}
+          CAS1_E2E_PERSON_NAME: ${{ needs.generate-tier-a-person.outputs.name }}
+          CAS1_E2E_ASSESSOR_EMAIL: stuart.harrison2+test1@digital.justice.gov.uk
+          CAS1_E2E_ASSESSOR_NAME: AP_USER TEST_1
+          CAS1_E2E_ASSESSOR_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_1_PASSWORD }}
+          CAS1_E2E_ASSESSOR_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_1_USERNAME }}
+          CAS1_E2E_FUTURE_MANAGER_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_4_PASSWORD }}
+          CAS1_E2E_FUTURE_MANAGER_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_4_USERNAME }}
+        run: npm run test:e2e:ci -- e2e/tests/apply/standard-application.spec.ts
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: standard-application-playwright-report
+          path: playwright-report
+          retention-days: 5
+          if-no-files-found: ignore
+
+      - name: Upload E2E artefacts
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: standard-application-artefacts
+          path: test-results
+          retention-days: 5
+          if-no-files-found: ignore
