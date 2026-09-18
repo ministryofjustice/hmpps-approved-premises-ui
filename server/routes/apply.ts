@@ -26,6 +26,9 @@ export default function routes(controllers: Controllers, router: Router): Router
   } = controllers
 
   get(paths.applications.start.pattern, applicationsController.start(), { auditEvent: 'START_APPLICATION' })
+  get(paths.applications.startWarning.pattern, applicationsController.startWarning(), {
+    auditEvent: 'START_APPLICATION_WARNING',
+  })
   get(paths.applications.index.pattern, applicationsController.index(), { auditEvent: 'LIST_APPLICATIONS' })
   get(paths.applications.dashboard.pattern, applicationsController.dashboard(), {
     auditEvent: 'LIST_APPLICATIONS_DASHBOARD',

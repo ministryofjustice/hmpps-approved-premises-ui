@@ -113,7 +113,15 @@ export default class ApplyHelper {
   enterCrnDetails() {
     GIVEN('I visit the start page')
     const startPage = ApplyPages.StartPage.visit()
+
+    WHEN('I click start')
     startPage.startApplication()
+
+    THEN('I am on the interstitial warning page')
+    const startWarningPage = Page.verifyOnPage(ApplyPages.StartWarningPage)
+
+    WHEN('I click continue')
+    startWarningPage.clickContinue()
 
     AND('I complete the first step')
     const crnPage = new ApplyPages.EnterCRNPage()
