@@ -1,7 +1,9 @@
 import { personFactory } from '../../../server/testutils/factories'
 import ApplyHelper from '../../helpers/apply'
-import { EnterCRNPage, StartPage } from '../../pages/apply'
 import { setup } from './setup'
+import { AND, THEN, WHEN } from '../../helpers'
+import Page from '../../pages'
+import * as ApplyPages from '../../pages/apply'
 
 context('Apply - Person Search', () => {
   beforeEach(setup)
@@ -11,7 +13,7 @@ context('Apply - Person Search', () => {
     apply.setupApplicationStubs()
     apply.startApplication()
 
-    // Then the API should have created the application
+    THEN('the API should have created the application')
     cy.task('verifyApplicationCreate').then(requests => {
       expect(requests).to.have.length(1)
 
@@ -24,10 +26,10 @@ context('Apply - Person Search', () => {
       expect(body.offenceId).equal(offence.offenceId)
     })
 
-    // And I complete the basic information step
+    AND('I complete the basic information step')
     apply.completeBasicInformation()
 
-    // Then the API should have recieved the updated application
+    THEN('the API should have recieved the updated application')
     cy.task('verifyApplicationUpdate', this.application.id).then(requests => {
       const firstRequestData = JSON.parse(requests[0].body).data
       const secondRequestData = JSON.parse(requests[1].body).data
@@ -38,20 +40,22 @@ context('Apply - Person Search', () => {
   })
 
   it('shows an error message if the person is not found', function test() {
-    // And the person I am about to search for is not in Delius
+    AND('the person I am about to search for is not in Delius')
     const person = personFactory.build()
     cy.task('stubPersonNotFound', { person })
 
-    // And I have started an application
-    const startPage = StartPage.visit()
+    AND('I have started an application')
+    const startPage = ApplyPages.StartPage.visit()
     startPage.startApplication()
+    const startWarningPage = Page.verifyOnPage(ApplyPages.StartWarningPage)
+    startWarningPage.clickContinue()
 
-    // When I enter a CRN
-    const crnPage = new EnterCRNPage()
+    WHEN('I enter a CRN')
+    const crnPage = new ApplyPages.EnterCRNPage()
     crnPage.enterCrn(person.crn)
     crnPage.clickSubmit()
 
-    // Then I should see an error message
+    THEN('I should see an error message')
     crnPage.shouldShowPersonNotFoundErrorMessage(person)
   })
 })

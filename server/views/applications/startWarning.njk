@@ -1,0 +1,38 @@
+{% from "moj/components/interruption-card/macro.njk" import interruptionCard %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% extends "../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {% if not showStopPage %}
+        {{ govukBackLink({
+            text: "Back",
+            href: backLink
+        }) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% call interruptionCard({
+          heading: pageHeading,
+          primaryAction: {
+            text: "Continue",
+            href: continueLink
+          },
+          secondaryAction: {
+            text: "Go back to dashboard",
+            href: backToDashboardLink
+          }
+        }) -%}
+      <p>This is some warning content</p>
+      <ul class="govuk-list govuk-list--bullet">
+          <li>Item 1</li>
+          <li>Item 2</li>
+      </ul>
+    {%- endcall %}
+
+{% endblock %}
