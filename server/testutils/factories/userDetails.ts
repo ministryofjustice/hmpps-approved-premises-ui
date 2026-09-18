@@ -7,7 +7,7 @@ import { cruManagementAreaFactory } from './cas1ReferenceData'
 
 export default Factory.define<UserDetails>(() => ({
   id: faker.string.uuid(),
-  name: faker.internet.userName(),
+  name: faker.internet.username(),
   displayName: faker.person.fullName(),
   active: true,
   roles: [],
