@@ -19,10 +19,12 @@ type PlacementDurationBody = {
   reason?: string
   defaultDurationDays?: number
   maxDurationDays?: number
+  isNullDuration?: boolean
 }
 
 const title = 'Placement duration and move on'
 const titleV3 = 'Placement length and dates'
+const titleV3NullDuration = 'Placement length cannot be calculated'
 
 const questions = {
   differentDuration: 'Does this application require a different placement duration?',
@@ -46,6 +48,7 @@ const questionsV3 = {
     'reason',
     'defaultDurationDays',
     'maxDurationDays',
+    'isNullDuration',
   ],
 })
 export default class PlacementDuration implements TasklistPage {
@@ -60,6 +63,8 @@ export default class PlacementDuration implements TasklistPage {
   questions: typeof questions
 
   dataServices: DataServices
+
+  submitLabel: string
 
   constructor(
     public body: Partial<PlacementDurationBody>,
@@ -78,6 +83,7 @@ export default class PlacementDuration implements TasklistPage {
     dataServices: DataServices,
   ): Promise<PlacementDuration> {
     const page = new PlacementDuration(body, application)
+
     await page.initializeDates(dataServices, token)
 
     return page
@@ -100,6 +106,11 @@ export default class PlacementDuration implements TasklistPage {
   response() {
     const response: PageResponse = {}
 
+    if (this.body.isNullDuration) {
+      response[titleV3] = titleV3NullDuration
+      return response
+    }
+
     response[this.questions.differentDuration] = sentenceCase(this.body.differentDuration)
 
     if (this.body.differentDuration === 'yes') {
@@ -114,6 +125,8 @@ export default class PlacementDuration implements TasklistPage {
 
   errors() {
     const errors: TaskListErrors<this> = {}
+
+    if (this.body.isNullDuration) return errors
 
     if (!this.body.differentDuration) {
       errors.differentDuration = this.isV3Tier
@@ -160,8 +173,14 @@ export default class PlacementDuration implements TasklistPage {
       dataServices,
       token,
     )
+
     this.body.maxDurationDays = maxDurationDays
     this.body.defaultDurationDays = defaultDurationDays
+    this.body.isNullDuration = this.isV3Tier && defaultDurationDays === null
+    if (this.body.isNullDuration) {
+      this.title = titleV3NullDuration
+      this.submitLabel = 'Continue'
+    }
 
     if (arrivalDateIso) {
       const arrivalDate = DateFormats.isoToDateObj(arrivalDateIso)
