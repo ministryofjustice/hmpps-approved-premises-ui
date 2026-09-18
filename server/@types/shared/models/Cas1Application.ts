@@ -20,11 +20,6 @@ export type Cas1Application = {
     apArea?: ApArea;
     apType?: ApType;
     applicantUserDetails?: Cas1ApplicationUserDetails;
-    /**
-     * use requestedPlacementPeriod
-     * @deprecated
-     */
-    arrivalDate?: string;
     assessmentDecision?: AssessmentDecision;
     assessmentDecisionDate?: string;
     assessmentId?: string;
@@ -36,21 +31,8 @@ export type Cas1Application = {
     cruManagementArea?: Cas1CruManagementArea;
     data?: any;
     document?: any;
-    /**
-     * use requestedPlacementDuration
-     * @deprecated
-     */
-    duration?: number;
     id: string;
     isEmergencyApplication?: boolean;
-    /**
-     * @deprecated
-     */
-    isEsapApplication?: boolean;
-    /**
-     * @deprecated
-     */
-    isPipeApplication?: boolean;
     isWomensApplication?: boolean;
     licenceExpiryDate?: string;
     person: (FullPerson | RestrictedPerson | UnknownPerson);
