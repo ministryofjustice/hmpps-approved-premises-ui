@@ -16,6 +16,7 @@ jobs:
       AUTH_URL: https://sign-in-dev.hmpps.service.justice.gov.uk
       PRISON_API: https://prison-api-dev.prison.service.justice.gov.uk
       OASYS_URL: https://t2.oasys.service.justice.gov.uk/eor/f?p=100:101
+      TIER_API_URL: https://hmpps-tier-dev.hmpps.service.justice.gov.uk
       DELIUS_USERNAME: ${{ secrets.E2E_DELIUS_USERNAME }}
       DELIUS_PASSWORD: ${{ secrets.E2E_DELIUS_PASSWORD }}
       DPS_USERNAME: ${{ secrets.E2E_DPS_USERNAME }}
