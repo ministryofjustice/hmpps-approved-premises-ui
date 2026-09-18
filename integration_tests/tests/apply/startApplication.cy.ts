@@ -87,9 +87,11 @@ context('Apply', () => {
     const lao = restrictedPersonFactory.build()
     cy.task('stubFindPerson', { person: lao })
 
-    GIVEN('I visit the start page')
+    GIVEN('I visit the start page and click through to the crn entry page')
     const startPage = StartPage.visit()
     startPage.startApplication()
+    const startWarningPage = Page.verifyOnPage(ApplyPages.StartWarningPage)
+    startWarningPage.clickContinue()
 
     AND('I enter a CRN that is restricted')
     const crnPage = new EnterCRNPage()
@@ -105,9 +107,11 @@ context('Apply', () => {
     cy.task('stubFindPerson', { person: restrictedPerson })
     cy.task('stubPersonOffences', { person: restrictedPerson, offences: activeOffenceFactory.buildList(1) })
 
-    GIVEN('I visit the start page')
+    GIVEN('I visit the start page and click through to the crn entry page')
     const startPage = StartPage.visit()
     startPage.startApplication()
+    const startWarningPage = Page.verifyOnPage(ApplyPages.StartWarningPage)
+    startWarningPage.clickContinue()
 
     AND('I enter a CRN that is restricted')
     const crnPage = new EnterCRNPage()
