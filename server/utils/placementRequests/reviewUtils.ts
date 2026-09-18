@@ -11,6 +11,7 @@ import {
 import { getResponseForPage } from '../applications/getResponseForPage'
 import { embeddedSummaryListItemCompact } from '../applications/summaryListUtils/embeddedSummaryListItem'
 import { summaryListItem } from '../formUtils'
+import { DateFormats } from '../dateUtils'
 
 export const mapPageForSummaryList = (
   placementApplication: PlacementApplication,
@@ -45,7 +46,12 @@ const placementApplicationResponsesAsSummaryListItems = (placementApplication: P
   if (placementApplication.requestedPlacementPeriod) {
     const { arrival, duration } = placementApplication.requestedPlacementPeriod
     placementPeriodRows.push(summaryListItem('Arrival date', arrival, 'date'))
-    placementPeriodRows.push(summaryListItem('Placement duration', `${duration}`, 'duration'))
+    placementPeriodRows.push(
+      summaryListItem(
+        'Placement duration',
+        (duration && DateFormats.formatDuration(duration)) || 'Placement length could not be calculated',
+      ),
+    )
   }
 
   placementApplication.document['request-a-placement'].forEach((questions: Record<string, unknown>) => {
