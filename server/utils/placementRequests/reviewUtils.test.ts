@@ -129,6 +129,20 @@ describe('checkYourAnswersUtils', () => {
       expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
     })
 
+    it('uses defined text if requestedPlacementPeriod.duration is null', () => {
+      placementApp.requestedPlacementPeriod.duration = null
+      placementApp.document['request-a-placement'] = [{ 'Dates of placement': [{ 'some question': 'some answer' }] }]
+      const expected = {
+        ...card,
+        rows: [
+          summaryListItem('Arrival date', placementApp.requestedPlacementPeriod.arrival, 'date'),
+          summaryListItem('Placement duration', 'Placement length could not be calculated'),
+        ],
+      }
+
+      expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
+    })
+
     it('injects requestedPlacementPeriod details for parole cases', () => {
       placementApp.document['request-a-placement'] = [{ 'Enter the date of decision': 'dd mmm yyyy' }]
 
