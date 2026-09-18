@@ -1,4 +1,4 @@
-name: 'Create CAS Booking'
+name: 'Create CAS1 Booking'
 
 on:
   workflow_dispatch:
