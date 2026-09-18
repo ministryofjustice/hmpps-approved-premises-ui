@@ -46,12 +46,6 @@ const linkCell = (assessment: AssessmentSummary, person: FullPerson) => {
   }
 }
 
-const prisonCell = (person: FullPerson) => {
-  return {
-    text: person.prisonName,
-  }
-}
-
 const daysSinceReceivedCell = (assessment: AssessmentSummary) => {
   return {
     text: formatDays(daysSinceReceived(assessment)),
@@ -82,9 +76,6 @@ const assessmentTable = (
           sortHeader<AssessmentSortField>('CRN', 'crn', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Tier',
-          },
-          {
-            text: 'Current location',
           },
           sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
           {
@@ -119,9 +110,6 @@ const assessmentTable = (
             text: 'Tier',
           },
           sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
-          {
-            text: 'Current location',
-          },
           sortHeader<AssessmentSortField>('Days until assessment due', 'dueAt', sortBy, sortDirection, hrefPrefix),
           sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
@@ -140,14 +128,12 @@ const awaitingAssessmentTableRows = (assessments: Array<AssessmentSummary>): Arr
         crnCell({ crn: assessment.person.crn }),
         versionedTierCell(assessment.person),
         arrivalDateCell(assessment),
-        prisonCell(assessment.person),
         daysUntilDueCell(assessment, 'assessments--index__warning'),
         statusCell(assessment),
       ])
     } else {
       rows.push([
         restrictedPersonCell(assessment.person),
-        emptyCell(),
         emptyCell(),
         emptyCell(),
         emptyCell(),
@@ -192,7 +178,6 @@ const requestedFurtherInformationTableRows = (assessments: Array<AssessmentSumma
         linkCell(assessment, assessment.person),
         crnCell({ crn: assessment.person.crn }),
         versionedTierCell(assessment.person),
-        prisonCell(assessment.person),
         arrivalDateCell(assessment),
         daysSinceReceivedCell(assessment),
         daysSinceInfoRequestCell(assessment),
