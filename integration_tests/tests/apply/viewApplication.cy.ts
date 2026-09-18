@@ -58,10 +58,14 @@ context('show applications', () => {
 
   it('shows an application assessed as suitable', function test() {
     GIVEN('I have an application assessed as suitable')
-    const { application, assessment } = setup({ application: { status: 'awaitingPlacement' } })
+    const { application, applicationSummary, assessment } = setup({ application: { status: 'awaitingPlacement' } })
 
     AND('I visit the list page')
-    const listPage = ListPage.visit([], [], [{ ...application, hasRequestsForPlacement: false, isWithdrawn: false }])
+    const listPage = ListPage.visit(
+      [],
+      [],
+      [{ ...applicationSummary, hasRequestsForPlacement: false, isWithdrawn: false }],
+    )
 
     WHEN('I click on the Submitted tab')
     listPage.clickSubmittedTab()
@@ -73,7 +77,7 @@ context('show applications', () => {
     listPage.clickApplication(application)
 
     THEN('I should see the application view page')
-    const showPage = Page.verifyOnPage(ShowPage, application)
+    const showPage = Page.verifyOnPage(ShowPage, applicationSummary)
 
     AND('I should see details of the application')
     showPage.shouldShowApplication()

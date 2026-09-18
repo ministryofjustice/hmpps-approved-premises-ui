@@ -6,7 +6,6 @@ import {
   personFactory,
   placementApplicationFactory,
   requestForPlacementFactory,
-  restrictedPersonFactory,
 } from '../../../server/testutils/factories'
 import { applicationSuitableStatuses } from '../../../server/utils/applications/utils'
 import { normaliseCrn } from '../../../server/utils/normaliseCrn'
@@ -17,6 +16,7 @@ import Page from '../../pages/page'
 import { defaultUserId } from '../../mockApis/auth'
 import applicationDocument from '../../fixtures/applicationDocument.json'
 import { ShowPage } from '../../pages/apply'
+import { restrictedPersonSummaryFactory } from '../../../server/testutils/factories/person'
 
 context('All applications', () => {
   beforeEach(() => {
@@ -71,7 +71,7 @@ context('All applications', () => {
     GIVEN('there is a page of application')
     const page1Applications = cas1ApplicationSummaryFactory.buildList(1)
 
-    page1Applications[0].person = restrictedPersonFactory.build()
+    page1Applications[0].person = restrictedPersonSummaryFactory.build()
 
     cy.task('stubAllApplications', { applications: page1Applications, page: '1' })
 

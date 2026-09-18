@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express'
-import { PlacementApplicationDecisionEnvelope } from '@approved-premises/api'
+import { AssessmentStep, PlacementApplicationReview } from '../../utils/placementApplications/review'
 import { PlacementApplicationService } from '../../services'
 
 import {
@@ -9,7 +9,7 @@ import {
   generateErrorMessages,
   generateErrorSummary,
 } from '../../utils/validation'
-import { PlacementApplicationReview } from '../../utils/placementApplications/review'
+
 import assessPaths from '../../paths/assess'
 import placementApplicationPaths from '../../paths/placementApplications'
 import { placementApplicationQuestionsForReview } from '../../utils/placementRequests/reviewUtils'
@@ -17,7 +17,7 @@ import { placementApplicationQuestionsForReview } from '../../utils/placementReq
 export default class ReviewController {
   constructor(private readonly placementApplicationService: PlacementApplicationService) {}
 
-  show(step: 'review' | 'decision'): RequestHandler {
+  show(step: AssessmentStep): RequestHandler {
     return async (req: Request, res: Response) => {
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
@@ -35,12 +35,15 @@ export default class ReviewController {
             }
           : {
               pageHeading: 'Make a decision',
-              backLink: placementApplicationPaths.placementApplications.show({ id: review.applicationId }),
+              backLink: placementApplicationPaths.placementApplications.review.show({ id: review.applicationId }),
+              questions: { duration: 'Recommended placement length' },
+              hints: { duration: 'We could not calculate the placement length automatically.' },
+              noDuration: !placementApplication.requestedPlacementPeriod.duration,
             }
 
       res.render(`placement-applications/pages/review/${review.step}`, {
         reviewQuestions: placementApplicationQuestionsForReview(placementApplication),
-        pageProps,
+        page: pageProps,
         placementApplication,
         errors,
         errorSummary,
@@ -82,11 +85,14 @@ export default class ReviewController {
       try {
         review.update()
 
-        await this.placementApplicationService.submitDecision(
+        const placementApplication = await this.placementApplicationService.getPlacementApplication(
           req.user.token,
           req.params.id,
-          req.session.placementApplicationDecisions[review.applicationId] as PlacementApplicationDecisionEnvelope,
         )
+
+        const submissionData = review.getSubmissionData(placementApplication)
+
+        await this.placementApplicationService.submitDecision(req.user.token, req.params.id, submissionData)
 
         return res.redirect(
           placementApplicationPaths.placementApplications.review.confirm({ id: review.applicationId }),

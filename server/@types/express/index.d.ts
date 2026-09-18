@@ -1,5 +1,6 @@
 import type { ErrorMessages } from '@approved-premises/ui'
-import type { Cas1Application, PlacementApplicationDecisionEnvelope } from '@approved-premises/api'
+import type { Cas1Application } from '@approved-premises/api'
+import { PlacementApplicationSessionBody } from '../../utils/placementApplications/review'
 
 export default {}
 
@@ -10,7 +11,7 @@ declare module 'express-session' {
     nowInMinutes: number
     application: Cas1Application
     user: UserDetails
-    placementApplicationDecisions: Record<string, Partial<PlacementApplicationDecisionEnvelope>>
+    placementApplicationDecisions: Record<string, PlacementApplicationSessionBody>
     messages: Array<string>
     pageReferers: Record<string, string>
     multiPageFormData: MultiPageFormData

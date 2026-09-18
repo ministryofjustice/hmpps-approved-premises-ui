@@ -1,6 +1,7 @@
 import type { Request } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
-import { PlacementApplicationReview } from './review'
+import { PlacementApplicationReview, PlacementApplicationSessionBody } from './review'
+import { placementApplicationFactory } from '../../testutils/factories'
 
 describe('PlacementApplicationReview', () => {
   const id = 'some-uuid'
@@ -113,6 +114,73 @@ describe('PlacementApplicationReview', () => {
       const review = new PlacementApplicationReview(request, 'decision')
 
       expect(() => review.update()).toThrow('Invalid request body')
+    })
+  })
+
+  describe('getSubmissionData', () => {
+    const formData: PlacementApplicationSessionBody = {
+      summaryOfChanges: 'Changes summary',
+      decisionSummary: 'Decision summary',
+      decision: 'accepted',
+    }
+    it('returns submission data when the requsted placement has a duration', () => {
+      const request: DeepMocked<Request> = createMock<Request>({
+        params: { id },
+        session: createMock<Request['session']>({
+          placementApplicationDecisions: {
+            [id]: formData,
+          },
+        }),
+        body: {},
+      })
+
+      const placementApplication = placementApplicationFactory.build()
+
+      const review = new PlacementApplicationReview(request, 'decision')
+
+      expect(review.getSubmissionData(placementApplication)).toEqual({
+        acceptance: {
+          authorisedPlacementPeriod: {
+            arrival: placementApplication.requestedPlacementPeriod.arrival,
+            arrivalFlexible: placementApplication.requestedPlacementPeriod.arrivalFlexible,
+            duration: placementApplication.requestedPlacementPeriod.duration,
+          },
+        },
+        ...formData,
+      })
+    })
+
+    it('returns submission data when the requsted placement has no duration', () => {
+      const placementApplication = placementApplicationFactory.build({
+        requestedPlacementPeriod: { duration: undefined },
+      })
+
+      const request: DeepMocked<Request> = createMock<Request>({
+        params: { id },
+        session: createMock<Request['session']>({
+          placementApplicationDecisions: {
+            [id]: {
+              ...formData,
+              durationDays: '3',
+              durationWeeks: '1',
+            },
+          },
+        }),
+        body: {},
+      })
+
+      const review = new PlacementApplicationReview(request, 'decision')
+
+      expect(review.getSubmissionData(placementApplication)).toEqual({
+        acceptance: {
+          authorisedPlacementPeriod: {
+            arrival: placementApplication.requestedPlacementPeriod.arrival,
+            arrivalFlexible: placementApplication.requestedPlacementPeriod.arrivalFlexible,
+            duration: 10,
+          },
+        },
+        ...formData,
+      })
     })
   })
 })

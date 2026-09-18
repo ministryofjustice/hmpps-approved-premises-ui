@@ -2,8 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type DatePeriod = {
-    endDate: string;
+export type Cas1WithdrawableDatePeriodDto = {
+    endDate?: string;
     startDate: string;
 };
 

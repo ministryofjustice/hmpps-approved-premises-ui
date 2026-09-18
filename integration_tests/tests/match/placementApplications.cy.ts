@@ -302,16 +302,13 @@ context('Placement Applications', () => {
   })
 
   describe('Review a placement application', () => {
-    it('allows me to review a placement application', () => {
-      GIVEN('there is a placement request task and placement application in the database')
-      const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
+    const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
 
-      const document = {
-        'request-a-placement': [{ 'test question 1': 'test answer 1' }, { 'test question 2': 'test answer 2' }],
-      }
-      const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
-      cy.task('stubPlacementApplication', placementApplication)
+    const document = {
+      'request-a-placement': [{ 'test question 1': 'test answer 1' }, { 'test question 2': 'test answer 2' }],
+    }
 
+    beforeEach(() => {
       cy.task('stubGetAllTasks', {
         types: ['PlacementApplication'],
         tasks: placementApplicationTasks,
@@ -320,6 +317,12 @@ context('Placement Applications', () => {
         sortBy: null,
         sortDirection: null,
       })
+    })
+
+    it('allows me to review a placement application', () => {
+      GIVEN('there is a placement request task and placement application in the database')
+      const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
+      cy.task('stubPlacementApplication', placementApplication)
 
       WHEN('I visit the placementRequests dashboard')
       const listPage = ListPage.visit('requests_for_placement')
@@ -332,20 +335,30 @@ context('Placement Applications', () => {
       const page = Page.verifyOnPage(ReviewApplicationPage)
       page.checkPageContents(placementApplication)
 
-      WHEN('I complete the form')
+      WHEN('I submit the empty form')
+      page.clickSubmit()
+
+      THEN('I should see errors')
+      page.shouldShowErrorMessagesForFields(['summaryOfChanges'], {
+        summaryOfChanges: 'You must provide a summary of the changes',
+      })
+
+      WHEN('I complete the form and submit')
       page.completeForm()
       page.clickSubmit()
 
       THEN('I should be taken to the decision page')
 
       const decisionPage = Page.verifyOnPage(ReviewApplicationDecisionPage)
+      WHEN('I submit the empty form')
+      decisionPage.clickSubmit()
 
-      WHEN('I complete the form')
+      THEN('the page should render with errors')
+      decisionPage.checkErrors()
 
+      WHEN('I complete the form and submit')
+      decisionPage.completeForm()
       cy.task('stubSubmitPlacementApplicationDecision', placementApplication)
-
-      decisionPage.checkRadioByNameAndValue('decision', 'accepted')
-      decisionPage.getTextInputByIdAndEnterDetails('decisionSummary', 'some summary notes')
       decisionPage.clickSubmit()
 
       THEN('I should be taken to the confirm submission page')
@@ -355,90 +368,63 @@ context('Placement Applications', () => {
 
         const body = JSON.parse(requests[0].body)
 
-        expect(body).to.contain.keys('decision', 'decisionSummary', 'summaryOfChanges')
+        expect(body).to.contain.keys('decision', 'decisionSummary', 'summaryOfChanges', 'acceptance')
+        expect(body.acceptance.authorisedPlacementPeriod.duration).to.equal(
+          placementApplication.requestedPlacementPeriod.duration,
+        )
       })
 
       Page.verifyOnPage(ReviewApplicationConfirmPage)
     })
 
-    it('renders with errors if I do not complete the summary of changes in the review', () => {
+    it('forces me to enter a placement duration if no duration is in the requested period', () => {
       GIVEN('there is a placement request task and placement application in the database')
-      const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
-
-      const document = {
-        'request-a-placement': [{ 'test question 1': 'test answer 1' }, { 'test question 2': 'test answer 2' }],
-      }
-      const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
-      cy.task('stubPlacementApplication', placementApplication)
-
-      cy.task('stubGetAllTasks', {
-        type: 'PlacementApplication',
-        tasks: placementApplicationTasks,
-        allocatedToUserId: defaultUserId,
-        allocatedFilter: 'allocated',
-        sortBy: null,
-        sortDirection: null,
+      const placementApplication = placementApplicationFactory.build({
+        id: placementApplicationTasks[0].id,
+        document,
+        requestedPlacementPeriod: { duration: undefined },
       })
+      cy.task('stubPlacementApplication', placementApplication)
 
       WHEN('I visit the placementRequests dashboard')
       const listPage = ListPage.visit('requests_for_placement')
+      listPage.clickRequestsForPlacement()
 
       AND('I click on the first name')
       listPage.clickPersonName(placementApplicationTasks[0].personName)
 
       THEN('I should be taken to the review applications page')
       const page = Page.verifyOnPage(ReviewApplicationPage)
+      page.checkPageContents(placementApplication)
 
-      WHEN('I click submit without entering text')
-      page.clickSubmit()
-
-      THEN('the page should render with errors')
-      page.shouldShowErrorMessagesForFields(['summaryOfChanges'], {
-        summaryOfChanges: 'You must provide a summary of the changes',
-      })
-    })
-
-    it('renders with errors if I do not complete the decision summary in the review', () => {
-      GIVEN('there is a placement request task and placement application in the database')
-      const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
-
-      const document = {
-        'request-a-placement': [{ 'test question 1': 'test answer 1' }, { 'test question 2': 'test answer 2' }],
-      }
-      const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
-      cy.task('stubPlacementApplication', placementApplication)
-      cy.task('stubGetAllTasks', {
-        type: 'PlacementApplication',
-        tasks: placementApplicationTasks,
-        allocatedToUserId: defaultUserId,
-        allocatedFilter: 'allocated',
-        sortBy: null,
-        sortDirection: null,
-      })
-
-      WHEN('I visit the placementRequests dashboard')
-      const listPage = ListPage.visit('requests_for_placement')
-
-      AND('I click on the first name')
-      listPage.clickPersonName(placementApplicationTasks[0].personName)
-
-      THEN('I should be taken to the review applications page')
-      const page = Page.verifyOnPage(ReviewApplicationPage)
-
-      WHEN('I complete the form')
+      WHEN('I complete the form and submit')
       page.completeForm()
+      page.clickSubmit()
 
       THEN('I should be taken to the decision page')
       const decisionPage = Page.verifyOnPage(ReviewApplicationDecisionPage)
 
-      WHEN('I click submit')
+      WHEN('I accept the placement, provide a summary and submit')
+      decisionPage.completeForm()
       decisionPage.clickSubmit()
 
-      THEN('the page should render with errors')
-      decisionPage.shouldShowErrorMessagesForFields(['decision', 'decisionSummary'], {
-        decision: 'You must provide a decision',
-        decisionSummary: 'You must provide a decision summary',
+      THEN('I see an error on the placement length')
+      decisionPage.checkDurationError()
+
+      WHEN('I complete the duration fields and submit')
+      decisionPage.completeDuration()
+      cy.task('stubSubmitPlacementApplicationDecision', placementApplication)
+      decisionPage.clickSubmit()
+
+      THEN('I should be taken to the confirm submission page')
+      cy.task('verifyPlacementApplicationReviewSubmit', placementApplication.id).then(requests => {
+        const body = JSON.parse(requests[0].body)
+
+        expect(body).to.contain.keys('decision', 'decisionSummary', 'summaryOfChanges', 'acceptance')
+        expect(body.acceptance.authorisedPlacementPeriod.duration).to.equal(17)
       })
+
+      Page.verifyOnPage(ReviewApplicationConfirmPage)
     })
   })
 
