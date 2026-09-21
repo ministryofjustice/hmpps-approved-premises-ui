@@ -20,11 +20,6 @@ export type SubmitApprovedPremisesApplication = {
     caseManagerIsNotApplicant?: boolean;
     caseManagerUserDetails?: Cas1ApplicationUserDetails;
     /**
-     * Use requestedPlacementDuration instead, which a better named version of this field
-     * @deprecated
-     */
-    duration?: number;
-    /**
      * noticeType should be used to indicate if this an emergency application
      * @deprecated
      */
@@ -40,7 +35,7 @@ export type SubmitApprovedPremisesApplication = {
     reasonForShortNoticeOther?: string;
     releaseType: ReleaseTypeOption;
     /**
-     * The placement duration requested by the applicant, which may be the default duration if not overridden. This will be provided even if requestedPlacementPeriod is null. Required on submission. nullable until 'duration' is removed
+     * The placement duration requested by the applicant, which may be the default duration if not overridden, which itself maybe null. This will be provided even if requestedPlacementPeriod is null
      */
     requestedPlacementDuration?: number;
     /**
