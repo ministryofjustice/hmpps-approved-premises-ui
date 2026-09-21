@@ -105,6 +105,23 @@ describe('applicationsController', () => {
     })
   })
 
+  describe('startWarning', () => {
+    it('renders the warning page that follows the start page', () => {
+      applicationsController.startWarning()(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/startWarning', {
+        backLink: '/applications/start',
+        backToDashboardLink: '/applications',
+        continueLink: '/applications/new',
+        pageHeading: 'Applications to Approved Premises based solely on an accommodation need will be rejected',
+        cas2Link:
+          'https://community-accommodation-tier-2-bail-dev.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start?referred_by=cas1_warning',
+        cas3Link:
+          'https://transitional-accommodation-dev.hmpps.service.justice.gov.uk/referrals/start?referred_by=cas1_warning',
+      })
+    })
+  })
+
   describe('dashboard', () => {
     it('calls the dashboard service with the page number and renders the results', async () => {
       const searchOptions = createMock<ApplicationDashboardSearchOptions>()
