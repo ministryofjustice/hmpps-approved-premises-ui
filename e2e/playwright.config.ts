@@ -30,7 +30,7 @@ export default defineConfig<TestOptions>({
       name: 'dev',
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: 'https://approved-premises-dev.hmpps.service.justice.gov.uk',
+        baseURL: 'https://approved-premises-test.hmpps.service.justice.gov.uk',
       },
       dependencies: ['setup-dev'],
     },

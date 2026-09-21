@@ -23,4 +23,9 @@ export class Cas2InterstitialPage extends BasePage {
   async clickApplyForCas2() {
     await this.page.getByRole('button', { name: 'Apply for Short-term accommodation (CAS2)' }).click()
   }
+
+  async shouldBeRedirectedToCas2() {
+    await expect(this.page).toHaveURL(/referred_by=cas1_interstitial/)
+    await expect(this.page.getByRole('heading', { name: 'Apply for short-term accommodation (CAS2)' })).toBeVisible()
+  }
 }
