@@ -181,7 +181,6 @@ describeClient('ApplicationClient', provider => {
         sentenceType: 'life' as const,
         type: 'CAS1',
         requestedPlacementPeriod: undefined,
-        duration: 25,
       }
 
       await provider.addInteraction({
