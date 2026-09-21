@@ -3,6 +3,11 @@ name: 'Create CAS1 Booking'
 on:
   workflow_dispatch:
     inputs: 
+      crn: 
+        description: 'CRN (leave blank to generate a new person)'
+        type: string
+        required: false
+        default: ''
       stop-at-stage:
         description: 'Stage to stop the application at'
         type: choice
@@ -20,6 +25,7 @@ permissions:
 jobs:
   generate-tier-a-person:
     name: 'Generate CRN with Tier A'
+    if: ${{ inputs.crn == '' }}
     uses: ./.github/workflows/setup-tier-data.yml
     with:
       tier: A
@@ -29,6 +35,7 @@ jobs:
   run-standard-application:
     name: 'Apply, assess, match and book (Tier A)'
     needs: generate-tier-a-person
+    if: ${{ !cancelled() && (needs.generate-tier-a-person.result == 'success' || inputs.crn != '') }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -50,7 +57,7 @@ jobs:
 
       - name: Run standard application E2E test
         env:
-          CAS1_E2E_PERSON_CRN: ${{ needs.generate-tier-a-person.outputs.crn }}
+          CAS1_E2E_PERSON_CRN: ${{ inputs.crn || needs.generate-tier-a-person.outputs.crn }}
           CAS1_E2E_PERSON_NAME: ${{ needs.generate-tier-a-person.outputs.name }}
           CAS1_E2E_ASSESSOR_EMAIL: stuart.harrison2+test1@digital.justice.gov.uk
           CAS1_E2E_ASSESSOR_NAME: AP_USER TEST_1
