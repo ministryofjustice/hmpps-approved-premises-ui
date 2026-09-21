@@ -37,6 +37,7 @@ test('generate one persistent person for requested tier', async ({ browser }) =>
   const result = {
     requestedTier,
     requestedGender,
+    name: person.name,
     crn: person.crn,
     nomisId: person.nomisId,
     assessmentCreated: false,
