@@ -114,7 +114,7 @@ export default class ApplicationsController {
   startWarning(): RequestHandler {
     return async (req: Request, res: Response) => {
       return res.render('applications/startWarning', {
-        pageHeading: 'Applications to Approved Premises based solely on an accommodation need will be rejected',
+        pageHeading: 'Applications for Approved Premises based on accommodation need only will be rejected',
         continueLink: paths.applications.new({}),
         backLink: paths.applications.start({}),
         backToDashboardLink: paths.applications.index({}),

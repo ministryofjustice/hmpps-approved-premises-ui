@@ -113,7 +113,7 @@ describe('applicationsController', () => {
         backLink: '/applications/start',
         backToDashboardLink: '/applications',
         continueLink: '/applications/new',
-        pageHeading: 'Applications to Approved Premises based solely on an accommodation need will be rejected',
+        pageHeading: 'Applications for Approved Premises based on accommodation need only will be rejected',
         cas2Link:
           'https://community-accommodation-tier-2-bail-dev.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start?referred_by=cas1_warning',
         cas3Link:
