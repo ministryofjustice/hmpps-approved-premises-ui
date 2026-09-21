@@ -6,6 +6,10 @@ import { signIn } from '../../steps/signIn'
 import { matchAndBookApplication } from '../../steps/match'
 import { signOut } from '../../steps/signOut'
 
+function stopAtStage(stage: string): boolean {
+  return process.env.STOP_AT_STAGE === stage
+}
+
 test('Apply, assess, match and book an application for an Approved Premises with a release date', async ({
   page,
   assessor,
@@ -20,7 +24,12 @@ test('Apply, assess, match and book an application for an Approved Premises with
     true,
   )
 
+  if (stopAtStage('application-created')) return
+
   const { datesOfPlacement, duration } = await assessApplication({ page, assessor, person }, id)
+
+  if (stopAtStage('application-assessed')) return
+
   const { premisesName, newDatesOfPlacement } = await matchAndBookApplication({
     person,
     applicationId: id,
@@ -32,6 +41,9 @@ test('Apply, assess, match and book an application for an Approved Premises with
     duration,
     preferredPostcode,
   })
+
+  if (stopAtStage('application-matched-and-booked')) return
+
   await signOut(page)
   await signIn(page, futureManager)
   await manageBooking({
@@ -39,4 +51,6 @@ test('Apply, assess, match and book an application for an Approved Premises with
     premisesName,
     datesOfPlacement: newDatesOfPlacement,
   })
+
+  if (stopAtStage('booking-managed')) return
 })
