@@ -433,6 +433,20 @@ const appealDecisionRadioItems = (selectedOption: AppealDecision | undefined) =>
 const getApplicationTierValue = (application: Cas1Application) =>
   getVersionedTierValue(application.person, application.risks?.tier?.value)
 
+const externalLinks = (referredBy: string) => {
+  let env = {
+    test: '-test',
+    preprod: '-preprod',
+    prod: '',
+  }[config.environment]
+  env = env === undefined ? '-dev' : env
+
+  return {
+    cas2Link: `https://community-accommodation-tier-2-bail${env}.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start?referred_by=${referredBy}`,
+    cas3Link: `https://transitional-accommodation${env}.hmpps.service.justice.gov.uk/referrals/start?referred_by=${referredBy}`,
+  }
+}
+
 export {
   applicationTableRows,
   dashboardTableRows,
@@ -449,4 +463,5 @@ export {
   appealDecisionRadioItems,
   applicationSuitableStatuses,
   getApplicationTierValue,
+  externalLinks,
 }
