@@ -1,6 +1,7 @@
-/* eslint-disable no-console */
+/* eslint-disable import/no-extraneous-dependencies, no-console */
 import { writeFileSync } from 'node:fs'
 import { test } from '@playwright/test'
+import { releasePrisoner } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/dps/prison-api'
 import { createOasysAssessment } from '../steps/oasys'
 import { createTestPerson, isAssessedTier, PersonLifecycle } from '../setup/person'
 import { verifyGeneratedTier } from '../setup/tier-verification'
@@ -33,32 +34,49 @@ test('generate one persistent person for requested tier', async ({ browser }) =>
   const context = await browser.newContext()
   const page = await context.newPage()
   const lifecycle: PersonLifecycle = { booked: false }
-  const person = await createTestPerson(page, lifecycle, requestedTier, requestedGender, dobOverride)
-  const result = {
-    requestedTier,
-    requestedGender,
-    name: person.name,
-    crn: person.crn,
-    nomisId: person.nomisId,
-    assessmentCreated: false,
-    verifiedTier: null as string | null,
-    provisional: null as boolean | null,
+
+  try {
+    const person = await createTestPerson(page, lifecycle, requestedTier, requestedGender, dobOverride)
+    const result = {
+      requestedTier,
+      requestedGender,
+      name: person.name,
+      crn: person.crn,
+      nomisId: person.nomisId,
+      assessmentCreated: false,
+      verifiedTier: null as string | null,
+      provisional: null as boolean | null,
+    }
+
+    if (isAssessedTier(requestedTier)) {
+      await createOasysAssessment(context, person, requestedTier)
+      result.assessmentCreated = true
+    }
+
+    console.log(`Verifying calculated tier for CRN ${person.crn} matches requested tier ${requestedTier}...`)
+    const verification = await verifyGeneratedTier(person.crn, requestedTier)
+    result.verifiedTier = verification?.tierScore ?? null
+    result.provisional = verification?.provisional ?? null
+
+    if (outputFile) {
+      writeFileSync(outputFile, JSON.stringify(result, null, 2))
+    }
+
+    console.log(`Generated person: ${JSON.stringify(result)}`)
+  } catch (error) {
+    if (lifecycle.booked && lifecycle.nomisId) {
+      console.log(
+        `Person generation failed; releasing prisoner ${lifecycle.nomisId}...`,
+      )
+      try {
+        await releasePrisoner(lifecycle.nomisId)
+        console.log(`Released prisoner ${lifecycle.nomisId}`)
+      } catch (releaseError) {
+        console.error(`Failed to release prisoner ${lifecycle.nomisId}:`, releaseError)
+      }
+    }
+    throw error
+  } finally {
+    await context.close()
   }
-
-  if (isAssessedTier(requestedTier)) {
-    await createOasysAssessment(context, person, requestedTier)
-    result.assessmentCreated = true
-  }
-
-  console.log(`Verifying calculated tier for CRN ${person.crn} matches requested tier ${requestedTier}...`)
-  const verification = await verifyGeneratedTier(person.crn, requestedTier)
-  result.verifiedTier = verification?.tierScore ?? null
-  result.provisional = verification?.provisional ?? null
-
-  if (outputFile) {
-    writeFileSync(outputFile, JSON.stringify(result, null, 2))
-  }
-
-  console.log(`Generated person: ${JSON.stringify(result)}`)
-  await context.close()
 })

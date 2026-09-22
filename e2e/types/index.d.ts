@@ -61,6 +61,7 @@ declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/d
 
 declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/dps/prison-api.mjs' {
   export const createAndBookPrisoner: (...args: Array<any>) => Promise<any>
+  export const releasePrisoner: (...args: Array<any>) => Promise<any>
 }
 
 declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/find-offender.mjs' {
@@ -161,6 +162,7 @@ declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/d
 
 declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/dps/prison-api' {
   export const createAndBookPrisoner: (...args: Array<any>) => Promise<any>
+  export const releasePrisoner: (...args: Array<any>) => Promise<any>
 }
 
 declare module '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/auth/get-token' {
