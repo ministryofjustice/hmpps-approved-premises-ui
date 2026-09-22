@@ -27,6 +27,7 @@ import {
   applicationStatusSelectOptions,
   getApplicationShowPageTabs,
   firstPageOfApplicationJourney,
+  externalLinks,
 } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { isFullPerson } from '../../utils/personUtils'
@@ -106,6 +107,18 @@ export default class ApplicationsController {
     return (_req: Request, res: Response) => {
       res.render('applications/start', {
         pageHeading: tasklistPageHeading,
+      })
+    }
+  }
+
+  startWarning(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      return res.render('applications/startWarning', {
+        pageHeading: 'Applications for Approved Premises based on accommodation need only will be rejected',
+        continueLink: paths.applications.new({}),
+        backLink: paths.applications.start({}),
+        backToDashboardLink: paths.applications.index({}),
+        ...externalLinks('cas1_warning'),
       })
     }
   }
@@ -284,18 +297,10 @@ export default class ApplicationsController {
     return async (req: Request, res: Response) => {
       const { crn } = req.params
 
-      let env = {
-        test: '-test',
-        preprod: '-preprod',
-        prod: '',
-      }[config.environment]
-      env = env === undefined ? '-dev' : env
-
-      const cas2Link = `https://community-accommodation-tier-2-bail${env}.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start?referred_by=cas1_interstitial`
       return res.render('applications/people/cas2Option', {
         continuePath: paths.applications.people.selectOffence({ crn }),
         backLink: paths.applications.people.eligibilityCheck({ crn }),
-        cas2Link,
+        cas2Link: externalLinks('cas1_interstitial').cas2Link,
       })
     }
   }

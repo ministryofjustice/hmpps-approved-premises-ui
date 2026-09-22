@@ -42,6 +42,7 @@ import {
   dashboardTableHeader,
   dashboardTableRows,
   eventTypeTranslations,
+  externalLinks,
   firstPageOfApplicationJourney,
   getApplicationSummary,
   getApplicationTierValue,
@@ -977,6 +978,35 @@ describe('utils', () => {
       expect(getApplicationTierValue(application)).toEqual('D')
 
       expect(personUtils.getVersionedTierValue).toHaveBeenCalledWith(application.person, application.risks.tier.value)
+    })
+  })
+
+  describe('externalLinks', () => {
+    const oldEnv = config.environment
+    afterAll(() => {
+      config.environment = oldEnv
+    })
+
+    it('gets links to cas2 and cas3 with attached referrer', () => {
+      config.environment = 'test'
+
+      expect(externalLinks('referrer')).toEqual({
+        cas2Link:
+          'https://community-accommodation-tier-2-bail-test.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start?referred_by=referrer',
+        cas3Link:
+          'https://transitional-accommodation-test.hmpps.service.justice.gov.uk/referrals/start?referred_by=referrer',
+      })
+    })
+
+    it('gets links to cas2 and cas3 for production environment', () => {
+      config.environment = 'prod'
+
+      expect(externalLinks('prod-referrer')).toEqual({
+        cas2Link:
+          'https://community-accommodation-tier-2-bail.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start?referred_by=prod-referrer',
+        cas3Link:
+          'https://transitional-accommodation.hmpps.service.justice.gov.uk/referrals/start?referred_by=prod-referrer',
+      })
     })
   })
 })

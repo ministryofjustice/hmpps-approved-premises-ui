@@ -1,0 +1,39 @@
+{% from "moj/components/interruption-card/macro.njk" import interruptionCard %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% extends "../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {% if not showStopPage %}
+        {{ govukBackLink({
+            text: "Back",
+            href: backLink
+        }) }}
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {% call interruptionCard({
+          heading: pageHeading,
+          primaryAction: {
+            text: "Continue",
+            href: continueLink
+          },
+          secondaryAction: {
+            text: "Go back to dashboard",
+            href: backToDashboardLink
+          }
+        }) -%}
+      <p>You can also apply for:</p>
+      <ul class="govuk-list govuk-list--bullet">
+          <li><a class="govuk-link govuk-link--inverse" href="{{ cas2Link }}">Short-term accommodation (CAS2)</a></li>
+          <li><a class="govuk-link govuk-link--inverse" href="{{ cas3Link }}">Transitional accommodation (CAS3)</a></li>
+      </ul>
+      <p>For more guidance on CAS eligibility, see EQuiP.</p>
+    {%- endcall %}
+
+{% endblock %}

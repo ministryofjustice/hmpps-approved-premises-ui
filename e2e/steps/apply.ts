@@ -18,6 +18,7 @@ import { ShowPage } from '../pages/apply/showPage'
 import { assessmentShouldHaveCorrectDeadlineAndAllocatedUser } from './workflow'
 import { SelectIndexOffencePage } from '../pages/apply/selectIndexOffencePage'
 import { visitDashboard } from './signIn'
+import { StartWarningPage } from '../pages/apply/startWarningPage'
 
 export const startAnApplication = async (dashboard: DashboardPage, page: Page) => {
   await dashboard.clickApply()
@@ -27,6 +28,9 @@ export const startAnApplication = async (dashboard: DashboardPage, page: Page) =
 
   const startPage = new StartPage(page)
   await startPage.createApplication()
+
+  const startWarningPage = new StartWarningPage(page)
+  startWarningPage.clickContinue()
 }
 
 export const enterAndConfirmCrn = async (page: Page, crn: string) => {
@@ -415,8 +419,14 @@ export const completeMoveOnTask = async (page: Page) => {
   const taskListPage = new TasklistPage(page)
   await taskListPage.clickTask('Add move on information')
 
-  const placementDurationPage = await ApplyPage.initialize(page, 'Placement duration and move on')
-  await placementDurationPage.checkRadio('No')
+  const pageHeading = await page.locator('h1').first().innerText()
+  const placementDurationPage = await ApplyPage.initialize(page, pageHeading)
+  if (pageHeading === 'Placement length and dates') {
+    await placementDurationPage.checkRadio('No, apply for 16 weeks')
+  } else {
+    // TODO: remove this once tierV3 is live
+    await placementDurationPage.checkRadio('No')
+  }
   await placementDurationPage.clickSave()
 
   const moveOnPage = await ApplyPage.initialize(page, 'Placement duration and move on')

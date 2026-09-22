@@ -59,6 +59,7 @@ import SentenceTypePage from './sentenceType'
 import ShowPage from './showPage'
 import SituationPage from './situationPage'
 import StartPage from './startPage'
+import StartWarningPage from './startWarningPage'
 import SubmissionConfirmation from './submissionConfirmation'
 import SupportingInformationPage from './supportingInformation'
 import TaskListPage from './taskListPage'
@@ -137,6 +138,7 @@ export {
   ShowPage,
   SituationPage,
   StartPage,
+  StartWarningPage,
   SubmissionConfirmation,
   SupportingInformationPage,
   TaskListPage,
