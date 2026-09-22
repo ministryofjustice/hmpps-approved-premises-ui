@@ -71,7 +71,7 @@ export const assertCas2InterstitialPageShown = async (page: Page, crn: string) =
   const cas2InterstitialHeading = page.getByRole('heading', {
     name: /may be eligible for Short-term accommodation \(CAS2\)/i,
   })
-  await cas2InterstitialHeading.isVisible()
+  await expect(cas2InterstitialHeading).toBeVisible()
   await cas2InterstitialPage.clickContinue()
   await cas2InterstitialPage.shouldShowInformationHeading()
 }
@@ -476,11 +476,7 @@ export const shouldSeeConfirmationPage = async (page: Page) => {
   await confirmationPage.shouldShowLinkToSurvey()
 }
 
-export const startIneligibleApplication = async ({ page, person, }: {
-    page: Page
-    person: TestOptions['person']
-  },
-) => {
+export const startIneligibleApplication = async ({ page, person }: { page: Page; person: TestOptions['person'] }) => {
   // Given I visit the Dashboard
   const dashboard = await visitDashboard(page)
 
