@@ -12,6 +12,7 @@ export type Cas1ApplicationTimeline = {
     id: string;
     isOfflineApplication: boolean;
     status?: Cas1ApplicationStatus;
+    submittedAt?: string;
     timelineEvents: Array<Cas1TimelineEvent>;
 };
 
