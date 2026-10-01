@@ -730,8 +730,6 @@ describe('applicationsController', () => {
     })
 
     it('should render the CAS2 option page', async () => {
-      config.environment = 'dev'
-
       await applicationsController.cas2Option()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('applications/people/cas2Option', {
@@ -742,16 +740,15 @@ describe('applicationsController', () => {
       })
     })
 
-    it('should use the production CAS2 link in the production environment', async () => {
-      config.environment = 'prod'
+    it('should use the CAS2 link from the environment', async () => {
+      config.paths.cas2StartLink = 'cas2-link'
 
       await applicationsController.cas2Option()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
         'applications/people/cas2Option',
         expect.objectContaining({
-          cas2Link:
-            'https://community-accommodation-tier-2-bail.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start?referred_by=cas1_interstitial',
+          cas2Link: 'cas2-link?referred_by=cas1_interstitial',
         }),
       )
     })
