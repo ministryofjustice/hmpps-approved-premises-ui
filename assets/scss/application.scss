@@ -1,7 +1,6 @@
-@use "govuk-frontend/dist/govuk/index" with (
-  $govuk-global-styles: true
-);
 @use "@ministryofjustice/frontend/moj/all";
+@use "govuk-frontend/dist/govuk/index";
+@use "govuk-frontend/dist/govuk/core/global-styles.mixin" as govuk-global-styles;
 
 @use './components/header-bar';
 @use './components/identity-bar';
@@ -36,3 +35,5 @@
 @use './pages/dashboard-index';
 
 @use 'local';
+
+@include govuk-global-styles.govuk-global-styles;
