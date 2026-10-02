@@ -215,6 +215,7 @@ export type { MigrationJobType } from './models/MigrationJobType';
 export type { ModelScope } from './models/ModelScope';
 export type { MoveOnCategory } from './models/MoveOnCategory';
 export type { MultipleExclusionZoneAdditionalCondition } from './models/MultipleExclusionZoneAdditionalCondition';
+export type { MultipleUploadAdditionalCondition } from './models/MultipleUploadAdditionalCondition';
 export type { Name } from './models/Name';
 export type { NamedId } from './models/NamedId';
 export type { NewAppeal } from './models/NewAppeal';
