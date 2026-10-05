@@ -9,7 +9,6 @@ const person = {
 }
 
 test('CAS2 interstitial page shown for ineligible person', async ({ page, assessor }) => {
-  test.skip(true, 'CAS2 interstitial page test is skipped until V3 tiers are enabled in dev')
   await signIn(page, assessor)
   await startIneligibleApplication({ page, person })
 })
