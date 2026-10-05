@@ -4,8 +4,8 @@ import { test as base } from '@playwright/test'
 export const test = base.extend<TestOptions>({
   person: [
     {
-      name: process.env.CAS1_E2E_PERSON_NAME || 'Noe Smith',
-      crn: process.env.CAS1_E2E_PERSON_CRN || 'Y058851',
+      name: process.env.CAS1_E2E_PERSON_NAME || 'Ben Davies',
+      crn: process.env.CAS1_E2E_PERSON_CRN || 'X371199',
       tier: process.env.CAS1_E2E_PERSON_TIER || 'A',
     },
     { option: true },
