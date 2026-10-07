@@ -3,6 +3,7 @@ import hmppsConfig from '@ministryofjustice/eslint-config-hmpps'
 export default [
   ...hmppsConfig({
     extraIgnorePaths: ['public', 'assets', 'cypress.json', 'reporter-config.json', 'playwright-report', 'esbuild'],
+    extraPathsAllowingDevDependencies: ['e2e/**/*.ts'],
   }),
   {
     name: 'CAS1-specific rules',

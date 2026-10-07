@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { expect, Page } from '@playwright/test'
 import { clickCreateOffenderButton } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/cms-offender-details'
 import { offenderSearchWithCRN } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/offender-search'
