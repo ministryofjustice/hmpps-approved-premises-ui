@@ -63,6 +63,8 @@ test('generate one persistent person for requested tier', async ({ browser }) =>
     }
 
     console.log(`Generated person: ${JSON.stringify(result)}`)
+    await releasePrisoner(lifecycle.nomisId)
+    console.log(`Released prisoner ${lifecycle.nomisId}`)
   } catch (error) {
     if (lifecycle.booked && lifecycle.nomisId) {
       console.log(
