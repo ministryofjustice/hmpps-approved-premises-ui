@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies, no-console */
+/* eslint-disable no-console */
 import { BrowserContext, Page, expect } from '@playwright/test'
 import { signAndlock } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/sign-and-lock'
 import { createLayer3AssessmentWithoutNeeds } from './layer3-assessment/create-layer3-assessment/create-layer3-without-needs'

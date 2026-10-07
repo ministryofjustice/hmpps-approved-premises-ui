@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { Page } from '@playwright/test'
 import {
   login as loginOasys,
