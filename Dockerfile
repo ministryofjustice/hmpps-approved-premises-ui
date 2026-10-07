@@ -37,7 +37,7 @@ RUN export BUILD_NUMBER=${BUILD_NUMBER} && \
 RUN npm prune --no-audit --no-fund --omit=dev
 
 # Stage: copy production assets and dependencies
-FROM ghcr.io/ministryofjustice/hmpps-node:24-alpine
+FROM ghcr.io/ministryofjustice/hmpps-node:24-alpine-runtime
 
 ARG BUILD_NUMBER
 ARG GIT_REF
