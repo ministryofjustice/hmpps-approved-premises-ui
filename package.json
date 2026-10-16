@@ -108,7 +108,7 @@
   },
   "dependencies": {
     "@microsoft/applicationinsights-web": "^3.3.8",
-    "@ministryofjustice/frontend": "^11.1.0",
+    "@ministryofjustice/frontend": "^8.0.0",
     "@ministryofjustice/hmpps-audit-client": "^1.1.1",
     "@ministryofjustice/hmpps-npm-script-allowlist": "0.0.6",
     "@playwright/test": "^1.56.1",
@@ -211,6 +211,9 @@
     "typescript": "^5.8.3"
   },
   "overrides": {
+    "@ministryofjustice/frontend": {
+      "moment": "2.31.0"
+    },
     "diff": "^8.0.3",
     "serialize-javascript": "^7.0.5",
     "proxy-addr": "^2.0.8"
