@@ -4,8 +4,6 @@ import { DateFormats } from '../../dateUtils'
 import { linkTo } from '../../utils'
 import matchPaths from '../../../paths/match'
 import managePaths from '../../../paths/manage'
-import {Cas1WithdrawableDatePeriodDto} from "@approved-premises/api";
-import {faker} from "@faker-js/faker/locale/en_GB";
 
 describe('withdrawableTypeRadioOptions', () => {
   const applicationRadioItem = {
@@ -63,26 +61,30 @@ describe('withdrawableTypeRadioOptions', () => {
   describe('withdrawableRadioOptions', () => {
     const paWithdrawable = withdrawableFactory.build({
       type: 'placement_application',
-      dates:  [{
-        startDate: '2019-10-18',
-        endDate: '2019-10-20',
-      }]
+      dates: [
+        {
+          startDate: '2019-10-18',
+          endDate: null,
+        },
+      ],
     })
     const prWithdrawable = withdrawableFactory.build({
       type: 'placement_request',
-      dates:  [{
-        startDate: '2019-09-18',
-        endDate: '2019-09-20',
-      },
+      dates: [
+        {
+          startDate: '2019-09-18',
+          endDate: '2019-09-20',
+        },
         {
           startDate: '2020-09-18',
           endDate: '2020-09-20',
-        }]
+        },
+      ],
     })
 
     const applicationAndAssesRadios = [
       {
-        text: '18 Oct 2019 - 20 Oct 2019',
+        text: '18 Oct 2019',
         checked: true,
         value: paWithdrawable.id,
       },
