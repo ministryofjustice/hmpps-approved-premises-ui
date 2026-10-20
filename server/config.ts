@@ -58,6 +58,14 @@ export default {
   },
   paths: {
     ndeliusDeeplink: get('NDELIUS_DEEPLINK', ''),
+    cas2StartLink: get(
+      'CAS2_START_LINK',
+      'https://community-accommodation-tier-2-bail-dev.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start',
+    ),
+    cas3StartLink: get(
+      'CAS3_START_LINK',
+      'https://transitional-accommodation-dev.hmpps.service.justice.gov.uk/referrals/start',
+    ),
   },
   environment: process.env.ENVIRONMENT || 'local',
   isProduction: process.env.ENVIRONMENT === 'prod',

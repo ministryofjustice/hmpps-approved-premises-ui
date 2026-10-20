@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies, no-console */
+/* eslint-disable no-console */
 import { request } from '@playwright/test'
 import { getToken } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/auth/get-token'
 import { WorkflowPersonTier } from './workflow-person'

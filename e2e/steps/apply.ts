@@ -59,6 +59,29 @@ export const enterAndConfirmCrn = async (page: Page, crn: string) => {
   return url.match(/applications\/(.+)\/tasks/)[1]
 }
 
+export const assertCas2InterstitialPageShown = async (page: Page, crn: string) => {
+  const crnPage = new CRNPage(page)
+  await crnPage.enterCrn(crn)
+  await crnPage.clickSave()
+
+  const confirmPersonPage = new ConfirmPersonPage(page)
+  await confirmPersonPage.clickSave()
+
+  const cas2InterstitialPage = new Cas2InterstitialPage(page)
+  const cas2InterstitialHeading = page.getByRole('heading', {
+    name: /may be eligible for Short-term accommodation \(CAS2\)/i,
+  })
+  await expect(cas2InterstitialHeading).toBeVisible()
+  await cas2InterstitialPage.clickContinue()
+  await cas2InterstitialPage.shouldShowInformationHeading()
+}
+
+export const redirectToCas2Application = async (page: Page) => {
+  const cas2InterstitialPage = new Cas2InterstitialPage(page)
+  await cas2InterstitialPage.clickApplyForCas2()
+  await cas2InterstitialPage.shouldBeRedirectedToCas2()
+}
+
 export const completeBasicInformationTask = async (
   page: Page,
   withReleaseDate = true,
@@ -451,6 +474,20 @@ export const shouldSeeConfirmationPage = async (page: Page) => {
   const confirmationPage = new ConfirmationPage(page)
   await confirmationPage.shouldShowSuccessMessage()
   await confirmationPage.shouldShowLinkToSurvey()
+}
+
+export const startIneligibleApplication = async ({ page, person }: { page: Page; person: TestOptions['person'] }) => {
+  // Given I visit the Dashboard
+  const dashboard = await visitDashboard(page)
+
+  // And I start an application with an ineligible person
+  await startAnApplication(dashboard, page)
+
+  // And I see the CAS2 interstitial page
+  await assertCas2InterstitialPageShown(page, person.crn)
+
+  // Then I should be redirected to the CAS2 application page
+  await redirectToCas2Application(page)
 }
 
 export const createApplication = async (

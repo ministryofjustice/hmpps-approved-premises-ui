@@ -982,30 +982,21 @@ describe('utils', () => {
   })
 
   describe('externalLinks', () => {
-    const oldEnv = config.environment
+    const oldEnv = config.paths
     afterAll(() => {
-      config.environment = oldEnv
+      config.paths = oldEnv
     })
 
     it('gets links to cas2 and cas3 with attached referrer', () => {
-      config.environment = 'test'
+      config.paths = {
+        ...config.paths,
+        cas2StartLink: 'cas2_link',
+        cas3StartLink: 'cas3_link',
+      }
 
       expect(externalLinks('referrer')).toEqual({
-        cas2Link:
-          'https://community-accommodation-tier-2-bail-test.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start?referred_by=referrer',
-        cas3Link:
-          'https://transitional-accommodation-test.hmpps.service.justice.gov.uk/referrals/start?referred_by=referrer',
-      })
-    })
-
-    it('gets links to cas2 and cas3 for production environment', () => {
-      config.environment = 'prod'
-
-      expect(externalLinks('prod-referrer')).toEqual({
-        cas2Link:
-          'https://community-accommodation-tier-2-bail.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start?referred_by=prod-referrer',
-        cas3Link:
-          'https://transitional-accommodation.hmpps.service.justice.gov.uk/referrals/start?referred_by=prod-referrer',
+        cas2Link: 'cas2_link?referred_by=referrer',
+        cas3Link: 'cas3_link?referred_by=referrer',
       })
     })
   })

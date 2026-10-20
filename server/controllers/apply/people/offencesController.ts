@@ -9,9 +9,9 @@ import { statusesLimitedToOne } from '../../../utils/applications/statusTag'
 
 /** A list of CRNs that skip the 'one application per CRN rule'
  * This is to allow e2e tests to create multiple applications for these CRNs which are needed
- * both for e2e testing and generation og test data for match and manage
+ * both for e2e testing and generation of test data for match and manage
  */
-const testCrnList = ['X371199']
+const testCrnList = ['X371199', 'Y052015']
 
 export default class OffencesController {
   constructor(

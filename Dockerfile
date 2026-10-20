@@ -22,7 +22,7 @@ ARG BUILD_NUMBER
 ARG GIT_REF
 ARG GIT_BRANCH
 
-COPY package*.json .allowed-scripts.mjs ./
+COPY package*.json .allowed-scripts.mjs .npmrc ./
 RUN NPM_CONFIG_AUDIT=false NPM_CONFIG_FUND=false npm run setup
 ENV NODE_ENV='production'
 
@@ -37,7 +37,11 @@ RUN export BUILD_NUMBER=${BUILD_NUMBER} && \
 RUN npm prune --no-audit --no-fund --omit=dev
 
 # Stage: copy production assets and dependencies
-FROM base
+FROM ghcr.io/ministryofjustice/hmpps-node:24-alpine-runtime
+
+ARG BUILD_NUMBER
+ARG GIT_REF
+ARG GIT_BRANCH
 
 COPY --from=build --chown=appuser:appgroup \
         /app/package.json \
@@ -55,7 +59,10 @@ COPY --from=build --chown=appuser:appgroup \
         /app/node_modules ./node_modules
 
 EXPOSE 3000
+ENV BUILD_NUMBER=${BUILD_NUMBER}
+ENV GIT_REF=${GIT_REF}
+ENV GIT_BRANCH=${GIT_BRANCH}
 ENV NODE_ENV='production'
 USER 2000
 
-CMD [ "npm", "start" ]
+CMD [ "sh", "-c", "node dist/server.js | ./node_modules/.bin/bunyan -o short" ]
