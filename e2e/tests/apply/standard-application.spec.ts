@@ -51,6 +51,4 @@ test('Apply, assess, match and book an application for an Approved Premises with
     premisesName,
     datesOfPlacement: newDatesOfPlacement,
   })
-
-  if (stopAtStage('booking-managed')) return
 })

@@ -8,6 +8,11 @@ on:
         type: string
         required: false
         default: ''
+      name:
+        description: 'Name matching the supplied CRN (required when CRN is supplied)'
+        type: string
+        required: false
+        default: ''
       stop-at-stage:
         description: 'Stage to stop the application at'
         type: choice
@@ -38,6 +43,12 @@ jobs:
     if: ${{ !cancelled() && (needs.generate-tier-a-person.result == 'success' || inputs.crn != '') }}
     runs-on: ubuntu-latest
     steps:
+      - name: Validate name is supplied alongside CRN
+        if: ${{ inputs.crn != '' && inputs.name == '' }}
+        run: |
+          echo "::error::'name' must be supplied (matching the given CRN) when 'crn' is provided."
+          exit 1
+
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -58,7 +69,7 @@ jobs:
       - name: Run standard application E2E test
         env:
           CAS1_E2E_PERSON_CRN: ${{ inputs.crn || needs.generate-tier-a-person.outputs.crn }}
-          CAS1_E2E_PERSON_NAME: ${{ needs.generate-tier-a-person.outputs.name }}
+          CAS1_E2E_PERSON_NAME: ${{ inputs.name || needs.generate-tier-a-person.outputs.name }}
           CAS1_E2E_ASSESSOR_EMAIL: stuart.harrison2+test1@digital.justice.gov.uk
           CAS1_E2E_ASSESSOR_NAME: AP_USER TEST_1
           CAS1_E2E_ASSESSOR_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_1_PASSWORD }}
