@@ -1,4 +1,4 @@
-name: 'Create CAS1 Application'
+name: 'CAS1 Application Journey'
 
 on:
   workflow_dispatch:
