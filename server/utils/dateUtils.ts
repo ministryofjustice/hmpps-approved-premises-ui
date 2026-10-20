@@ -240,8 +240,15 @@ export class DateFormats {
     return time ? this.timeFromDate(new Date(`2024-01-01T${time}`)) : ''
   }
 
-  static formatDatePair(date1: string, date2: string, options: { format: UiDateFormat } = { format: 'long' }): string {
-    return `${DateFormats.isoDateToUIDate(date1, { format: options.format })} - ${DateFormats.isoDateToUIDate(date2, { format: options.format })}`
+  static formatDatePair(
+    date1: string,
+    date2: string | null | undefined,
+    options: { format: UiDateFormat } = { format: 'long' },
+  ): string {
+    if (date2 !== null && date2 !== undefined) {
+      return `${DateFormats.isoDateToUIDate(date1, { format: options.format })} - ${DateFormats.isoDateToUIDate(date2, { format: options.format })}`
+    }
+    return `${DateFormats.isoDateToUIDate(date1, { format: options.format })}`
   }
 
   static formatDurationBetweenDates(
