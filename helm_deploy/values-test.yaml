@@ -33,4 +33,4 @@ generic-service:
     V3_TIERS: 'true'
 
 generic-prometheus-alerts:
-  alertSeverity: hmpps-approved-premises-nonprod
+  targetApplication: hmpps-approved-premises-ui
