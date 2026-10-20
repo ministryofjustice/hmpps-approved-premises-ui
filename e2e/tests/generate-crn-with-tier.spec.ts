@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies, no-console */
+/* eslint-disable no-console */
 import { writeFileSync } from 'node:fs'
 import { test } from '@playwright/test'
 import { releasePrisoner } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/dps/prison-api'
@@ -67,9 +67,7 @@ test('generate one persistent person for requested tier', async ({ browser }) =>
     console.log(`Released prisoner ${lifecycle.nomisId}`)
   } catch (error) {
     if (lifecycle.booked && lifecycle.nomisId) {
-      console.log(
-        `Person generation failed; releasing prisoner ${lifecycle.nomisId}...`,
-      )
+      console.log(`Person generation failed; releasing prisoner ${lifecycle.nomisId}...`)
       try {
         await releasePrisoner(lifecycle.nomisId)
         console.log(`Released prisoner ${lifecycle.nomisId}`)
