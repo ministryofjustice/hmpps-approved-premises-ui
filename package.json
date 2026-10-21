@@ -217,7 +217,6 @@
     "diff": "^8.0.3",
     "serialize-javascript": "^7.0.5",
     "proxy-addr": "^2.0.8",
-    "undici": "^6.29.1",
-    "@opentelemetry/core": "2.11.0"
+    "undici": "^6.29.1"
   }
 }
