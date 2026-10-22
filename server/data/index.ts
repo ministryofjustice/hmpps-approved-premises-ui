@@ -1,14 +1,4 @@
-/* eslint-disable import/first */
-/*
- * Do appinsights first as it does some magic instrumentation work, i.e. it affects other 'require's
- * In particular, applicationinsights automatically collects bunyan logs
- */
 /* istanbul ignore file */
-
-import { buildAppInsightsClient, initialiseAppInsights } from '../utils/azureAppInsights'
-
-initialiseAppInsights()
-buildAppInsightsClient()
 
 import HmppsAuthClient from './hmppsAuthClient'
 import PremisesClient from './premisesClient'

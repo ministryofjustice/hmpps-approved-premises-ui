@@ -22,7 +22,6 @@ import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 import setUpMaintenancePageRedirect from './middleware/setUpMaintenancePageRedirect'
 import setUpDocumentRender from './middleware/setUpDocumentRender'
-import { appInsightsMiddleware } from './utils/azureAppInsights'
 
 import routes from './routes'
 import type { Controllers } from './controllers'
@@ -39,7 +38,6 @@ export default function createApp(controllers: Controllers, services: Services):
   // Add method-override to allow us to use PUT and DELETE methods
   app.use(methodOverride('_method'))
 
-  app.use(appInsightsMiddleware())
   app.use(metricsMiddleware)
   app.use(setUpHealthChecks())
   app.use(setUpWebSecurity())

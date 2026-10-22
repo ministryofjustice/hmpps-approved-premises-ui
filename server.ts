@@ -1,6 +1,7 @@
-// Require Sentry and App Insights setup before anything else to allow for instrumentation of bunyan and express
+// Import telemetry before anything else so OpenTelemetry can instrument bunyan and express
+import './server/utils/azureAppInsights'
+// Require Sentry setup before the app to allow for instrumentation of express
 import './server/sentryInstrumentation'
-import 'applicationinsights'
 
 import { app, metricsApp } from './server/index'
 import logger from './logger'
