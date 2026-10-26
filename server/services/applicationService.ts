@@ -1,9 +1,11 @@
 import type { Request } from 'express'
-import type {
+import {
   ApplicationDashboardSearchOptions,
   DataServices,
   GroupedApplications,
+  JourneyType,
   PaginatedResponse,
+  TaskData,
 } from '@approved-premises/ui'
 import type {
   ActiveOffence,
@@ -26,7 +28,7 @@ import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import type { ApplicationClient, RestClientBuilder } from '../data'
 import { ValidationError } from '../utils/errors'
 
-import { getBody } from '../form-pages/utils'
+import { getBody, getPrefillPageData } from '../form-pages/utils'
 import Review from '../form-pages/apply/check-your-answers/review'
 import { getResponses } from '../utils/applications/getResponses'
 
@@ -110,7 +112,15 @@ export default class ApplicationService {
     userInput?: Record<string, unknown>,
   ): Promise<TasklistPage> {
     const application = await this.findApplication(request.user.token, request.params.id)
-    const body = getBody(Page, application, request, userInput)
+
+    const preFillImport = await dataServices.formDataService.getFormData(
+      request.user.token,
+      `prefill-${application.person.crn}`,
+    )
+
+    const preFill = getPrefillPageData(Page, preFillImport)
+
+    const body = { ...preFill, ...getBody(Page, application, request, userInput) }
 
     return Page.initialize
       ? Page.initialize(body, application, request.user.token, dataServices)

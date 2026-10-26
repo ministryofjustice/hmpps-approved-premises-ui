@@ -4,11 +4,11 @@ import type { FormDataClient, RestClientBuilder } from '../data'
 export default class FormDataService {
   constructor(private readonly formClientBuilder: RestClientBuilder<FormDataClient>) {}
 
-  private getId(id: string, journey: JourneyType): string {
+  private getId(id: string, journey?: JourneyType): string {
     return journey ? `${id}-${journey}` : id
   }
 
-  async getFormData(token: string, id: string, journey: JourneyType): Promise<TaskData> {
+  async getFormData(token: string, id: string, journey?: JourneyType): Promise<TaskData> {
     const formClient = this.formClientBuilder(token)
 
     try {

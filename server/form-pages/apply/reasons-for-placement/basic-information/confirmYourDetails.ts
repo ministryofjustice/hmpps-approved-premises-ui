@@ -110,6 +110,9 @@ export default class ConfirmYourDetails implements TasklistPage {
     readonly application: Application,
   ) {
     this.detailsToUpdate = _body?.detailsToUpdate ?? []
+    ;['name', 'emailAddress', 'phoneNumber', 'area'].forEach((key: keyof UserDetails) => {
+      if (_body[key] && !this.detailsToUpdate.includes(key)) this.detailsToUpdate.push(key)
+    })
   }
 
   static async initialize(
@@ -193,7 +196,6 @@ export default class ConfirmYourDetails implements TasklistPage {
 
   errors() {
     const errors: TaskListErrors<this> = {}
-
     userDetailsKeys.forEach(detailKey => {
       if (
         this.body?.detailsToUpdate?.length &&

@@ -1,7 +1,9 @@
 import type { Request } from 'express'
 import type { FormArtifact, JourneyType, UiTask, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
+import { isObject } from 'underscore'
 import TasklistPage, { TasklistPageInterface } from '../tasklistPage'
 import { sentenceCase } from '../../utils/utils'
+import { DateFormats } from '../../utils/dateUtils'
 
 export const applyYesOrNo = <K extends string>(key: K, body: Record<string, unknown>): YesOrNoWithDetail<K> => {
   return {
@@ -97,6 +99,61 @@ export function getBody(
     return request.body
   }
   return pageDataFromApplicationOrAssessment(Page, application)
+}
+type FieldType = 'DATE' | 'STRING'
+type FieldDefn = string | { fieldName: string; type?: FieldType }
+
+export function getPrefillPageData(Page: TasklistPageInterface, prefillData: Record<string, string>) {
+  const mapping: Record<string, Record<string, Record<string, FieldDefn>>> = {
+    'basic-information': {
+      'is-exceptional-case': {
+        isExceptionalCase: 'exceptionalCaseFlag',
+      },
+      'exception-details': {
+        managerName: 'managerName',
+        agreementDate: { fieldName: 'agreementDate', type: 'DATE' },
+        agreementSummary: 'agreementSummary',
+      },
+      'confirm-your-details': {
+        emailAddress: 'caseManagerEmail',
+        name: 'caseManagerName',
+        phoneNumber: 'caseManagerPhoneNumber',
+        caseManagementResponsibility: 'caseManagementResponsibility',
+      },
+      transgender: {
+        transgenderOrHasTransgenderHistory: 'isTransgender',
+      },
+      'relevant-dates': {
+        licenceExpiryDate: { fieldName: 'licenceExpiryDate', type: 'DATE' },
+        homeDetentionCurfewDate: { fieldName: 'homeDetentionCurfewDate', type: 'DATE' },
+        selectedDates: 'selectedDates',
+      },
+    },
+  }
+  const pageName: string = getPageName(Page)
+  const taskName: string = getTaskName(Page)
+  let output: Record<string, unknown> = {}
+
+  const pageMap = mapping[taskName]?.[pageName] || {}
+  Object.entries(pageMap).forEach(([key, pageMapping]) => {
+    let preFillField: string
+    let preFillType: FieldType = 'STRING'
+
+    if (isObject(pageMapping)) {
+      preFillField = pageMapping.fieldName
+      preFillType = pageMapping.type
+    } else {
+      preFillField = pageMapping
+    }
+    const value = prefillData[preFillField]
+    if (value) {
+      output[key] = value
+      if (preFillType === 'DATE') {
+        output = { ...output, ...DateFormats.dateObjectToDateInputs(DateFormats.isoToDateObj(value), key) }
+      }
+    }
+  })
+  return output
 }
 
 export function pageDataFromApplicationOrAssessment(Page: TasklistPageInterface, application: FormArtifact) {

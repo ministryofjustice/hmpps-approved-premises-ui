@@ -376,6 +376,9 @@ export type DataServices = Partial<{
   apAreaService: {
     getApAreas: (token: string) => Promise<Array<ApArea>>
   }
+  formDataService: {
+    getFormData(token: string, id: string, journey?: JourneyType): Promise<TaskData>
+  }
 }>
 
 export type GroupedAssessments = {

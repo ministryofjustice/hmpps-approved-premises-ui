@@ -8,6 +8,7 @@ import WithdrawalsController from './applications/withdrawalsController'
 import WithdrawablesController from './withdrawablesController'
 import ExpiryController from './applications/expiryController'
 import NotesController from './applications/notesController'
+import { FormDataService } from '../../services'
 
 import type { Services } from '../../services'
 import AppealsController from './appealsController'
@@ -22,6 +23,7 @@ export const controllers = (services: Services) => {
     appealService,
     placementService,
     assessmentService,
+    formDataService
   } = services
 
   const applicationsController = new ApplicationsController(applicationService, assessmentService, personService)
@@ -31,6 +33,7 @@ export const controllers = (services: Services) => {
     premisesService,
     userService,
     apAreaService,
+    formDataService,
   })
   const offencesController = new OffencesController(personService, applicationService)
   const documentsController = new DocumentsController(personService)
