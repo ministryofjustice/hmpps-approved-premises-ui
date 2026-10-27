@@ -4,6 +4,7 @@ import { Page } from '../utils/decorators'
 
 import TasklistPage from '../tasklistPage'
 import { adjacentPageFromSentenceType, sentenceTypes } from '../../utils/applications/adjacentPageFromSentenceType'
+import { PrefillMapping } from '../utils'
 
 @Page({ name: 'sentence-type', bodyProperties: ['sentenceType'] })
 export default class SentenceType implements TasklistPage {
@@ -40,5 +41,11 @@ export default class SentenceType implements TasklistPage {
       checked: this.body.sentenceType === value,
       conditional: { html: value === 'nonStatutory' ? conditionalHtml : '' },
     }))
+  }
+
+  static getPrefillMapping(): PrefillMapping {
+    return {
+      sentenceType: 'sentenceType',
+    }
   }
 }

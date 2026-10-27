@@ -40,12 +40,14 @@ import {
   Cas1RequestsForPlacementDurationsCalculationResponseDto,
   Cas1OASysAssessmentMetadata,
   type PersonRisks,
+  Cas1Application,
 } from '@approved-premises/api'
 import type { Request } from 'express'
 import { Session } from 'express-session'
 import { ApTypeCriteria } from '../../utils/placementCriteriaUtils'
 import { roomCharacteristicMap } from '../../utils/characteristicsUtils'
 import { spaceSearchCriteriaApLevelLabels } from '../../utils/match/spaceSearchLabels'
+import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 
 interface TasklistPage {
   body: Record<string, unknown>
@@ -378,6 +380,7 @@ export type DataServices = Partial<{
   }
   formDataService: {
     getFormData(token: string, id: string, journey?: JourneyType): Promise<TaskData>
+    getPopulationData(token: string, application: Cas1Application, dataServices: DataServices, mapping: Record<string,string>)
   }
 }>
 

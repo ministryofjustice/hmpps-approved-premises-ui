@@ -28,7 +28,7 @@ import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import type { ApplicationClient, RestClientBuilder } from '../data'
 import { ValidationError } from '../utils/errors'
 
-import { getBody, getPrefillPageData } from '../form-pages/utils'
+import { getBody,getPrefillPageData, PrefillMapping } from '../form-pages/utils'
 import Review from '../form-pages/apply/check-your-answers/review'
 import { getResponses } from '../utils/applications/getResponses'
 
@@ -113,12 +113,16 @@ export default class ApplicationService {
   ): Promise<TasklistPage> {
     const application = await this.findApplication(request.user.token, request.params.id)
 
-    const preFillImport = await dataServices.formDataService.getFormData(
-      request.user.token,
-      `prefill-${application.person.crn}`,
-    )
+    let preFill = {}
+    const mapping = Page.getPrefillMapping && Page.getPrefillMapping()
+    if (mapping) {
+      const preFillImport = await dataServices.formDataService.getFormData(
+        request.user.token,
+        `prefill-${application.person.crn}`,
+      )
 
-    const preFill = getPrefillPageData(Page, preFillImport)
+      preFill = getPrefillPageData(mapping, preFillImport)
+    }
 
     const body = { ...preFill, ...getBody(Page, application, request, userInput) }
 

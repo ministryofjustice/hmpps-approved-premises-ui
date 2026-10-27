@@ -10,6 +10,7 @@ import { Page } from '../../../utils/decorators'
 import ReleaseDate from './releaseDate'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 import { startDateOutsideOfNationalStandardsTimescales } from '../../../../utils/applications/startDateOutsideOfNationalStandardsTimescales'
+import { PrefillMapping } from '../../../utils'
 
 type PlacementDateBody = ObjectWithDateParts<'startDate'> & {
   startDateSameAsReleaseDate: YesOrNo
@@ -50,28 +51,18 @@ export default class PlacementDate implements TasklistPage {
   }
 
   public set body(value: Partial<PlacementDateBody>) {
-    if (this.releaseDatePast) {
+    const { 'startDate-year': year, 'startDate-month': month, 'startDate-day': day, startDateSameAsReleaseDate } = value
+    this._body = !this.releaseDatePast ? { startDateSameAsReleaseDate } : {}
+
+    if (this.releaseDatePast || year) {
       this._body = {
+        ...this._body,
         startDateSameAsReleaseDate: 'no',
-        'startDate-year': value['startDate-year'] as string,
-        'startDate-month': value['startDate-month'] as string,
-        'startDate-day': value['startDate-day'] as string,
+        'startDate-year': year,
+        'startDate-month': month,
+        'startDate-day': day,
         startDate: DateFormats.dateAndTimeInputsToIsoString(value as ObjectWithDateParts<'startDate'>, 'startDate')
           .startDate,
-      }
-    } else {
-      this._body = {
-        startDateSameAsReleaseDate: value.startDateSameAsReleaseDate as YesOrNo,
-      }
-      if (value.startDateSameAsReleaseDate === 'no') {
-        this._body = {
-          startDateSameAsReleaseDate: 'no',
-          'startDate-year': value['startDate-year'] as string,
-          'startDate-month': value['startDate-month'] as string,
-          'startDate-day': value['startDate-day'] as string,
-          startDate: DateFormats.dateAndTimeInputsToIsoString(value as ObjectWithDateParts<'startDate'>, 'startDate')
-            .startDate,
-        }
       }
     }
   }
@@ -138,5 +129,11 @@ export default class PlacementDate implements TasklistPage {
         },
       },
     })
+  }
+
+  static getPrefillMapping(): PrefillMapping {
+    return {
+      startDate: { fieldName: 'placementDate', type: 'DATE' },
+    }
   }
 }

@@ -9,6 +9,7 @@ import { adjacentPageFromSentenceType } from '../../../../utils/applications/adj
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import SentenceType from './sentenceType'
+import { PrefillMapping } from '../../../utils'
 
 type ReleaseDateType = ObjectWithDateParts<'releaseDate'> & {
   knowReleaseDate: YesOrNo
@@ -27,15 +28,14 @@ export default class ReleaseDate implements TasklistPage {
   ) {}
 
   public set body(value: Partial<ReleaseDateType>) {
-    this._body = {
-      knowReleaseDate: value.knowReleaseDate as YesOrNo,
-    }
-    if (value.knowReleaseDate === 'yes') {
+    const { 'releaseDate-year': year, 'releaseDate-month': month, 'releaseDate-day': day, knowReleaseDate } = value
+    this._body = {knowReleaseDate}
+    if (year) {
       this._body = {
-        knowReleaseDate: value.knowReleaseDate as YesOrNo,
-        'releaseDate-year': value['releaseDate-year'] as string,
-        'releaseDate-month': value['releaseDate-month'] as string,
-        'releaseDate-day': value['releaseDate-day'] as string,
+        knowReleaseDate: 'yes' as YesOrNo,
+        'releaseDate-year': year,
+        'releaseDate-month': month,
+        'releaseDate-day':day,
         releaseDate: DateFormats.dateAndTimeInputsToIsoString(
           value as ObjectWithDateParts<'releaseDate'>,
           'releaseDate',
@@ -85,5 +85,11 @@ export default class ReleaseDate implements TasklistPage {
     }
 
     return errors
+  }
+
+  static getPrefillMapping(): PrefillMapping {
+    return {
+      releaseDate: { fieldName: 'releaseDate', type: 'DATE' },
+    }
   }
 }

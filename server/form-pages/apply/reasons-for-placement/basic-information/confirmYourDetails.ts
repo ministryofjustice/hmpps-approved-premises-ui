@@ -7,6 +7,7 @@ import { lowerCase, sentenceCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
 import { isValidEmail } from '../../../../utils/formUtils'
+import { PrefillMapping } from '../../../utils'
 
 const updatableDetailsLabels: Record<string, string> = {
   area: 'AP area',
@@ -239,5 +240,14 @@ export default class ConfirmYourDetails implements TasklistPage {
     return this.body.areas.find(apAreas => {
       return apAreas.id === areaId
     }).name
+  }
+
+  static getPrefillMapping(): PrefillMapping {
+    return {
+      emailAddress: 'caseManagerEmail',
+      name: 'caseManagerName',
+      phoneNumber: 'caseManagerPhoneNumber',
+      caseManagementResponsibility: 'caseManagementResponsibility',
+    }
   }
 }

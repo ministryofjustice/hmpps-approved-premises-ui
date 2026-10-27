@@ -4,6 +4,7 @@ import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../../utils/d
 
 import TasklistPage from '../../../tasklistPage'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
+import { PrefillMapping } from '../../../utils'
 
 export type ExceptionDetailsBody = ObjectWithDateParts<'agreementDate'> & {
   managerName: string
@@ -75,5 +76,13 @@ export default class ExceptionDetails implements TasklistPage {
     }
 
     return errors
+  }
+
+  static getPrefillMapping(): PrefillMapping {
+    return {
+      managerName: 'managerName',
+      agreementDate: { fieldName: 'agreementDate', type: 'DATE' },
+      agreementSummary: 'agreementSummary',
+    }
   }
 }

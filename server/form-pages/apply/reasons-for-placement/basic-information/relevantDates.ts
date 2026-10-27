@@ -1,4 +1,4 @@
-import type { ObjectWithDateParts, PageResponse, TaskListErrors } from '@approved-premises/ui'
+import type { DataServices, ObjectWithDateParts, PageResponse, TaskListErrors } from '@approved-premises/ui'
 
 import { Cas1Application as Application } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
@@ -6,6 +6,8 @@ import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../
 
 import TasklistPage from '../../../tasklistPage'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
+import { expect } from '@playwright/test'
+import { FieldDefn, FieldType,PrefillMapping } from '../../../utils'
 
 export const relevantDatesDictionary = {
   paroleEligibilityDate: 'Parole eligibility date',
@@ -45,14 +47,39 @@ export default class RelevantDates implements TasklistPage {
     private readonly application: Application,
   ) {}
 
+  // static async initialize(
+  //   body: Partial<RelevantDatesBody>,
+  //   application: Application,
+  //   token: string,
+  //   dataServices: DataServices,
+  // ): Promise<RelevantDates> {
+  //   const page = new RelevantDates(body, application)
+  //
+  //   const mapping: Partial<Record<RelevantDateKeys,string>> = {
+  //     paroleEligibilityDate:'paroleEligibilityDate',
+  //     homeDetentionCurfewDate:'homeDetentionCurfewDate',
+  //     pssEndDate:'pssEndDate'
+  //   }
+  //
+  //   const preFill = await dataServices.formDataService.getPopulationData(token,application,dataServices,mapping)
+  //   console.log('*****  Pre-fill',preFill)
+  //
+  //   return page
+  // }
+
   public set body(value: Partial<RelevantDatesBody>) {
     this._body = {} as RelevantDatesBody
-    this._body.selectedDates = value.selectedDates || []
-    this._body.selectedDates.forEach((selectedDate: RelevantDateKeys) => {
-      ;[...dateBodyProperties(selectedDate), selectedDate].forEach(element => {
-        this._body[element] = value[element]
-      })
+
+    let selectedDates = value.selectedDates || []
+
+    relevantDateKeys.forEach((dateKey: RelevantDateKeys) => {
+      if (value[dateKey]) {
+        if (!selectedDates.includes(dateKey)) {
+          selectedDates = [...selectedDates, dateKey]
+        }
+      }
     })
+    this._body = { ...value, selectedDates }
   }
 
   public get body() {
@@ -101,5 +128,13 @@ export default class RelevantDates implements TasklistPage {
     })
 
     return errors
+  }
+
+  static getPrefillMapping(): PrefillMapping {
+    return {
+      licenceExpiryDate: { fieldName: 'licenceExpiryDate', type: 'DATE' },
+      homeDetentionCurfewDate: { fieldName: 'homeDetentionCurfewDate', type: 'DATE' },
+      pssEndDate: { fieldName: 'pssEndDate', type: 'DATE' },
+    }
   }
 }

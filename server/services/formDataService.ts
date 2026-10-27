@@ -1,4 +1,5 @@
-import { JourneyType, TaskData } from '@approved-premises/ui'
+import { DataServices, JourneyType, TaskData, TasklistPage } from '@approved-premises/ui'
+import { Cas1Application } from '@approved-premises/api'
 import type { FormDataClient, RestClientBuilder } from '../data'
 
 export default class FormDataService {
@@ -22,5 +23,21 @@ export default class FormDataService {
     const formClient = this.formClientBuilder(token)
 
     return formClient.update(this.getId(id, journey), formData)
+  }
+
+  async getPopulationData(
+    token: string,
+    application: Cas1Application,
+    dataServices: DataServices,
+    mapping: Record<string, string>,
+  ) {
+    const preFillImport = await dataServices.formDataService.getFormData(token, `prefill-${application.person.crn}`)
+    return Object.entries(mapping).reduce(
+      (obj, [inKey, outKey]) => {
+        if (preFillImport[inKey]) obj[outKey] = preFillImport[inKey]
+        return obj
+      },
+      {} as Record<string, string>,
+    )
   }
 }

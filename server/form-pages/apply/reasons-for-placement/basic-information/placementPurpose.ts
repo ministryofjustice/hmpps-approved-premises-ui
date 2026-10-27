@@ -7,6 +7,7 @@ import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import ReleaseDate from './releaseDate'
+import { PrefillMapping } from '../../../utils'
 
 export const placementPurposes = {
   publicProtection: 'Public protection',
@@ -124,5 +125,12 @@ export default class PlacementPurpose implements TasklistPage {
     }
 
     return response
+  }
+
+  static getPrefillMapping(): PrefillMapping {
+    return {
+      placementPurposes: 'placementPurposes',
+      otherReason: 'placementPurposesOther',
+    }
   }
 }

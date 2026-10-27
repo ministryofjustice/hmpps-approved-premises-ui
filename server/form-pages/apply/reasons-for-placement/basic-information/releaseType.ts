@@ -4,6 +4,7 @@ import SentenceType from './sentenceType'
 import { Page } from '../../../utils/decorators'
 import { SelectableReleaseTypes } from '../../../../utils/applications/releaseTypeUtils'
 import BaseReleaseType from '../../../shared/releaseType'
+import { PrefillMapping } from '../../../utils'
 
 @Page({ name: 'release-type', bodyProperties: ['releaseType'] })
 export default class ReleaseType extends BaseReleaseType {
@@ -14,5 +15,11 @@ export default class ReleaseType extends BaseReleaseType {
     super(body, application)
 
     this.sentenceType = retrieveQuestionResponseFromFormArtifact(application, SentenceType)
+  }
+
+  static getPrefillMapping(): PrefillMapping {
+    return {
+      releaseType: 'releaseType',
+    }
   }
 }

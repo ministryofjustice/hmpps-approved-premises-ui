@@ -5,6 +5,7 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { displayName, getVersionedTierValue } from '../../../../utils/personUtils'
+import { PrefillMapping } from '../../../utils'
 
 @Page({ name: 'is-exceptional-case', bodyProperties: ['isExceptionalCase'] })
 export default class IsExceptionalCase implements TasklistPage {
@@ -45,5 +46,11 @@ export default class IsExceptionalCase implements TasklistPage {
     }
 
     return errors
+  }
+
+  static getPrefillMapping(): PrefillMapping {
+    return {
+      isExceptionalCase: 'exceptionalCaseFlag',
+    }
   }
 }

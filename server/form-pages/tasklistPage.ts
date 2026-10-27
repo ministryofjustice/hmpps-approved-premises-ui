@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 import type { DataServices, PageResponse, TaskData, TaskListErrors } from '@approved-premises/ui'
+import { FieldDefn,PrefillMapping } from './utils'
 
 export interface TasklistPageInterface {
   new (body: Record<string, unknown>, data?: TaskData): TasklistPage
@@ -10,6 +11,8 @@ export interface TasklistPageInterface {
     token: string,
     dataServices: Partial<DataServices>,
   ): Promise<TasklistPage>
+
+  getPrefillMapping?(): PrefillMapping
 }
 
 export default abstract class TasklistPage {
@@ -26,4 +29,6 @@ export default abstract class TasklistPage {
   abstract errors(): TaskListErrors<this>
 
   abstract response(): PageResponse
+
+  abstract getPrefillMapping?(): PrefillMapping
 }

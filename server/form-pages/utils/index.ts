@@ -100,41 +100,14 @@ export function getBody(
   }
   return pageDataFromApplicationOrAssessment(Page, application)
 }
-type FieldType = 'DATE' | 'STRING'
-type FieldDefn = string | { fieldName: string; type?: FieldType }
 
-export function getPrefillPageData(Page: TasklistPageInterface, prefillData: Record<string, string>) {
-  const mapping: Record<string, Record<string, Record<string, FieldDefn>>> = {
-    'basic-information': {
-      'is-exceptional-case': {
-        isExceptionalCase: 'exceptionalCaseFlag',
-      },
-      'exception-details': {
-        managerName: 'managerName',
-        agreementDate: { fieldName: 'agreementDate', type: 'DATE' },
-        agreementSummary: 'agreementSummary',
-      },
-      'confirm-your-details': {
-        emailAddress: 'caseManagerEmail',
-        name: 'caseManagerName',
-        phoneNumber: 'caseManagerPhoneNumber',
-        caseManagementResponsibility: 'caseManagementResponsibility',
-      },
-      transgender: {
-        transgenderOrHasTransgenderHistory: 'isTransgender',
-      },
-      'relevant-dates': {
-        licenceExpiryDate: { fieldName: 'licenceExpiryDate', type: 'DATE' },
-        homeDetentionCurfewDate: { fieldName: 'homeDetentionCurfewDate', type: 'DATE' },
-        selectedDates: 'selectedDates',
-      },
-    },
-  }
-  const pageName: string = getPageName(Page)
-  const taskName: string = getTaskName(Page)
+export type FieldType = 'DATE' | 'STRING'
+export type FieldDefn = string | { fieldName: string; type?: FieldType }
+export type PrefillMapping = Record<string, FieldDefn>
+
+export function getPrefillPageData(pageMap:PrefillMapping, prefillData: Record<string, string>) {
   let output: Record<string, unknown> = {}
 
-  const pageMap = mapping[taskName]?.[pageName] || {}
   Object.entries(pageMap).forEach(([key, pageMapping]) => {
     let preFillField: string
     let preFillType: FieldType = 'STRING'

@@ -3,6 +3,7 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { sentenceCase } from '../../../../utils/utils'
+import { PrefillMapping } from '../../../utils'
 
 @Page({ name: 'transgender', bodyProperties: ['transgenderOrHasTransgenderHistory'] })
 export default class IsPersonTransgender implements TasklistPage {
@@ -34,5 +35,11 @@ export default class IsPersonTransgender implements TasklistPage {
     }
 
     return errors
+  }
+
+  static getPrefillMapping(): PrefillMapping {
+    return {
+      transgenderOrHasTransgenderHistory: 'isTransgender',
+    }
   }
 }

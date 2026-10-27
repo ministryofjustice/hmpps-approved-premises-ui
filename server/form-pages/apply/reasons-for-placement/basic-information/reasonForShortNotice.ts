@@ -4,6 +4,7 @@ import { noticeTypeFromApplication } from '../../../../utils/applications/notice
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
+import { PrefillMapping } from '../../../utils'
 
 export const shortNoticeReasons = {
   riskEscalated: 'The risk level has recently escalated',
@@ -76,5 +77,12 @@ export default class ReasonForShortNotice implements TasklistPage {
     const other = items.pop()
 
     return [...items, { ...other, conditional: { html: conditionalHtml } }]
+  }
+
+  static getPrefillMapping(): PrefillMapping {
+    return {
+      reason: 'shortNoticeReason',
+      other: 'shortNoticeReasonOther'
+    }
   }
 }
