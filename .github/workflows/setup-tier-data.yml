@@ -34,7 +34,10 @@ on:
         required: false
         default: true
       release-date:
-        description: 'Release date for the prisoner (YYYY-MM-DD). Leave blank for default (yesterday).'
+        description: >-
+          Expected release date (YYYY-MM-DD). If set, the prisoner stays in custody with this as
+          their confirmed release date, overriding 'Release from prison'. Leave blank to use
+          'Release from prison' instead.
         type: string
         required: false
         default: ''
@@ -61,7 +64,10 @@ on:
         required: false
         default: true
       release-date:
-        description: 'Release date for the prisoner (YYYY-MM-DD). Leave blank for default (yesterday).'
+        description: >-
+          Expected release date (YYYY-MM-DD). If set, the prisoner stays in custody with this as
+          their confirmed release date, overriding 'Release from prison'. Leave blank to use
+          'Release from prison' instead.
         type: string
         required: false
         default: ''
