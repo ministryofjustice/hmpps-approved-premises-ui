@@ -17,6 +17,7 @@ export type WorkflowPerson = {
   crn: string
   name: string
   nomisId: string
+  bookingId: string
   convictionDate: Date
   details: WorkflowPersonDetails
 }

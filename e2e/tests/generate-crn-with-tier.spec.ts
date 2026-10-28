@@ -1,10 +1,12 @@
 /* eslint-disable no-console */
 import { writeFileSync } from 'node:fs'
 import { test } from '@playwright/test'
-import { releasePrisoner } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/dps/prison-api'
+import {
+  releasePrisoner,
+  updateCustodyDates,
+} from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/dps/prison-api'
 import { createOasysAssessment } from '../steps/oasys'
 import { createTestPerson, isAssessedTier, PersonLifecycle } from '../setup/person'
-import { releasePrisonerOnDate } from '../setup/release-prisoner'
 import { verifyGeneratedTier } from '../setup/tier-verification'
 import { WorkflowPersonGender, WorkflowPersonTier } from '../setup/workflow-person'
 
@@ -36,7 +38,6 @@ test('generate one persistent person for requested tier', async ({ browser }) =>
     throw new Error('CAS1_E2E_RELEASE_DATE must be in YYYY-MM-DD format')
   }
   const dobOverride = requestedDob ? new Date(`${requestedDob}T00:00:00`) : undefined
-  const releaseDateOverride = requestedReleaseDate ? new Date(`${requestedReleaseDate}T00:00:00`) : undefined
 
   const context = await browser.newContext()
   const page = await context.newPage()
@@ -70,14 +71,17 @@ test('generate one persistent person for requested tier', async ({ browser }) =>
     }
 
     console.log(`Generated person: ${JSON.stringify(result)}`)
-    if (shouldReleaseFromPrison) {
-      if (releaseDateOverride) {
-        await releasePrisonerOnDate(lifecycle.nomisId, releaseDateOverride)
-        console.log(`Released prisoner ${lifecycle.nomisId} on ${requestedReleaseDate}`)
-      } else {
-        await releasePrisoner(lifecycle.nomisId)
-        console.log(`Released prisoner ${lifecycle.nomisId}`)
-      }
+    if (requestedReleaseDate) {
+      await updateCustodyDates(person.bookingId, {
+        confirmedReleaseDate: requestedReleaseDate,
+        conditionalReleaseDate: requestedReleaseDate,
+      })
+      console.log(
+        `Set expected release date ${requestedReleaseDate} for prisoner ${lifecycle.nomisId}; prisoner remains in custody`,
+      )
+    } else if (shouldReleaseFromPrison) {
+      await releasePrisoner(lifecycle.nomisId)
+      console.log(`Released prisoner ${lifecycle.nomisId}`)
     } else {
       console.log(`Skipping release of prisoner ${lifecycle.nomisId} ('Release from prison' not selected)`)
     }

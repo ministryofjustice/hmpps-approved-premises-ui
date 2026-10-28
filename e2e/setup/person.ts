@@ -14,6 +14,7 @@ import { WorkflowPerson, WorkflowPersonGender, WorkflowPersonTier } from './work
 export type PersonLifecycle = {
   crn?: string
   nomisId?: string
+  bookingId?: string
   booked: boolean
 }
 
@@ -179,6 +180,7 @@ export const createTestPerson = async (
   console.log(`Creating and booking prisoner for CRN ${lifecycle.crn} at SWI...`)
   const { nomisId, bookingId } = await createAndBookPrisoner(page, lifecycle.crn, person)
   lifecycle.nomisId = nomisId
+  lifecycle.bookingId = bookingId
   lifecycle.booked = true
   console.log(`Created and booked prisoner ${lifecycle.nomisId} with booking ID ${bookingId}`)
 
@@ -190,6 +192,7 @@ export const createTestPerson = async (
       gender,
     },
     nomisId: lifecycle.nomisId,
+    bookingId: lifecycle.bookingId,
     convictionDate,
   }
 }
