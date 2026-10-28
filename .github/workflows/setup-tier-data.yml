@@ -28,6 +28,16 @@ on:
         type: string
         required: false
         default: ''
+      release-from-prison:
+        description: Release from prison
+        type: boolean
+        required: false
+        default: true
+      release-date:
+        description: 'Release date for the prisoner (YYYY-MM-DD). Leave blank for default (yesterday).'
+        type: string
+        required: false
+        default: ''
   workflow_call:
     inputs:
       tier:
@@ -42,6 +52,16 @@ on:
         default: Male
       dob:
         description: 'DOB for the generated person (YYYY-MM-DD). Leave blank for default.'
+        type: string
+        required: false
+        default: ''
+      release-from-prison:
+        description: Release from prison
+        type: boolean
+        required: false
+        default: true
+      release-date:
+        description: 'Release date for the prisoner (YYYY-MM-DD). Leave blank for default (yesterday).'
         type: string
         required: false
         default: ''
@@ -100,6 +120,8 @@ jobs:
           INPUT_TIER: ${{ inputs.tier }}
           INPUT_GENDER: ${{ inputs.gender }}
           INPUT_DOB: ${{ inputs.dob }}
+          INPUT_RELEASE_FROM_PRISON: ${{ inputs.release-from-prison }}
+          INPUT_RELEASE_DATE: ${{ inputs.release-date }}
         run: |
           if [ "$INPUT_TIER" = "NOT_SUPERVISED" ]; then
             echo "CAS1_E2E_PERSON_TIER=NOT_SUPERVISED" >> "$GITHUB_ENV"
@@ -108,6 +130,8 @@ jobs:
           fi
           echo "CAS1_E2E_PERSON_GENDER=$INPUT_GENDER" >> "$GITHUB_ENV"
           echo "CAS1_E2E_PERSON_DOB=$INPUT_DOB" >> "$GITHUB_ENV"
+          echo "CAS1_E2E_RELEASE_FROM_PRISON=$INPUT_RELEASE_FROM_PRISON" >> "$GITHUB_ENV"
+          echo "CAS1_E2E_RELEASE_DATE=$INPUT_RELEASE_DATE" >> "$GITHUB_ENV"
 
       - name: Generate person
         timeout-minutes: 10

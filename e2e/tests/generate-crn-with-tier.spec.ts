@@ -4,6 +4,7 @@ import { test } from '@playwright/test'
 import { releasePrisoner } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/dps/prison-api'
 import { createOasysAssessment } from '../steps/oasys'
 import { createTestPerson, isAssessedTier, PersonLifecycle } from '../setup/person'
+import { releasePrisonerOnDate } from '../setup/release-prisoner'
 import { verifyGeneratedTier } from '../setup/tier-verification'
 import { WorkflowPersonGender, WorkflowPersonTier } from '../setup/workflow-person'
 
@@ -11,6 +12,8 @@ const outputFile = process.env.CRN_OUTPUT_FILE
 const requestedTier = process.env.CAS1_E2E_PERSON_TIER as WorkflowPersonTier
 const requestedGender = (process.env.CAS1_E2E_PERSON_GENDER || 'Male') as WorkflowPersonGender
 const requestedDob = process.env.CAS1_E2E_PERSON_DOB || undefined
+const shouldReleaseFromPrison = process.env.CAS1_E2E_RELEASE_FROM_PRISON !== 'false'
+const requestedReleaseDate = process.env.CAS1_E2E_RELEASE_DATE || undefined
 const validTiers: Array<WorkflowPersonTier> = ['A', 'B', 'C', 'D', 'MISSING', 'NOT_SUPERVISED']
 const validGenders: Array<WorkflowPersonGender> = ['Male', 'Female']
 
@@ -29,7 +32,11 @@ test('generate one persistent person for requested tier', async ({ browser }) =>
   if (requestedDob && !/^\d{4}-\d{2}-\d{2}$/.test(requestedDob)) {
     throw new Error('CAS1_E2E_PERSON_DOB must be in YYYY-MM-DD format')
   }
+  if (requestedReleaseDate && !/^\d{4}-\d{2}-\d{2}$/.test(requestedReleaseDate)) {
+    throw new Error('CAS1_E2E_RELEASE_DATE must be in YYYY-MM-DD format')
+  }
   const dobOverride = requestedDob ? new Date(`${requestedDob}T00:00:00`) : undefined
+  const releaseDateOverride = requestedReleaseDate ? new Date(`${requestedReleaseDate}T00:00:00`) : undefined
 
   const context = await browser.newContext()
   const page = await context.newPage()
@@ -63,8 +70,17 @@ test('generate one persistent person for requested tier', async ({ browser }) =>
     }
 
     console.log(`Generated person: ${JSON.stringify(result)}`)
-    await releasePrisoner(lifecycle.nomisId)
-    console.log(`Released prisoner ${lifecycle.nomisId}`)
+    if (shouldReleaseFromPrison) {
+      if (releaseDateOverride) {
+        await releasePrisonerOnDate(lifecycle.nomisId, releaseDateOverride)
+        console.log(`Released prisoner ${lifecycle.nomisId} on ${requestedReleaseDate}`)
+      } else {
+        await releasePrisoner(lifecycle.nomisId)
+        console.log(`Released prisoner ${lifecycle.nomisId}`)
+      }
+    } else {
+      console.log(`Skipping release of prisoner ${lifecycle.nomisId} ('Release from prison' not selected)`)
+    }
   } catch (error) {
     if (lifecycle.booked && lifecycle.nomisId) {
       console.log(`Person generation failed; releasing prisoner ${lifecycle.nomisId}...`)
