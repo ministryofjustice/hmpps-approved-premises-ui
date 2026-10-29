@@ -1,4 +1,4 @@
-name: 'Setup tier data'
+name: 'Create offender'
 
 on:
   workflow_dispatch:
@@ -35,8 +35,7 @@ on:
         default: true
       release-date:
         description: >-
-          Expected release date (YYYY-MM-DD). If set, the prisoner stays in custody with this as
-          their confirmed release date, overriding 'Release from prison'. Leave blank to use
+          Expected release date (YYYY-MM-DD). Leave blank to use
           'Release from prison' instead.
         type: string
         required: false
@@ -72,16 +71,13 @@ on:
         default: true
       release-date:
         description: >-
-          Expected release date (YYYY-MM-DD). If set, the prisoner stays in custody with this as
-          their confirmed release date, overriding 'Release from prison'. Leave blank to use
-          'Release from prison' instead.
+          Expected release date (YYYY-MM-DD). Leave blank to use 'Release from prison' instead.
         type: string
         required: false
         default: ''
       sexual-offence:
         description: >-
-          Sexual offences: add a sexual offence as the person's conviction. Unselect for a
-          non-sexual offence instead; does not affect the selected tier.
+          Sexual offences: add a sexual offence as the person's conviction.
         type: boolean
         required: false
         default: true

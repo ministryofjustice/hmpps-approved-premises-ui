@@ -3,7 +3,6 @@ import { clickCreateOffenderButton } from '@ministryofjustice/hmpps-probation-in
 import { offenderSearchWithCRN } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/offender-search'
 import { setProviderEstablishment } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/set-provider-establishment'
 import { clickSearch } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/task-manager'
-import { completeOffenceAnalysisYes } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/analysis-of-offences-layer3'
 import { clickCMSRecord } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/cms-search-results'
 import {
   clickOffenceAnalysis,
@@ -20,6 +19,7 @@ import { clickOKForCRNAmendment } from '@ministryofjustice/hmpps-probation-integ
 import { completeRoSHSection1MarkAllNo } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-1'
 import { completeRoSHSection5FullAnalysis } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-5'
 import { completeRoSHSection8FullAnalysisYes } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/oasys/layer3-assessment/section-8'
+import { completeOffenceAnalysis } from '../offence-analysis'
 import { completeOffenderInformationLayer3 } from '../offender-information-layer3'
 import { completeRiskManagementPlan } from '../risk-management-plan'
 import { completeRoSHSection9RoSHSummary } from '../section-9'
@@ -75,10 +75,10 @@ export const createLayer3AssessmentWithoutNeeds = async (
   await completeRoSHSection5FullAnalysis(page)
   await completeRoSHSection8FullAnalysisYes(page)
   await completeRoSHSection9RoSHSummary(page)
-  await completeRoSHSection10RoSHSummary(page, tier)
+  await completeRoSHSection10RoSHSummary(page, tier, includeSexualOffence)
   await clickRiskManagementPlan(page)
   await completeRiskManagementPlan(page)
   await completeReviewSentencePlan(page)
   await clickOffenceAnalysis(page)
-  await completeOffenceAnalysisYes(page)
+  await completeOffenceAnalysis(page, includeSexualOffence)
 }

@@ -3,7 +3,6 @@ import { expect, Page } from '@playwright/test'
 import { createOffender } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/create-offender'
 import { deliusPerson } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/utils/person'
 import { createCustodialEvent } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/event/create-event'
-import { createRegistration } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/registration/create-registration'
 import { createRelease } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/release/create-release'
 import { createAndBookPrisoner } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/api/dps/prison-api'
 import { findOffenderByCRN } from '@ministryofjustice/hmpps-probation-integration-e2e-tests/steps/delius/offender/find-offender'
@@ -50,8 +49,6 @@ const ABUSE_OF_TRUST_EVENT = {
   plea: 'Guilty',
 }
 
-// Non-sexual equivalent used when the 'Sexual offences' option is not selected. Shares the same
-// outcome/length (which drive the custody/RoSH calculation), only the offence itself differs.
 const NON_SEXUAL_EVENT = {
   appearanceType: 'Sentence',
   outcome: 'Adult Custody < 12m',
@@ -135,11 +132,22 @@ const assessedTiers: Array<AssessedTier> = ['A', 'B', 'C', 'D']
 export const isAssessedTier = (tier: WorkflowPersonTier): tier is AssessedTier =>
   assessedTiers.includes(tier as AssessedTier)
 
-export const createTierRegistration = async (page: Page, crn: string, tier: AssessedTier) => {
+export const createTierRegistration = async (
+  page: Page,
+  crn: string,
+  tier: AssessedTier,
+  includeSexualOffence: boolean = true,
+) => {
   const rule = TIER_RULES[tier]
 
   if (rule.mappa) {
-    await createRegistration(page, crn, 'MAPPA', TEST_TEAM.provider)
+    await createRegistrationForTestProvider(
+      page,
+      crn,
+      'MAPPA',
+      includeSexualOffence ? 'MAPPA Cat 1' : 'MAPPA Cat 2',
+      'MAPPA Level 3',
+    )
   }
 
   if (rule.extra === 'lifer-recent-release') {
@@ -185,7 +193,7 @@ export const createTestPerson = async (
 
   if (isAssessedTier(tier)) {
     console.log(`Creating Tier ${tier} registration for CRN ${lifecycle.crn}...`)
-    await createTierRegistration(page, lifecycle.crn, tier)
+    await createTierRegistration(page, lifecycle.crn, tier, includeSexualOffence)
     console.log(`Created Tier ${tier} registration for CRN ${lifecycle.crn}`)
   }
 

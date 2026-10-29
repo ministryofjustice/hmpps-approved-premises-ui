@@ -39,9 +39,18 @@ const roshSummaryScoresByTier: Record<OasysTierProfile, Record<string, RiskScore
   },
 }
 
-const setRoSHSummaryScores = async (page: Page, tier: OasysTierProfile) => {
+const setRoSHSummaryScores = async (page: Page, tier: OasysTierProfile, includeSexualOffence: boolean) => {
+  const scores = { ...roshSummaryScoresByTier[tier] }
+  if (!includeSexualOffence) {
+    Object.keys(scores)
+      .filter(fieldId => fieldId.startsWith('itm_SUM6_1_'))
+      .forEach(fieldId => {
+        scores[fieldId] = 'Low'
+      })
+  }
+
   await Promise.all(
-    Object.entries(roshSummaryScoresByTier[tier]).map(async ([fieldId, score]) => {
+    Object.entries(scores).map(async ([fieldId, score]) => {
       const select = page.locator(`#${fieldId}`)
       if ((await select.count()) === 0) return
       await select.selectOption({ label: score })
@@ -49,8 +58,15 @@ const setRoSHSummaryScores = async (page: Page, tier: OasysTierProfile) => {
   )
 }
 
-export const completeRoSHSection10RoSHSummary = async (page: Page, tier: OasysTierProfile = 'A') => {
-  await page.fill('#textarea_SUM1', "OASys Question - 'R10.1 Who is at risk.' - Answer Input - 'Child'")
+export const completeRoSHSection10RoSHSummary = async (
+  page: Page,
+  tier: OasysTierProfile = 'A',
+  includeSexualOffence: boolean = true,
+) => {
+  await page.fill(
+    '#textarea_SUM1',
+    `OASys Question - 'R10.1 Who is at risk.' - Answer Input - '${includeSexualOffence ? 'Child' : 'Known Adult'}'`,
+  )
   await page.fill(
     '#textarea_SUM2',
     "OASys Question - 'R10.2 - What is the nature of the risk' - Answer Input - 'Test Nature'",
@@ -73,7 +89,7 @@ export const completeRoSHSection10RoSHSummary = async (page: Page, tier: OasysTi
   )
 
   await page.locator('select[id^="itm_SUM6_"]').first().waitFor()
-  await setRoSHSummaryScores(page, tier)
+  await setRoSHSummaryScores(page, tier, includeSexualOffence)
 
   await page.keyboard.press('End')
   await page.click('input[value="Save"]')
