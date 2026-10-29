@@ -36,6 +36,7 @@ export const createLayer3AssessmentWithoutNeeds = async (
   page: Page,
   person: WorkflowPerson,
   workflowTier: WorkflowOasysTier,
+  includeSexualOffence: boolean = true,
 ) => {
   const tier = toOasysProfile(workflowTier)
   const providerHeading = page.locator('#loginbodyheader > h2')
@@ -65,7 +66,7 @@ export const createLayer3AssessmentWithoutNeeds = async (
 
   await expect(page.locator('#contextleft > h3')).toHaveText('Case ID - Offender Information (Layer 3)')
 
-  await completeOffenderInformationLayer3(page, person)
+  await completeOffenderInformationLayer3(page, person, includeSexualOffence)
   await clickSection2to13(page, 'Yes')
   await selfAssessmentForm(page)
   await clickRoSHScreeningSection1(page)

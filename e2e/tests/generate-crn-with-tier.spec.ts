@@ -66,7 +66,7 @@ test('generate one persistent person for requested tier', async ({ browser }) =>
     }
 
     if (isAssessedTier(requestedTier)) {
-      await createOasysAssessment(context, person, requestedTier)
+      await createOasysAssessment(context, person, requestedTier, undefined, includeSexualOffence)
       result.assessmentCreated = true
     }
 

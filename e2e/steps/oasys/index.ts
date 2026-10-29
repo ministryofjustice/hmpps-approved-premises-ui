@@ -42,6 +42,7 @@ export const createOasysAssessment = async (
   person: WorkflowPerson,
   useOrTier: UseOasysSections | WorkflowPersonTier,
   maybeTier: WorkflowPersonTier = 'A',
+  includeSexualOffence: boolean = true,
 ) => {
   const page = await context.newPage()
   const tier = typeof useOrTier === 'string' ? useOrTier : maybeTier
@@ -52,7 +53,7 @@ export const createOasysAssessment = async (
     } else {
       console.log(`Creating OASys assessment for CRN ${person.crn}`)
       await loginOasysWithRetry(page)
-      await createLayer3AssessmentWithoutNeeds(page, person, tier as WorkflowOasysTier)
+      await createLayer3AssessmentWithoutNeeds(page, person, tier as WorkflowOasysTier, includeSexualOffence)
       await signAndLockWithFallback(page)
       console.log(`Created and signed OASys assessment for CRN ${person.crn}`)
     }
