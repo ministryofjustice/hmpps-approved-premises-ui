@@ -95,8 +95,9 @@ test('generate one persistent person for requested tier', async ({ browser }) =>
       console.log(`Skipping release of prisoner ${lifecycle.nomisId} ('Release from prison' not selected)`)
     }
   } catch (error) {
+    console.error('Person generation failed:', error)
     if (lifecycle.booked && lifecycle.nomisId) {
-      console.log(`Person generation failed; releasing prisoner ${lifecycle.nomisId}...`)
+      console.log(`Releasing prisoner ${lifecycle.nomisId}...`)
       try {
         await releasePrisoner(lifecycle.nomisId)
         console.log(`Released prisoner ${lifecycle.nomisId}`)
