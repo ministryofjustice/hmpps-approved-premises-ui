@@ -50,6 +50,16 @@ const ABUSE_OF_TRUST_EVENT = {
   plea: 'Guilty',
 }
 
+// Non-sexual equivalent used when the 'Sexual offences' option is not selected. Shares the same
+// outcome/length (which drive the custody/RoSH calculation), only the offence itself differs.
+const NON_SEXUAL_EVENT = {
+  appearanceType: 'Sentence',
+  outcome: 'Adult Custody < 12m',
+  length: '6',
+  mainOffence: 'Stealing by an employee - 04100',
+  plea: 'Guilty',
+}
+
 export type AssessedTier = 'A' | 'B' | 'C' | 'D'
 
 // Business rules for determining V3 tiers defined here https://dsdmoj.atlassian.net/wiki/spaces/PINT/pages/6105498753/Tiering+V3+-+Business+Rules
@@ -146,6 +156,7 @@ export const createTestPerson = async (
   tier: WorkflowPersonTier,
   gender: WorkflowPersonGender = 'Male',
   dobOverride?: Date,
+  includeSexualOffence: boolean = true,
 ): Promise<WorkflowPerson> => {
   await loginDelius(page)
 
@@ -161,11 +172,12 @@ export const createTestPerson = async (
   console.log(`Tier: ${tier}`)
 
   if (tier !== 'NOT_SUPERVISED') {
-    console.log(`Creating custodial event for CRN ${lifecycle.crn}...`)
+    const sexualOffenceEvent = isAssessedTier(tier) ? TIER_RULES[tier].event : SA_EVENT
+    console.log(`Creating custodial event for CRN ${lifecycle.crn} (sexual offence: ${includeSexualOffence})...`)
     await createCustodialEvent(page, {
       crn: lifecycle.crn,
       allocation: { team: TEST_TEAM },
-      event: isAssessedTier(tier) ? TIER_RULES[tier].event : SA_EVENT,
+      event: includeSexualOffence ? sexualOffenceEvent : NON_SEXUAL_EVENT,
       date: convictionDate,
     })
     console.log(`Created custodial event for CRN ${lifecycle.crn}`)

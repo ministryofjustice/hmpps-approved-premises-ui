@@ -16,6 +16,7 @@ const requestedGender = (process.env.CAS1_E2E_PERSON_GENDER || 'Male') as Workfl
 const requestedDob = process.env.CAS1_E2E_PERSON_DOB || undefined
 const shouldReleaseFromPrison = process.env.CAS1_E2E_RELEASE_FROM_PRISON !== 'false'
 const requestedReleaseDate = process.env.CAS1_E2E_RELEASE_DATE || undefined
+const includeSexualOffence = process.env.CAS1_E2E_SEXUAL_OFFENCE !== 'false'
 const validTiers: Array<WorkflowPersonTier> = ['A', 'B', 'C', 'D', 'MISSING', 'NOT_SUPERVISED']
 const validGenders: Array<WorkflowPersonGender> = ['Male', 'Female']
 
@@ -44,13 +45,21 @@ test('generate one persistent person for requested tier', async ({ browser }) =>
   const lifecycle: PersonLifecycle = { booked: false }
 
   try {
-    const person = await createTestPerson(page, lifecycle, requestedTier, requestedGender, dobOverride)
+    const person = await createTestPerson(
+      page,
+      lifecycle,
+      requestedTier,
+      requestedGender,
+      dobOverride,
+      includeSexualOffence,
+    )
     const result = {
       requestedTier,
       requestedGender,
       name: person.name,
       crn: person.crn,
       nomisId: person.nomisId,
+      sexualOffence: includeSexualOffence,
       assessmentCreated: false,
       verifiedTier: null as string | null,
       provisional: null as boolean | null,
