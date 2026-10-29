@@ -40,13 +40,6 @@ const selectIfPresent = async (page: Page, label: string, value: string) => {
   }
 }
 
-const fillIfVisible = async (page: Page, label: string, value: string) => {
-  const field = page.getByLabel(label)
-  if ((await field.count()) && (await field.first().isVisible())) {
-    await field.first().fill(value)
-  }
-}
-
 export const completeOffenderInformationLayer3 = async (
   page: Page,
   person: WorkflowPerson,
@@ -69,11 +62,9 @@ export const completeOffenderInformationLayer3 = async (
   const sexualOffenceDropdown = page.locator('tr #itm_1_30')
   if (await sexualOffenceDropdown.isEnabled()) {
     await sexualOffenceDropdown.selectOption(includeSexualOffence ? '1.30~YES' : '1.30~NO')
-    await selectIfPresent(
-      page,
-      'Does the current offence have a sexual motivation?',
-      includeSexualOffence ? '1.41~YES' : '1.41~NO',
-    )
+    if (includeSexualOffence) {
+      await selectIfPresent(page, 'Does the current offence have a sexual motivation?', '1.41~YES')
+    }
   }
 
   const contactOffenceDropdown = page.getByLabel(
@@ -89,27 +80,23 @@ export const completeOffenderInformationLayer3 = async (
       '#itm_1_33',
       convictionDate,
     )
+    await page
+      .getByLabel('Number of previous/current sanctions involving contact adult sexual/sexually motivated offences')
+      .fill('1')
+    await page
+      .getByLabel(
+        'Number of previous/current sanctions involving direct contact child sexual/sexually motivated offences',
+      )
+      .fill('0')
+    await page
+      .getByLabel(
+        'Number of previous/current sanctions involving indecent child image or indirect child contact sexual/sexually motivated offences',
+      )
+      .fill('0')
+    await page
+      .getByLabel('Number of previous/current sanctions involving other non-contact sexual/sexually motivated offences')
+      .fill('0')
   }
-  await fillIfVisible(
-    page,
-    'Number of previous/current sanctions involving contact adult sexual/sexually motivated offences',
-    includeSexualOffence ? '1' : '0',
-  )
-  await fillIfVisible(
-    page,
-    'Number of previous/current sanctions involving direct contact child sexual/sexually motivated offences',
-    '0',
-  )
-  await fillIfVisible(
-    page,
-    'Number of previous/current sanctions involving indecent child image or indirect child contact sexual/sexually motivated offences',
-    '0',
-  )
-  await fillIfVisible(
-    page,
-    'Number of previous/current sanctions involving other non-contact sexual/sexually motivated offences',
-    '0',
-  )
   await fillOasysDate(page, 'Date of commencement of community sentence', '#itm_1_38', convictionDate)
 
   await page.click('input[value="Save"]')
