@@ -35,7 +35,7 @@ const fillOasysDate = async (page: Page, label: string, selector: string, date: 
 
 const selectIfPresent = async (page: Page, label: string, value: string) => {
   const select = page.getByLabel(label)
-  if (await select.count()) {
+  if ((await select.count()) && (await select.first().isVisible())) {
     await select.first().selectOption(value)
   }
 }
@@ -69,11 +69,9 @@ export const completeOffenderInformationLayer3 = async (
   const sexualOffenceDropdown = page.locator('tr #itm_1_30')
   if (await sexualOffenceDropdown.isEnabled()) {
     await sexualOffenceDropdown.selectOption(includeSexualOffence ? '1.30~YES' : '1.30~NO')
-    await selectIfPresent(
-      page,
-      'Does the current offence have a sexual motivation?',
-      includeSexualOffence ? '1.41~YES' : '1.41~NO',
-    )
+    if (includeSexualOffence) {
+      await selectIfPresent(page, 'Does the current offence have a sexual motivation?', '1.41~YES')
+    }
   }
 
   const contactOffenceDropdown = page.getByLabel(
