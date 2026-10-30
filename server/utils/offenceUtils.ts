@@ -2,9 +2,9 @@ import { ActiveOffence } from '@approved-premises/api'
 import { TableRow } from '@approved-premises/ui'
 import { DateFormats } from './dateUtils'
 
-const offenceTableRows = (offences: Array<ActiveOffence>): Array<TableRow> => {
+const offenceTableRows = (offences: Array<ActiveOffence>, offenceId?: string): Array<TableRow> => {
   const rows = [] as Array<TableRow>
-
+   console.log('*** Offence rows - with Id', offenceId)
   offences.forEach(offence => {
     const offenceDate = offence?.offenceDate
       ? DateFormats.isoDateToUIDate(offence.offenceDate)
@@ -12,7 +12,7 @@ const offenceTableRows = (offences: Array<ActiveOffence>): Array<TableRow> => {
 
     rows.push([
       {
-        html: offenceRadioButton(offence),
+        html: offenceRadioButton(offence, offenceId),
       },
       {
         text: offence.offenceDescription,
@@ -29,10 +29,10 @@ const offenceTableRows = (offences: Array<ActiveOffence>): Array<TableRow> => {
   return rows
 }
 
-const offenceRadioButton = (offence: ActiveOffence) => {
+const offenceRadioButton = (offence: ActiveOffence, offenceId?: string) => {
   return `
   <div class="govuk-radios__item">
-    <input class="govuk-radios__input" id="${offence.offenceId}" name="offenceId" type="radio" value="${offence.offenceId}" />
+    <input class="govuk-radios__input" id="${offence.offenceId}" name="offenceId" type="radio" value="${offence.offenceId}" ${offence.offenceId === offenceId ? 'checked="checked"' : ''}"/>
     <label class="govuk-label govuk-radios__label" for="${offence.offenceId}">
       <span class="govuk-visually-hidden">
         Select ${offence.offenceDescription} as index offence

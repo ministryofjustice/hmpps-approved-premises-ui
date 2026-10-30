@@ -1,11 +1,12 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import { ApplicationService, PersonService } from '../../../services'
+import { ApplicationService,FormDataService, PersonService } from '../../../services'
 import { isFullPerson } from '../../../utils/personUtils'
 import { RestrictedPersonError } from '../../../utils/errors'
 import { fetchErrorsAndUserInput } from '../../../utils/validation'
 import paths from '../../../paths/apply'
 import { statusesLimitedToOne } from '../../../utils/applications/statusTag'
+import { getPrefillPageData } from '../../../form-pages/utils'
 
 /** A list of CRNs that skip the 'one application per CRN rule'
  * This is to allow e2e tests to create multiple applications for these CRNs which are needed
@@ -17,6 +18,7 @@ export default class OffencesController {
   constructor(
     private readonly personService: PersonService,
     private readonly applicationService: ApplicationService,
+    private readonly formDataService: FormDataService,
   ) {}
 
   selectOffence(): RequestHandler {
@@ -44,12 +46,19 @@ export default class OffencesController {
 
       const offences = await this.personService.getOffences(req.user.token, crn)
 
+      /*  ********  get prefill ******* */
+      const preFillImport = await this.formDataService.getFormData(req.user.token, `prefill-${crn}`)
+
+      const { offenceId } = getPrefillPageData({ offenceId: 'indexOffenceId' }, preFillImport)
+
+
       return res.render('applications/people/selectOffence', {
         pageHeading: `Select index offence for ${person.name}`,
         errors,
         errorSummary,
         person,
         offences,
+        offenceId,
       })
     }
   }

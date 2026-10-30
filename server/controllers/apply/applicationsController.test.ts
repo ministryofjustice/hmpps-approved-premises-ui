@@ -12,7 +12,7 @@ import { type Cas1ApplicationSummary, TierVersionDto } from '@approved-premises/
 import { faker } from '@faker-js/faker'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController from './applicationsController'
-import { ApplicationService, AssessmentService, PersonService } from '../../services'
+import { ApplicationService, AssessmentService, FormDataService, PersonService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import * as backLinkUtils from '../../utils/backlinks'
 import {
@@ -59,11 +59,17 @@ describe('applicationsController', () => {
   const applicationService = createMock<ApplicationService>({})
   const assessmentService = createMock<AssessmentService>({})
   const personService = createMock<PersonService>({})
+  const formDataService = createMock<FormDataService>({})
 
   let applicationsController: ApplicationsController
 
   beforeEach(() => {
-    applicationsController = new ApplicationsController(applicationService, assessmentService, personService)
+    applicationsController = new ApplicationsController(
+      applicationService,
+      assessmentService,
+      personService,
+      formDataService,
+    )
     request = createMock<Request>({ user: { token } })
     response = createMock<Response>({})
     jest.clearAllMocks()

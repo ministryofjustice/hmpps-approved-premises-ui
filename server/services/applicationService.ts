@@ -20,6 +20,7 @@ import type {
   Cas1CreateApplicationOutcome,
   ApType,
   SentenceTypeOption,
+  Cas1Application,
 } from '@approved-premises/api'
 
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
@@ -28,9 +29,9 @@ import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import type { ApplicationClient, RestClientBuilder } from '../data'
 import { ValidationError } from '../utils/errors'
 
-import { getBody,getPrefillPageData, PrefillMapping } from '../form-pages/utils'
+import { getBody, getPrefillPageData } from '../form-pages/utils'
 import Review from '../form-pages/apply/check-your-answers/review'
-import { getResponses } from '../utils/applications/getResponses'
+import { getGlobalApplicationData, getResponses } from '../utils/applications/getResponses'
 
 export default class ApplicationService {
   constructor(private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>) {}
@@ -115,13 +116,17 @@ export default class ApplicationService {
 
     let preFill = {}
     const mapping = Page.getPrefillMapping && Page.getPrefillMapping()
-    if (mapping) {
-      const preFillImport = await dataServices.formDataService.getFormData(
-        request.user.token,
-        `prefill-${application.person.crn}`,
-      )
+    try {
+      if (mapping) {
+        const preFillImport = await dataServices.formDataService.getFormData(
+          request.user.token,
+          `prefill-${application.person.crn}`,
+        )
 
-      preFill = getPrefillPageData(mapping, preFillImport)
+        preFill = getPrefillPageData(mapping, preFillImport)
+      }
+    } catch {
+      // no pre-fill but it doesn't matter
     }
 
     const body = { ...preFill, ...getBody(Page, application, request, userInput) }
@@ -129,6 +134,16 @@ export default class ApplicationService {
     return Page.initialize
       ? Page.initialize(body, application, request.user.token, dataServices)
       : new Page(body, application)
+  }
+
+  async updateGlobalData(token: string, application: Cas1Application, dataServices: DataServices) {
+    const applicationData: TaskData = getGlobalApplicationData(application)
+    await dataServices.formDataService.updateFormData(
+      token,
+      `prefill-${application.person.crn}`,
+      undefined,
+      applicationData,
+    )
   }
 
   async save(page: TasklistPage, request: Request) {

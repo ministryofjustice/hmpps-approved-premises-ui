@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
 import type { DataServices, PageResponse, TaskData, TaskListErrors } from '@approved-premises/ui'
-import { FieldDefn,PrefillMapping } from './utils'
+import { PrefillMapping } from './utils'
 
 export interface TasklistPageInterface {
   new (body: Record<string, unknown>, data?: TaskData): TasklistPage
@@ -29,6 +29,4 @@ export default abstract class TasklistPage {
   abstract errors(): TaskListErrors<this>
 
   abstract response(): PageResponse
-
-  abstract getPrefillMapping?(): PrefillMapping
 }

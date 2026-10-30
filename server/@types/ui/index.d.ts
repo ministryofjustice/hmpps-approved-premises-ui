@@ -381,6 +381,7 @@ export type DataServices = Partial<{
   formDataService: {
     getFormData(token: string, id: string, journey?: JourneyType): Promise<TaskData>
     getPopulationData(token: string, application: Cas1Application, dataServices: DataServices, mapping: Record<string,string>)
+    updateFormData(token:string, id:string, journeyType: JourneyType, data:TaskData)
   }
 }>
 

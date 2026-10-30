@@ -2,7 +2,7 @@ import type { TaskListErrors, YesNoOrIDKWithDetail, YesOrNo, YesOrNoWithDetail }
 import { Cas1Application } from '@approved-premises/api'
 import { sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
-import { yesNoOrDontKnowResponseWithDetail, yesOrNoResponseWithDetailForYes } from '../../../utils'
+import { PrefillMapping, yesNoOrDontKnowResponseWithDetail, yesOrNoResponseWithDetailForYes } from '../../../utils'
 
 import TasklistPage from '../../../tasklistPage'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
@@ -104,5 +104,16 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
     }
 
     return errors
+  }
+
+  static getPrefillMapping(): PrefillMapping {
+    return {
+      needsWheelchair: 'needsWheelchair',
+      healthConditions: 'healthConditions',
+      healthConditionsDetail: 'healthConditionsDetail',
+      prescribedMedication: 'prescribedMedication',
+      prescribedMedicationDetail: 'prescribedMedicationDetail',
+      isPersonPregnant: 'isPersonPregnant',
+    }
   }
 }

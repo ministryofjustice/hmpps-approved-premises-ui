@@ -4,7 +4,7 @@ import { pascalCase, sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-import { yesOrNoResponseWithDetailForYes } from '../../../utils'
+import { PrefillMapping, yesOrNoResponseWithDetailForYes } from '../../../utils'
 
 export const additionalNeeds = {
   mobility: 'Mobility',
@@ -130,6 +130,18 @@ export default class AccessNeeds implements TasklistPage {
 
   needsCheckboxes() {
     return convertKeyValuePairToCheckBoxItems(additionalNeeds, this.body.additionalNeeds as Array<AdditionalNeed>, true)
+  }
+
+  static getPrefillMapping(): PrefillMapping {
+    return {
+      additionalNeeds: 'healthcareDisabilityCulturalNeedsFlags',
+      religiousOrCulturalNeeds: 'religiousOrCulturalNeeds',
+      religiousOrCulturalNeedsDetail: 'religiousOrCulturalNeedsDetail',
+      careAndSupportNeeds: 'careAndSupportNeeds',
+      careAndSupportNeedsDetail: 'careAndSupportNeedsDetail',
+      needsInterpreter: 'needsInterpreter',
+      interpreterLanguage: 'interpreterLanguage',
+    }
   }
 }
 

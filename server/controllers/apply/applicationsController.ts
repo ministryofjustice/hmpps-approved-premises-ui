@@ -16,7 +16,7 @@ import {
 } from '../../utils/applications/manageApplications'
 import TasklistService from '../../services/tasklistService'
 import ApplicationService from '../../services/applicationService'
-import { AssessmentService, PersonService } from '../../services'
+import { AssessmentService, FormDataService, PersonService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import adminPaths from '../../paths/admin'
@@ -51,6 +51,7 @@ export default class ApplicationsController {
     private readonly applicationService: ApplicationService,
     private readonly assessmentService: AssessmentService,
     private readonly personService: PersonService,
+    private readonly formDataService: FormDataService,
   ) {}
 
   index(): RequestHandler {
@@ -241,6 +242,7 @@ export default class ApplicationsController {
               href: paths.applications.index({}),
             })
           }
+
           const offenceId = offencesLength === 1 ? offences[0].offenceId : null
 
           return res.render(`applications/people/confirm`, {
@@ -333,6 +335,10 @@ export default class ApplicationsController {
     return async (req: Request, res: Response) => {
       const application = await this.applicationService.findApplication(req.user.token, req.params.id)
       application.document = getResponses(application)
+
+      await this.applicationService.updateGlobalData(req.user.token, application, {
+        formDataService: this.formDataService,
+      })
 
       if (req.body?.confirmation !== 'submit') {
         addErrorMessageToFlash(

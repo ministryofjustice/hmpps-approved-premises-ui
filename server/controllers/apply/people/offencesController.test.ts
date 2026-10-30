@@ -8,7 +8,7 @@ import { activeOffenceFactory, personFactory, restrictedPersonFactory } from '..
 import { isFullPerson } from '../../../utils/personUtils'
 import { RestrictedPersonError } from '../../../utils/errors'
 import { fetchErrorsAndUserInput } from '../../../utils/validation'
-import { ApplicationService } from '../../../services'
+import { ApplicationService, FormDataService } from '../../../services'
 import Cas1ApplicationSummary from '../../../testutils/factories/cas1ApplicationSummary'
 import { statusesLimitedToOne } from '../../../utils/applications/statusTag'
 
@@ -22,12 +22,13 @@ describe('OffencesController', () => {
 
   const personService = createMock<PersonService>({})
   const applicationService = createMock<ApplicationService>({})
+  const formDataService = createMock<FormDataService>({})
 
   let offencesController: OffencesController
   let request: DeepMocked<Request>
 
   beforeEach(() => {
-    offencesController = new OffencesController(personService, applicationService)
+    offencesController = new OffencesController(personService, applicationService, formDataService)
     request = createMock<Request>({
       user: { token },
       params: { crn },

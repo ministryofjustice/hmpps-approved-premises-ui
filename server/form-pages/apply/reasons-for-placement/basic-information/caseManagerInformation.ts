@@ -1,5 +1,6 @@
 import type { TaskListErrors } from '@approved-premises/ui'
 
+import { PrefillMapping } from 'server/form-pages/utils'
 import { lowerCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
@@ -52,5 +53,13 @@ export default class CaseManagerInformation implements TasklistPage {
     })
 
     return errors
+  }
+
+  static getPrefillMapping(): PrefillMapping {
+    return {
+      name: 'caseManagerName',
+      emailAddress: 'caseManagerEmailAddress',
+      phoneNumber: 'caseManagerPhoneNumber',
+    }
   }
 }

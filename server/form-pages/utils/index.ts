@@ -105,7 +105,7 @@ export type FieldType = 'DATE' | 'STRING'
 export type FieldDefn = string | { fieldName: string; type?: FieldType }
 export type PrefillMapping = Record<string, FieldDefn>
 
-export function getPrefillPageData(pageMap:PrefillMapping, prefillData: Record<string, string>) {
+export function getPrefillPageData(pageMap: PrefillMapping, prefillData: Record<string, string>) {
   let output: Record<string, unknown> = {}
 
   Object.entries(pageMap).forEach(([key, pageMapping]) => {
