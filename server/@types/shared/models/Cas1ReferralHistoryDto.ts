@@ -8,7 +8,7 @@ import type { Cas1StaffDto } from './Cas1StaffDto';
 import type { RequestForPlacementStatus } from './RequestForPlacementStatus';
 import type { ServiceType } from './ServiceType';
 import type { WithdrawPlacementRequestReason } from './WithdrawPlacementRequestReason';
-export type Cas1ReferralHistory = {
+export type Cas1ReferralHistoryDto = {
     applicationId: string;
     applicationStatus: ApprovedPremisesApplicationStatus;
     date: string;
