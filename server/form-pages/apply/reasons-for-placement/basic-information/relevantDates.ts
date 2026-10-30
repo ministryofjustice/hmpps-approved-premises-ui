@@ -48,17 +48,12 @@ export default class RelevantDates implements TasklistPage {
 
   public set body(value: Partial<RelevantDatesBody>) {
     this._body = {} as RelevantDatesBody
-
-    let selectedDates = value.selectedDates || []
-
-    relevantDateKeys.forEach((dateKey: RelevantDateKeys) => {
-      if (value[dateKey]) {
-        if (!selectedDates.includes(dateKey)) {
-          selectedDates = [...selectedDates, dateKey]
-        }
-      }
+    this._body.selectedDates = value.selectedDates || []
+    this._body.selectedDates.forEach((selectedDate: RelevantDateKeys) => {
+      ;[...dateBodyProperties(selectedDate), selectedDate].forEach(element => {
+        this._body[element] = value[element]
+      })
     })
-    this._body = { ...value, selectedDates }
   }
 
   public get body() {
@@ -111,6 +106,7 @@ export default class RelevantDates implements TasklistPage {
 
   static getPrefillMapping(): PrefillMapping {
     return {
+      selectedDates: 'selectedDates',
       paroleEligibilityDate: { fieldName: 'paroleEligibilityDate', type: 'DATE' },
       homeDetentionCurfewDate: { fieldName: 'homeDetentionCurfewDate', type: 'DATE' },
       licenceExpiryDate: { fieldName: 'licenceExpiryDate', type: 'DATE' },
