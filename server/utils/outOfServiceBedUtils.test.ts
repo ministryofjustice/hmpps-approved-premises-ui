@@ -375,14 +375,11 @@ describe('outOfServiceBedUtils', () => {
     })
 
     it('returns an error if the end date is before the start date', async () => {
+      const today = new Date()
       const bodyEndBeforeStart = {
         ...validBody,
-        'startDate-year': '2026',
-        'startDate-month': '10',
-        'startDate-day': '15',
-        'endDate-year': '2026',
-        'endDate-month': '10',
-        'endDate-day': '14',
+        ...DateFormats.dateObjectToDateInputs(today, 'startDate'),
+        ...DateFormats.dateObjectToDateInputs(subDays(today, 1), 'endDate'),
       }
       expectErrors(bodyEndBeforeStart, {
         endDate: 'The end date must be on or after the start date',
