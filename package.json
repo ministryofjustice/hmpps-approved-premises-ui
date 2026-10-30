@@ -214,7 +214,7 @@
     "@ministryofjustice/frontend": {
       "moment": "2.31.0"
     },
-    "diff": "^8.0.3",
+    "diff": "^9.0.0",
     "serialize-javascript": "^7.0.5",
     "proxy-addr": "^2.0.8",
     "undici": "^6.29.1"
