@@ -20,7 +20,7 @@ generic-service:
     NDELIUS_DEEPLINK: 'https://ndelius.probation.service.justice.gov.uk/NDelius-war/delius/JSP/deeplink.xhtml'
     CAS2_START_LINK: 'https://community-accommodation-tier-2-bail-preprod.hmpps.service.justice.gov.uk/new-cohorts/applications/before-you-start'
     CAS3_START_LINK: 'https://transitional-accommodation-preprod.hmpps.service.justice.gov.uk/referrals/start'
-    IN_MAINTENANCE_MODE: false
+    IN_MAINTENANCE_MODE: true
     PLANNED_MAINTENANCE_BANNER: false
     NDELIUS_RISK_FLAGS_ENABLED: 'true'
     USE_LIVE_TIER: 'true'
