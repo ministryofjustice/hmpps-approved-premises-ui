@@ -13,7 +13,7 @@ import { escape } from './formUtils'
 import { mapApiPersonRisksForUi, sentenceCase } from './utils'
 import { OasysNotFoundError } from '../services/personService'
 import oasysStubs from '../data/stubs/oasysStubs.json'
-import { logToSentry } from '../../logger'
+import { logToSentry } from './sentry'
 import config from '../config'
 
 export type Constructor<T> = new (body: unknown) => T
