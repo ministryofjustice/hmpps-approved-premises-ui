@@ -8,11 +8,17 @@ export const signIn = (
   role: ApprovedPremisesUserRole | Array<ApprovedPremisesUserRole>,
   user?: Partial<ApprovedPremisesUser>,
 ) => {
+  cy.task('debug', 'signIn: stubbing OAuth endpoints')
   cy.task('stubSignIn')
+  cy.task('debug', 'signIn: OAuth endpoints stubbed')
   const rolesPermissions = makeArrayOfType<ApprovedPremisesUserRole>(role).reduce(
     (permissionList, userRole: ApprovedPremisesUserRole) => [...permissionList, ...roleToPermissions(userRole)],
     [] as Array<ApprovedPremisesUserPermission>,
   )
+  cy.task('debug', 'signIn: stubbing user')
   cy.task('stubAuthUser', { role, ...user, permissions: [...rolesPermissions, ...(user?.permissions || [])] })
+  cy.task('debug', 'signIn: user stubbed')
+  cy.task('debug', 'signIn: starting Cypress sign-in command')
   cy.signIn()
+  cy.task('debug', 'signIn: Cypress sign-in command complete')
 }
