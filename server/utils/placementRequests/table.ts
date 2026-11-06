@@ -12,7 +12,6 @@ import { dateCell, htmlCell, textCell, versionedTierCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
 import { displayName, isFullPerson } from '../personUtils'
 import { placementRequestStatus } from '../formUtils'
-import config from '../../config'
 
 export const dashboardTableRows = (
   placementRequests: Array<Cas1PlacementRequestSummary>,
@@ -63,7 +62,7 @@ export const dashboardTableHeader = (
 
   return [
     sortColumn('Name and CRN', 'person_name'),
-    sortColumn('Tier', config.flags.useLiveTiers ? 'person_tier' : 'person_risks_tier'),
+    sortColumn('Tier', 'person_tier'),
     sortColumn('Request type', 'request_type'),
     status === 'matched' && sortColumn('Booked arrival date', 'canonical_arrival_date'),
     status === 'matched' && sortColumn('Approved Premises', 'name'),

@@ -21,7 +21,6 @@ import { pagination } from '../../utils/pagination'
 import { placementRequestStatusSelectOptions, tierSelectOptions } from '../../utils/formUtils'
 import { createQueryString } from '../../utils/utils'
 import ReferenceDataService from '../../services/referenceDataService'
-import config from '../../config'
 
 describe('CruDashboardController', () => {
   const token = 'SOME_TOKEN'
@@ -209,15 +208,9 @@ describe('CruDashboardController', () => {
     const searchPath = paths.admin.cruDashboard.search({})
 
     let searchRequest: Request
-    let originalUseLiveTiers: boolean
 
     beforeEach(() => {
-      originalUseLiveTiers = config.flags.useLiveTiers
       placementRequestService.search.mockResolvedValue(paginatedResponse)
-    })
-
-    afterEach(() => {
-      config.flags.useLiveTiers = originalUseLiveTiers
     })
 
     it('should render the search template', async () => {
@@ -268,10 +261,8 @@ describe('CruDashboardController', () => {
       })
     })
 
-    it('should search for placement requests by application tier and dates', async () => {
-      config.flags.useLiveTiers = false
-
-      const query = { tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-03' }
+    it('should search for placement requests by live tier and dates', async () => {
+      const query = { tier: 'B', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-03' }
 
       searchRequest = { ...request, query }
 
@@ -280,7 +271,7 @@ describe('CruDashboardController', () => {
       expect(response.render).toHaveBeenCalledWith(
         'admin/cruDashboard/search',
         expect.objectContaining({
-          tierOptions: tierSelectOptions(tiers, 'A1'),
+          tierOptions: tierSelectOptions(tiers, 'B'),
           ...query,
         }),
       )
@@ -292,36 +283,8 @@ describe('CruDashboardController', () => {
         {
           arrivalDateEnd: '2022-01-03',
           arrivalDateStart: '2022-01-01',
-          tierOnApplicationCreation: 'A1',
+          personTier: 'B',
         },
-        undefined,
-        undefined,
-        undefined,
-      )
-    })
-
-    it('should search for placement requests by live tier', async () => {
-      config.flags.useLiveTiers = true
-
-      const query = { tier: 'B2' }
-
-      searchRequest = { ...request, query }
-
-      await cruDashboardController.search()(searchRequest, response, next)
-
-      expect(response.render).toHaveBeenCalledWith(
-        'admin/cruDashboard/search',
-        expect.objectContaining({
-          tierOptions: tierSelectOptions(tiers, 'B2'),
-          ...query,
-        }),
-      )
-
-      expect(getPaginationDetails.getPaginationDetails).toHaveBeenCalledWith(searchRequest, searchPath, query)
-
-      expect(placementRequestService.search).toHaveBeenCalledWith(
-        token,
-        { personTier: 'B2' },
         undefined,
         undefined,
         undefined,

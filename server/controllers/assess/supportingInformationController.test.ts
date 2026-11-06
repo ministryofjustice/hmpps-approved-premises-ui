@@ -10,13 +10,11 @@ import {
   assessmentFactory,
   cas1OasysGroupFactory,
   prisonCaseNotesFactory,
-  risksFactory,
 } from '../../testutils/factories'
 
 import SupportingInformationController from './supportingInformationController'
 import { AssessmentService, PersonService } from '../../services'
 import { DateFormats } from '../../utils/dateUtils'
-import config from '../../config'
 import Cas1OASysMetadata from '../../testutils/factories/cas1OASysMetadata'
 
 describe('supportingInformationController', () => {
@@ -74,14 +72,13 @@ describe('supportingInformationController', () => {
         }
 
         assessmentService.findAssessment.mockResolvedValue(assessment)
+        personService.riskProfile.mockResolvedValue(assessment.application.risks)
       })
 
       it('renders the view', async () => {
-        const requestHandler = supportingInformationController.show()
+        await supportingInformationController.show()(request, response, next)
 
-        await requestHandler(request, response, next)
-
-        expect(response.render).toBeCalledWith('assessments/pages/risk-information/oasys-information', {
+        expect(response.render).toHaveBeenCalledWith('assessments/pages/risk-information/oasys-information', {
           assessmentId: assessment.id,
           dateOfImport: DateFormats.isoDateToUIDate(metaData.importedDate),
           lastUpdated: DateFormats.isoDateToUIDate(metaData.dateCompleted),
@@ -95,46 +92,17 @@ describe('supportingInformationController', () => {
           risks: assessment.application.risks,
           pageHeading: 'Review risk information',
         })
-        expect(assessmentService.findAssessment).toBeCalledWith(token, request.params.id)
+        expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, request.params.id)
       })
 
-      describe('when the live tiers feature flag is enabled', () => {
-        const liveRisks = risksFactory.build()
+      it('renders the view with risks from the risk profile endpoint', async () => {
+        await supportingInformationController.show()(request, response, next)
 
-        beforeEach(() => {
-          config.flags.useLiveTiers = true
-          personService.riskProfile.mockResolvedValue(liveRisks)
-        })
-
-        afterEach(() => {
-          config.flags.useLiveTiers = false
-        })
-
-        it('renders the view with risks from the risk profile endpoint', async () => {
-          const requestHandler = supportingInformationController.show()
-
-          await requestHandler(request, response, next)
-
-          expect(personService.riskProfile).toHaveBeenCalledWith(token, assessment.application.person.crn)
-          expect(response.render).toHaveBeenCalledWith(
-            'assessments/pages/risk-information/oasys-information',
-            expect.objectContaining({ risks: liveRisks }),
-          )
-        })
-      })
-
-      describe('when the live tiers feature flag is disabled', () => {
-        it('renders the view with risks from the application when live tiers are disabled', async () => {
-          const requestHandler = supportingInformationController.show()
-
-          await requestHandler(request, response, next)
-
-          expect(personService.riskProfile).not.toHaveBeenCalled()
-          expect(response.render).toHaveBeenCalledWith(
-            'assessments/pages/risk-information/oasys-information',
-            expect.objectContaining({ risks: assessment.application.risks }),
-          )
-        })
+        expect(personService.riskProfile).toHaveBeenCalledWith(token, assessment.application.person.crn)
+        expect(response.render).toHaveBeenCalledWith(
+          'assessments/pages/risk-information/oasys-information',
+          expect.objectContaining({ risks: assessment.application.risks }),
+        )
       })
     })
 

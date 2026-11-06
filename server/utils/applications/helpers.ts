@@ -1,5 +1,5 @@
 import { KeyDetailsArgs } from '@approved-premises/ui'
-import { Cas1Application, Cas1ApplicationSummary, RiskTier } from '../../@types/shared'
+import { Cas1Application, Cas1ApplicationSummary } from '../../@types/shared'
 import { displayName, getVersionedTierValue, isFullPerson, PersonAny } from '../personUtils'
 import paths from '../../paths/apply'
 import { DateFormats } from '../dateUtils'
@@ -32,11 +32,11 @@ export const createNameAnchorElement = (
     : textCell(name)
 }
 
-export const personKeyDetails = (person: PersonAny, tierOnApplicationCreation?: RiskTier): KeyDetailsArgs => ({
+export const personKeyDetails = (person: PersonAny): KeyDetailsArgs => ({
   header: { value: displayName(person), key: '', showKey: false },
   items: [
     summaryListItem('CRN', person.crn),
-    summaryListItem('Tier', getVersionedTierValue(person, tierOnApplicationCreation) || 'Not available'),
+    summaryListItem('Tier', getVersionedTierValue(person) || 'Not available'),
     isFullPerson(person)
       ? summaryListItem('Date of birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
       : undefined,
@@ -44,4 +44,4 @@ export const personKeyDetails = (person: PersonAny, tierOnApplicationCreation?: 
 })
 
 export const applicationKeyDetails = (application: Cas1Application | Cas1ApplicationSummary): KeyDetailsArgs =>
-  personKeyDetails(application.person, application.risks?.tier?.value)
+  personKeyDetails(application.person)

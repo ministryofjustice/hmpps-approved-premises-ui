@@ -9,7 +9,6 @@ import {
 import { PlacementRequestDashboardSearchOptions } from '@approved-premises/ui'
 import createError from 'http-errors'
 
-import config from '../../config'
 import { CruManagementAreaService, PlacementRequestService, PremisesService } from '../../services'
 import adminPaths from '../../paths/admin'
 import { objectClean } from '../../utils/utils'
@@ -109,13 +108,11 @@ export default class CruDashboardController {
         searchOptions,
       )
 
-      const tierFieldName = config.flags.useLiveTiers ? 'personTier' : 'tierOnApplicationCreation'
-
       const dashboard = await this.placementRequestService.search(
         req.user.token,
         objectClean({
           ...searchOptions,
-          [tierFieldName]: searchOptions.tier,
+          personTier: searchOptions.tier,
           tier: undefined,
         }),
         pageNumber,

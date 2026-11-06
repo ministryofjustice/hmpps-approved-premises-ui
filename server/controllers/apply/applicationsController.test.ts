@@ -280,13 +280,7 @@ describe('applicationsController', () => {
         })
       })
 
-      afterEach(() => {
-        config.flags.useLiveTiers = false
-      })
-
       it('fetches the application and live person risks from the API and renders the task list if the application is started and the the useLiveTiers feature flag is set', async () => {
-        config.flags.useLiveTiers = true
-
         const risks = risksFactory.build()
 
         personService.riskProfile.mockResolvedValue(risks)
@@ -303,22 +297,6 @@ describe('applicationsController', () => {
 
         expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
         expect(personService.riskProfile).toHaveBeenCalledWith(token, application.person.crn)
-      })
-
-      it('uses the risk information from the application if the useLiveTiers feature flag is not set', async () => {
-        config.flags.useLiveTiers = false
-
-        await applicationsController.show()(request, response, next)
-
-        expect(response.render).toHaveBeenCalledWith('applications/tasklist', {
-          application,
-          taskList: stubTaskList,
-          errors: {},
-          errorSummary: [],
-          risks: application.risks,
-        })
-
-        expect(personService.riskProfile).not.toHaveBeenCalled()
       })
     })
 
@@ -437,6 +415,7 @@ describe('applicationsController', () => {
         ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
           return errorsAndUserInput
         })
+        personService.riskProfile.mockResolvedValue(application.risks)
       })
 
       it('sends the errors to the template', async () => {
@@ -763,7 +742,7 @@ describe('applicationsController', () => {
       await applicationsController.manageApplications()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('applications/manageApplications', {
-        contextKeyDetails: personKeyDetails(person, undefined),
+        contextKeyDetails: personKeyDetails(person),
         applicationCount: 0,
         applicationsHeader: getApplicationTableHeader(),
         applicationsRows: getApplicationTableRows([], ''),

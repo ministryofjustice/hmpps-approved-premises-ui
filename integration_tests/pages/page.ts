@@ -830,11 +830,11 @@ export default class Page {
     cy.get('[aria-label="Primary navigation"] a').contains(label).click()
   }
 
-  shouldShowKeyPersonDetails(person: FullPerson, tier: string) {
+  shouldShowKeyPersonDetails(person: FullPerson) {
     cy.get('.prisoner-info').within(() => {
       cy.get('span').contains(displayName(person))
       cy.get('span').contains(`CRN: ${person.crn}`)
-      cy.get('span').contains(`Tier: ${tier}`)
+      cy.get('span').contains(`Tier: ${person.tier.tierScore}`)
       cy.get('span').contains(`Date of birth: ${DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' })}`)
     })
   }

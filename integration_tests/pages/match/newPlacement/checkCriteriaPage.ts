@@ -5,6 +5,6 @@ export default class CheckCriteriaPage extends Page {
   constructor(placementRequest: Cas1PlacementRequestDetail) {
     super('Check placement transfer criteria')
 
-    this.shouldShowKeyPersonDetails(placementRequest.person as FullPerson, placementRequest.risks.tier.value.level)
+    this.shouldShowKeyPersonDetails(placementRequest.person as FullPerson)
   }
 }

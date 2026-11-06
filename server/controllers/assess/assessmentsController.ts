@@ -4,7 +4,6 @@ import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/val
 import TasklistService from '../../services/tasklistService'
 import { AssessmentService, PersonService, TaskService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
-import config from '../../config'
 
 import paths from '../../paths/assess'
 import { Cas1Assessment, AssessmentSortField, Cas1AssessmentStatus, TaskSortField } from '../../@types/shared'
@@ -103,9 +102,7 @@ export default class AssessmentsController {
       } else {
         const taskList = new TasklistService(assessment)
 
-        const risks = config.flags.useLiveTiers
-          ? await this.personService.riskProfile(req.user.token, assessment.application.person.crn)
-          : assessment.application.risks
+        const risks = await this.personService.riskProfile(req.user.token, assessment.application.person.crn)
 
         res.render('assessments/tasklist', {
           assessment,

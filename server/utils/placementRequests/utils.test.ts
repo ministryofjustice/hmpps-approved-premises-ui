@@ -68,10 +68,7 @@ describe('utils', () => {
 
       placementRequestKeyDetails(placementRequest)
 
-      expect(applicationHelpers.personKeyDetails).toHaveBeenCalledWith(
-        placementRequest.person,
-        placementRequest.risks.tier.value,
-      )
+      expect(applicationHelpers.personKeyDetails).toHaveBeenCalledWith(placementRequest.person)
     })
   })
 

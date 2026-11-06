@@ -2,7 +2,6 @@ import { Request, RequestHandler, Response } from 'express'
 import { OasysMetaData } from '@approved-premises/ui'
 import { AssessmentService, PersonService } from '../../services'
 import { DateFormats } from '../../utils/dateUtils'
-import config from '../../config'
 
 import {
   acctAlertsFromAssessment,
@@ -31,9 +30,7 @@ export default class SupportingInformationController {
           'optional-oasys-sections': { metaData: OasysMetaData }
         }
 
-        const risks = config.flags.useLiveTiers
-          ? await this.personService.riskProfile(req.user.token, assessment.application.person.crn)
-          : assessment.application.risks
+        const risks = await this.personService.riskProfile(req.user.token, assessment.application.person.crn)
 
         const dateOfImportIso =
           oasys['optional-oasys-sections'].metaData?.importedDate || assessment.application.submittedAt

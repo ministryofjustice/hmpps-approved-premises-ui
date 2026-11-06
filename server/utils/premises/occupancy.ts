@@ -18,7 +18,6 @@ import { placementCriteriaLabels } from '../placementCriteriaUtils'
 import { getRoomCharacteristicLabel, roomCharacteristicMap } from '../characteristicsUtils'
 import { mapPlacementTableRows } from './index'
 import { htmlCell, textCell } from '../tableUtils'
-import config from '../../config'
 
 type CalendarDayStatus = 'available' | 'full' | 'overbooked'
 
@@ -170,9 +169,9 @@ export type SortablePlacementColumnField = Exclude<Cas1SpaceBookingDaySummarySor
 export type PlacementColumnField = SortablePlacementColumnField | 'spaceType'
 export type OutOfServiceBedColumnField = keyof Cas1OutOfServiceBedSummary
 
-export const placementColumnMap: Array<ColumnDefinition<Exclude<PlacementColumnField, 'personTier'>>> = [
+export const placementColumnMap: Array<ColumnDefinition<Exclude<PlacementColumnField, 'tier'>>> = [
   { title: 'Name and CRN', fieldName: 'personName', sortable: true },
-  { title: 'Tier', fieldName: 'tier', sortable: true },
+  { title: 'Tier', fieldName: 'personTier', sortable: true },
   { title: 'Arrival date', fieldName: 'canonicalArrivalDate', sortable: true },
   { title: 'Departure date', fieldName: 'canonicalDepartureDate', sortable: true },
   { title: 'Room criteria', fieldName: 'spaceType', sortable: false },
@@ -194,8 +193,7 @@ export const tableHeader = <T extends string>(
 ): Array<TableCell> => {
   return columnMap.map(({ title, fieldName, sortable }: ColumnDefinition<T>) => {
     if (!sortable) return textCell(title)
-    const targetField = fieldName === 'tier' && config.flags.useLiveTiers ? ('personTier' as T) : fieldName
-    return sortHeader<T>(title, targetField, sortBy, sortDirection, hrefPrefix)
+    return sortHeader<T>(title, fieldName, sortBy, sortDirection, hrefPrefix)
   })
 }
 

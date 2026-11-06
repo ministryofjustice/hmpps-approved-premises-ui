@@ -23,7 +23,7 @@ export default class SearchPage extends Page {
   }
 
   shouldShowCaseDetails(placementRequest: Cas1PlacementRequestDetail): void {
-    this.shouldShowKeyPersonDetails(placementRequest.person as FullPerson, placementRequest.risks?.tier?.value?.level)
+    this.shouldShowKeyPersonDetails(placementRequest.person as FullPerson)
     this.shouldShowMatchingDetails(placementRequest)
   }
 
