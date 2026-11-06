@@ -665,7 +665,6 @@ describe('applicationsController', () => {
       })
     })
 
-
     it('should not render the Stop page, even if the person has a MISSING tier (SAS-1715)', async () => {
       const { person } = mockPerson('MISSING')
 
@@ -681,7 +680,7 @@ describe('applicationsController', () => {
       })
     })
 
-    it('should throw if the person has a V3 tier that is null', () => {
+    it('should throw if the person has a tier that is null', () => {
       mockPerson(null)
 
       expect(async () => {

@@ -1,6 +1,6 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
-import { TierDto } from '@approved-premises/api'
+import { TierDto, TierVersionDto } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 
 const v3EligibleTiers = ['A', 'B', 'C']
@@ -20,5 +20,5 @@ export default TierDtoFactory.define(() => ({
   calculationDate: DateFormats.dateObjToIsoDate(faker.date.recent({ days: 365 })),
   provisional: faker.datatype.boolean(),
   tierScore: faker.helpers.arrayElement([...v3EligibleTiers, ...v3IneligibleTiers]),
-  vesion: 'V3',
+  version: 'V3' as TierVersionDto,
 }))
