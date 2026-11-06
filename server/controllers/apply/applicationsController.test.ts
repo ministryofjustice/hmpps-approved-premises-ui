@@ -680,7 +680,7 @@ describe('applicationsController', () => {
       })
     })
 
-    it('should throw if the person has a V3 tier that is null', () => {
+    it('should throw if the person has a tier that is null', () => {
       mockPerson(null)
 
       expect(async () => {

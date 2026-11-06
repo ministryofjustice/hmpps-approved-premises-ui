@@ -43,7 +43,7 @@ context('Apply - placement length and dates', () => {
   })
 
   it('shows no duration skip page if the calculated duration is null', function test() {
-    GIVEN('there is an application for a person with a version 3 tier')
+    GIVEN('there is an application for a person')
     const application = { ...this.application, status: 'started' }
     application.person = { ...this.person, tier: tierDtoFactory.build({ tierScore: 'B' }) }
     cy.task('stubApplicationGet', { application })

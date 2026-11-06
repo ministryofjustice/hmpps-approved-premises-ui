@@ -24,7 +24,7 @@ context('Apply', () => {
     GIVEN('the person does not have an eligible risk tier')
     this.application.risks = risksFactory.build({
       crn: this.person.crn,
-      tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
+      tier: tierEnvelopeFactory.build({ value: { level: 'E' } }),
     })
     const tier = tierDtoFactory.ineligible().build()
     this.person.sex = 'Male'
@@ -36,7 +36,7 @@ context('Apply', () => {
     AND('I start the application and left')
     const apply = new ApplyHelper(application, application.person, this.offences)
     apply.setupApplicationStubs()
-    apply.startApplication()
+    apply.startApplication({ withCas2Interstitial: true })
 
     AND('I visit the list page')
     const listPage = ListPage.visit([application], [], [])
@@ -54,7 +54,7 @@ context('Apply', () => {
   it('If user navigates away from application on confirm details page for eligible CRN, return to confirm details page', function test() {
     GIVEN('the person has an eligible risk tier')
 
-    const tier = tierDtoFactory.eligible().build()
+    const tier = tierDtoFactory.build({ tierScore: 'A' })
     this.application.risks = risksFactory.build({
       crn: this.person.crn,
       tier: tierEnvelopeFactory.build({ value: { level: tier.tierScore } }),
@@ -146,7 +146,7 @@ context('Apply', () => {
 
     const apply = new ApplyHelper(application, application.person, this.offences)
     apply.setupApplicationStubs()
-    apply.startApplication()
+    apply.startApplication({ withCas2Interstitial: true })
 
     THEN('I should be able to confirm that the case is exceptional')
     apply.completeExceptionalCase()
@@ -224,7 +224,7 @@ context('Apply', () => {
     Page.verifyOnPage(ApplyPages.ConfirmYourDetailsPage, application)
   })
 
-  it('allows the user to specify if the case is exceptional for a male with a V3 tier D', function test() {
+  it('allows the user to specify if the case is exceptional for a male with a tier of D', function test() {
     const tier = tierDtoFactory.build({ tierScore: 'D' })
     this.person.tier = tier
     this.person.sex = 'Male'
@@ -242,7 +242,7 @@ context('Apply', () => {
     Page.verifyOnPage(ApplyPages.ConfirmYourDetailsPage, application)
   })
 
-  it('Follows the Tier V3 CAS2 interstitial page route', function test() {
+  it('Follows the CAS2 interstitial page route', function test() {
     this.person.tier = tierDtoFactory.build({ tierScore: 'B' })
     const apply = new ApplyHelper({ ...this.application, person: this.person }, this.person, this.offences)
     apply.setupApplicationStubs()
