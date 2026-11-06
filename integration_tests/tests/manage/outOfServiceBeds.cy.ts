@@ -31,7 +31,7 @@ describe('Out of service beds', () => {
     cy.task('reset')
     cy.task('debug', 'outOfServiceBeds beforeEach: WireMock reset complete')
     cy.task('stubOutOfServiceBedReasons')
-    cy.task('debug', 'outOfServiceBeds beforeEach: reasons stubbed')
+    cy.task('debug', 'outOfServiceBeds beforeEach: reasons stubbedd')
 
     GIVEN('I am signed in as a Future manager')
     cy.task('debug', 'outOfServiceBeds beforeEach: signing in')
