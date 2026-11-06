@@ -43,6 +43,10 @@ export default defineConfig({
   e2e: {
     setupNodeEvents(on) {
       on('task', {
+        debug: (message: string) => {
+          process.stdout.write(`[Cypress debug] ${message}\n`)
+          return null
+        },
         reset: resetStubs,
         ...auth,
         ...tokenVerification,
