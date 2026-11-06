@@ -15,44 +15,20 @@ import {
 const tierBadge = (tier: string): string => {
   if (!tier) return ''
 
-  const colour = { A: 'moj-badge--red', B: 'moj-badge--purple' }[tier[0]]
-
-  return `<span class="moj-badge ${colour}">${tier}</span>`
-}
-
-const tierBadgeV3 = (tier: string): string => {
-  if (!tier) return ''
-
   return `<span>${tier}</span>`
 }
 
 const versionedTierBadge = (tier: TierDto): string => {
-  if (tier.version === 'V2') {
-    return tierBadge(tier.tierScore)
-  }
-  return tierBadgeV3(tier.tierScore)
+  return tierBadge(tier.tierScore)
 }
 
 const isApplicableTierDto = (person: FullPerson) => {
-  const { version, tierScore } = person.tier || {}
+  const { sex, tier: { tierScore } = {} } = person
 
-  return version === 'V2' ? isApplicableV2Tier(person.sex, tierScore) : isApplicableV3Tier(person.sex, tierScore)
-}
-
-const isApplicableV3Tier = (sex: string, tier: string) => {
   const applicableTiersMen = ['A', 'B', 'C']
 
-  if (sex === 'Female') return ['D', ...applicableTiersMen].includes(tier)
-  return applicableTiersMen.includes(tier)
-}
-
-const isApplicableV2Tier = (sex: string, tier: string): boolean => {
-  const applicableTiersAll = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3']
-  const applicableTiersWomen = ['C3']
-
-  const applicableTiers = sex === 'Female' ? [applicableTiersAll, applicableTiersWomen].flat() : applicableTiersAll
-
-  return applicableTiers.includes(tier)
+  if (sex === 'Female') return ['D', ...applicableTiersMen].includes(tierScore)
+  return applicableTiersMen.includes(tierScore)
 }
 
 export type PersonAny = Person | PersonSummary

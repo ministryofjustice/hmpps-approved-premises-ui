@@ -7,7 +7,7 @@ import { cas1SpaceBookingFactory, caseDetailFactory } from '../../testutils/fact
 import { fullPersonFactory } from '../../testutils/factories/person'
 import { DateFormats } from '../dateUtils'
 import { PersonStatusTag } from '../people/personStatusTag'
-import { versionedTierBadge } from '../personUtils'
+import { tierBadge } from '../personUtils'
 import * as utils from './index'
 import * as contactUtils from './contactUtils'
 import { htmlCell } from '../tableUtils'
@@ -75,7 +75,7 @@ describe('personalUtils', () => {
           { key: { text: 'Age' }, value: { text: '32 years' } },
           { key: { text: 'Status' }, value: { html: new PersonStatusTag(person.status).html() } },
           { key: { text: 'Nationality' }, value: { text: person.nationality } },
-          { key: { text: 'Tier' }, value: { html: versionedTierBadge(person.tier) } },
+          { key: { text: 'Tier' }, value: { html: tierBadge(person.tier.tierScore) } },
         ],
       })
     }

@@ -281,9 +281,9 @@
   ],
   "move-on": [
     {
-      "Does this application require a different placement duration?": "Yes",
-      "How many weeks will the person stay at the AP?": "6 weeks",
-      "Why does this person require a different placement duration?": "some reason"
+      "Do you want to change the placement length?": "Yes",
+      "New placement length": "6 weeks",
+      "Reason for change": "some reason"
     },
     {
       "Where is the person most likely to live when they move on from the AP?": "SW11"

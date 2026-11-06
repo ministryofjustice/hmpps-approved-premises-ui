@@ -8,7 +8,7 @@ import type {
   PaginatedResponse,
 } from '@approved-premises/ui'
 import { addYears } from 'date-fns'
-import { type Cas1ApplicationSummary, TierVersionDto } from '@approved-premises/api'
+import { type Cas1ApplicationSummary } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController from './applicationsController'
@@ -41,7 +41,7 @@ import { getApplicationTableHeader, getApplicationTableRows } from '../../utils/
 import { applicationKeyDetails, personKeyDetails } from '../../utils/applications/helpers'
 import { statusesLimitedToOne } from '../../utils/applications/statusTag'
 import config from '../../config'
-import { fullPersonFactory, unknownPersonFactory } from '../../testutils/factories/person'
+import { fullPersonFactory } from '../../testutils/factories/person'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applications/getResponses')
@@ -627,8 +627,8 @@ describe('applicationsController', () => {
   describe('eligibilityCheck', () => {
     const crn: string = '00112233'
 
-    const mockPerson = (version: TierVersionDto, tierScore: string) => {
-      const tierDto = tierDtoFactory.build({ version, tierScore })
+    const mockPerson = (tierScore: string) => {
+      const tierDto = tierDtoFactory.build({ tierScore })
       const person = fullPersonFactory.build({ crn, tier: tierDto })
       personService.findByCrn.mockResolvedValue(person)
       return { person }
@@ -642,16 +642,7 @@ describe('applicationsController', () => {
     })
 
     it('should redirect to the offences page, if the tier is V3 and the person is eligible for AP', async () => {
-      mockPerson('V3', 'A')
-
-      await applicationsController.eligibilityCheck()(request, response, next)
-
-      expect(personService.findByCrn).toHaveBeenCalledWith(token, crn)
-      expect(response.redirect).toHaveBeenCalledWith(paths.applications.people.selectOffence({ crn }))
-    })
-
-    it('should redirect to the offences page, if tier is V2', async () => {
-      mockPerson('V2', 'C1')
+      mockPerson('A')
 
       await applicationsController.eligibilityCheck()(request, response, next)
 
@@ -660,7 +651,7 @@ describe('applicationsController', () => {
     })
 
     it('should render the CAS2 warning page if the person is not eligible for AP', async () => {
-      const { person } = mockPerson('V3', 'E')
+      const { person } = mockPerson('E')
 
       await applicationsController.eligibilityCheck()(request, response, next)
 
@@ -675,7 +666,7 @@ describe('applicationsController', () => {
     })
 
     it('should render the Stop page if the person has a MISSING tier', async () => {
-      const { person } = mockPerson('V3', 'MISSING')
+      const { person } = mockPerson('MISSING')
 
       await applicationsController.eligibilityCheck()(request, response, next)
 
@@ -690,28 +681,11 @@ describe('applicationsController', () => {
     })
 
     it('should throw if the person has a V3 tier that is null', () => {
-      mockPerson('V3', null)
+      mockPerson(null)
 
       expect(async () => {
         await applicationsController.eligibilityCheck()(request, response, next)
       }).rejects.toThrowError(`CRN: ${crn} has no tier`)
-    })
-
-    it('should not throw if the person has a V2 tier that is null', async () => {
-      mockPerson('V2', null)
-
-      await applicationsController.eligibilityCheck()(request, response, next)
-
-      expect(response.redirect).toHaveBeenCalledWith(paths.applications.people.selectOffence({ crn }))
-    })
-
-    it('should not throw if the person has no tier', async () => {
-      const person = unknownPersonFactory.build({ crn })
-      personService.findByCrn.mockResolvedValue(person)
-
-      await applicationsController.eligibilityCheck()(request, response, next)
-
-      expect(response.redirect).toHaveBeenCalledWith(paths.applications.people.selectOffence({ crn }))
     })
   })
 

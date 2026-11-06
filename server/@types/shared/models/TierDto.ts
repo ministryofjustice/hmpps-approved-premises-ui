@@ -13,6 +13,7 @@ export type TierDto = {
      */
     provisional?: boolean;
     tierScore: string;
-    version: TierVersionDto;
+    // TODO: revert
+    // version: TierVersionDto;
 };
 

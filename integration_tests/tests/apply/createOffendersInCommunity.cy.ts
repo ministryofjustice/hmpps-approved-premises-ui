@@ -1,6 +1,6 @@
 import { addMonths, subDays } from 'date-fns'
 import { addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
-import { personFactory } from '../../../server/testutils/factories'
+import { personFactory, tierDtoFactory } from '../../../server/testutils/factories'
 import ApplyHelper from '../../helpers/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
@@ -11,7 +11,7 @@ context('Apply', () => {
   beforeEach(setup)
 
   it('supports offenders already in the community', function test() {
-    const person = personFactory.build({ status: 'InCommunity' })
+    const person = personFactory.build({ status: 'InCommunity', tier: tierDtoFactory.build({ tierScore: 'B' }) })
 
     // A 'regular' placement date (not emergency or short notice)
     const placementDate = addMonths(new Date(), 7)
@@ -45,7 +45,7 @@ context('Apply', () => {
     const apply = new ApplyHelper(this.application, person, this.offences)
 
     apply.setupApplicationStubs(uiRisks)
-    apply.startApplication()
+    apply.startApplication({ withCas2Interstitial: true })
     apply.completeApplication({ isExceptionalCase: false, isInComunity: true })
 
     THEN('the application should be submitted to the API')
