@@ -21,84 +21,42 @@
       <form action="{{ paths.applications.startWarning() }}" method="get">
         <h1>{{ pageHeading }}</h1>
 
-        {% if v3Tiers %}
-            <p class="govuk-body">Use this service to apply for an Approved Premises placement for people in custody or on probation.</p>
+        <p class="govuk-body">Use this service to apply for an Approved Premises placement for people in custody or on probation.</p>
 
-            <h2 class="govuk-heading-m">Who is eligible</h2>
+        <h2 class="govuk-heading-m">Who is eligible</h2>
 
-            <p class="govuk-body govuk-!-margin-bottom-1">The person is usually eligible for a placement if they are:</p>
-            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-1">
-                <li>male: tier A, B or C</li>
-                <li>female: tier A, B, C or D</li>
-            </ul>
-            <p class="govuk-body">In exceptional cases, a person outside these criteria may still be eligible if this has been agreed with a senior manager.</p>
+        <p class="govuk-body govuk-!-margin-bottom-1">The person is usually eligible for a placement if they are:</p>
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-1">
+            <li>male: tier A, B or C</li>
+            <li>female: tier A, B, C or D</li>
+        </ul>
+        <p class="govuk-body">In exceptional cases, a person outside these criteria may still be eligible if this has been agreed with a senior manager.</p>
 
-            <h2 class="govuk-heading-m">What you'll need</h2>
+        <h2 class="govuk-heading-m">What you'll need</h2>
 
-            <p class="govuk-body govuk-!-margin-bottom-1">You'll be asked for information about:</p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>why an AP is needed to manage risk</li>
-                <li>the risks they may pose in an AP</li>
-                <li>how those risks will be managed</li>
-                <li>the location, AP type and room type</li>
-                <li>placement requirements - for example, health needs</li>
-                <li>move-on</li>
-            </ul>
-
-            <h2 class="govuk-heading-m">OASys assessment</h2>
-
-            <p class="govuk-body govuk-!-margin-bottom-1">The most recent OASys assessment will be imported into the application.</p>
-            <p class="govuk-body govuk-!-margin-bottom-1">Before you start, check the assessment:</p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>is up to date</li>
-                <li>has a complete or locked incomplete status</li>
-            </ul>
-
-            <h2 class="govuk-heading-m">When to apply</h2>
-            <p class="govuk-body govuk-!-margin-bottom-8">Apply at least 6 months before release, unless there are exceptional circumstances.</p>
-
-
-        {% else %}
-
-        {% block introContent %}
-        <p class="govuk-body">Use this service to apply for a placement in an Approved Premises (AP) for men or women.</p>
-
-        <p class="govuk-body">Approved Premises support the risk management of individuals who pose a very high / high risk of serious harm and have complex needs. When applying for an Approved Premises placement you must identify how the placement will contribute to risk management.</p>
-
-        <p class="govuk-body">Applications for Approved Premises should not be made primarily for accommodation need. Alternatives should be considered such as CAS2 / CAS3 where this is the case.</p>
-
-        <p class="govuk-body">If a person is leaving prison, you should aim to complete your application 6 months before they are released, unless there are exceptional reasons such as a short sentence or a change in risk or other circumstances.</p>
-
-        <p class="govuk-body">You can leave and return to your application at any time. Your progress will be saved.</p>
-
-
-        {% endblock %}
-
-
-        <h2>Before you start</h2>
-
-        <h3>You need:</h3>
-
-        <ul>
-          <li>the person's CRN </li>
-          <li>an up-to-date OASys assessment - this is required in order for the service to import OASys information</li>
+        <p class="govuk-body govuk-!-margin-bottom-1">You'll be asked for information about:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>why an AP is needed to manage risk</li>
+            <li>the risks they may pose in an AP</li>
+            <li>how those risks will be managed</li>
+            <li>the location, AP type and room type</li>
+            <li>placement requirements - for example, health needs</li>
+            <li>move-on</li>
         </ul>
 
-        <h3>You need to know:</h3>
+        <h2 class="govuk-heading-m">OASys assessment</h2>
 
-        <ul>
-          <li>
-            <a href="https://equip-portal.equip.service.justice.gov.uk/CtrlWebIsapi.dll?__id=webMyTopics.searchOne&k=8722">eligibility requirements</a> - you'll need to demonstrate why an AP is necessary over other interventions and accommodation options</li>
-          <li>factors impacting which location, type of AP, and type of room will be suitable</li>
-          <li>how you'll prepare for move on after the AP</li>
+        <p class="govuk-body govuk-!-margin-bottom-1">The most recent OASys assessment will be imported into the application.</p>
+        <p class="govuk-body govuk-!-margin-bottom-1">Before you start, check the assessment:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>is up to date</li>
+            <li>has a complete or locked incomplete status</li>
         </ul>
 
-        {{ govukWarningText({
-          html: "<p class='govuk-!-font-weight-bold'>The person's OASys record must be updated before starting an application.</p><p class='govuk-!-font-weight-bold'>If you start an application and then update the OASys record, any changes will not be imported. You will need to restart the application from the beginning for the changes to be imported.</p>",
-          iconFallbackText: "Warning"
-        }) }}
+        <h2 class="govuk-heading-m">When to apply</h2>
+        <p class="govuk-body govuk-!-margin-bottom-8">Apply at least 6 months before release, unless there are exceptional circumstances.</p>
 
-        {% endif %}
+
 
         {{ govukButton({
             text: "Start now",

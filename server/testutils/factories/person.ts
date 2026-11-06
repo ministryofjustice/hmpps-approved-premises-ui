@@ -28,7 +28,7 @@ export const fullPersonFactory = Factory.define<FullPerson>(() => ({
   isRestricted: false,
   ethnicity: faker.helpers.arrayElement(['White', 'Black', 'Asian', 'Mixed', undefined]),
   genderIdentity: faker.helpers.arrayElement(['Man', 'Woman', undefined]),
-  tier: tierDtoFactory.v2Eligible().build(),
+  tier: tierDtoFactory.build(),
 }))
 
 export const restrictedPersonFactory = Factory.define<RestrictedPerson>(() => ({
@@ -62,5 +62,5 @@ export const fullPersonSummaryFactory = Factory.define<FullPersonSummary>(() => 
   name: faker.person.fullName(),
   isRestricted: false,
   dateOfBirth: DateFormats.dateObjToIsoDate(faker.date.past()),
-  tier: tierDtoFactory.v3().build(),
+  tier: tierDtoFactory.build(),
 }))
