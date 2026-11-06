@@ -8,9 +8,8 @@ import {
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 
-import { signIn } from '../signIn'
+import { defaultUserId, signIn } from '../signIn'
 import CheckSentenceTypePage from '../../pages/match/placementRequestForm/checkSentenceType'
-import { defaultUserId } from '../../mockApis/auth'
 import applicationDocument from '../../fixtures/applicationDocument.json'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 

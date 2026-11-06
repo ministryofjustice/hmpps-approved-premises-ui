@@ -27,11 +27,16 @@ describe('Out of service beds', () => {
   const premises = premisesFactory.build({ name: 'Hope House' })
 
   beforeEach(() => {
+    cy.task('debug', 'outOfServiceBeds beforeEach: resetting WireMock')
     cy.task('reset')
+    cy.task('debug', 'outOfServiceBeds beforeEach: WireMock reset complete')
     cy.task('stubOutOfServiceBedReasons')
+    cy.task('debug', 'outOfServiceBeds beforeEach: reasons stubbedd')
 
     GIVEN('I am signed in as a Future manager')
+    cy.task('debug', 'outOfServiceBeds beforeEach: signing in')
     signIn('future_manager')
+    cy.task('debug', 'outOfServiceBeds beforeEach: sign-in complete')
   })
 
   it('allows me to view all out of service beds for a given premises', () => {
