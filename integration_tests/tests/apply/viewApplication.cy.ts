@@ -10,7 +10,7 @@ import {
   requestForPlacementFactory,
   withdrawableFactory,
 } from '../../../server/testutils/factories'
-import { defaultUserId } from '../../mockApis/auth'
+import { defaultUserId } from '../signIn'
 import paths from '../../../server/paths/api'
 import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
 import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
