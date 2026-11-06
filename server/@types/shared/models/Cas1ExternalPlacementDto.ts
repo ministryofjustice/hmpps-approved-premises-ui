@@ -8,6 +8,8 @@ export type Cas1ExternalPlacementDto = {
     actualArrivalDate?: string;
     actualDepartureDate?: string;
     cancellationReason?: string;
+    expectedArrivalDate?: string;
+    expectedDepartureDate?: string;
     premises?: Cas1ExternalPremisesDto;
     status?: Cas1SpaceBookingStatus;
 };
