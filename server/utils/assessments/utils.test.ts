@@ -101,7 +101,7 @@ describe('utils', () => {
     jest.resetAllMocks()
   })
 
-  describe('groupAssessmements', () => {
+  describe('groupAssessments', () => {
     it('groups assessments by their status', () => {
       const completedAssessments = assessmentSummaryFactory.buildList(2, { status: 'completed' })
       const pendingAssessments = assessmentSummaryFactory.buildList(3, { status: 'awaiting_response' })
@@ -134,7 +134,7 @@ describe('utils', () => {
         <p>We've notified the Probation practitioner that this application has been assessed as suitable.</p>`)
     })
 
-    it('returns the rejection copy if the decision isnt "accept"', () => {
+    it("returns the rejection copy if the decision isn't 'accept'", () => {
       ;(decisionFromAssessment as jest.Mock).mockReturnValue('')
 
       expect(confirmationPageMessage(assessment)).toMatchStringIgnoringWhitespace(
@@ -332,7 +332,7 @@ describe('utils', () => {
   })
 
   describe('assessmentKeyDetails', () => {
-    const person = personFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'D2Live' }) })
+    const person = personFactory.build({ tier: tierDtoFactory.build({ tierScore: 'D2Live' }) })
     const risks = risksFactory.build({
       tier: tierEnvelopeFactory.build({ value: { level: 'D2' } }),
     })

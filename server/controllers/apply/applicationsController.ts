@@ -271,25 +271,23 @@ export default class ApplicationsController {
       const { crn } = req.params
       const person = (await this.personService.findByCrn(req.user.token, crn)) as FullPerson
 
-      if (person.tier && person.tier.version === 'V3' && !person.tier.tierScore) {
+      const { tierScore } = person.tier || {}
+
+      // TODO: do we need this check in V3 only world?
+      if (!tierScore) {
         throw new NoTierError(person.crn)
       }
 
-      const { version, tierScore } = person.tier || {}
-      if (version === 'V3') {
-        if (tierScore === 'A') return res.redirect(paths.applications.people.selectOffence({ crn }))
+      if (tierScore === 'A') return res.redirect(paths.applications.people.selectOffence({ crn }))
 
-        return res.render('applications/people/eligibilityCheck', {
-          person,
-          tierScore,
-          showStopPage: tierScore === 'MISSING',
-          continuePath: paths.applications.people.cas2Option({ crn }),
-          backLink: paths.applications.new({}),
-          dashboardPath: paths.applications.dashboard({}),
-        })
-      }
-
-      return res.redirect(paths.applications.people.selectOffence({ crn }))
+      return res.render('applications/people/eligibilityCheck', {
+        person,
+        tierScore,
+        showStopPage: tierScore === 'MISSING',
+        continuePath: paths.applications.people.cas2Option({ crn }),
+        backLink: paths.applications.new({}),
+        dashboardPath: paths.applications.dashboard({}),
+      })
     }
   }
 
@@ -322,7 +320,7 @@ export default class ApplicationsController {
       const outcome = await this.applicationService.createApplication(req.user.token, crn, indexOffence)
 
       // If this is a new CRN, it's possible that the tier is in the person requested earlier is not populated - however it should be populated in the create-application response
-      // So we substitue the later and more-reliable version
+      // So we substitute the later and more-reliable version
       person.tier = outcome.tier
 
       return res.redirect(firstPageOfApplicationJourney(outcome.applicationId, person))

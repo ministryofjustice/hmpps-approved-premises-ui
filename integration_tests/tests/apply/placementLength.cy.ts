@@ -15,7 +15,7 @@ context('Apply - placement length and dates', () => {
   it('shows the placement length and dates when the person has a version 3 tier', function test() {
     GIVEN('there is an application for a person with a version 3 tier')
     const application = { ...this.application, status: 'started' }
-    application.person = { ...this.person, tier: tierDtoFactory.v3().build({ tierScore: 'B' }) }
+    application.person = { ...this.person, tier: tierDtoFactory.build({ tierScore: 'B' }) }
     cy.task('stubApplicationGet', { application })
 
     AND('a placement duration has been calculated for the application')
@@ -43,9 +43,9 @@ context('Apply - placement length and dates', () => {
   })
 
   it('shows no duration skip page if the calculated duration is null', function test() {
-    GIVEN('there is an application for a person with a version 3 tier')
+    GIVEN('there is an application for a person')
     const application = { ...this.application, status: 'started' }
-    application.person = { ...this.person, tier: tierDtoFactory.v3().build({ tierScore: 'B' }) }
+    application.person = { ...this.person, tier: tierDtoFactory.build({ tierScore: 'B' }) }
     cy.task('stubApplicationGet', { application })
 
     AND('a placement duration has been calculated for the application')

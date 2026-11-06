@@ -1,4 +1,4 @@
-import { Cas1Application, TierVersionDto } from '@approved-premises/api'
+import { Cas1Application } from '@approved-premises/api'
 import { addDays } from 'date-fns'
 import { createMock } from '@golevelup/ts-jest'
 import { getDefaultPlacementDurationInDays } from '../../../utils/applications/getDefaultPlacementDurationInDays'
@@ -20,15 +20,15 @@ const token = 'test_token'
 describe('PlacementDuration', () => {
   let application: Cas1Application
 
-  const buildApplication = (tierVersion: TierVersionDto) =>
+  const buildApplication = () =>
     applicationFactory
       .withReleaseDate()
       .withPageResponse({ task: 'type-of-ap', page: 'ap-type', key: 'type', value: 'normal' })
-      .build({ person: personFactory.build({ tier: tierDtoFactory.build({ version: tierVersion }) }) })
+      .build({ person: personFactory.build({ tier: tierDtoFactory.build() }) })
 
   beforeEach(() => {
     jest.resetAllMocks()
-    application = buildApplication('V2')
+    application = buildApplication()
   })
 
   describe('body', () => {
@@ -87,6 +87,17 @@ describe('PlacementDuration', () => {
     })
   })
 
+  it('shows the placement length content', () => {
+    const page = new PlacementDuration({}, application)
+
+    expect(page.title).toEqual('Placement length and dates')
+    expect(page.questions).toEqual({
+      differentDuration: 'Do you want to change the placement length?',
+      duration: 'New placement length',
+      reason: 'Reason for change',
+    })
+  })
+
   describe('the previous and next page are correct', () => {
     beforeEach(() => {
       application = addResponsesToFormArtifact(application, {
@@ -109,7 +120,7 @@ describe('PlacementDuration', () => {
       const page = new PlacementDuration({}, application)
 
       expect(page.errors()).toEqual({
-        differentDuration: 'You must specify if this application requires a different placement length',
+        differentDuration: 'You must specify if you want to change the placement length',
       })
     })
 
@@ -117,8 +128,8 @@ describe('PlacementDuration', () => {
       const page = new PlacementDuration({ differentDuration: 'yes' }, application)
 
       expect(page.errors()).toEqual({
-        duration: 'You must specify the duration of the placement',
-        reason: 'You must specify the reason for the different placement duration',
+        duration: 'You must specify the new placement length',
+        reason: 'You must specify the reason for the change',
       })
     })
 
@@ -136,9 +147,21 @@ describe('PlacementDuration', () => {
       )
 
       expect(page.errors()).toEqual({
-        duration: 'You must specify the duration of the placement',
+        duration: 'You must specify the new placement length',
       })
       expect(formUtils.validWeeksAndDaysDuration).toHaveBeenCalledWith('a', 'b')
+    })
+
+    it('returns an error if the duration has not been calculated for a kept placement length', () => {
+      const page = new PlacementDuration({ differentDuration: 'no' }, application)
+
+      expect(page.errors()).toEqual({ defaultDurationDays: 'Calculate duration' })
+    })
+
+    it('returns no errors when the placement length is kept and has been calculated', () => {
+      const page = new PlacementDuration({ differentDuration: 'no', defaultDurationDays: 112 }, application)
+
+      expect(page.errors()).toEqual({})
     })
   })
 
@@ -150,152 +173,62 @@ describe('PlacementDuration', () => {
       )
 
       expect(page.response()).toEqual({
-        'Does this application require a different placement duration?': 'Yes',
-        'How many weeks will the person stay at the AP?': '1 week, 4 days',
-        'Why does this person require a different placement duration?': 'Some reason',
+        'Do you want to change the placement length?': 'Yes',
+        'New placement length': '1 week, 4 days',
+        'Reason for change': 'Some reason',
       })
     })
 
     it("should not include the detail if it's blank", () => {
       const page = new PlacementDuration({ differentDuration: 'no' as const, duration: '' }, application)
 
-      expect(page.response()).toEqual({ 'Does this application require a different placement duration?': 'No' })
+      expect(page.response()).toEqual({ 'Do you want to change the placement length?': 'No' })
     })
   })
 
-  describe('when the person has a version 3 tier', () => {
+  describe('null duration', () => {
     beforeEach(() => {
-      application = buildApplication('V3')
-    })
-
-    it('shows the placement length content', () => {
-      const page = new PlacementDuration({}, application)
-
-      expect(page.isV3Tier).toEqual(true)
-      expect(page.title).toEqual('Placement length and dates')
-      expect(page.questions).toEqual({
-        differentDuration: 'Do you want to change the placement length?',
-        duration: 'New placement length',
-        reason: 'Reason for change',
+      ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValue({
+        defaultDurationDays: null,
+        maxDurationDays: null,
       })
     })
+    it('sets the null duration flag, title and submit label if the duration is null', async () => {
+      const page = await PlacementDuration.initialize({}, application, 'test-token', { applicationService })
 
-    describe('null duration', () => {
-      beforeEach(() => {
-        ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValue({
-          defaultDurationDays: null,
-          maxDurationDays: null,
-        })
-      })
-      it('sets the null duration flag, title and submit label if the duration is null', async () => {
-        const page = await PlacementDuration.initialize({}, application, 'test-token', { applicationService })
-
-        expect(page.isV3Tier).toEqual(true)
-        expect(page.body.isNullDuration).toEqual(true)
-        expect(page.title).toEqual('Placement length cannot be calculated')
-        expect((page.submitLabel = 'Continue'))
-      })
-
-      it('adjusts response when duration is null', async () => {
-        const page = await PlacementDuration.initialize({}, application, 'test-token', { applicationService })
-
-        expect(page.response()).toEqual({ 'Placement length and dates': 'Placement length cannot be calculated' })
-      })
-
-      it('suppresses error checking on the null duration page as the post will be empty', async () => {
-        const page = await PlacementDuration.initialize({}, application, 'test-token', {
-          applicationService,
-        })
-        expect(page.errors()).toEqual({})
-      })
-
-      it('suppresses error checking on the null duration page even when the page initilizer is not called but isNullDuration is set in the body', async () => {
-        const page = new PlacementDuration({ isNullDuration: true }, application)
-        expect(page.errors()).toEqual({})
-      })
+      expect(page.body.isNullDuration).toEqual(true)
+      expect(page.title).toEqual('Placement length cannot be calculated')
+      expect((page.submitLabel = 'Continue'))
     })
 
-    describe('errors', () => {
-      it('returns an error if the different duration response is not defined', () => {
-        const page = new PlacementDuration({}, application)
+    it('adjusts response when duration is null', async () => {
+      const page = await PlacementDuration.initialize({}, application, 'test-token', { applicationService })
 
-        expect(page.errors()).toEqual({
-          differentDuration: 'You must specify if you want to change the placement length',
-        })
-      })
-
-      it('returns an error if the different duration response is yes but the reason and duration arent defined', () => {
-        const page = new PlacementDuration({ differentDuration: 'yes' }, application)
-
-        expect(page.errors()).toEqual({
-          duration: 'You must specify the new placement length',
-          reason: 'You must specify the reason for the change',
-        })
-      })
-
-      it('validates the duration fields', () => {
-        jest.spyOn(formUtils, 'validWeeksAndDaysDuration')
-
-        const page = new PlacementDuration(
-          {
-            differentDuration: 'yes',
-            durationWeeks: 'a',
-            durationDays: 'b',
-            reason: 'Some reason',
-          },
-          application,
-        )
-
-        expect(page.errors()).toEqual({
-          duration: 'You must specify the new placement length',
-        })
-        expect(formUtils.validWeeksAndDaysDuration).toHaveBeenCalledWith('a', 'b')
-      })
-
-      it('returns an error if the duration has not been calculated for a kept placement length', () => {
-        const page = new PlacementDuration({ differentDuration: 'no' }, application)
-
-        expect(page.errors()).toEqual({ defaultDurationDays: 'Calculate duration' })
-      })
-
-      it('returns no errors when the placement length is kept and has been calculated', () => {
-        const page = new PlacementDuration({ differentDuration: 'no', defaultDurationDays: 112 }, application)
-
-        expect(page.errors()).toEqual({})
-      })
+      expect(page.response()).toEqual({ 'Placement length and dates': 'Placement length cannot be calculated' })
     })
 
-    describe('response', () => {
-      it('should return a translated version of the response', () => {
-        const page = new PlacementDuration(
-          { differentDuration: 'yes' as const, durationDays: '4', durationWeeks: '1', reason: 'Some reason' },
-          application,
-        )
-
-        expect(page.response()).toEqual({
-          'Do you want to change the placement length?': 'Yes',
-          'New placement length': '1 week, 4 days',
-          'Reason for change': 'Some reason',
-        })
+    it('suppresses error checking on the null duration page as the post will be empty', async () => {
+      const page = await PlacementDuration.initialize({}, application, 'test-token', {
+        applicationService,
       })
-
-      it("should not include the detail if it's blank", () => {
-        const page = new PlacementDuration({ differentDuration: 'no' as const, duration: '' }, application)
-
-        expect(page.response()).toEqual({ 'Do you want to change the placement length?': 'No' })
-      })
+      expect(page.errors()).toEqual({})
     })
 
-    it('labels the keep-duration option with the calculated placement length', () => {
-      const page = new PlacementDuration({ defaultDurationDays: 112 }, application)
-
-      expect(page.keepDurationLabel).toEqual('No, apply for 16 weeks')
+    it('suppresses error checking on the null duration page even when the page initializer is not called but isNullDuration is set in the body', async () => {
+      const page = new PlacementDuration({ isNullDuration: true }, application)
+      expect(page.errors()).toEqual({})
     })
+  })
 
-    it('labels the keep-duration option with a bare No when the API returns no default duration', () => {
-      const page = new PlacementDuration({ defaultDurationDays: undefined }, application)
+  it('labels the keep-duration option with the calculated placement length', () => {
+    const page = new PlacementDuration({ defaultDurationDays: 112 }, application)
 
-      expect(page.keepDurationLabel).toEqual('No')
-    })
+    expect(page.keepDurationLabel).toEqual('No, apply for 16 weeks')
+  })
+
+  it('labels the keep-duration option with a bare No when the API returns no default duration', () => {
+    const page = new PlacementDuration({ defaultDurationDays: undefined }, application)
+
+    expect(page.keepDurationLabel).toEqual('No')
   })
 })

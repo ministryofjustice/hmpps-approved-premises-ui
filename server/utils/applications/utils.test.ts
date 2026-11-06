@@ -195,12 +195,12 @@ describe('utils', () => {
     it('returns an array of applications as table rows', async () => {
       const applicationA = cas1ApplicationSummaryFactory.build({
         arrivalDate: undefined,
-        person: { ...person, tier: tierDtoFactory.v2().build({ tierScore: 'A1' }) },
+        person: { ...person, tier: tierDtoFactory.build({ tierScore: 'A' }) },
         submittedAt: null,
       })
       const applicationB = cas1ApplicationSummaryFactory.build({
         arrivalDate,
-        person: { ...person, tier: tierDtoFactory.v2().build({ tierScore: null }) },
+        person: { ...person, tier: tierDtoFactory.build({ tierScore: null }) },
       })
 
       const result = applicationTableRows([applicationA, applicationB])
@@ -217,7 +217,7 @@ describe('utils', () => {
             text: applicationA.person.crn,
           },
           {
-            html: personUtils.tierBadge('A1'),
+            html: personUtils.tierBadge('A'),
           },
           {
             text: 'N/A',
@@ -265,7 +265,7 @@ describe('utils', () => {
       it('returns a blank tier badge', async () => {
         const application = cas1ApplicationSummaryFactory.build({
           arrivalDate,
-          person: { ...person, tier: tierDtoFactory.v2().build({ tierScore: undefined }) },
+          person: { ...person, tier: tierDtoFactory.build({ tierScore: undefined }) },
           status: 'started',
         })
 
@@ -490,7 +490,7 @@ describe('utils', () => {
 
     it('returns the sentence type page for an applicable application', () => {
       jest.spyOn(personUtils, 'isApplicableTierDto').mockReturnValue(true)
-      const tier = tierDtoFactory.v2Eligible().build()
+      const tier = tierDtoFactory.eligible().build()
       const person = personFactory.build({ tier })
 
       expect(firstPageOfApplicationJourney(applicationId, person)).toEqual(
@@ -507,7 +507,7 @@ describe('utils', () => {
     })
 
     it('returns the is exceptional case page for an application with an unsuitable tier', () => {
-      const tier = tierDtoFactory.v2Ineligible().build()
+      const tier = tierDtoFactory.ineligible().build()
       const person = fullPersonFactory.build({ sex: 'Male', tier })
 
       expect(firstPageOfApplicationJourney(applicationId, person)).toEqual(
