@@ -10,5 +10,5 @@ const person = {
 
 test('CAS2 interstitial page shown for ineligible person', async ({ page, assessor }) => {
   await signIn(page, assessor)
-  await startIneligibleApplication({ page, person })
+  await startIneligibleApplication({ page, person, user: assessor })
 })

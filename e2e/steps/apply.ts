@@ -1,6 +1,6 @@
 import { Page, expect } from '@playwright/test'
 
-import { AppealDecision, ApplicationType, TestOptions } from '@approved-premises/e2e'
+import { AppealDecision, ApplicationType, TestOptions, UserFullDetails } from '@approved-premises/e2e'
 import { Cas2InterstitialPage } from 'e2e/pages/apply/cas2InterstitialPage'
 import {
   ApplyPage,
@@ -17,7 +17,7 @@ import { BasePage } from '../pages/basePage'
 import { ShowPage } from '../pages/apply/showPage'
 import { assessmentShouldHaveCorrectDeadlineAndAllocatedUser } from './workflow'
 import { SelectIndexOffencePage } from '../pages/apply/selectIndexOffencePage'
-import { visitDashboard } from './signIn'
+import { signIn, visitDashboard } from './signIn'
 import { StartWarningPage } from '../pages/apply/startWarningPage'
 
 export const startAnApplication = async (dashboard: DashboardPage, page: Page) => {
@@ -76,9 +76,15 @@ export const assertCas2InterstitialPageShown = async (page: Page, crn: string) =
   await cas2InterstitialPage.shouldShowInformationHeading()
 }
 
-export const redirectToCas2Application = async (page: Page) => {
+export const redirectToCas2Application = async (page: Page, user: UserFullDetails) => {
   const cas2InterstitialPage = new Cas2InterstitialPage(page)
   await cas2InterstitialPage.clickApplyForCas2()
+
+  // when running tests locally, user needs to sign in again when going from localhost to dev
+  if (page.url().includes('sign-in')) {
+    await signIn(page, user, { redirectToRoot: false })
+  }
+
   await cas2InterstitialPage.shouldBeRedirectedToCas2()
 }
 
@@ -471,7 +477,15 @@ export const shouldSeeConfirmationPage = async (page: Page) => {
   await confirmationPage.shouldShowLinkToSurvey()
 }
 
-export const startIneligibleApplication = async ({ page, person }: { page: Page; person: TestOptions['person'] }) => {
+export const startIneligibleApplication = async ({
+  page,
+  person,
+  user,
+}: {
+  page: Page
+  person: TestOptions['person']
+  user: UserFullDetails
+}) => {
   // Given I visit the Dashboard
   const dashboard = await visitDashboard(page)
 
@@ -482,7 +496,7 @@ export const startIneligibleApplication = async ({ page, person }: { page: Page;
   await assertCas2InterstitialPageShown(page, person.crn)
 
   // Then I should be redirected to the CAS2 application page
-  await redirectToCas2Application(page)
+  await redirectToCas2Application(page, user)
 }
 
 export const createApplication = async (
