@@ -45,7 +45,11 @@ export const enterAndConfirmCrn = async (page: Page, crn: string) => {
   const cas2InterstitialHeading = page.getByRole('heading', {
     name: /may be eligible for Short-term accommodation \(CAS2\)/i,
   })
-  if (await cas2InterstitialHeading.isVisible()) {
+  const isCas2Interstitial = await cas2InterstitialHeading
+    .waitFor({ state: 'visible', timeout: 5000 })
+    .then(() => true)
+    .catch(() => false)
+  if (isCas2Interstitial) {
     await cas2InterstitialPage.clickContinue()
     await cas2InterstitialPage.shouldShowInformationHeading()
     await cas2InterstitialPage.clickApplyForCas1()
@@ -448,7 +452,7 @@ export const completeMoveOnTask = async (page: Page) => {
   if (pageHeading === 'Placement length cannot be calculated') {
     await placementDurationPage.clickContinue()
   } else if (pageHeading === 'Placement length and dates') {
-    await placementDurationPage.checkRadio(/^No, apply for/)
+    await placementDurationPage.checkRadio(/No, apply for/)
     await placementDurationPage.clickSave()
   } else {
     // TODO: remove this once tierV3 is live
