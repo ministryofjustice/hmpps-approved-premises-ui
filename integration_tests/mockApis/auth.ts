@@ -123,8 +123,6 @@ const token = () =>
     },
   })
 
-export const defaultUserId = '70596333-63d4-4fb2-8acc-9ca55563d878'
-
 const stubProfile = (profile: Cas1ProfileResponse) =>
   stubFor({
     request: {

@@ -33,8 +33,6 @@ export default class BedspaceConflictErrorComponent {
     } else {
       Page.verifyOnPage(OutOfServiceBedShowPage, this.premisesId, conflictingEntity)
     }
-
-    cy.go('back')
   }
 
   private getTitle(fields: Array<string>, conflictingEntityType: EntityType): string {

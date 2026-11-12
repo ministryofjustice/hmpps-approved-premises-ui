@@ -23,10 +23,10 @@ import {
 } from './oasysImportUtils'
 import oasysStubs from '../data/stubs/oasysStubs.json'
 import { type Cas1OASysAssessmentSuitabilityStrategyDto, Cas1OASysGroup } from '../@types/shared'
-import { logToSentry } from '../../logger'
+import { logToSentry } from './sentry'
 import config from '../config'
 
-jest.mock('../../logger.ts')
+jest.mock('./sentry')
 
 type OasysOffencePage = OasysPage & { offenceDetailsSummary: Cas1OASysGroup }
 
