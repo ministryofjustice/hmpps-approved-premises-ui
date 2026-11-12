@@ -45,7 +45,12 @@ export const enterAndConfirmCrn = async (page: Page, crn: string) => {
   const cas2InterstitialHeading = page.getByRole('heading', {
     name: /may be eligible for Short-term accommodation \(CAS2\)/i,
   })
-  if (await cas2InterstitialHeading.isVisible()) {
+  
+  const isCas2Interstitial = await cas2InterstitialHeading
+    .waitFor({ state: 'visible', timeout: 5000 })
+    .then(() => true)
+    .catch(() => false)
+  if (isCas2Interstitial) {
     await cas2InterstitialPage.clickContinue()
     await cas2InterstitialPage.shouldShowInformationHeading()
     await cas2InterstitialPage.clickApplyForCas1()
