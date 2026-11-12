@@ -45,12 +45,7 @@ export const enterAndConfirmCrn = async (page: Page, crn: string) => {
   const cas2InterstitialHeading = page.getByRole('heading', {
     name: /may be eligible for Short-term accommodation \(CAS2\)/i,
   })
-
-  const isCas2Interstitial = await cas2InterstitialHeading
-    .waitFor({ state: 'visible', timeout: 5000 })
-    .then(() => true)
-    .catch(() => false)
-  if (isCas2Interstitial) {
+  if (await cas2InterstitialHeading.isVisible()) {
     await cas2InterstitialPage.clickContinue()
     await cas2InterstitialPage.shouldShowInformationHeading()
     await cas2InterstitialPage.clickApplyForCas1()
@@ -317,10 +312,7 @@ export const completeLocationFactorsTask = async (
   await locationFactorsPage.checkRadioInGroup('Are there any restrictions linked to placement location?', 'No')
   await locationFactorsPage.clickSave()
 
-  const preferredApsPage = await ApplyPage.initialize(
-    page,
-    /Select a preferred AP|Select all preferred properties for your women’s AP application/,
-  )
+  const preferredApsPage = await ApplyPage.initialize(page, 'Select a preferred AP')
 
   const firstChoiceAp = await preferredApsPage.selectFirstPremises('First choice AP')
   const secondChoiceAp = await preferredApsPage.selectFirstPremises('Second choice AP')
@@ -458,7 +450,11 @@ export const completeMoveOnTask = async (page: Page) => {
   } else if (pageHeading === 'Placement length and dates') {
     await placementDurationPage.checkRadio(/^No, apply for/)
     await placementDurationPage.clickSave()
-  } 
+  } else {
+    // TODO: remove this once tierV3 is live
+    await placementDurationPage.checkRadio('No')
+    await placementDurationPage.clickSave()
+  }
 
   const moveOnPage = await ApplyPage.initialize(page, 'Placement duration and move on')
   await moveOnPage.fillField(`Where is the person most likely to live when they move on from the AP?`, 'WS1')

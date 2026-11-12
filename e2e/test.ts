@@ -10,9 +10,7 @@ const defaultPerson = process.env.CAS1_E2E_PERSON_CRN
 
 // eslint-disable-next-line no-console
 console.log(
-  `e2e: using test person '${defaultPerson.name}' (${defaultPerson.crn})${
-    process.env.CAS1_E2E_PERSON_CRN ? ' [from CAS1_E2E_PERSON_CRN]' : ' [randomly selected]'
-  }`,
+  `Using: '${defaultPerson.name}: ${defaultPerson.crn}'`,
 )
 
 export const test = base.extend<TestOptions>({
