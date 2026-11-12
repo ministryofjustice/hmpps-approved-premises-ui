@@ -88,19 +88,17 @@ export class BasePage {
   }
 
   async selectFirstPremises(legend: string): Promise<string> {
-    await this.page
-      .getByRole('group', { name: legend })
-      .getByRole('combobox', { name: 'Select an area' })
-      .selectOption({ index: 1 })
-    await this.page
-      .getByRole('group', { name: legend })
-      .getByRole('combobox', { name: 'Select a premises' })
-      .selectOption({ index: 1 })
+    const group = this.page.getByRole('group', { name: legend })
 
-    const premisesNames = await this.page
-      .getByRole('group', { name: legend })
-      .getByRole('combobox', { name: 'Select a premises' })
-      .innerText()
+    const areaSelect = group.getByRole('combobox', { name: 'Select an area' })
+    if (await areaSelect.isVisible()) {
+      await areaSelect.selectOption({ index: 1 })
+    }
+
+    const premisesSelect = group.getByRole('combobox', { name: 'Select a premises' })
+    await premisesSelect.selectOption({ index: 1 })
+
+    const premisesNames = await premisesSelect.innerText()
 
     return premisesNames.split('\n')[1]
   }

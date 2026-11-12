@@ -204,8 +204,16 @@ export const completeOasysImportTask = async (page: Page, oasysSections: Array<s
   const taskListPage = new TasklistPage(page)
   await taskListPage.clickTask('Choose sections of OASys to import')
 
-  const oasysPage = await ApplyPage.initialize(page, 'Which of the following sections of OASys do you want to import?')
-  await oasysPage.checkCheckBoxes(oasysSections)
+  const oasysSectionsHeading = page.getByRole('heading', {
+    name: 'Which of the following sections of OASys do you want to import?',
+  })
+  const oasysUnavailableHeading = page.getByRole('heading', { name: 'Oasys Information' })
+  await expect(oasysSectionsHeading.or(oasysUnavailableHeading)).toBeVisible()
+
+  const oasysPage = new ApplyPage(page)
+  if (await oasysSectionsHeading.isVisible()) {
+    await oasysPage.checkCheckBoxes(oasysSections)
+  }
   await oasysPage.clickSave()
 
   const roshSummaryPage = await ApplyPage.initialize(page)
@@ -267,11 +275,20 @@ export const completePrisonNotesTask = async (page: Page) => {
   await taskListPage.clickTask('Review prison information')
 
   const prisonInformationPage = await ApplyPage.initialize(page, 'Prison information')
-  // TODO once this CRN has prison case notes again
-  // await prisonInformationPage.checkCheckBoxes(['Select case note from Thursday 21 April 2022'])
-  await prisonInformationPage.clickTab('Adjudications')
-  await prisonInformationPage.clickTab('ACCT')
-  await prisonInformationPage.clickTab('Prison case notes')
+
+  const adjudicationsTab = page.getByRole('link', { name: 'Adjudications' })
+  const nomisFailedRadio = page.getByRole('radio', { name: 'No' })
+  await expect(adjudicationsTab.or(nomisFailedRadio)).toBeVisible()
+
+  if (await adjudicationsTab.isVisible()) {
+    // TODO once this CRN has prison case notes again
+    // await prisonInformationPage.checkCheckBoxes(['Select case note from Thursday 21 April 2022'])
+    await prisonInformationPage.clickTab('Adjudications')
+    await prisonInformationPage.clickTab('ACCT')
+    await prisonInformationPage.clickTab('Prison case notes')
+  } else {
+    await prisonInformationPage.checkRadio('No')
+  }
   await prisonInformationPage.clickSave()
 }
 
@@ -295,7 +312,10 @@ export const completeLocationFactorsTask = async (
   await locationFactorsPage.checkRadioInGroup('Are there any restrictions linked to placement location?', 'No')
   await locationFactorsPage.clickSave()
 
-  const preferredApsPage = await ApplyPage.initialize(page, 'Select a preferred AP')
+  const preferredApsPage = await ApplyPage.initialize(
+    page,
+    /Select a preferred AP|Select all preferred properties for your women’s AP application/,
+  )
 
   const firstChoiceAp = await preferredApsPage.selectFirstPremises('First choice AP')
   const secondChoiceAp = await preferredApsPage.selectFirstPremises('Second choice AP')

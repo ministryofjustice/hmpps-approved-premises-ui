@@ -48,6 +48,8 @@ export const matchAndBookApplication = async ({
 
   let cruDashboard = new ListPage(page)
 
+  await cruDashboard.updateAreaFilter()
+
   // And I select the placement request
   await cruDashboard.choosePlacementApplicationWithId(applicationId)
 

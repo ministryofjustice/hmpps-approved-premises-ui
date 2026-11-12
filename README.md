@@ -115,6 +115,12 @@ For creating a person with a specific Tier (including local runs of that flow), 
 `A`, `B`, `C`, `MISSING`, `NOT_SUPERVISED` (GitHub Actions input label: `NOT SUPERVISED`).
 This is used by `.github/workflows/setup-tier-data.yml`, which runs `e2e/tests/generate-crn-with-tier.spec.ts`.
 
+### Test person rotation
+
+By default the `person` fixture used in the e2e tests picks a random
+person from [e2e/testData/testPersons.csv](e2e/testData/testPersons.csv), rather than always
+using the same CRN. 
+
 ### Testing Emails
 
 The E2E test do not check emails by default. To enable this in the e2e tests update the .env file, changing:

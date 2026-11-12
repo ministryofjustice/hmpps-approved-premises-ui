@@ -1,11 +1,25 @@
 import { TestOptions } from '@approved-premises/e2e'
 import { test as base } from '@playwright/test'
+import { randomTestPerson } from './testData/testPersons'
+
+// Pick a random test person from testData/testPersons.csv unless a specific CRN has been
+// requested via env vars (e.g. for a local run testing a specific person).
+const defaultPerson = process.env.CAS1_E2E_PERSON_CRN
+  ? { crn: process.env.CAS1_E2E_PERSON_CRN, name: process.env.CAS1_E2E_PERSON_NAME || 'Ben Davies' }
+  : randomTestPerson()
+
+// eslint-disable-next-line no-console
+console.log(
+  `e2e: using test person '${defaultPerson.name}' (${defaultPerson.crn})${
+    process.env.CAS1_E2E_PERSON_CRN ? ' [from CAS1_E2E_PERSON_CRN]' : ' [randomly selected]'
+  }`,
+)
 
 export const test = base.extend<TestOptions>({
   person: [
     {
-      name: process.env.CAS1_E2E_PERSON_NAME || 'Ben Davies',
-      crn: process.env.CAS1_E2E_PERSON_CRN || 'X371199',
+      name: defaultPerson.name,
+      crn: defaultPerson.crn,
       tier: process.env.CAS1_E2E_PERSON_TIER || 'A',
     },
     { option: true },
