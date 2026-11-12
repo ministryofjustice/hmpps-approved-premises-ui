@@ -33,7 +33,7 @@ export class BasePage {
     await this.page.getByRole('textbox', { name: label }).fill(value)
   }
 
-  async checkRadio(label: string) {
+  async checkRadio(label: string | RegExp) {
     await this.page.getByLabel(label, { exact: true }).click()
   }
 

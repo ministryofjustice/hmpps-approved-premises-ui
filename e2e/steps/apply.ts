@@ -45,7 +45,7 @@ export const enterAndConfirmCrn = async (page: Page, crn: string) => {
   const cas2InterstitialHeading = page.getByRole('heading', {
     name: /may be eligible for Short-term accommodation \(CAS2\)/i,
   })
-  
+
   const isCas2Interstitial = await cas2InterstitialHeading
     .waitFor({ state: 'visible', timeout: 5000 })
     .then(() => true)
@@ -452,13 +452,13 @@ export const completeMoveOnTask = async (page: Page) => {
 
   const pageHeading = await page.locator('h1').first().innerText()
   const placementDurationPage = await ApplyPage.initialize(page, pageHeading)
-  if (pageHeading === 'Placement length and dates') {
-    await placementDurationPage.checkRadio('No, apply for 16 weeks')
-  } else {
-    // TODO: remove this once tierV3 is live
-    await placementDurationPage.checkRadio('No')
-  }
-  await placementDurationPage.clickSave()
+
+  if (pageHeading === 'Placement length cannot be calculated') {
+    await placementDurationPage.clickContinue()
+  } else if (pageHeading === 'Placement length and dates') {
+    await placementDurationPage.checkRadio(/^No, apply for/)
+    await placementDurationPage.clickSave()
+  } 
 
   const moveOnPage = await ApplyPage.initialize(page, 'Placement duration and move on')
   await moveOnPage.fillField(`Where is the person most likely to live when they move on from the AP?`, 'WS1')
