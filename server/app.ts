@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 import express from 'express'
+import { telemetryMiddleware } from '@ministryofjustice/hmpps-azure-telemetry'
 import flash from 'connect-flash'
 
 import createError from 'http-errors'
@@ -53,6 +54,7 @@ export default function createApp(controllers: Controllers, services: Services):
   app.use(authorisationMiddleware())
   app.use(setUpCsrf())
   app.use(setUpCurrentUser(services))
+  app.use(telemetryMiddleware.addUserMetadataToTelemetry())
   app.use(setUpMaintenancePageRedirect())
   app.use((req, res, next) => {
     res.locals.infoMessages = req.flash('info')
