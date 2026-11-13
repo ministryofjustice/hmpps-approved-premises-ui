@@ -427,12 +427,7 @@ export const completeMoveOnTask = async (page: Page) => {
 
   const pageHeading = await page.locator('h1').first().innerText()
   const placementDurationPage = await ApplyPage.initialize(page, pageHeading)
-  if (pageHeading === 'Placement length and dates') {
-    await placementDurationPage.checkRadio('No, apply for 16 weeks')
-  } else {
-    // TODO: remove this once tierV3 is live
-    await placementDurationPage.checkRadio('No')
-  }
+  await placementDurationPage.checkRadio('No, apply for 16 weeks')
   await placementDurationPage.clickSave()
 
   const moveOnPage = await ApplyPage.initialize(page, 'Placement duration and move on')

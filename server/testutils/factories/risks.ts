@@ -1,8 +1,8 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { PersonRisks, RiskEnvelopeStatus, RiskTierLevel, TierVersionDto } from '@approved-premises/api'
-import { RiskLevel, TierLetter, TierNumber } from '@approved-premises/ui'
+import type { PersonRisks, RiskEnvelopeStatus } from '@approved-premises/api'
+import { RiskLevel } from '@approved-premises/ui'
 import { DateFormats } from '../../utils/dateUtils'
 import { getCrn } from './person'
 
@@ -50,16 +50,13 @@ export const flagsFactory = Factory.define<PersonRisks['flags']>(() => {
   }
 })
 
-const lettersFactory: () => TierLetter = () => faker.helpers.arrayElement<TierLetter>(['A', 'B', 'C', 'D'])
-const numbersFactory: () => TierNumber = () => faker.helpers.arrayElement<TierNumber>(['1', '2', '3'])
-
-export const riskTierLevel: RiskTierLevel = `${lettersFactory()}${numbersFactory()}`
+export const riskTierLevel: string = faker.helpers.arrayElement(['A', 'B', 'C', 'D', 'E', 'F'])
 
 export const tierEnvelopeFactory = Factory.define<PersonRisks['tier']>(() => ({
   status: faker.helpers.arrayElement(riskEnvelopeStatuses),
   value: {
     level: riskTierLevel,
     lastUpdated: DateFormats.dateObjToIsoDate(faker.date.past()),
-    version: faker.helpers.arrayElement(['V2', 'V3']) as TierVersionDto,
+    version: 'V3',
   },
 }))

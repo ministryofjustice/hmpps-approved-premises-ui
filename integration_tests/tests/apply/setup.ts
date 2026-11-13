@@ -5,6 +5,7 @@ import {
   assessmentFactory,
   cas1RequestsForPlacementDurationsCalculationResponseDtoFactory,
   risksFactory,
+  tierDtoFactory,
   tierEnvelopeFactory,
 } from '../../../server/testutils/factories'
 import { DateFormats } from '../../../server/utils/dateUtils'
@@ -17,7 +18,7 @@ export const setup = () => {
   GIVEN('I am signed in as an applicant')
   signIn('applicant', { id: defaultUserId })
   cy.fixture('applicationData.json').then(applicationData => {
-    const person = fullPersonFactory.build()
+    const person = fullPersonFactory.build({ tier: tierDtoFactory.build({ tierScore: 'A' }) })
     const assessment = assessmentFactory.build()
     const application = applicationFactory.build({
       person,
@@ -28,7 +29,7 @@ export const setup = () => {
     })
     const risks = risksFactory.build({
       crn: person.crn,
-      tier: tierEnvelopeFactory.build({ value: { level: 'A3' } }),
+      tier: tierEnvelopeFactory.build({ value: { level: person.tier.tierScore } }),
     })
     const offences = activeOffenceFactory.buildList(1)
 
