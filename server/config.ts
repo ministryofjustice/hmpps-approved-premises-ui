@@ -47,6 +47,10 @@ export interface AuditConfig {
 export default {
   https: production,
   staticResourceCacheDuration: 20,
+  buildNumber: get('BUILD_NUMBER', '1_0_0', requiredInProduction),
+  productId: get('PRODUCT_ID', 'UNASSIGNED', requiredInProduction),
+  gitRef: get('GIT_REF', 'xxxxxxxxxxxxxxxxxxx', requiredInProduction),
+  branchName: get('GIT_BRANCH', 'xxxxxxxxxxxxxxxxxxx', requiredInProduction),
   flags: {
     maintenanceMode: getFlag('IN_MAINTENANCE_MODE'),
     plannedMaintenance: getFlag('PLANNED_MAINTENANCE_BANNER'),
@@ -95,6 +99,7 @@ export default {
       apiClientSecret: get('API_CLIENT_SECRET', 'clientsecret', requiredInProduction),
       systemClientId: get('SYSTEM_CLIENT_ID', 'clientid', requiredInProduction),
       systemClientSecret: get('SYSTEM_CLIENT_SECRET', 'clientsecret', requiredInProduction),
+      healthPath: '/health/ping',
     },
     tokenVerification: {
       url: get('TOKEN_VERIFICATION_API_URL', 'http://localhost:8100', requiredInProduction),
@@ -104,6 +109,7 @@ export default {
       },
       agent: new AgentConfig(Number(get('TOKEN_VERIFICATION_API_TIMEOUT_RESPONSE', 5000))),
       enabled: get('TOKEN_VERIFICATION_ENABLED', 'false') === 'true',
+      healthPath: '/health/ping',
     },
     approvedPremises: {
       url: get('APPROVED_PREMISES_API_URL', 'http://localhost:9092', requiredInProduction),
@@ -113,13 +119,14 @@ export default {
       },
       agent: new AgentConfig(Number(get('COMMUNITY_ACCOMMODATION_API_TIMEOUT_RESPONSE', 10000))),
       serviceName: get('COMMUNITY_ACCOMMODATION_API_SERVICE_NAME', 'approved-premises', requiredInProduction),
+      healthPath: '/health/ping',
     },
-    audit: {
-      region: get('AUDIT_SQS_REGION', 'eu-west-2'),
-      queueUrl: get('AUDIT_SQS_QUEUE_URL', ''),
-      serviceName: get('AUDIT_SERVICE_NAME', 'approved-premises-ui'),
-      logErrors: false,
-    },
+  },
+  audit: {
+    region: get('AUDIT_SQS_REGION', 'eu-west-2'),
+    queueUrl: get('AUDIT_SQS_QUEUE_URL', ''),
+    serviceName: get('AUDIT_SERVICE_NAME', 'approved-premises-ui'),
+    logErrors: false,
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
 }

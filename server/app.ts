@@ -22,7 +22,7 @@ import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 import setUpMaintenancePageRedirect from './middleware/setUpMaintenancePageRedirect'
 import setUpDocumentRender from './middleware/setUpDocumentRender'
-import { appInsightsMiddleware } from './utils/azureAppInsights'
+import setUpSentryProcessor from './middleware/setUpSentryProcessor'
 
 import routes from './routes'
 import type { Controllers } from './controllers'
@@ -39,9 +39,8 @@ export default function createApp(controllers: Controllers, services: Services):
   // Add method-override to allow us to use PUT and DELETE methods
   app.use(methodOverride('_method'))
 
-  app.use(appInsightsMiddleware())
+  app.use(setUpHealthChecks(services.applicationInfo))
   app.use(metricsMiddleware)
-  app.use(setUpHealthChecks())
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
   app.use(setUpWebRequestParsing())
@@ -64,6 +63,7 @@ export default function createApp(controllers: Controllers, services: Services):
   app.use((req, res, next) => next(createError(404, 'Not found')))
 
   if (config.sentry.dsn) {
+    app.use(setUpSentryProcessor())
     Sentry.setupExpressErrorHandler(app)
   }
 

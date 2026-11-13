@@ -29,11 +29,6 @@ ENV NODE_ENV='production'
 COPY . .
 RUN npm run build
 
-# TODO: migrate CAS1 to use the monitoring middleware from @ministryofjustice/hmpps-monitoring
-RUN export BUILD_NUMBER=${BUILD_NUMBER} && \
-        export GIT_REF=${GIT_REF} && \
-        npm run record-build-info
-
 RUN npm prune --no-audit --no-fund --omit=dev
 
 # Stage: copy production assets and dependencies
@@ -47,10 +42,6 @@ COPY --from=build --chown=appuser:appgroup \
         /app/package.json \
         /app/package-lock.json \
         ./
-
-# TODO: migrate CAS1 to use the monitoring middleware from @ministryofjustice/hmpps-monitoring
-COPY --from=build --chown=appuser:appgroup \
-        /app/build-info.json ./dist/build-info.json
 
 COPY --from=build --chown=appuser:appgroup \
         /app/dist ./dist
