@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ApprovedPremisesApplicationStatus } from './ApprovedPremisesApplicationStatus';
+import type { Cas1ExternalSubmittedApplicationDto } from './Cas1ExternalSubmittedApplicationDto';
 import type { Cas1StaffDto } from './Cas1StaffDto';
 export type Cas1ExternalApplicationDto = {
     createdAt: string;
@@ -10,6 +11,10 @@ export type Cas1ExternalApplicationDto = {
     expiresAt?: string;
     id: string;
     status: ApprovedPremisesApplicationStatus;
-    submittedAt?: string;
+    /**
+     * Only populated once the application has been submitted
+     */
+    submittedApplication?: Cas1ExternalSubmittedApplicationDto;
+    uiUrl: string;
 };
 
