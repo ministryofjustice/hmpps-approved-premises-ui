@@ -1,7 +1,6 @@
 /* istanbul ignore file */
 
 import express from 'express'
-import { telemetryMiddleware } from '@ministryofjustice/hmpps-azure-telemetry'
 import flash from 'connect-flash'
 
 import createError from 'http-errors'
