@@ -54,7 +54,6 @@ export default function createApp(controllers: Controllers, services: Services):
   app.use(authorisationMiddleware())
   app.use(setUpCsrf())
   app.use(setUpCurrentUser(services))
-  app.use(telemetryMiddleware.addUserMetadataToTelemetry())
   app.use(setUpMaintenancePageRedirect())
   app.use((req, res, next) => {
     res.locals.infoMessages = req.flash('info')
