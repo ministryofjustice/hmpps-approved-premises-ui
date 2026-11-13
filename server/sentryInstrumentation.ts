@@ -23,8 +23,8 @@ if (config.sentry.dsn) {
       urlQueryParams: false,
       stackFrameVariables: false,
     },
-    integrations: [Sentry.expressIntegration(), Sentry.httpIntegration({ tracePropagation: false })],
-    enableOpenTelemetrySetup: false,
+    integrations: [Sentry.expressIntegration(), Sentry.httpIntegration({ disableIncomingRequestSpans: true })],
+    enableOpenTelemetrySetup: true,
     tracesSampler: ({ name }) => {
       if (name.includes('ping') || name.includes('health') || name.includes('assets')) {
         return 0
