@@ -27,6 +27,7 @@ import spaceBookings from './integration_tests/mockApis/spaceBooking'
 import referenceData from './integration_tests/mockApis/referenceData'
 import changeRequests from './integration_tests/mockApis/changeRequests'
 import formData from './integration_tests/mockApis/formData'
+import approvedPremises from './integration_tests/mockApis/approvedPremises'
 
 export default defineConfig({
   chromeWebSecurity: false,
@@ -44,6 +45,7 @@ export default defineConfig({
     setupNodeEvents(on) {
       on('task', {
         reset: resetStubs,
+        ...approvedPremises,
         ...auth,
         ...tokenVerification,
         ...premises,
