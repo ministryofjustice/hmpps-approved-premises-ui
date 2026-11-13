@@ -163,7 +163,7 @@
     "@ministryofjustice/hmpps-npm-script-allowlist": "0.0.6",
     "@ministryofjustice/hmpps-probation-integration-e2e-tests": "1.293.0",
     "@pact-foundation/pact": "^16.0.2",
-    "@pactflow/openapi-pact-comparator": "^1.4.0",
+    "@pactflow/openapi-pact-comparator": "^2.4.0",
     "@types/bunyan": "^1.8.8",
     "@types/bunyan-format": "^0.2.5",
     "@types/compression": "^1.8.0",
