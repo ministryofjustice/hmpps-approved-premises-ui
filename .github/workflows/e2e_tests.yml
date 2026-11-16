@@ -7,6 +7,11 @@ on:
 permissions:
   contents: read
 
+
+concurrency:
+  group: cas1-e2e-tests
+  cancel-in-progress: false
+
 jobs:
   e2e_test:
     name: "CAS1 E2E Tests 🧪"
