@@ -8,8 +8,7 @@ import {
   tierEnvelopeFactory,
 } from '../../../server/testutils/factories'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import { defaultUserId } from '../../mockApis/auth'
-import { signIn } from '../signIn'
+import { defaultUserId, signIn } from '../signIn'
 import { fullPersonFactory } from '../../../server/testutils/factories/person'
 
 export const setup = () => {

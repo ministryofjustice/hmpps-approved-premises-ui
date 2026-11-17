@@ -64,7 +64,7 @@ export class OutOfServiceBedShowPage extends Page {
           }
 
           // Date time
-          cy.get('time').should('have.attr', { time: timelineEvents[i].updatedAt })
+          cy.get('time').should('have.attr', 'datetime', timelineEvents[i].updatedAt)
           cy.get('time').should('contain', DateFormats.isoDateTimeToUIDateTime(timelineEvents[i].updatedAt))
 
           // Revision details

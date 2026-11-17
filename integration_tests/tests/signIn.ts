@@ -2,6 +2,8 @@ import { ApprovedPremisesUser, ApprovedPremisesUserPermission, ApprovedPremisesU
 import { roleToPermissions } from '../../server/utils/users/roles'
 import { makeArrayOfType } from '../../server/utils/utils'
 
+export const defaultUserId = '70596333-63d4-4fb2-8acc-9ca55563d878'
+
 export const signIn = (
   role: ApprovedPremisesUserRole | Array<ApprovedPremisesUserRole>,
   user?: Partial<ApprovedPremisesUser>,

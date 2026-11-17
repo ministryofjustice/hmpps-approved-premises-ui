@@ -1,8 +1,7 @@
 import { assessmentSummaryFactory, placementApplicationTaskFactory } from '../../../server/testutils/factories'
 import { ListPage } from '../../pages/assess'
 import { awaitingAssessmentStatuses } from '../../../server/utils/assessments/utils'
-import { defaultUserId } from '../../mockApis/auth'
-import { signIn } from '../signIn'
+import { defaultUserId, signIn } from '../signIn'
 
 context('List assessments', () => {
   beforeEach(() => {

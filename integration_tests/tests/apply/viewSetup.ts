@@ -15,8 +15,7 @@ import {
   tierEnvelopeFactory,
 } from '../../../server/testutils/factories'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import { defaultUserId } from '../../mockApis/auth'
-import { signIn } from '../signIn'
+import { defaultUserId, signIn } from '../signIn'
 import applicationDocument from '../../fixtures/applicationDocument.json'
 import applicationData from '../../fixtures/applicationData.json'
 import assessmentDocument from '../../fixtures/assessmentDocument.json'

@@ -1,64 +1,29 @@
 /* istanbul ignore file */
 
-import {
-  DistributedTracingModes,
-  type TelemetryClient,
-  defaultClient,
-  getCorrelationContext,
-  setup,
-} from 'applicationinsights'
-import { RequestHandler } from 'express'
+import { initialiseTelemetry, flushTelemetry, telemetry } from '@ministryofjustice/hmpps-azure-telemetry'
+import { SpanFilterFn, SpanInfo } from '@ministryofjustice/hmpps-azure-telemetry/src/main'
+import applicationInfoSupplier from '../applicationInfo'
 
-import applicationVersion from '../applicationVersion'
+const applicationInfo = applicationInfoSupplier()
+const filterSentry: SpanFilterFn = (span: SpanInfo) => !span.attributes['sentry.op']
+initialiseTelemetry({
+  serviceName: applicationInfo.applicationName,
+  serviceVersion: process.env.BUILD_NUMBER || 'unknown',
+  connectionString: process.env.APPLICATIONINSIGHTS_CONNECTION_STRING,
+  debug: process.env.DEBUG_TELEMETRY === 'true',
+})
+  .addFilter(filterSentry)
+  .addFilter(telemetry.processors.filterSpanWherePath(['/health', '/ping', '/info', '/assets/*', '/favicon.ico']))
+  .addModifier(telemetry.processors.enrichSpanNameWithHttpRoute())
+  .startRecording()
 
-function defaultName(): string {
-  const {
-    packageData: { name },
-  } = applicationVersion
-  return name
+const shutdown = async (signal: string) => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports,global-require
+  const { default: logger } = require('../../logger')
+  logger.info(`${signal} received, shutting down...`)
+  await flushTelemetry()
+  process.exit(0)
 }
 
-function version(): string {
-  const { buildNumber } = applicationVersion
-  return buildNumber
-}
-
-export function initialiseAppInsights(): void {
-  if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
-    // eslint-disable-next-line no-console
-    console.info('Enabling azure application insights')
-
-    setup().setDistributedTracingMode(DistributedTracingModes.AI_AND_W3C).start()
-  }
-}
-
-export function buildAppInsightsClient(name = defaultName()): TelemetryClient {
-  if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
-    defaultClient.context.tags['ai.cloud.role'] = name
-    defaultClient.context.tags['ai.application.ver'] = version()
-
-    defaultClient.addTelemetryProcessor(({ tags, data }, contextObjects) => {
-      const operationNameOverride = contextObjects.correlationContext?.customProperties?.getProperty('operationName')
-      if (operationNameOverride) {
-        // eslint-disable-next-line no-multi-assign
-        tags['ai.operation.name'] = data.baseData.name = operationNameOverride
-      }
-      return true
-    })
-
-    return defaultClient
-  }
-  return null
-}
-
-export function appInsightsMiddleware(): RequestHandler {
-  return (req, res, next) => {
-    res.prependOnceListener('finish', () => {
-      const context = getCorrelationContext()
-      if (context && req.route) {
-        context.customProperties.setProperty('operationName', `${req.method} ${req.route?.path}`)
-      }
-    })
-    next()
-  }
-}
+process.on('SIGTERM', () => shutdown('SIGTERM'))
+process.on('SIGINT', () => shutdown('SIGINT'))

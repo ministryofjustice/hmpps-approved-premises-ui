@@ -23,6 +23,7 @@ import ReferenceDataService from './referenceDataService'
 
 export const services = () => {
   const {
+    applicationInfo,
     appealClientBuilder,
     approvedPremisesClientBuilder,
     placementClientBuilder,
@@ -64,6 +65,7 @@ export const services = () => {
   const referenceDataService = new ReferenceDataService(referenceDataClientBuilder)
 
   return {
+    applicationInfo,
     appealService,
     userService,
     premisesService,

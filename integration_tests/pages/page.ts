@@ -749,7 +749,7 @@ export default class Page {
         cy.get('.moj-timeline__item').each(($el, i) => {
           cy.wrap($el).within(() => {
             cy.get('.moj-timeline__header').should('contain', eventTypeTranslations[sortedTimelineEvents[i].type])
-            cy.get('time').should('have.attr', { time: sortedTimelineEvents[i].occurredAt })
+            cy.get('time').should('have.attr', 'datetime', sortedTimelineEvents[i].occurredAt)
             if (timelineEvents[i].createdBySummary?.name) {
               cy.get('.moj-timeline__header > .moj-timeline__byline').should(
                 'contain',
@@ -757,7 +757,7 @@ export default class Page {
               )
             }
             if (timelineEvents[i].associatedUrls?.length) {
-              cy.get('.govuk-link').should('have.attr', { time: timelineEvents[i].associatedUrls[0].url })
+              cy.get('.govuk-link').should('have.attr', 'href', timelineEvents[i].associatedUrls[0].url)
               cy.get('.govuk-link').should('contain', timelineEvents[i].associatedUrls[0].type)
             }
             cy.get('time').should('contain', DateFormats.isoDateTimeToUIDateTime(timelineEvents[i].occurredAt))

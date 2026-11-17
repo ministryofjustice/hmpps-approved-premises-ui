@@ -22,9 +22,8 @@ import AdditionalDocuments from '../../pages/match/placementRequestForm/addition
 import Page from '../../pages/page'
 import paths from '../../../server/paths/api'
 import ReviewApplicationConfirmPage from '../../pages/match/reviewApplicationForm/confirmPage'
-import { defaultUserId } from '../../mockApis/auth'
 import applicationDocument from '../../fixtures/applicationDocument.json'
-import { signIn } from '../signIn'
+import { defaultUserId, signIn } from '../signIn'
 import { AND, GIVEN, THEN, WHEN } from '../../helpers'
 import Helper, { SentenceTypeOptions } from '../../helpers/placementApplication'
 
