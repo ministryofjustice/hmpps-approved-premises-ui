@@ -174,6 +174,25 @@ describe('placementUtils', () => {
       commonFields.forEach(field => expect(fieldLabels).toContain(field))
     })
 
+    it('should show departure details for a departed breach/recall placement', () => {
+      const placement = cas1SpaceBookingFactory.departed().build()
+      placement.departure.parentReason = {
+        id: 'd3e43ec3-02f4-4b96-a464-69dc74099259',
+        name: 'Breach/Recall',
+      }
+      const fieldLabels = getFieldLabels(placementCard(placement))
+
+      expect(fieldLabels).toContain('Actual arrival date')
+      expect(fieldLabels).toContain('Actual departure date')
+      expect(fieldLabels).toContain('Departure time')
+      expect(fieldLabels).toContain('Departure reason')
+      expect(fieldLabels).toContain('Breach or recall')
+      expect(fieldLabels).toContain('Move on')
+      expect(fieldLabels).not.toContain('Expected arrival date')
+      expect(fieldLabels).not.toContain('Expected departure date')
+      commonFields.forEach(field => expect(fieldLabels).toContain(field))
+    })
+
     it('should show cancellation details for cancelled placement', () => {
       const placement = cas1SpaceBookingShortSummaryFactory.cancelled().build()
       const fieldLabels = getFieldLabels(placementCard(placement))

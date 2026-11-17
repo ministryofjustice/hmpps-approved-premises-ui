@@ -12,7 +12,7 @@ import {
 import { SubmittedDocumentRenderer } from '../forms/submittedDocumentRenderer'
 import { DateFormats } from '../dateUtils'
 import { summaryListItem, summaryListItemNoBlankRows } from '../formUtils'
-import { placementStatusTag, requirementsInformation } from '../placements'
+import { BREACH_OR_RECALL_REASON_ID, placementStatusTag, requirementsInformation } from '../placements'
 import paths from '../../paths/manage'
 import assessPaths from '../../paths/assess'
 import { linkTo } from '../utils'
@@ -85,48 +85,59 @@ export const placementSideNavigation = (subTab: ResidentProfileSubTab, crn: stri
   ]
 }
 
-export const placementCard = (placement: Cas1SpaceBooking | Cas1SpaceBookingShortSummary): SummaryListWithCard => ({
-  card: {
-    title: {
-      html: `${placement.premises.name} ${placementStatusTag(placement, { classes: 'govuk-!-margin-left-1' })}`,
+export const placementCard = (placement: Cas1SpaceBooking | Cas1SpaceBookingShortSummary): SummaryListWithCard => {
+  let reason = placement.departure?.reason?.name
+  let breachOrRecall = null
+
+  if (placement.departure?.parentReason?.id === BREACH_OR_RECALL_REASON_ID) {
+    reason = placement.departure.parentReason.name
+    breachOrRecall = placement.departure?.reason?.name
+  }
+
+  return {
+    card: {
+      title: {
+        html: `${placement.premises.name} ${placementStatusTag(placement, { classes: 'govuk-!-margin-left-1' })}`,
+      },
     },
-  },
-  rows: [
-    summaryListItem('Approved Premises', placement.premises.name),
-    summaryListItem('Date of booking', placement.createdAt, 'date'),
-    summaryListItemNoBlankRows(
-      'Expected arrival date',
-      placement.actualArrivalDate ? undefined : placement.expectedArrivalDate,
-      'date',
-    ),
-    summaryListItemNoBlankRows('Actual arrival date', placement.actualArrivalDate, 'date'),
-    summaryListItemNoBlankRows(
-      'Arrival time',
-      DateFormats.formatTime((placement as Cas1SpaceBooking).actualArrivalTime),
-      'text',
-    ),
-    summaryListItemNoBlankRows(
-      'Expected departure date',
-      placement.actualDepartureDate ? undefined : placement.expectedDepartureDate,
-      'date',
-    ),
-    summaryListItemNoBlankRows('Actual departure date', placement.actualDepartureDate, 'date'),
-    summaryListItemNoBlankRows(
-      'Departure time',
-      DateFormats.formatTime((placement as Cas1SpaceBooking).actualDepartureTime),
-      'text',
-    ),
-    summaryListItemNoBlankRows('Departure reason', placement.departure?.reason?.name),
-    summaryListItemNoBlankRows('Move on', placement.departure?.moveOnCategory?.name),
-    summaryListItemNoBlankRows('More information', placement.departure?.notes),
-    summaryListItemNoBlankRows('Non-arrival reason', placement.nonArrival?.reason?.name),
-    summaryListItemNoBlankRows('Cancellation date', placement.cancellation?.occurredAt, 'date'),
-    summaryListItemNoBlankRows('Cancellation reason notes', placement.cancellation?.reason_notes),
-    summaryListItem('Key worker', placement.keyWorkerAllocation?.name ?? 'not assigned'),
-    ...requirementsInformation(placement).rows,
-    summaryListItem('Delius event number', placement.deliusEventNumber),
-  ].filter(Boolean),
-})
+    rows: [
+      summaryListItem('Approved Premises', placement.premises.name),
+      summaryListItem('Date of booking', placement.createdAt, 'date'),
+      summaryListItemNoBlankRows(
+        'Expected arrival date',
+        placement.actualArrivalDate ? undefined : placement.expectedArrivalDate,
+        'date',
+      ),
+      summaryListItemNoBlankRows('Actual arrival date', placement.actualArrivalDate, 'date'),
+      summaryListItemNoBlankRows(
+        'Arrival time',
+        DateFormats.formatTime((placement as Cas1SpaceBooking).actualArrivalTime),
+        'text',
+      ),
+      summaryListItemNoBlankRows(
+        'Expected departure date',
+        placement.actualDepartureDate ? undefined : placement.expectedDepartureDate,
+        'date',
+      ),
+      summaryListItemNoBlankRows('Actual departure date', placement.actualDepartureDate, 'date'),
+      summaryListItemNoBlankRows(
+        'Departure time',
+        DateFormats.formatTime((placement as Cas1SpaceBooking).actualDepartureTime),
+        'text',
+      ),
+      summaryListItemNoBlankRows('Departure reason', reason),
+      summaryListItemNoBlankRows('Breach or recall', breachOrRecall),
+      summaryListItemNoBlankRows('Move on', placement.departure?.moveOnCategory?.name),
+      summaryListItemNoBlankRows('More information', placement.departure?.notes),
+      summaryListItemNoBlankRows('Non-arrival reason', placement.nonArrival?.reason?.name),
+      summaryListItemNoBlankRows('Cancellation date', placement.cancellation?.occurredAt, 'date'),
+      summaryListItemNoBlankRows('Cancellation reason notes', placement.cancellation?.reason_notes),
+      summaryListItem('Key worker', placement.keyWorkerAllocation?.name ?? 'not assigned'),
+      ...requirementsInformation(placement).rows,
+      summaryListItem('Delius event number', placement.deliusEventNumber),
+    ].filter(Boolean),
+  }
+}
 
 export const placementDetailsCards = (placement: Cas1SpaceBooking): Array<SummaryListWithCard> => {
   return [placementCard(placement)]
