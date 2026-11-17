@@ -217,6 +217,7 @@
     "@ministryofjustice/frontend": {
       "moment": "2.31.0"
     },
+    "@opentelemetry/core@>=2.0.0 <2.8.0": "^2.8.0",
     "diff": "^8.0.3",
     "serialize-javascript": "^7.0.5",
     "proxy-addr": "^2.0.8",
