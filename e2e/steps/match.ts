@@ -48,10 +48,8 @@ export const matchAndBookApplication = async ({
 
   let cruDashboard = new ListPage(page)
 
-  await cruDashboard.updateAreaFilter()
-
-  // And I select the placement request
-  await cruDashboard.choosePlacementApplicationWithId(applicationId)
+  // And I search for and select the placement request by CRN
+  await cruDashboard.choosePlacementApplicationWithCrn(applicationId, person.crn)
 
   let placementRequestPage = new PlacementRequestPage(page)
 
@@ -117,20 +115,21 @@ export const matchAndBookApplication = async ({
   const premisesId = page.url().match(/space-bookings\/(.[^/]*)/)[1] // Path: /match/placement-requests/:id/space-bookings/:premisesId/new
   await bookingPage.clickConfirm()
 
-  // Then I should see the Booked tab on the CRU dashboard
+  // Then I should see the Booked tab on the CRU dashboard (already landed here after confirming the booking)
   cruDashboard = new ListPage(page)
 
   await cruDashboard.updateAreaFilter()
 
-  // And the placement should be listed
-  await cruDashboard.findRowWithValues([
+  // And the placement should be listed. The Booked tab has no CRN search, but the premises and booked
+  // arrival date columns we need to verify are only available there, so sort newest-first instead
+  await cruDashboard.findRowWithValuesSortedByCreatedAt([
     `${person.name}, ${person.crn}`,
     DateFormats.isoDateToUIDate(newDatesOfPlacement.startDate, { format: 'short' }),
     premisesName,
   ])
 
-  // When I reopen the placement request to change the dates
-  await cruDashboard.choosePlacementApplicationWithId(applicationId)
+  // When I reopen the placement request to change the dates, found by searching for the CRN
+  await cruDashboard.choosePlacementApplicationWithCrn(applicationId, person.crn)
 
   placementRequestPage = new PlacementRequestPage(page)
 

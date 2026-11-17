@@ -640,9 +640,14 @@ export const recordAnAppealOnApplication = async (page: Page, applicationId: str
   }
 }
 
-export const assessmentShouldBeAllocatedToCorrectUser = async (page: Page, applicationId: string, user: string) => {
+export const assessmentShouldBeAllocatedToCorrectUser = async (
+  page: Page,
+  applicationId: string,
+  user: string,
+  crn?: string,
+) => {
   const dashboard = await visitDashboard(page)
-  await assessmentShouldHaveCorrectDeadlineAndAllocatedUser(dashboard, page, applicationId, 10, user)
+  await assessmentShouldHaveCorrectDeadlineAndAllocatedUser(dashboard, page, applicationId, 10, user, crn)
 }
 
 const withdrawApplication = async (page: Page) => {
