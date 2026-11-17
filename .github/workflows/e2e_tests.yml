@@ -10,7 +10,7 @@ permissions:
 jobs:
   e2e_test:
     name: "CAS1 E2E Tests 🧪"
-    runs-on: ubuntu-latest
+    runs-on: [ self-hosted, hmpps-github-actions-runner ]
     strategy:
       fail-fast: false
       matrix:
@@ -83,7 +83,7 @@ jobs:
     name: "E2E test failure notification"
     needs: e2e_test
     if: ${{ always() && needs.e2e_test.result == 'failure' }}
-    runs-on: ubuntu-latest
+    runs-on: [ self-hosted, hmpps-github-actions-runner ]
     steps:
       - name: Send Slack notification
         uses: ministryofjustice/hmpps-approved-premises-ui/.github/actions/slack_failure_notification@e4c0dfad94348a856e9a0370166b48963b96e38f # main 2026-04-23
