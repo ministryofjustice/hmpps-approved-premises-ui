@@ -3,7 +3,6 @@ import {
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationStatus,
   ApprovedPremisesAssessment,
-  ApprovedPremisesAssessmentSummary as AssessmentSummary,
   ApprovedPremisesUser as User,
   ApprovedPremisesUserPermission,
   ApprovedPremisesUserRole,
@@ -377,12 +376,6 @@ export type DataServices = Partial<{
     getApAreas: (token: string) => Promise<Array<ApArea>>
   }
 }>
-
-export type GroupedAssessments = {
-  completed: Array<AssessmentSummary>
-  requestedFurtherInformation: Array<AssessmentSummary>
-  awaiting: Array<AssessmentSummary>
-}
 
 export interface GroupedApplications {
   inProgress: Array<Cas1ApplicationSummary>

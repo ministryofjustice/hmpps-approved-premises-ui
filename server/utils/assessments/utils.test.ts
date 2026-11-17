@@ -9,7 +9,6 @@ import {
   confirmationPageResult,
   formattedArrivalDate,
   getReviewNavigationItems,
-  groupAssessmements,
   assessmentKeyDetails,
   rejectionRationaleFromAssessmentResponses,
 } from './utils'
@@ -21,7 +20,6 @@ import {
   adjudicationFactory,
   applicationFactory,
   assessmentFactory,
-  assessmentSummaryFactory,
   cas1RequestedPlacementPeriodFactory,
   personFactory,
   prisonCaseNotesFactory,
@@ -99,22 +97,6 @@ Assess.pages[reviewApplication] = {
 describe('utils', () => {
   beforeEach(() => {
     jest.resetAllMocks()
-  })
-
-  describe('groupAssessmements', () => {
-    it('groups assessments by their status', () => {
-      const completedAssessments = assessmentSummaryFactory.buildList(2, { status: 'completed' })
-      const pendingAssessments = assessmentSummaryFactory.buildList(3, { status: 'awaiting_response' })
-      const activeAssessments = assessmentSummaryFactory.buildList(5, { status: 'not_started' })
-
-      const assessments = [completedAssessments, pendingAssessments, activeAssessments].flat()
-
-      expect(groupAssessmements(assessments)).toEqual({
-        completed: completedAssessments,
-        requestedFurtherInformation: pendingAssessments,
-        awaiting: activeAssessments,
-      })
-    })
   })
 
   describe('getReviewNavigationItems', () => {
