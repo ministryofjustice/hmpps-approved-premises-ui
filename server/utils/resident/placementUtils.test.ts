@@ -185,8 +185,18 @@ describe('placementUtils', () => {
       expect(fieldLabels).toContain('Actual arrival date')
       expect(fieldLabels).toContain('Actual departure date')
       expect(fieldLabels).toContain('Departure time')
-      expect(fieldLabels).toContain('Departure reason')
-      expect(fieldLabels).toContain('Breach or recall')
+      expect(placementCard(placement).rows).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            key: { text: 'Departure reason' },
+            value: { text: placement.departure.parentReason.name },
+          }),
+          expect.objectContaining({
+            key: { text: 'Breach or recall' },
+            value: { text: placement.departure.reason.name },
+          }),
+        ]),
+      )
       expect(fieldLabels).toContain('Move on')
       expect(fieldLabels).not.toContain('Expected arrival date')
       expect(fieldLabels).not.toContain('Expected departure date')
