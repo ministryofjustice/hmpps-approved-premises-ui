@@ -11,7 +11,24 @@ import { statusesLimitedToOne } from '../../../utils/applications/statusTag'
  * This is to allow e2e tests to create multiple applications for these CRNs which are needed
  * both for e2e testing and generation of test data for match and manage
  */
-const testCrnList = ['X371199', 'Y052015']
+const testCrnList = [
+  'X371199',
+  'Y091465',
+  'Y091466',
+  'Y091469',
+  'Y091470',
+  'Y090305',
+  'Y089118',
+  'Y089119',
+  'Y086749',
+  'Y083751',
+  'Y081279',
+  'Y080673',
+  'Y077962',
+  'Y076354',
+  'Y074363',
+  'Y076762',
+]
 
 export default class OffencesController {
   constructor(
