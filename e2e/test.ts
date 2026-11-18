@@ -8,11 +8,6 @@ const defaultPerson = process.env.CAS1_E2E_PERSON_CRN
   ? { crn: process.env.CAS1_E2E_PERSON_CRN, name: process.env.CAS1_E2E_PERSON_NAME || 'Ben Davies' }
   : randomTestPerson()
 
-// eslint-disable-next-line no-console
-console.log(
-  `Using: '${defaultPerson.name}: ${defaultPerson.crn}'`,
-)
-
 export const test = base.extend<TestOptions>({
   person: [
     {
@@ -67,4 +62,13 @@ export const test = base.extend<TestOptions>({
   ],
   oasysSections: [],
   emergencyApplicationUser: [process.env.CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO, { option: true }],
+})
+
+// Log relevant test person on failure
+// eslint-disable-next-line no-empty-pattern
+test.afterEach(async ({}, testInfo) => {
+  if (testInfo.status !== testInfo.expectedStatus) {
+    // eslint-disable-next-line no-console
+    console.log(`Test failed using person: '${defaultPerson.name}: ${defaultPerson.crn}'`)
+  }
 })

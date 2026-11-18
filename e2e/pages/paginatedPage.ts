@@ -20,13 +20,31 @@ export class PaginatedPage extends BasePage {
     return locator
   }
 
-  async findRowWithValues(values: Array<string>) {
+  async findRowWithValues(values: Array<string>, sortBy?: string) {
+    if (sortBy) {
+      await this.sortDescendingBy(sortBy)
+    }
+
     let row = this.page.getByRole('row')
 
     values.forEach(value => {
       row = row.filter({ hasText: value })
     })
 
-    return this.tryNextPageUntilFound(row.first())
+    const foundRow = row.first()
+
+    if (sortBy) {
+      await expect(foundRow).toBeVisible()
+      return foundRow
+    }
+
+    return this.tryNextPageUntilFound(foundRow)
+  }
+
+  async sortDescendingBy(field: string) {
+    const url = new URL(this.page.url())
+    url.searchParams.set('sortBy', field)
+    url.searchParams.set('sortDirection', 'desc')
+    await this.page.goto(url.toString())
   }
 }

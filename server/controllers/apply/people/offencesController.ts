@@ -12,7 +12,6 @@ import { statusesLimitedToOne } from '../../../utils/applications/statusTag'
  * both for e2e testing and generation of test data for match and manage
  */
 export const testCrnList = [
-
   'X371199',
   'Y091465',
   'Y091466',

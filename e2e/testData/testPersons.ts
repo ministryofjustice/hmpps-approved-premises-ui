@@ -26,7 +26,6 @@ export const testPersons: Array<TestPerson> = parseCsv(fs.readFileSync(csvPath, 
 const csvCrns = testPersons.map(person => person.crn)
 const missingFromTestCrnList = csvCrns.filter(crn => !testCrnList.includes(crn))
 
-
 if (missingFromTestCrnList.length > 0) {
   throw new Error(
     `e2e/testData/testPersons.csv contains CRN(s) not present in testCrnList: ${missingFromTestCrnList.join(', ')}. ` +

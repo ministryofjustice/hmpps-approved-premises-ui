@@ -19,13 +19,6 @@ export class ListPage extends PaginatedPage {
     return this.getAssessmentRow(id, crn)
   }
 
-  async sortDescendingBy(field: string) {
-    const url = new URL(this.page.url())
-    url.searchParams.set('sortBy', field)
-    url.searchParams.set('sortDirection', 'desc')
-    await this.page.goto(url.toString())
-  }
-
   async getAssessmentRow(id: string, crn?: string) {
     const assessmentRow = this.page
       .getByRole('row')
@@ -118,19 +111,5 @@ export class ListPage extends PaginatedPage {
 
     await expect(placementApplication).toBeVisible()
     return placementApplication.click()
-  }
-
-  async findRowWithValuesSortedByCreatedAt(values: Array<string>) {
-    await this.sortDescendingBy('created_at')
-
-    let row = this.page.getByRole('row')
-
-    values.forEach(value => {
-      row = row.filter({ hasText: value })
-    })
-
-    const foundRow = row.first()
-    await expect(foundRow).toBeVisible()
-    return foundRow
   }
 }

@@ -119,7 +119,7 @@ This is used by `.github/workflows/setup-tier-data.yml`, which runs `e2e/tests/g
 
 By default the `person` fixture used in the e2e tests picks a random
 person from [e2e/testData/testPersons.csv](e2e/testData/testPersons.csv), rather than always
-using the same CRN. 
+using the same CRN.
 
 ### Testing Emails
 

@@ -120,15 +120,17 @@ export const matchAndBookApplication = async ({
 
   await cruDashboard.updateAreaFilter()
 
-  // And the placement should be listed. The Booked tab has no CRN search, but the premises and booked
-  // arrival date columns we need to verify are only available there, so sort newest-first instead
-  await cruDashboard.findRowWithValuesSortedByCreatedAt([
-    `${person.name}, ${person.crn}`,
-    DateFormats.isoDateToUIDate(newDatesOfPlacement.startDate, { format: 'short' }),
-    premisesName,
-  ])
+  // And the placement should be listed.
+  await cruDashboard.findRowWithValues(
+    [
+      `${person.name}, ${person.crn}`,
+      DateFormats.isoDateToUIDate(newDatesOfPlacement.startDate, { format: 'short' }),
+      premisesName,
+    ],
+    'created_at',
+  )
 
-  // When I reopen the placement request to change the dates, found by searching for the CRN
+  // When I reopen the placement request to change the dates
   await cruDashboard.choosePlacementApplicationWithCrn(applicationId, person.crn)
 
   placementRequestPage = new PlacementRequestPage(page)
