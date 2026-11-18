@@ -1,11 +1,6 @@
-import { GroupedAssessments, KeyDetailsArgs, SummaryListItem, TabItem, UserDetails } from '@approved-premises/ui'
+import { KeyDetailsArgs, SummaryListItem, TabItem, UserDetails } from '@approved-premises/ui'
 
-import {
-  Cas1AssessmentStatus,
-  Cas1Assessment as Assessment,
-  Cas1AssessmentSummary as AssessmentSummary,
-  PersonAcctAlert,
-} from '@approved-premises/api'
+import { Cas1AssessmentStatus, Cas1Assessment as Assessment, PersonAcctAlert } from '@approved-premises/api'
 import Apply from '../../form-pages/apply'
 import { createQueryString, kebabCase, linkTo } from '../utils'
 import { getApplicationType } from '../applications/utils'
@@ -20,26 +15,6 @@ import { hasPermission } from '../users'
 import { summaryListItem } from '../formUtils'
 
 const awaitingAssessmentStatuses = ['in_progress', 'not_started'] as Array<Cas1AssessmentStatus>
-
-const groupAssessmements = (assessments: Array<AssessmentSummary>): GroupedAssessments => {
-  const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments
-
-  assessments.forEach(assessment => {
-    switch (assessment.status) {
-      case 'completed':
-        result.completed.push(assessment)
-        break
-      case 'awaiting_response':
-        result.requestedFurtherInformation.push(assessment)
-        break
-      default:
-        result.awaiting.push(assessment)
-        break
-    }
-  })
-
-  return result
-}
 
 const allocationSummary = (assessment: Assessment): Array<SummaryListItem> => {
   const summary = [
@@ -199,7 +174,6 @@ export {
   confirmationPageResult,
   formattedArrivalDate,
   getReviewNavigationItems,
-  groupAssessmements,
   rejectionRationaleFromAssessmentResponses,
   awaitingAssessmentStatuses,
   assessmentKeyDetails,
