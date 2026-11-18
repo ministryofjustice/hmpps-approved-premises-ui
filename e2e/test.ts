@@ -1,12 +1,20 @@
 import { TestOptions } from '@approved-premises/e2e'
 import { test as base } from '@playwright/test'
+import { randomTestPerson } from './testData/testPersons'
 
 export const test = base.extend<TestOptions>({
   person: [
-    {
-      name: process.env.CAS1_E2E_PERSON_NAME || 'Ben Davies',
-      crn: process.env.CAS1_E2E_PERSON_CRN || 'X371199',
-      tier: process.env.CAS1_E2E_PERSON_TIER || 'A',
+    // eslint-disable-next-line no-empty-pattern
+    async ({}, use) => {
+      const selectedPerson = process.env.CAS1_E2E_PERSON_CRN
+        ? { crn: process.env.CAS1_E2E_PERSON_CRN, name: process.env.CAS1_E2E_PERSON_NAME || 'Ben Davies' }
+        : randomTestPerson()
+
+      await use({
+        name: selectedPerson.name,
+        crn: selectedPerson.crn,
+        tier: process.env.CAS1_E2E_PERSON_TIER || 'A',
+      })
     },
     { option: true },
   ],
@@ -55,4 +63,12 @@ export const test = base.extend<TestOptions>({
   ],
   oasysSections: [],
   emergencyApplicationUser: [process.env.CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO, { option: true }],
+})
+
+// Log the resolved test person on failure
+test.afterEach(async ({ person }, testInfo) => {
+  if (testInfo.status !== testInfo.expectedStatus) {
+    // eslint-disable-next-line no-console
+    console.log(`Test failed using person: '${person.name}: ${person.crn}'`)
+  }
 })

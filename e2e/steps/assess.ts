@@ -242,10 +242,11 @@ export const assessApplication = async (
     applicationId,
     deadlineInDays,
     allocatedUser,
+    person.crn,
   )
 
   // And I allocate the assessement to myself
-  await assignAssessmentToMe(dashboard, page, assessor.name, applicationId, !!allocatedUser)
+  await assignAssessmentToMe(dashboard, page, assessor.name, applicationId, !!allocatedUser, person.crn)
 
   // Then I should receive a confirmation email
   await verifyEmailSent(assessor.email, 'Approved Premises application to assess', emailBody)
@@ -297,7 +298,7 @@ export const requestAndAddAdditionalInformation = async (
   // When I start the assessment
   const dashboard = await visitDashboard(page)
   await dashboard.clickWorkflow()
-  await assignAssessmentToMe(dashboard, page, assessor.name, applicationId)
+  await assignAssessmentToMe(dashboard, page, assessor.name, applicationId, undefined, person.crn)
   await startAssessment(page, person.name, applicationId)
   await reviewApplication(page)
 

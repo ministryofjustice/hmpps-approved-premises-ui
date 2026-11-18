@@ -45,7 +45,11 @@ export const enterAndConfirmCrn = async (page: Page, crn: string) => {
   const cas2InterstitialHeading = page.getByRole('heading', {
     name: /may be eligible for Short-term accommodation \(CAS2\)/i,
   })
-  if (await cas2InterstitialHeading.isVisible()) {
+  const isCas2Interstitial = await cas2InterstitialHeading
+    .waitFor({ state: 'visible', timeout: 5000 })
+    .then(() => true)
+    .catch(() => false)
+  if (isCas2Interstitial) {
     await cas2InterstitialPage.clickContinue()
     await cas2InterstitialPage.shouldShowInformationHeading()
     await cas2InterstitialPage.clickApplyForCas1()
@@ -204,8 +208,16 @@ export const completeOasysImportTask = async (page: Page, oasysSections: Array<s
   const taskListPage = new TasklistPage(page)
   await taskListPage.clickTask('Choose sections of OASys to import')
 
-  const oasysPage = await ApplyPage.initialize(page, 'Which of the following sections of OASys do you want to import?')
-  await oasysPage.checkCheckBoxes(oasysSections)
+  const oasysSectionsHeading = page.getByRole('heading', {
+    name: 'Which of the following sections of OASys do you want to import?',
+  })
+  const oasysUnavailableHeading = page.getByRole('heading', { name: 'Oasys Information' })
+  await expect(oasysSectionsHeading.or(oasysUnavailableHeading)).toBeVisible()
+
+  const oasysPage = new ApplyPage(page)
+  if (await oasysSectionsHeading.isVisible()) {
+    await oasysPage.checkCheckBoxes(oasysSections)
+  }
   await oasysPage.clickSave()
 
   const roshSummaryPage = await ApplyPage.initialize(page)
@@ -267,11 +279,20 @@ export const completePrisonNotesTask = async (page: Page) => {
   await taskListPage.clickTask('Review prison information')
 
   const prisonInformationPage = await ApplyPage.initialize(page, 'Prison information')
-  // TODO once this CRN has prison case notes again
-  // await prisonInformationPage.checkCheckBoxes(['Select case note from Thursday 21 April 2022'])
-  await prisonInformationPage.clickTab('Adjudications')
-  await prisonInformationPage.clickTab('ACCT')
-  await prisonInformationPage.clickTab('Prison case notes')
+
+  const adjudicationsTab = page.getByRole('link', { name: 'Adjudications' })
+  const nomisFailedRadio = page.getByRole('radio', { name: 'No' })
+  await expect(adjudicationsTab.or(nomisFailedRadio)).toBeVisible()
+
+  if (await adjudicationsTab.isVisible()) {
+    // TODO once this CRN has prison case notes again
+    // await prisonInformationPage.checkCheckBoxes(['Select case note from Thursday 21 April 2022'])
+    await prisonInformationPage.clickTab('Adjudications')
+    await prisonInformationPage.clickTab('ACCT')
+    await prisonInformationPage.clickTab('Prison case notes')
+  } else {
+    await prisonInformationPage.checkRadio('No')
+  }
   await prisonInformationPage.clickSave()
 }
 
@@ -427,13 +448,13 @@ export const completeMoveOnTask = async (page: Page) => {
 
   const pageHeading = await page.locator('h1').first().innerText()
   const placementDurationPage = await ApplyPage.initialize(page, pageHeading)
-  if (pageHeading === 'Placement length and dates') {
-    await placementDurationPage.checkRadio('No, apply for 16 weeks')
-  } else {
-    // TODO: remove this once tierV3 is live
-    await placementDurationPage.checkRadio('No')
+
+  if (pageHeading === 'Placement length cannot be calculated') {
+    await placementDurationPage.clickContinue()
+  } else if (pageHeading === 'Placement length and dates') {
+    await placementDurationPage.checkRadio(/No, apply for/)
+    await placementDurationPage.clickSave()
   }
-  await placementDurationPage.clickSave()
 
   const moveOnPage = await ApplyPage.initialize(page, 'Placement duration and move on')
   await moveOnPage.fillField(`Where is the person most likely to live when they move on from the AP?`, 'WS1')
@@ -615,9 +636,14 @@ export const recordAnAppealOnApplication = async (page: Page, applicationId: str
   }
 }
 
-export const assessmentShouldBeAllocatedToCorrectUser = async (page: Page, applicationId: string, user: string) => {
+export const assessmentShouldBeAllocatedToCorrectUser = async (
+  page: Page,
+  applicationId: string,
+  user: string,
+  crn?: string,
+) => {
   const dashboard = await visitDashboard(page)
-  await assessmentShouldHaveCorrectDeadlineAndAllocatedUser(dashboard, page, applicationId, 10, user)
+  await assessmentShouldHaveCorrectDeadlineAndAllocatedUser(dashboard, page, applicationId, 10, user, crn)
 }
 
 const withdrawApplication = async (page: Page) => {

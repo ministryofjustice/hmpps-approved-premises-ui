@@ -48,8 +48,8 @@ export const matchAndBookApplication = async ({
 
   let cruDashboard = new ListPage(page)
 
-  // And I select the placement request
-  await cruDashboard.choosePlacementApplicationWithId(applicationId)
+  // And I search for and select the placement request by CRN
+  await cruDashboard.choosePlacementApplicationWithCrn(applicationId, person.crn)
 
   let placementRequestPage = new PlacementRequestPage(page)
 
@@ -120,15 +120,18 @@ export const matchAndBookApplication = async ({
 
   await cruDashboard.updateAreaFilter()
 
-  // And the placement should be listed
-  await cruDashboard.findRowWithValues([
-    `${person.name}, ${person.crn}`,
-    DateFormats.isoDateToUIDate(newDatesOfPlacement.startDate, { format: 'short' }),
-    premisesName,
-  ])
+  // And the placement should be listed.
+  await cruDashboard.findRowWithValues(
+    [
+      `${person.name}, ${person.crn}`,
+      DateFormats.isoDateToUIDate(newDatesOfPlacement.startDate, { format: 'short' }),
+      premisesName,
+    ],
+    'created_at',
+  )
 
   // When I reopen the placement request to change the dates
-  await cruDashboard.choosePlacementApplicationWithId(applicationId)
+  await cruDashboard.choosePlacementApplicationWithCrn(applicationId, person.crn)
 
   placementRequestPage = new PlacementRequestPage(page)
 

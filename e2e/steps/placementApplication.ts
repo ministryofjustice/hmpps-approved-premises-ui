@@ -16,11 +16,12 @@ export const assignPlacementApplicationToMe = async (
   page: Page,
   userName: string,
   id: string,
+  crn?: string,
 ) => {
   await dashboard.clickWorkflow()
 
   const workflowListPage = new WorkflowListPage(page)
-  await workflowListPage.choosePlacementApplicationWithId(id)
+  await workflowListPage.choosePlacementApplicationWithId(id, crn)
 
   const placementRequestPage = new PlacementApplicationPage(page)
   await placementRequestPage.selectStaffMember(userName)

@@ -2,8 +2,8 @@ import { expect } from '@playwright/test'
 import { PaginatedPage } from '../paginatedPage'
 
 export class ListPage extends PaginatedPage {
-  async getAssignmentWithId(id: string, isAllocated: boolean) {
-    await this.updateAreaFilter()
+  async getAssignmentWithId(id: string, isAllocated: boolean, crn?: string) {
+    await this.updateAreaFilter(crn)
     if (!isAllocated) {
       await this.page
         .getByRole('link')
@@ -12,27 +12,41 @@ export class ListPage extends PaginatedPage {
         .click()
     }
 
-    return this.getAssessmentRow(id)
+    if (crn) {
+      await this.sortDescendingBy('createdAt')
+    }
+
+    return this.getAssessmentRow(id, crn)
   }
 
-  async getAssessmentRow(id: string) {
+  async getAssessmentRow(id: string, crn?: string) {
     const assessmentRow = this.page
       .getByRole('row')
       .filter({ has: this.page.getByText('Assessment') })
       .filter({ has: this.page.locator(`[data-cy-applicationId="${id}"]`) })
       .first()
 
+    if (crn) {
+      await expect(assessmentRow).toBeVisible()
+      return assessmentRow
+    }
+
     return this.tryNextPageUntilFound(assessmentRow)
   }
 
-  async chooseAssessmentWithId(id: string, isAllocated: boolean) {
-    const row = await this.getAssignmentWithId(id, isAllocated)
+  async chooseAssessmentWithId(id: string, isAllocated: boolean, crn?: string) {
+    const row = await this.getAssignmentWithId(id, isAllocated, crn)
 
     await row.getByRole('link').click()
   }
 
-  async shouldHaveCorrectDeadlineAndAllocation(id: string, expectedDeadlineInDays: number, user?: string | null) {
-    const row = await this.getAssignmentWithId(id, !!user)
+  async shouldHaveCorrectDeadlineAndAllocation(
+    id: string,
+    expectedDeadlineInDays: number,
+    user?: string | null,
+    crn?: string,
+  ) {
+    const row = await this.getAssignmentWithId(id, !!user, crn)
 
     // Either 'Today' or 'X days'
     const actualDeadline: string = await row.locator('td').nth(0).innerText()
@@ -50,18 +64,52 @@ export class ListPage extends PaginatedPage {
     }
   }
 
-  async updateAreaFilter() {
+  async updateAreaFilter(crn?: string) {
     await this.page.getByLabel('AP area').selectOption({ label: 'All areas' })
+    if (crn) {
+      await this.page.getByLabel('CRN or Name').fill(crn)
+    }
     await this.page.getByRole('button', { name: 'Apply filters' }).click()
   }
 
-  async choosePlacementApplicationWithId(id: string) {
+  async choosePlacementApplicationWithId(id: string, crn?: string) {
+    if (crn) {
+      await this.updateAreaFilter(crn)
+      await this.sortDescendingBy('createdAt')
+    }
+
     const placementApplication = this.page
       .getByRole('row')
       .filter({ has: this.page.locator(`[data-cy-applicationId="${id}"]`) })
       .first()
       .getByRole('link')
 
+    if (crn) {
+      await expect(placementApplication).toBeVisible()
+      return placementApplication.click()
+    }
+
     return (await this.tryNextPageUntilFound(placementApplication)).click()
+  }
+
+  async searchCruDashboardByCrn(crn: string) {
+    await this.page.getByRole('link', { name: 'Search' }).click()
+    await this.page.getByLabel('Find a placement').fill(crn)
+    await this.page.getByRole('button', { name: 'Apply filters' }).click()
+
+    await this.sortDescendingBy('created_at')
+  }
+
+  async choosePlacementApplicationWithCrn(id: string, crn: string) {
+    await this.searchCruDashboardByCrn(crn)
+
+    const placementApplication = this.page
+      .getByRole('row')
+      .filter({ has: this.page.locator(`[data-cy-applicationId="${id}"]`) })
+      .first()
+      .getByRole('link')
+
+    await expect(placementApplication).toBeVisible()
+    return placementApplication.click()
   }
 }
