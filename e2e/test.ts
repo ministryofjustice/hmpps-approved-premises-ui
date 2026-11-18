@@ -2,18 +2,19 @@ import { TestOptions } from '@approved-premises/e2e'
 import { test as base } from '@playwright/test'
 import { randomTestPerson } from './testData/testPersons'
 
-// Pick a random test person from testData/testPersons.csv unless a specific CRN has been
-// requested via env vars (e.g. for a local run testing a specific person).
-const defaultPerson = process.env.CAS1_E2E_PERSON_CRN
-  ? { crn: process.env.CAS1_E2E_PERSON_CRN, name: process.env.CAS1_E2E_PERSON_NAME || 'Ben Davies' }
-  : randomTestPerson()
-
 export const test = base.extend<TestOptions>({
   person: [
-    {
-      name: defaultPerson.name,
-      crn: defaultPerson.crn,
-      tier: process.env.CAS1_E2E_PERSON_TIER || 'A',
+    // eslint-disable-next-line no-empty-pattern
+    async ({}, use) => {
+      const selectedPerson = process.env.CAS1_E2E_PERSON_CRN
+        ? { crn: process.env.CAS1_E2E_PERSON_CRN, name: process.env.CAS1_E2E_PERSON_NAME || 'Ben Davies' }
+        : randomTestPerson()
+
+      await use({
+        name: selectedPerson.name,
+        crn: selectedPerson.crn,
+        tier: process.env.CAS1_E2E_PERSON_TIER || 'A',
+      })
     },
     { option: true },
   ],
@@ -64,11 +65,10 @@ export const test = base.extend<TestOptions>({
   emergencyApplicationUser: [process.env.CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO, { option: true }],
 })
 
-// Log relevant test person on failure
-// eslint-disable-next-line no-empty-pattern
-test.afterEach(async ({}, testInfo) => {
+// Log the resolved test person on failure
+test.afterEach(async ({ person }, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     // eslint-disable-next-line no-console
-    console.log(`Test failed using person: '${defaultPerson.name}: ${defaultPerson.crn}'`)
+    console.log(`Test failed using person: '${person.name}: ${person.crn}'`)
   }
 })
