@@ -4,10 +4,10 @@
 /* eslint-disable */
 import type { AssessmentDecision } from './AssessmentDecision';
 import type { Cas1AssessmentStatus } from './Cas1AssessmentStatus';
-import type { FullPerson } from './FullPerson';
+import type { FullPersonSummary } from './FullPersonSummary';
 import type { PersonRisks } from './PersonRisks';
-import type { RestrictedPerson } from './RestrictedPerson';
-import type { UnknownPerson } from './UnknownPerson';
+import type { RestrictedPersonSummary } from './RestrictedPersonSummary';
+import type { UnknownPersonSummary } from './UnknownPersonSummary';
 export type Cas1AssessmentSummary = {
     applicationId: string;
     arrivalDate?: string;
@@ -16,7 +16,7 @@ export type Cas1AssessmentSummary = {
     decision?: AssessmentDecision;
     dueAt: string;
     id: string;
-    person: (FullPerson | RestrictedPerson | UnknownPerson);
+    person: (FullPersonSummary | RestrictedPersonSummary | UnknownPersonSummary);
     risks?: PersonRisks;
     status: Cas1AssessmentStatus;
 };
