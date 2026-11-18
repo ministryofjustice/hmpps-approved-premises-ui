@@ -5,11 +5,7 @@ import Page from '../page'
 
 export default class Cas2Eligibility extends Page {
   constructor(person: FullPerson) {
-    const title =
-      person.tier.tierScore === 'MISSING'
-        ? 'You cannot continue with this application'
-        : `${person.name} may be eligible for Short-term accommodation (CAS2)`
-    super(title)
+    super(`${person.name} may be eligible for Short-term accommodation (CAS2)`)
   }
 
   public checkContent(): void {
