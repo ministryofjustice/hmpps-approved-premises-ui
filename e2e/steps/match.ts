@@ -115,7 +115,7 @@ export const matchAndBookApplication = async ({
   const premisesId = page.url().match(/space-bookings\/(.[^/]*)/)[1] // Path: /match/placement-requests/:id/space-bookings/:premisesId/new
   await bookingPage.clickConfirm()
 
-  // Then I should see the Booked tab on the CRU dashboard (already landed here after confirming the booking)
+  // Then I should see the Booked tab on the CRU dashboard
   cruDashboard = new ListPage(page)
 
   await cruDashboard.updateAreaFilter()
