@@ -454,7 +454,6 @@ export const completeMoveOnTask = async (page: Page) => {
   } else if (pageHeading === 'Placement length and dates') {
     await placementDurationPage.checkRadio(/No, apply for/)
     await placementDurationPage.clickSave()
-  } 
   }
 
   const moveOnPage = await ApplyPage.initialize(page, 'Placement duration and move on')
