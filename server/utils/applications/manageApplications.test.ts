@@ -52,7 +52,7 @@ describe('manageApplications', () => {
 
   describe('getApplicationTableRows', () => {
     it('should return the table rows', () => {
-      const tier = tierDtoFactory.v2().build({ tierScore: 'A3' })
+      const tier = tierDtoFactory.eligible().build({ tierScore: 'A' })
       const person = fullPersonFactory.build({ tier })
       const application = cas1ApplicationSummaryFactory.build({
         person,
@@ -63,8 +63,8 @@ describe('manageApplications', () => {
       const row = getApplicationTableRows([application], '')[0]
       expect(row[0]).toEqual(nameCell(application))
       expect(row[1]).toEqual({
-        attributes: { 'data-sort-value': 'A6' },
-        html: `<span class="moj-badge moj-badge--red">A3</span>`,
+        attributes: { 'data-sort-value': 'A' },
+        html: `<span>A</span>`,
       })
       expect(row[2]).toEqual({ attributes: { 'data-sort-value': '2024-12-16T15:35' }, text: '16 Dec 2024' })
       expect(row[3]).toEqual({ text: application.createdByUserName })

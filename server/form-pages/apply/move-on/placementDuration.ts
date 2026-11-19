@@ -8,7 +8,6 @@ import TasklistPage from '../../tasklistPage'
 import { sentenceCase } from '../../../utils/utils'
 import { getDefaultPlacementDurationInDays } from '../../../utils/applications/getDefaultPlacementDurationInDays'
 import { arrivalDateFromApplication } from '../../../utils/applications/arrivalDateFromApplication'
-import { personTier } from '../../../utils/personUtils'
 import { validWeeksAndDaysDuration } from '../../../utils/formUtils'
 
 type PlacementDurationBody = {
@@ -22,17 +21,10 @@ type PlacementDurationBody = {
   isNullDuration?: boolean
 }
 
-const title = 'Placement duration and move on'
-const titleV3 = 'Placement length and dates'
-const titleV3NullDuration = 'Placement length cannot be calculated'
+const title = 'Placement length and dates'
+const titleNullDuration = 'Placement length cannot be calculated'
 
 const questions = {
-  differentDuration: 'Does this application require a different placement duration?',
-  duration: 'How many weeks will the person stay at the AP?',
-  reason: 'Why does this person require a different placement duration?',
-}
-
-const questionsV3 = {
   differentDuration: 'Do you want to change the placement length?',
   duration: 'New placement length',
   reason: 'Reason for change',
@@ -58,8 +50,6 @@ export default class PlacementDuration implements TasklistPage {
 
   departureDate: string | undefined
 
-  isV3Tier: boolean
-
   questions: typeof questions
 
   dataServices: DataServices
@@ -70,9 +60,8 @@ export default class PlacementDuration implements TasklistPage {
     public body: Partial<PlacementDurationBody>,
     private readonly application: Cas1Application,
   ) {
-    this.isV3Tier = personTier(application.person)?.version === 'V3'
-    this.title = this.isV3Tier ? titleV3 : title
-    this.questions = this.isV3Tier ? questionsV3 : questions
+    this.title = title
+    this.questions = questions
     this.body.duration = this.lengthInDays()
   }
 
@@ -107,7 +96,7 @@ export default class PlacementDuration implements TasklistPage {
     const response: PageResponse = {}
 
     if (this.body.isNullDuration) {
-      response[titleV3] = titleV3NullDuration
+      response[title] = titleNullDuration
       return response
     }
 
@@ -129,22 +118,16 @@ export default class PlacementDuration implements TasklistPage {
     if (this.body.isNullDuration) return errors
 
     if (!this.body.differentDuration) {
-      errors.differentDuration = this.isV3Tier
-        ? 'You must specify if you want to change the placement length'
-        : 'You must specify if this application requires a different placement length'
+      errors.differentDuration = 'You must specify if you want to change the placement length'
     }
 
     if (this.body.differentDuration === 'yes') {
       if (!validWeeksAndDaysDuration(this.body.durationWeeks, this.body.durationDays)) {
-        errors.duration = this.isV3Tier
-          ? 'You must specify the new placement length'
-          : 'You must specify the duration of the placement'
+        errors.duration = 'You must specify the new placement length'
       }
 
       if (!this.body.reason) {
-        errors.reason = this.isV3Tier
-          ? 'You must specify the reason for the change'
-          : 'You must specify the reason for the different placement duration'
+        errors.reason = 'You must specify the reason for the change'
       }
     }
     if (this.body.differentDuration === 'no') {
@@ -176,9 +159,9 @@ export default class PlacementDuration implements TasklistPage {
 
     this.body.maxDurationDays = maxDurationDays
     this.body.defaultDurationDays = defaultDurationDays
-    this.body.isNullDuration = this.isV3Tier && defaultDurationDays === null
+    this.body.isNullDuration = defaultDurationDays === null
     if (this.body.isNullDuration) {
-      this.title = titleV3NullDuration
+      this.title = titleNullDuration
       this.submitLabel = 'Continue'
     }
 

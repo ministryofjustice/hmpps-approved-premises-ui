@@ -25,42 +25,16 @@ import config from '../config'
 
 describe('personUtils', () => {
   describe('tierBadge', () => {
-    it('returns the correct tier badge for A', () => {
-      expect(tierBadge('A')).toEqual('<span class="moj-badge moj-badge--red">A</span>')
-    })
-
-    it('returns the correct tier badge for B', () => {
-      expect(tierBadge('B')).toEqual('<span class="moj-badge moj-badge--purple">B</span>')
-    })
-
-    it('returns the correct tier badge for C', () => {
-      expect(tierBadge('C')).toEqual('<span class="moj-badge undefined">C</span>')
+    it.each(['A', 'B'])('returns the correct tier badge for tier %s', tier => {
+      expect(tierBadge(tier)).toEqual(`<span>${tier}</span>`)
     })
   })
 
   describe('versionedTierBadge', () => {
-    it('returns the correct tier badge for version 2, A', () => {
-      expect(versionedTierBadge(tierDtoFactory.v2().build({ tierScore: 'A' }))).toEqual(
-        '<span class="moj-badge moj-badge--red">A</span>',
-      )
-    })
-
-    it('returns the correct tier badge for version 2, B', () => {
-      expect(versionedTierBadge(tierDtoFactory.v2().build({ tierScore: 'B' }))).toEqual(
-        '<span class="moj-badge moj-badge--purple">B</span>',
-      )
-    })
-
-    it('returns the correct tier badge for version 2, C', () => {
-      expect(versionedTierBadge(tierDtoFactory.v2().build({ tierScore: 'C' }))).toEqual(
-        '<span class="moj-badge undefined">C</span>',
-      )
-    })
-
     it.each(['A', 'B', 'C'])(
       'returns the correct, consistently coloured tiers badges for version 3 tiers "%s"',
       tier => {
-        expect(versionedTierBadge(tierDtoFactory.v3().build({ tierScore: tier }))).toEqual(`<span>${tier}</span>`)
+        expect(versionedTierBadge(tierDtoFactory.build({ tierScore: tier }))).toEqual(`<span>${tier}</span>`)
       },
     )
   })
@@ -79,20 +53,8 @@ describe('personUtils', () => {
       ['Female', 'G', false],
       ['Male', 'MISSING', false],
       ['Female', 'NOT_SUPERVISED', false],
-    ])('for tier version V3 sex:%s, tier:%s returns %s', (sex, tierScore, result) => {
-      const person = fullPersonFactory.build({ tier: tierDtoFactory.v3().build({ tierScore }), sex })
-      expect(isApplicableTierDto(person)).toBe(result)
-    })
-
-    it.each([
-      ['Male', 'A1', true],
-      ['Male', 'C3', false],
-      ['Male', 'D1', false],
-      ['Female', 'A3', true],
-      ['Female', 'C3', true],
-      ['Female', 'D1', false],
-    ])('for tier version V2 sex:%s, tier:%s returns %s', (sex, tierScore, result) => {
-      const person = fullPersonFactory.build({ tier: tierDtoFactory.v2().build({ tierScore }), sex })
+    ])('for sex:%s, tier:%s returns %s', (sex, tierScore, result) => {
+      const person = fullPersonFactory.build({ tier: tierDtoFactory.build({ tierScore }), sex })
       expect(isApplicableTierDto(person)).toBe(result)
     })
   })
@@ -273,7 +235,7 @@ describe('personUtils', () => {
       })
 
       it('returns the badge for the person tier when present', () => {
-        const tier = tierDtoFactory.v2().build({ tierScore: 'live' })
+        const tier = tierDtoFactory.build({ tierScore: 'live' })
         const person = fullPersonFactory.build({ tier })
 
         expect(getVersionedTierOrBlank(person)).toEqual(versionedTierBadge(tier))
@@ -289,24 +251,10 @@ describe('personUtils', () => {
 
   describe('getVersionedTierValue', () => {
     const tierOnApplicationCreation = tierEnvelopeFactory.build({ value: { level: 'static', version: 'V2' } }).value
-    const personWithLiveTier = personFactory.build({ tier: tierDtoFactory.v2().build({ tierScore: 'live' }) })
+    const personWithLiveTier = personFactory.build({ tier: tierDtoFactory.build({ tierScore: 'live' }) })
 
     afterEach(() => {
       config.flags.useLiveTiers = false
-    })
-
-    describe('when live tiers are disabled', () => {
-      beforeEach(() => {
-        config.flags.useLiveTiers = false
-      })
-
-      it('returns the tier from application creation when present', () => {
-        expect(getVersionedTierValue(personWithLiveTier, tierOnApplicationCreation)).toEqual('static')
-      })
-
-      it('returns an empty string when the application tier is undefined', () => {
-        expect(getVersionedTierValue(personWithLiveTier, undefined)).toEqual('')
-      })
     })
 
     describe('when live tiers are enabled', () => {

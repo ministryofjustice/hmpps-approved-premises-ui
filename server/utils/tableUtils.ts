@@ -26,13 +26,7 @@ export const dateCellSortable = (date: string): TableCell => ({
 
 export const crnCell = (item: { crn?: string }): TableCell => ({ text: item.crn })
 
-const tierSortKey = (person: Person | PersonSummary) => {
-  const { tierScore, version } = personTier(person) || {}
-  if (version === 'V2' && /^[A-Z][0-9]/.test(tierScore))
-    return tierScore.charAt(0).concat(String(9 - +tierScore.charAt(1)), tierScore.slice(2))
-
-  return tierScore || ''
-}
+const tierSortKey = (person: Person | PersonSummary) => personTier(person)?.tierScore || ''
 
 export const versionedTierCell = (person: Person | PersonSummary) => ({
   html: getVersionedTierOrBlank(person),

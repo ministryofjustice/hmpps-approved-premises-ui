@@ -10,14 +10,15 @@ import { GIVEN, THEN, WHEN } from '../../helpers'
 context('Apply', () => {
   beforeEach(setup)
 
-  it('allows completion of application emergency flow with a V3 tier', function test() {
+  it('allows completion of application emergency flow', function test() {
     GIVEN('I need to complete I need a placement')
     const user = userFactory.build()
     this.application.createdByUserId = user.id
     this.application.submittedAt = undefined
 
-    this.person.tier = tierDtoFactory.v3().build({ tierScore: 'B' })
-    this.application.risks.tier = tierEnvelopeFactory.build({ value: { level: 'B', version: 'V3' } })
+    this.person.tier = tierDtoFactory.build({ tierScore: 'A' })
+    this.application.person = this.person
+    this.application.risks.tier = tierEnvelopeFactory.build({ value: { level: 'A' } })
     cy.task('stubRiskProfile', { person: this.person, personRisks: this.application.risks })
 
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
@@ -52,7 +53,8 @@ context('Apply', () => {
     })
     WHEN('I start the application')
     apply.setupApplicationStubs(uiRisks)
-    apply.startApplication({ withCas2Interstitial: true })
+
+    apply.startApplication()
 
     THEN('I am able to complete the Emergency application flow')
     apply.completeEmergencyApplication()
