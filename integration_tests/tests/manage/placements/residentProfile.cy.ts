@@ -281,6 +281,7 @@ context('ResidentProfile', () => {
     it('should show the sentence tab', () => {
       const caseDetail = caseDetailFactory.build()
       const oasysOffenceDetails = cas1OasysGroupFactory.offenceDetails().build()
+      oasysOffenceDetails.answers[0].answer = 'Details about the offence. '.repeat(100)
       const adjudications = adjudicationFactory.buildList(5)
       const licence = licenceFactory.build()
       const csraSummaries = csraSummaryFactory.buildList(2)
@@ -308,7 +309,9 @@ context('ResidentProfile', () => {
       cy.scrollTo('bottom')
 
       THEN('the "back to top" jump link should be shown')
-      page.clickLink('Back to top')
+      cy.contains('#backToTopJumpLink a', 'Back to top').should('be.visible').click({ scrollBehavior: false })
+      cy.location('hash').should('eq', '#top')
+      cy.window().its('scrollY').should('eq', 0)
 
       WHEN('I select the licence side-nav')
       page.clickSideNav('Licence')

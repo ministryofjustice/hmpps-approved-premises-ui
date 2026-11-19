@@ -17,8 +17,8 @@ describe('healthCheck', () => {
   let mockNext: any
   let mockMiddleware: any
 
-  beforeAll(async () => {
-    const module = await import('./healthCheck')
+  beforeAll(() => {
+    const module = jest.requireActual<typeof import('./healthCheck')>('./healthCheck')
     createHealthCheckWithPrometheusHandler = module.healthCheckWithPrometheusHandler
   })
 
