@@ -1,4 +1,3 @@
-import { FullPerson } from '@approved-premises/api'
 import {
   activeOffenceFactory,
   personFactory,
@@ -296,17 +295,17 @@ context('Apply', () => {
     Page.verifyOnPage(ApplyPages.ConfirmYourDetailsPage, this.application)
   })
 
-  it('Stops the application if V3 tier is MISSING', function test() {
+  it('Follows the Tier V3 CAS2 interstitial page and exceptional case route when the tier is MISSING', function test() {
     this.person.tier = tierDtoFactory.build({ version: 'V3', tierScore: 'MISSING' })
     const apply = new ApplyHelper({ ...this.application, person: this.person }, this.person, this.offences)
     apply.setupApplicationStubs()
+    apply.startApplication({ withCas2Interstitial: true })
 
-    WHEN('I start an application and confirm the person')
-    apply.enterCrnDetails()
-    Page.verifyOnPage(ApplyPages.ConfirmDetailsPage, this.person as FullPerson).clickSaveAndContinue()
+    THEN('I should be asked whether the application is an exceptional case')
+    Page.verifyOnPage(ApplyPages.IsExceptionalCasePage, this.application)
+    apply.completeExceptionalCase()
 
-    THEN('I am on the stop page')
-    const eligibilityCheckPage = Page.verifyOnPage(ApplyPages.EligibilityCheckPage, this.person as FullPerson)
-    eligibilityCheckPage.checkDashboardLink()
+    THEN('I am on the Confirm your details page')
+    Page.verifyOnPage(ApplyPages.ConfirmYourDetailsPage, this.application)
   })
 })
