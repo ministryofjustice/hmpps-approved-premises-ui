@@ -282,7 +282,7 @@ export default class ApplicationsController {
         return res.render('applications/people/eligibilityCheck', {
           person,
           tierScore,
-          showStopPage: tierScore === 'MISSING',
+          showStopPage: false,
           continuePath: paths.applications.people.cas2Option({ crn }),
           backLink: paths.applications.new({}),
           dashboardPath: paths.applications.dashboard({}),

@@ -674,13 +674,13 @@ describe('applicationsController', () => {
       })
     })
 
-    it('should render the Stop page if the person has a MISSING tier', async () => {
+    it('should not render the Stop page, even if the person has a MISSING tier (SAS-1715)', async () => {
       const { person } = mockPerson('V3', 'MISSING')
 
       await applicationsController.eligibilityCheck()(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('applications/people/eligibilityCheck', {
-        showStopPage: true,
+        showStopPage: false,
         backLink: paths.applications.new({}),
         continuePath: paths.applications.people.cas2Option({ crn }),
         dashboardPath: paths.applications.dashboard({}),

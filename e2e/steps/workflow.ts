@@ -9,10 +9,11 @@ export const assessmentShouldHaveCorrectDeadlineAndAllocatedUser = async (
   id: string,
   deadline: number,
   user: string | null,
+  crn?: string,
 ) => {
   await dashboard.clickWorkflow()
   const workflowListPage = new ListPage(page)
-  await workflowListPage.shouldHaveCorrectDeadlineAndAllocation(id, deadline, user)
+  await workflowListPage.shouldHaveCorrectDeadlineAndAllocation(id, deadline, user, crn)
 }
 
 export const assignAssessmentToMe = async (
@@ -21,9 +22,10 @@ export const assignAssessmentToMe = async (
   userName: TestOptions['assessor']['username'],
   id: string,
   isAllocated?: boolean,
+  crn?: string,
 ) => {
   const workflowListPage = new ListPage(page)
-  await workflowListPage.chooseAssessmentWithId(id, isAllocated)
+  await workflowListPage.chooseAssessmentWithId(id, isAllocated, crn)
 
   const assessmentPage = new AssessmentPage(page)
   await assessmentPage.selectStaffMember(userName)
