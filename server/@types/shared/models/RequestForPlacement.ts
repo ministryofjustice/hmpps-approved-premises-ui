@@ -30,6 +30,7 @@ export type RequestForPlacement = {
     id: string;
     isWithdrawn: boolean;
     placements: Array<Cas1SpaceBookingShortSummary>;
+    rejectionReason?: string;
     releaseType?: ReleaseTypeOption;
     /**
      * If `type` is `"manual"`, provides the value of `PlacementApplication.decisionMadeAt`. If `type` is `"automatic"` this field provides the value of `PlacementRequest.assessmentCompletedAt`.
@@ -39,10 +40,16 @@ export type RequestForPlacement = {
     sentenceType?: SentenceTypeOption;
     situation?: SituationOption;
     status: RequestForPlacementStatus;
+    /**
+     * Use statusSetDateTime
+     * @deprecated
+     */
     statusSetDate: string;
-    submittedAt?: string;
-    submittedBy?: Cas1StaffDto;
+    statusSetDateTime: string;
+    submittedAt: string;
+    submittedBy: Cas1StaffDto;
     type: RequestForPlacementType;
+    withdrawalDate?: string;
     withdrawalReason?: WithdrawPlacementRequestReason;
 };
 
