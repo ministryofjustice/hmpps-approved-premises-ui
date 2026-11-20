@@ -89,11 +89,17 @@
       "ts"
     ],
     "transformIgnorePatterns": [
-      "<rootDir>/node_modules/(?!https-proxy-agent/|proxy-agent-negotiate/)"
+      "<rootDir>/node_modules/(?!@faker-js/faker/|https-proxy-agent/|proxy-agent-negotiate/)"
     ],
     "transform": {
       "^.+\\.[tj]sx?$": [
-        "ts-jest"
+        "ts-jest",
+        {
+          "tsconfig": {
+            "module": "commonjs",
+            "moduleResolution": "node"
+          }
+        }
       ]
     }
   },
@@ -156,7 +162,7 @@
     "url-value-parser": "^2.2.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.0.0",
+    "@faker-js/faker": "^10.6.0",
     "@golevelup/ts-jest": "3.0.0",
     "@jgoz/esbuild-plugin-typecheck": "^4.0.4",
     "@ministryofjustice/eslint-config-hmpps": "^1.0.1",
