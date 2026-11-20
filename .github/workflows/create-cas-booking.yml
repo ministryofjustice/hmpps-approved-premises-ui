@@ -70,10 +70,10 @@ jobs:
         env:
           CAS1_E2E_PERSON_CRN: ${{ inputs.crn || needs.generate-tier-a-person.outputs.crn }}
           CAS1_E2E_PERSON_NAME: ${{ inputs.name || needs.generate-tier-a-person.outputs.name }}
-          CAS1_E2E_ASSESSOR_EMAIL: stuart.harrison2+test1@digital.justice.gov.uk
-          CAS1_E2E_ASSESSOR_NAME: AP_USER TEST_1
-          CAS1_E2E_ASSESSOR_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_1_PASSWORD }}
-          CAS1_E2E_ASSESSOR_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_1_USERNAME }}
+          CAS1_E2E_ASSESSOR_EMAIL: cas1dev+usere2e@justice.gov.uk
+          CAS1_E2E_ASSESSOR_NAME: cas1dev usere2e
+          CAS1_E2E_ASSESSOR_PASSWORD: ${{ secrets.E2E_USER_AP_E2E_USER_PASSWORD }}
+          CAS1_E2E_ASSESSOR_USERNAME: ${{ secrets.E2E_USER_AP_E2E_USER_USERNAME }}
           CAS1_E2E_FUTURE_MANAGER_PASSWORD: ${{ secrets.E2E_USER_AP_USER_TEST_4_PASSWORD }}
           CAS1_E2E_FUTURE_MANAGER_USERNAME: ${{ secrets.E2E_USER_AP_USER_TEST_4_USERNAME }}
           STOP_AT_STAGE: ${{ inputs.stop-at-stage }}
