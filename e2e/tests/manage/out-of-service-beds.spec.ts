@@ -3,6 +3,7 @@ import { UserLoginDetails } from '@approved-premises/e2e'
 import { Page } from '@playwright/test'
 import { OutOfServiceBedsPremisesListPage } from '../../pages/manage/outOfServiceBedsIndexPage'
 import { OutOfServiceBedPage } from '../../pages/manage/outOfServiceBedPage'
+import { CancelOutOfServiceBedPage } from '../../pages/manage/cancelOutOfServiceBedPage'
 import { test } from '../../test'
 import { PremisesListPage } from '../../pages/manage/premisesListPage'
 import { PremisesPage } from '../../pages/manage/premisesPage'
@@ -60,6 +61,45 @@ const markABedAsOutOfService = async (page: Page, futureManager: UserLoginDetail
   await revisitedBedPage.showsOutOfServiceBedRecordedSuccessMessage()
 }
 
+const navigateToOutOfServiceBedRecord = async (page: Page) => {
+  // Given I am on the dashboard page
+  const dashboard = await visitDashboard(page)
+
+  // And I am on the list of premises page
+  await dashboard.clickManage()
+  const premisesListPage = await PremisesListPage.initialize(page, 'Approved Premises (AP)')
+
+  // When I choose to view the detail of a particular premises
+  await premisesListPage.choosePremises(premisesName)
+
+  // Then I should see the premises page
+  const premisesPage = await PremisesPage.initialize(page, premisesName)
+
+  // When I choose to view the out of service bed records for the premises
+  await premisesPage.viewOutOfServiceBedRecords()
+  const manageOOSBedsPage = await OutOfServiceBedsPremisesListPage.initialize(page, premisesName)
+  await manageOOSBedsPage.showsTotalOutOfServiceBedsMatchingFilters()
+
+  // And I am on the future out of service beds tab
+  await manageOOSBedsPage.selectFutureTab()
+
+  // When I select an out of service bed from the list
+  await manageOOSBedsPage.selectOutOfServiceBed()
+
+  // Then I should be taken to the out of service bed page 
+  return OutOfServiceBedPage.initialize(page)
+}
+
+  // Cancel any out of service beds created during the test
+const cancelOutOfServiceBed = async (page: Page, outOfServiceBedPage: OutOfServiceBedPage) => {
+  await outOfServiceBedPage.selectCancelRecord()
+
+  const cancelOutOfServiceBedPage = await CancelOutOfServiceBedPage.initialize(page)
+  await cancelOutOfServiceBedPage.confirmCancellation()
+
+  await cancelOutOfServiceBedPage.shouldShowSuccessBanner('Cancelled out of service bed')
+}
+
 test('View all out of service beds', async ({ page, cruMember }) => {
   // Given I am signed in as a CRU Member
   await signIn(page, cruMember)
@@ -76,38 +116,18 @@ test('View all out of service beds', async ({ page, cruMember }) => {
 
 test('Future manager marks a bed as out of service in the manage area', async ({ page, futureManager }) => {
   await markABedAsOutOfService(page, futureManager)
+
+  // Cancel any out of service beds
+  const outOfServiceBedPage = await navigateToOutOfServiceBedRecord(page)
+  await cancelOutOfServiceBed(page, outOfServiceBedPage)
 })
 
 test('Future manager updates an out of service bed', async ({ page, futureManager }) => {
   // Given there is an Out of Service bed
   await markABedAsOutOfService(page, futureManager)
 
-  // And I am on the list of premises page
-  const dashboard = await visitDashboard(page)
-  await dashboard.clickManage()
-  const premisesListPage = await PremisesListPage.initialize(page, 'Approved Premises (AP)')
-
-  // When choose to view the detail of a particular premises
-  await premisesListPage.choosePremises(premisesName)
-
-  // Then I should see the premises page
-  const premisesPage = await PremisesPage.initialize(page, premisesName)
-
-  // When I choose to manage its out of service beds
-  await premisesPage.viewOutOfServiceBedRecords()
-
-  // Then I should see the out of service beds list page for the premises
-  const manageOOSBedsPage = await OutOfServiceBedsPremisesListPage.initialize(page, premisesName)
-
-  // And I should see the count of total OOSBs matching my filters (not limited to page max)
-  await manageOOSBedsPage.showsTotalOutOfServiceBedsMatchingFilters()
-
-  // When I select the 'future' tab and select the out of service bed created earlier
-  await manageOOSBedsPage.selectFutureTab()
-  await manageOOSBedsPage.selectOutOfServiceBed()
-
-  // Then I should see the out of service bed page
-  const outOfServiceBedPage = await OutOfServiceBedPage.initialize(page)
+  // And I view and out of service bed
+  const outOfServiceBedPage = await navigateToOutOfServiceBedRecord(page)
 
   // When I select 'Update record'
   await outOfServiceBedPage.selectUpdateRecord()
@@ -133,4 +153,7 @@ test('Future manager updates an out of service bed', async ({ page, futureManage
 
   // Then I should see the updated details
   await outOfServiceBedPage2.shouldShowUpdatedDetails(update)
+
+  // Cancel any out of service beds created during the test
+  await cancelOutOfServiceBed(page, outOfServiceBedPage2)
 })

@@ -12,6 +12,11 @@ export class OutOfServiceBedPage extends BasePage {
     await this.page.getByRole('button', { name: 'Update out of service bed' }).click()
   }
 
+  async selectCancelRecord() {
+    await this.page.getByRole('button', { name: 'Actions' }).click()
+    await this.page.getByRole('button', { name: 'Cancel out of service bed' }).click()
+  }
+
   async shouldShowUpdatedDetails(update: Record<string, string>) {
     await expect(this.page.getByText(update.referenceNumber, { exact: true })).toBeVisible()
     await expect(this.page.getByText(update.additionalInformation)).toBeVisible()
