@@ -83,13 +83,12 @@ const navigateToOutOfServiceBedRecord = async (page: Page, referenceNumber: stri
   // And I am on the future out of service beds tab
   await manageOOSBedsPage.selectFutureTab()
 
-  // When I select the out of service bed 
+  // When I select the out of service bed
   await manageOOSBedsPage.selectOutOfServiceBed(referenceNumber)
 
   // Then I should be taken to the out of service bed page
   return OutOfServiceBedPage.initialize(page)
 }
-
 
 const cleanUpOutOfServiceBed = async (page: Page, referenceNumber: string) => {
   try {
