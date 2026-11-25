@@ -6,6 +6,8 @@ import { BasePage } from '../basePage'
 export class MarkBedAsOutOfServicePage extends BasePage {
   startDate: Date
 
+  referenceNumber: string
+
   static async initialize(page: Page, title?: string) {
     if (title) {
       await expect(page.locator('h1')).toContainText(title)
@@ -41,18 +43,16 @@ export class MarkBedAsOutOfServicePage extends BasePage {
     await this.page.getByRole('group', { name: 'End date' }).getByLabel('Year').fill(getYear(endDate).toString())
   }
 
-  async completeForm() {
+  async completeForm(referenceNumber: string) {
+    this.referenceNumber = referenceNumber
+
     await this.enterOutOfServiceFromDate()
     await this.enterOutOfServiceToDate()
     await this.checkRadio('Planned Refurbishment (FM)')
-    await this.page.getByLabel('Work order reference number or CRN').fill('123456789')
+    await this.page.getByLabel('Work order reference number or CRN').fill(referenceNumber)
     await this.page
       .getByLabel('Details about why the bed is out of service')
       .fill('Reasons for bed being out of service')
-  }
-
-  async isBedNotAvailableMessageVisible(): Promise<boolean> {
-    return this.page.getByRole('heading', { name: 'This bedspace is not available for the dates entered' }).isVisible()
   }
 
   async addMonthsToStartDate(numberOfMonths: number) {
@@ -60,10 +60,18 @@ export class MarkBedAsOutOfServicePage extends BasePage {
   }
 
   async ensureNoBookingConflict() {
-    if (await this.isBedNotAvailableMessageVisible()) {
-      await this.addMonthsToStartDate(1)
-      await this.completeForm()
-      await this.clickSave()
+    const errorSelector = this.page.getByRole('heading', {
+      name: 'Out of service bed record cannot be created for the dates entered',
+    })
+    const newPageSelector = this.page.locator('h1', { hasText: /^Bed/ })
+
+    await expect(errorSelector.or(newPageSelector)).toBeVisible()
+
+    if (await errorSelector.isVisible()) {
+      this.addMonthsToStartDate(1)
+      await this.page.reload()
+      await this.completeForm(this.referenceNumber)
+      await this.clickSubmit('Save')
 
       await this.ensureNoBookingConflict()
     }
