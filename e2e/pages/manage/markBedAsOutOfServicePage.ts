@@ -55,19 +55,23 @@ export class MarkBedAsOutOfServicePage extends BasePage {
       .fill('Reasons for bed being out of service')
   }
 
-  async isBedNotAvailableMessageVisible(): Promise<boolean> {
-    return this.page.getByRole('heading', { name: 'This bedspace is not available for the dates entered' }).isVisible()
-  }
-
   async addMonthsToStartDate(numberOfMonths: number) {
     this.startDate = addMonths(this.startDate, numberOfMonths)
   }
 
   async ensureNoBookingConflict() {
-    if (await this.isBedNotAvailableMessageVisible()) {
-      await this.addMonthsToStartDate(1)
+    const errorSelector = this.page.getByRole('heading', {
+      name: 'Out of service bed record cannot be created for the dates entered',
+    })
+    const newPageSelector = this.page.locator('h1', { hasText: /^Bed/ })
+
+    await expect(errorSelector.or(newPageSelector)).toBeVisible()
+
+    if (await errorSelector.isVisible()) {
+      this.addMonthsToStartDate(1)
+      await this.page.reload()
       await this.completeForm(this.referenceNumber)
-      await this.clickSave()
+      await this.clickSubmit('Save')
 
       await this.ensureNoBookingConflict()
     }
