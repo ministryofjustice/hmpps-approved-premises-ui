@@ -18,7 +18,7 @@ test.describe.configure({ mode: 'parallel' })
 
 const premisesName = 'NE Men Premise 1'
 
-const markABedAsOutOfService = async (page: Page, futureManager: UserLoginDetails) => {
+const markABedAsOutOfService = async (page: Page, futureManager: UserLoginDetails, referenceNumber: string) => {
   // Given I am signed in as a future manager
   await signIn(page, futureManager)
 
@@ -48,7 +48,7 @@ const markABedAsOutOfService = async (page: Page, futureManager: UserLoginDetail
 
   // When I fill in and submit the manage out-of-service-bed form
   const markBedAsOutOfServicePage = await MarkBedAsOutOfServicePage.initialize(page, 'Mark a bed as out of service')
-  await markBedAsOutOfServicePage.completeForm()
+  await markBedAsOutOfServicePage.completeForm(referenceNumber)
   await markBedAsOutOfServicePage.clickSubmit('Save')
 
   // If there is a booking conflict then add 3 days to the start date and try again
@@ -61,7 +61,7 @@ const markABedAsOutOfService = async (page: Page, futureManager: UserLoginDetail
   await revisitedBedPage.showsOutOfServiceBedRecordedSuccessMessage()
 }
 
-const navigateToOutOfServiceBedRecord = async (page: Page) => {
+const navigateToOutOfServiceBedRecord = async (page: Page, referenceNumber: string) => {
   // Given I am on the dashboard page
   const dashboard = await visitDashboard(page)
 
@@ -83,21 +83,27 @@ const navigateToOutOfServiceBedRecord = async (page: Page) => {
   // And I am on the future out of service beds tab
   await manageOOSBedsPage.selectFutureTab()
 
-  // When I select an out of service bed from the list
-  await manageOOSBedsPage.selectOutOfServiceBed()
+  // When I select the out of service bed 
+  await manageOOSBedsPage.selectOutOfServiceBed(referenceNumber)
 
-  // Then I should be taken to the out of service bed page 
+  // Then I should be taken to the out of service bed page
   return OutOfServiceBedPage.initialize(page)
 }
 
-  // Cancel any out of service beds created during the test
-const cancelOutOfServiceBed = async (page: Page, outOfServiceBedPage: OutOfServiceBedPage) => {
-  await outOfServiceBedPage.selectCancelRecord()
 
-  const cancelOutOfServiceBedPage = await CancelOutOfServiceBedPage.initialize(page)
-  await cancelOutOfServiceBedPage.confirmCancellation()
+const cleanUpOutOfServiceBed = async (page: Page, referenceNumber: string) => {
+  try {
+    const outOfServiceBedPage = await navigateToOutOfServiceBedRecord(page, referenceNumber)
+    await outOfServiceBedPage.selectCancelRecord()
 
-  await cancelOutOfServiceBedPage.shouldShowSuccessBanner('Cancelled out of service bed')
+    const cancelOutOfServiceBedPage = await CancelOutOfServiceBedPage.initialize(page)
+    await cancelOutOfServiceBedPage.confirmCancellation()
+
+    await cancelOutOfServiceBedPage.shouldShowSuccessBanner('Cancelled out of service bed')
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn(`Could not clean up out of service bed with reference number ${referenceNumber}:`, error)
+  }
 }
 
 test('View all out of service beds', async ({ page, cruMember }) => {
@@ -115,45 +121,53 @@ test('View all out of service beds', async ({ page, cruMember }) => {
 })
 
 test('Future manager marks a bed as out of service in the manage area', async ({ page, futureManager }) => {
-  await markABedAsOutOfService(page, futureManager)
+  const referenceNumber = faker.string.alpha({ length: 32 })
 
-  // Cancel any out of service beds
-  const outOfServiceBedPage = await navigateToOutOfServiceBedRecord(page)
-  await cancelOutOfServiceBed(page, outOfServiceBedPage)
+  try {
+    await markABedAsOutOfService(page, futureManager, referenceNumber)
+  } finally {
+    await cleanUpOutOfServiceBed(page, referenceNumber)
+  }
 })
 
 test('Future manager updates an out of service bed', async ({ page, futureManager }) => {
   // Given there is an Out of Service bed
-  await markABedAsOutOfService(page, futureManager)
+  let referenceNumber = faker.string.alpha({ length: 10 })
 
-  // And I view and out of service bed
-  const outOfServiceBedPage = await navigateToOutOfServiceBedRecord(page)
+  try {
+    await markABedAsOutOfService(page, futureManager, referenceNumber)
 
-  // When I select 'Update record'
-  await outOfServiceBedPage.selectUpdateRecord()
+    // And I view an out of service bed
+    const outOfServiceBedPage = await navigateToOutOfServiceBedRecord(page, referenceNumber)
 
-  // Then I should see the update out of service bed record page
-  const updateOOSBedPage = await UpdateOutOfServiceBedPage.initialize(page)
+    // When I select 'Update record'
+    await outOfServiceBedPage.selectUpdateRecord()
 
-  // When I update the out of service bed record
-  const uniqueReferenceNumber = faker.string.alpha({ length: 32 })
-  const update = {
-    referenceNumber: uniqueReferenceNumber,
-    additionalInformation: `Additional information about update ${uniqueReferenceNumber}`,
+    // Then I should see the update out of service bed record page
+    const updateOOSBedPage = await UpdateOutOfServiceBedPage.initialize(page)
+
+    // When I update the out of service bed record
+    const uniqueReferenceNumber = faker.string.alpha({ length: 10 })
+    const update = {
+      referenceNumber: uniqueReferenceNumber,
+      additionalInformation: `Additional information about update ${uniqueReferenceNumber}`,
+    }
+    await updateOOSBedPage.updateBed(update)
+    await updateOOSBedPage.clickSubmit('Save')
+
+    referenceNumber = uniqueReferenceNumber
+
+    // Then I should see the out of service bed timeline page with the updated details
+    const outOfServiceBedPage2 = await OutOfServiceBedPage.initialize(page)
+    await outOfServiceBedPage2.shouldShowUpdatedDetails(update)
+
+    // When I select the details tab
+    await outOfServiceBedPage2.selectDetails()
+
+    // Then I should see the updated details
+    await outOfServiceBedPage2.shouldShowUpdatedDetails(update)
+  } finally {
+    // Cancel the out of service bed
+    await cleanUpOutOfServiceBed(page, referenceNumber)
   }
-  await updateOOSBedPage.updateBed(update)
-  await updateOOSBedPage.clickSubmit('Save')
-
-  // Then I should see the out of service bed timeline page with the updated details
-  const outOfServiceBedPage2 = await OutOfServiceBedPage.initialize(page)
-  await outOfServiceBedPage2.shouldShowUpdatedDetails(update)
-
-  // When I select the details tab
-  await outOfServiceBedPage2.selectDetails()
-
-  // Then I should see the updated details
-  await outOfServiceBedPage2.shouldShowUpdatedDetails(update)
-
-  // Cancel any out of service beds created during the test
-  await cancelOutOfServiceBed(page, outOfServiceBedPage2)
 })

@@ -6,6 +6,8 @@ import { BasePage } from '../basePage'
 export class MarkBedAsOutOfServicePage extends BasePage {
   startDate: Date
 
+  referenceNumber: string
+
   static async initialize(page: Page, title?: string) {
     if (title) {
       await expect(page.locator('h1')).toContainText(title)
@@ -41,11 +43,13 @@ export class MarkBedAsOutOfServicePage extends BasePage {
     await this.page.getByRole('group', { name: 'End date' }).getByLabel('Year').fill(getYear(endDate).toString())
   }
 
-  async completeForm() {
+  async completeForm(referenceNumber: string) {
+    this.referenceNumber = referenceNumber
+
     await this.enterOutOfServiceFromDate()
     await this.enterOutOfServiceToDate()
     await this.checkRadio('Planned Refurbishment (FM)')
-    await this.page.getByLabel('Work order reference number or CRN').fill('123456789')
+    await this.page.getByLabel('Work order reference number or CRN').fill(referenceNumber)
     await this.page
       .getByLabel('Details about why the bed is out of service')
       .fill('Reasons for bed being out of service')
@@ -62,7 +66,7 @@ export class MarkBedAsOutOfServicePage extends BasePage {
   async ensureNoBookingConflict() {
     if (await this.isBedNotAvailableMessageVisible()) {
       await this.addMonthsToStartDate(1)
-      await this.completeForm()
+      await this.completeForm(this.referenceNumber)
       await this.clickSave()
 
       await this.ensureNoBookingConflict()
