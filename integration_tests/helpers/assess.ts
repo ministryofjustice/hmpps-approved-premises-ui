@@ -53,7 +53,11 @@ export default class AseessHelper {
     private readonly user: User,
     private readonly clarificationNote?: Cas1ClarificationNote,
   ) {
-    this.assessmentSummary = assessmentSummaryFactory.build({ id: this.assessment.id, person: personFactory.build() })
+    this.assessmentSummary = assessmentSummaryFactory.build({
+      id: this.assessment.id,
+      person: personFactory.build(),
+      risks: this.assessment.application.risks,
+    })
   }
 
   setupStubs() {
@@ -84,6 +88,10 @@ export default class AseessHelper {
     cy.task('stubGetPlacementDuration', {
       applicationId: this.assessment.application.id,
       durationObj: cas1RequestsForPlacementDurationsCalculationResponseDtoFactory.build(),
+    })
+    cy.task('stubRiskProfile', {
+      person: this.assessment.application.person,
+      personRisks: this.assessmentSummary.risks,
     })
   }
 

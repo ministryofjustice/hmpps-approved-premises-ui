@@ -148,7 +148,7 @@ export default {
 
   verifyPlacementRequestsSearch: async ({
     crnOrName,
-    tierOnApplicationCreation,
+    personTier,
     arrivalDateStart,
     arrivalDateEnd,
     status,
@@ -157,7 +157,7 @@ export default {
     sortDirection = 'asc',
   }: {
     crnOrName: string
-    tierOnApplicationCreation: string
+    personTier: string
     arrivalDateStart: string
     arrivalDateEnd: string
     status: string
@@ -173,8 +173,8 @@ export default {
           crnOrName: {
             equalTo: crnOrName,
           },
-          tierOnApplicationCreation: {
-            equalTo: tierOnApplicationCreation,
+          personTier: {
+            equalTo: personTier,
           },
           status: {
             equalTo: status,

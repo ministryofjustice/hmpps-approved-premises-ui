@@ -317,6 +317,10 @@ context('Assess', () => {
 
       cy.task('stubAssessment', assessment)
       cy.task('stubAssessmentUpdate', assessment)
+      cy.task('stubRiskProfile', {
+        person: assessment.application.person,
+        personRisks: assessment.application.risks,
+      })
 
       AND('I visit the tasklist')
       TaskListPage.visit(assessment)
@@ -356,6 +360,10 @@ context('Assess', () => {
 
     cy.task('stubAssessment', assessment)
     cy.task('stubAssessmentUpdate', assessment)
+    cy.task('stubRiskProfile', {
+      person: assessment.application.person,
+      personRisks: assessment.application.risks,
+    })
 
     AND('I visit the tasklist')
     TaskListPage.visit(assessment)

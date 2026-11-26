@@ -62,7 +62,7 @@ export const setup = (
   })
   const risks = risksFactory.build({
     crn: person.crn,
-    tier: tierEnvelopeFactory.build({ value: { level: 'A3' } }),
+    tier: tierEnvelopeFactory.build({ value: { level: 'A' } }),
   })
 
   const offences = activeOffenceFactory.buildList(1)
