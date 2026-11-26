@@ -7,7 +7,6 @@ import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/val
 import TasklistService from '../../services/tasklistService'
 import AssessmentsController from './assessmentsController'
 import { AssessmentService, PersonService, TaskService } from '../../services'
-import config from '../../config'
 
 import {
   assessmentFactory,
@@ -165,6 +164,7 @@ describe('assessmentsController', () => {
     const assessment = assessmentFactory.build()
     const stubTaskList = jest.fn()
     const referrer = 'http://localhost/foo/bar'
+    const liveRisks = risksFactory.build()
 
     beforeEach(() => {
       request.params.id = assessment.id
@@ -177,6 +177,7 @@ describe('assessmentsController', () => {
       ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
         return { errors: {}, errorSummary: [] }
       })
+      personService.riskProfile.mockResolvedValue(liveRisks)
     })
 
     it('fetches the assessment and renders the task list', async () => {
@@ -187,7 +188,7 @@ describe('assessmentsController', () => {
         contextKeyDetails: assessmentKeyDetails(assessment),
         pageHeading: 'Assess an Approved Premises (AP) application',
         taskList: stubTaskList,
-        risks: assessment.application.risks,
+        risks: liveRisks,
         errorSummary: [],
         errors: {},
       })
@@ -238,7 +239,7 @@ describe('assessmentsController', () => {
         contextKeyDetails: assessmentKeyDetails(assessment),
         pageHeading: 'Assess an Approved Premises (AP) application',
         taskList: stubTaskList,
-        risks: assessment.application.risks,
+        risks: liveRisks,
         errorSummary: [],
         errors: {},
       })
@@ -263,48 +264,12 @@ describe('assessmentsController', () => {
           contextKeyDetails: assessmentKeyDetails(assessment),
           pageHeading: 'Assess an Approved Premises (AP) application',
           taskList: stubTaskList,
-          risks: assessment.application.risks,
+          risks: liveRisks,
           errorSummary: errorsAndUserInput.errorSummary,
           errors: errorsAndUserInput.errors,
         })
 
         expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
-      })
-    })
-
-    describe('when the live tiers feature flag is enabled', () => {
-      const liveRisks = risksFactory.build()
-
-      beforeEach(() => {
-        config.flags.useLiveTiers = true
-        personService.riskProfile.mockResolvedValue(liveRisks)
-      })
-
-      afterEach(() => {
-        config.flags.useLiveTiers = false
-        personService.riskProfile.mockClear()
-      })
-
-      it('renders the task list with risks from the risk profile endpoint', async () => {
-        await assessmentsController.show()(request, response, next)
-
-        expect(personService.riskProfile).toHaveBeenCalledWith(token, assessment.application.person.crn)
-        expect(response.render).toHaveBeenCalledWith(
-          'assessments/tasklist',
-          expect.objectContaining({ risks: liveRisks }),
-        )
-      })
-    })
-
-    describe('when the live tiers feature flag is disabled', () => {
-      it('renders the task list with risks from the application when live tiers are disabled', async () => {
-        await assessmentsController.show()(request, response, next)
-
-        expect(personService.riskProfile).not.toHaveBeenCalled()
-        expect(response.render).toHaveBeenCalledWith(
-          'assessments/tasklist',
-          expect.objectContaining({ risks: assessment.application.risks }),
-        )
       })
     })
   })

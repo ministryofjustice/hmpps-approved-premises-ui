@@ -251,7 +251,7 @@ context('Apply', () => {
     Page.verifyOnPage(ApplyPages.ConfirmYourDetailsPage, this.application)
   })
 
-  it('Follows the Tier V3 CAS2 interstitial page and exceptional case route when the tier is MISSING', function test() {
+  it('Stops the application if V3 tier is MISSING', function test() {
     this.person.tier = tierDtoFactory.build({ tierScore: 'MISSING' })
     const apply = new ApplyHelper({ ...this.application, person: this.person }, this.person, this.offences)
     apply.setupApplicationStubs()

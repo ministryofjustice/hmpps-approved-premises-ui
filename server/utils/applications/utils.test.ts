@@ -45,7 +45,6 @@ import {
   externalLinks,
   firstPageOfApplicationJourney,
   getApplicationSummary,
-  getApplicationTierValue,
   getApplicationType,
   isExceptionalCase,
   isInapplicable,
@@ -140,6 +139,7 @@ const assessSection1Task1 = {
   actionText: '',
   pages: {},
 }
+
 const assessSection1Task2 = {
   id: 'first-assess-section-task-2' as TaskNames,
   title: 'First Assess section, task 2',
@@ -195,7 +195,7 @@ describe('utils', () => {
     it('returns an array of applications as table rows', async () => {
       const applicationA = cas1ApplicationSummaryFactory.build({
         arrivalDate: undefined,
-        person: { ...person, tier: tierDtoFactory.build({ tierScore: 'A' }) },
+        person: { ...person, tier: tierDtoFactory.build({ tierScore: 'A1' }) },
         submittedAt: null,
       })
       const applicationB = cas1ApplicationSummaryFactory.build({
@@ -217,7 +217,7 @@ describe('utils', () => {
             text: applicationA.person.crn,
           },
           {
-            html: personUtils.tierBadge('A'),
+            html: personUtils.tierBadge('A1'),
           },
           {
             text: 'N/A',
@@ -319,10 +319,6 @@ describe('utils', () => {
     const sortDirection = 'asc'
     const hrefPrefix = 'http://example.com'
 
-    afterEach(() => {
-      config.flags.useLiveTiers = false
-    })
-
     it('returns header values', () => {
       expect(dashboardTableHeader(sortBy, sortDirection, hrefPrefix)).toEqual([
         {
@@ -331,7 +327,7 @@ describe('utils', () => {
         {
           text: 'CRN',
         },
-        sortHeader<ApplicationSortField>('Tier', 'tier', sortBy, sortDirection, hrefPrefix),
+        sortHeader<ApplicationSortField>('Tier', 'personTier', sortBy, sortDirection, hrefPrefix),
         sortHeader<ApplicationSortField>('Arrival Date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
         sortHeader<ApplicationSortField>('Date of application', 'createdAt', sortBy, sortDirection, hrefPrefix),
         {
@@ -344,8 +340,6 @@ describe('utils', () => {
     })
 
     it('should return the Tier column sorted on "personTier" when the useLiveTiers flag is enabled', () => {
-      config.flags.useLiveTiers = true
-
       expect(dashboardTableHeader(sortBy, sortDirection, hrefPrefix)).toContainEqual(
         sortHeader<ApplicationSortField>('Tier', 'personTier', sortBy, sortDirection, hrefPrefix),
       )
@@ -967,17 +961,6 @@ describe('utils', () => {
           },
         },
       ])
-    })
-  })
-
-  describe('getApplicationTierValue', () => {
-    it('calls getVersionedTierValue with the correct parameters from the application', () => {
-      const application = applicationFactory.build()
-      jest.spyOn(personUtils, 'getVersionedTierValue').mockReturnValue('D')
-
-      expect(getApplicationTierValue(application)).toEqual('D')
-
-      expect(personUtils.getVersionedTierValue).toHaveBeenCalledWith(application.person, application.risks.tier.value)
     })
   })
 

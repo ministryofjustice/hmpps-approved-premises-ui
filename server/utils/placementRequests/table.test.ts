@@ -9,7 +9,6 @@ import * as utils from '../utils'
 import adminPaths from '../../paths/admin'
 import { fullPersonFactory, restrictedPersonSummaryFactory } from '../../testutils/factories/person'
 import { placementRequestStatus } from '../formUtils'
-import config from '../../config'
 
 describe('tableUtils', () => {
   beforeEach(() => {
@@ -76,14 +75,6 @@ describe('tableUtils', () => {
       matched: cas1PlacementRequestSummaryFactory.matched(),
     }
 
-    beforeEach(() => {
-      config.flags.useLiveTiers = true
-    })
-
-    afterEach(() => {
-      config.flags.useLiveTiers = false
-    })
-
     it.each(['notMatched', 'unableToMatch'])(
       'returns table rows for placement requests with status %s',
       (status: PlacementRequestStatus) => {
@@ -145,35 +136,12 @@ describe('tableUtils', () => {
         ],
       ])
     })
-
-    it('returns the static tier badge if the useLiveTiers feature flag is not enabled', () => {
-      config.flags.useLiveTiers = false
-
-      const placementRequest = factories.matched.build({ isParole: true })
-      expect(dashboardTableRows([placementRequest], 'matched')).toEqual([
-        [
-          nameCell(placementRequest),
-          versionedTierCell(placementRequest.person),
-          textCell('Parole'),
-          textCell(DateFormats.isoDateToUIDate(placementRequest.firstBookingArrivalDate, { format: 'short' })),
-          textCell(placementRequest.firstBookingPremisesName),
-        ],
-      ])
-    })
   })
 
   describe('dashboardTableHeader', () => {
     const sortBy = 'duration'
     const sortDirection = 'asc'
     const hrefPrefix = 'http://example.com'
-
-    beforeEach(() => {
-      config.flags.useLiveTiers = true
-    })
-
-    afterEach(() => {
-      config.flags.useLiveTiers = false
-    })
 
     it.each(['notMatched', 'unableToMatch'])(
       'returns the table headers for the %s status',
@@ -231,24 +199,6 @@ describe('tableUtils', () => {
         ),
         sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
         { text: 'Status' },
-      ])
-    })
-
-    it('uses the static tier "person_risks_tier" rather than "person_tier" if the useLiveTiers flag is not enabled', () => {
-      config.flags.useLiveTiers = false
-
-      expect(dashboardTableHeader('matched', sortBy, sortDirection, hrefPrefix)).toEqual([
-        sortHeader<PlacementRequestSortField>('Name and CRN', 'person_name', sortBy, sortDirection, hrefPrefix),
-        sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
-        sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
-        sortHeader<PlacementRequestSortField>(
-          'Booked arrival date',
-          'canonical_arrival_date',
-          sortBy,
-          sortDirection,
-          hrefPrefix,
-        ),
-        sortHeader<PlacementRequestSortField>('Approved Premises', 'name', sortBy, sortDirection, hrefPrefix),
       ])
     })
   })

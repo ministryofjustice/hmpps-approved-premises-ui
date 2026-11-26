@@ -13,13 +13,13 @@ context('Search placement Requests', () => {
 
   const searchQuery = {
     crnOrName: 'CRN123',
-    tierOnApplicationCreation: 'A3',
+    personTier: 'A',
     arrivalDateStart: '2022-01-01',
     arrivalDateEnd: '2022-01-03',
     status: 'notMatched',
   } as PlacementRequestDashboardSearchOptions
 
-  const tiers = ['A3', 'A2', 'A1', 'B3', 'B2', 'B1', 'D3', 'D2', 'D1'].map(tier => ({
+  const tiers = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'MISSING', 'NOT_SUPERVISED'].map(tier => ({
     tier,
   })) as Array<AvailableTierDto>
 

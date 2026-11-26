@@ -30,7 +30,6 @@ import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
 import { textCell, versionedTierCell } from '../tableUtils'
 import { restrictedPersonSummaryFactory } from '../../testutils/factories/person'
-import config from '../../config'
 
 describe('premisesUtils', () => {
   describe('premisesActions', () => {
@@ -267,10 +266,6 @@ describe('premisesUtils', () => {
   })
 
   describe('placementTableHeader', () => {
-    afterEach(() => {
-      config.flags.useLiveTiers = false
-    })
-
     it.each(['upcoming', 'current', 'historic'])(
       'should return the sortable table headings for tab "%s" of the placement list',
       (activeTab: Cas1SpaceBookingResidency) => {
@@ -278,7 +273,7 @@ describe('premisesUtils', () => {
         const tableHeadings = placementTableHeader(activeTab, sortBy, 'asc', 'Test_Href_Prefix')
         const baseTableHeadings = [
           sortHeader('Name and CRN', 'personName', 'personName', 'asc', 'Test_Href_Prefix'),
-          sortHeader('Tier', 'tier', 'personName', 'asc', 'Test_Href_Prefix'),
+          sortHeader('Tier', 'personTier', 'personName', 'asc', 'Test_Href_Prefix'),
           sortHeader('Arrival date', 'canonicalArrivalDate', 'personName', 'asc', 'Test_Href_Prefix'),
           sortHeader('Departure date', 'canonicalDepartureDate', 'personName', 'asc', 'Test_Href_Prefix'),
         ]
@@ -293,14 +288,6 @@ describe('premisesUtils', () => {
         expect(tableHeadings).toEqual(expectedTableHeadings)
       },
     )
-
-    it('should return the Tier column sorted on "personTier" when the useLiveTiers flag is enabled', () => {
-      config.flags.useLiveTiers = true
-
-      const tableHeadings = placementTableHeader('upcoming', 'personTier', 'asc', 'Test_Href_Prefix')
-
-      expect(tableHeadings).toContainEqual(sortHeader('Tier', 'personTier', 'personTier', 'asc', 'Test_Href_Prefix'))
-    })
   })
 
   describe('placementTableRows', () => {

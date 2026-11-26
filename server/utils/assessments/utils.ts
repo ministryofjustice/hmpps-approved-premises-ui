@@ -141,11 +141,7 @@ const assessmentKeyDetails = (assessment: Assessment): KeyDetailsArgs => {
     },
     items: [
       summaryListItem('CRN', assessment.application.person.crn),
-      summaryListItem(
-        'Tier',
-        getVersionedTierValue(assessment.application.person, assessment.application.risks?.tier?.value) ||
-          'Not available',
-      ),
+      summaryListItem('Tier', getVersionedTierValue(assessment.application.person) || 'Not available'),
       summaryListItem('Arrival Date', arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate) : 'Not provided'),
       {
         value: {

@@ -2,7 +2,7 @@ import {
   cas1ApplicationSummaryFactory,
   personFactory,
   restrictedPersonFactory,
-  tierEnvelopeFactory,
+  tierDtoFactory,
 } from '../../testutils/factories'
 import { createNameAnchorElement, personKeyDetails } from './helpers'
 import paths from '../../paths/apply'
@@ -97,16 +97,14 @@ describe('helpers', () => {
   })
 
   describe('personKeyDetails', () => {
-    const tier = tierEnvelopeFactory.build().value
-
     it('should return the key information for a placement', () => {
       const person = personFactory.build()
 
-      expect(personKeyDetails(person, tier)).toEqual({
+      expect(personKeyDetails(person)).toEqual({
         header: { key: '', showKey: false, value: person.name },
         items: [
           { key: { text: 'CRN' }, value: { text: person.crn } },
-          { key: { text: 'Tier' }, value: { text: tier.level } },
+          { key: { text: 'Tier' }, value: { text: person.tier.tierScore } },
           {
             key: { text: 'Date of birth' },
             value: {
@@ -118,7 +116,7 @@ describe('helpers', () => {
     })
 
     it('should show the tier as not available if it is not defined', () => {
-      const person = personFactory.build()
+      const person = personFactory.build({ tier: tierDtoFactory.build({ tierScore: undefined }) })
 
       const result = personKeyDetails(person)
 
@@ -130,7 +128,7 @@ describe('helpers', () => {
         isRestricted: true,
       })
 
-      const result = personKeyDetails(person, tier)
+      const result = personKeyDetails(person)
 
       expect(result.header.value).toEqual(`LAO: ${person.name}`)
     })
@@ -138,11 +136,11 @@ describe('helpers', () => {
     it('should not show the name or date of birth for a restricted person', () => {
       const person = restrictedPersonFactory.build()
 
-      expect(personKeyDetails(person, tier)).toEqual({
+      expect(personKeyDetails(person)).toEqual({
         header: { key: '', showKey: false, value: 'Limited Access Offender' },
         items: [
           { key: { text: 'CRN' }, value: { text: person.crn } },
-          { key: { text: 'Tier' }, value: { text: tier.level } },
+          { key: { text: 'Tier' }, value: { text: 'Not available' } },
         ],
       })
     })
@@ -150,11 +148,11 @@ describe('helpers', () => {
     it('should not show the name or date of birth for an unknown person', () => {
       const person = unknownPersonFactory.build()
 
-      expect(personKeyDetails(person, tier)).toEqual({
+      expect(personKeyDetails(person)).toEqual({
         header: { key: '', showKey: false, value: 'Unknown person' },
         items: [
           { key: { text: 'CRN' }, value: { text: person.crn } },
-          { key: { text: 'Tier' }, value: { text: tier.level } },
+          { key: { text: 'Tier' }, value: { text: 'Not available' } },
         ],
       })
     })

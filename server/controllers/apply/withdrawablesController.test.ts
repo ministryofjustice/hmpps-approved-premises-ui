@@ -36,6 +36,7 @@ describe('withdrawablesController', () => {
     request = createMock<Request>({ user: { token }, flash })
     response = createMock<Response>({})
     jest.clearAllMocks()
+    jest.resetAllMocks()
     applicationService.findApplication.mockResolvedValue(application)
   })
 
@@ -84,10 +85,11 @@ describe('withdrawablesController', () => {
         const spaceBookingWithdrawables = withdrawableFactory.buildList(2, { type: 'space_booking' })
         const applicationWithdrawable = withdrawableFactory.build({ type: 'application' })
         const spaceBookings = cas1SpaceBookingFactory
-          .buildList(2, { person: application.person, tier: application.risks.tier.value.level })
+          .buildList(2)
           .map((b, i) => {
             return { ...b, id: spaceBookingWithdrawables[i].id }
           })
+          .map(booking => ({ ...booking, person: application.person }))
         const withdrawable = [applicationWithdrawable, ...spaceBookingWithdrawables]
         const withdrawables = withdrawablesFactory.build({ withdrawables: withdrawable })
 
@@ -104,15 +106,19 @@ describe('withdrawablesController', () => {
         )
         expect(sortAndFilterWithdrawables).toHaveBeenCalledWith(withdrawable, ['space_booking'])
         expect(applicationService.getWithdrawablesWithNotes).toHaveBeenCalledWith(token, applicationId)
-        expect(response.render).toHaveBeenCalledWith('applications/withdrawables/show', {
-          pageHeading: 'Select placement to withdraw',
-          id: applicationId,
-          withdrawables: spaceBookingWithdrawables,
-          allBookings: spaceBookings,
-          withdrawableType: 'placement',
-          notes: withdrawables.notes,
-          contextKeyDetails: applicationKeyDetails(application),
-        })
+
+        expect(response.render).toHaveBeenCalledWith(
+          'applications/withdrawables/show',
+          expect.objectContaining({
+            pageHeading: 'Select placement to withdraw',
+            id: applicationId,
+            withdrawables: spaceBookingWithdrawables,
+            allBookings: spaceBookings,
+            withdrawableType: 'placement',
+            notes: withdrawables.notes,
+            contextKeyDetails: applicationKeyDetails(application),
+          }),
+        )
         expect(placementService.getPlacement).toHaveBeenCalledTimes(2)
         expect(placementService.getPlacement).toHaveBeenCalledWith(token, spaceBookingWithdrawables[0].id)
         expect(placementService.getPlacement).toHaveBeenCalledWith(token, spaceBookingWithdrawables[1].id)

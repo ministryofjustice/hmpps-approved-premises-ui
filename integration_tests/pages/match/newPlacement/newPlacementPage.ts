@@ -13,7 +13,7 @@ export default class NewPlacementPage extends Page {
   constructor(placementRequest: Cas1PlacementRequestDetail) {
     super('Placement transfer details')
 
-    this.shouldShowKeyPersonDetails(placementRequest.person as FullPerson, placementRequest.risks.tier.value.level)
+    this.shouldShowKeyPersonDetails(placementRequest.person as FullPerson)
   }
 
   completeForm({

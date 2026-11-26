@@ -82,7 +82,7 @@ context('All applications', () => {
   })
 
   it('supports sorting by tier', () => {
-    shouldSortByField('tier')
+    shouldSortByField('personTier')
   })
 
   it('supports sorting by createdAt', () => {
@@ -299,7 +299,7 @@ context('All applications', () => {
     THEN('I should see the first result')
     page.shouldShowApplications()
 
-    WHEN('I sort by Tier')
+    WHEN(`I sort by ${field}`)
     page.clickSortBy(field)
 
     THEN('the API should have received a request for the sort')

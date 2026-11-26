@@ -38,7 +38,6 @@ import { NoTierError, RestrictedPersonError } from '../../utils/errors'
 import peoplePaths from '../../paths/people'
 import { applicationKeyDetails, personKeyDetails } from '../../utils/applications/helpers'
 import { getPageBackLink } from '../../utils/backlinks'
-import config from '../../config'
 
 interface ShowRequest extends Request {
   query: { tab: ApplicationShowPageTab }
@@ -179,9 +178,7 @@ export default class ApplicationsController {
         })
       }
 
-      const risks = config.flags.useLiveTiers
-        ? await this.personService.riskProfile(req.user.token, application.person.crn)
-        : application.risks
+      const risks = await this.personService.riskProfile(req.user.token, application.person.crn)
 
       return res.render('applications/tasklist', { application, taskList, errorSummary, errors, risks })
     }
@@ -207,7 +204,7 @@ export default class ApplicationsController {
         applicationList.length > 0 ? applicationList[0].person : await this.personService.findByCrn(req.user.token, crn)
 
       return res.render('applications/manageApplications', {
-        contextKeyDetails: personKeyDetails(person, applicationList[0] && applicationList[0].risks?.tier?.value),
+        contextKeyDetails: personKeyDetails(person),
         continuePath: applicationList.length > 0 ? undefined : paths.applications.people.selectOffence({ crn }),
         pageHeading: getApplicationsHeading(applicationList),
         applicationsHeader: getApplicationTableHeader(),
@@ -273,7 +270,6 @@ export default class ApplicationsController {
 
       const { tierScore } = person.tier || {}
 
-      // TODO: do we need this check in V3 only world?
       if (!tierScore) {
         throw new NoTierError(person.crn)
       }

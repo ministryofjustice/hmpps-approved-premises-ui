@@ -168,10 +168,7 @@ context('Placement Requests', () => {
       let showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
 
       AND('I should see the Key-person details in the blue banner')
-      showPage.shouldShowKeyPersonDetails(
-        unmatchedPlacementRequest.person as FullPerson,
-        unmatchedPlacementRequest.risks?.tier?.value?.level,
-      )
+      showPage.shouldShowKeyPersonDetails(unmatchedPlacementRequest.person as FullPerson)
 
       AND('I should see the information about the placement request')
       showPage.shouldShowSummary()
@@ -396,7 +393,7 @@ context('Placement Requests', () => {
       const sortableFields = [
         'expected_arrival',
         'person_name',
-        'person_risks_tier',
+        'person_tier',
         'application_date',
         'duration',
         'request_type',

@@ -117,13 +117,7 @@ const dashboardTableHeader = (
     {
       text: 'CRN',
     },
-    sortHeader<ApplicationSortField>(
-      'Tier',
-      config.flags.useLiveTiers ? 'personTier' : 'tier',
-      sortBy,
-      sortDirection,
-      hrefPrefix,
-    ),
+    sortHeader<ApplicationSortField>('Tier', 'personTier', sortBy, sortDirection, hrefPrefix),
     sortHeader<ApplicationSortField>('Arrival Date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
     sortHeader<ApplicationSortField>('Date of application', 'createdAt', sortBy, sortDirection, hrefPrefix),
     {
@@ -430,8 +424,7 @@ const appealDecisionRadioItems = (selectedOption: AppealDecision | undefined) =>
   }))
 }
 
-const getApplicationTierValue = (application: Cas1Application) =>
-  getVersionedTierValue(application.person, application.risks?.tier?.value)
+const getApplicationTierValue = (application: Cas1Application) => getVersionedTierValue(application.person)
 
 const externalLinks = (referredBy: string) => {
   return {

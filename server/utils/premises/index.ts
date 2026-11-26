@@ -19,7 +19,6 @@ import {
   ColumnDefinition,
 } from '@approved-premises/ui'
 import { Request } from 'express'
-import config from '../../config'
 import managePaths from '../../paths/manage'
 import { createQueryString, linkTo } from '../utils'
 import { sortHeader } from '../sortHeader'
@@ -155,11 +154,11 @@ export const keyworkersToSelectOptions = (
     })),
 ]
 
-type ColumnField = Exclude<Cas1SpaceBookingSummarySortField, 'personTier'> | 'status' | 'spaceType'
+type ColumnField = Exclude<Cas1SpaceBookingSummarySortField, 'tier'> | 'status' | 'spaceType'
 
 const baseColumns: Array<ColumnDefinition<ColumnField>> = [
   { title: 'Name and CRN', fieldName: 'personName', sortable: true },
-  { title: 'Tier', fieldName: 'tier', sortable: true },
+  { title: 'Tier', fieldName: 'personTier', sortable: true },
   { title: 'Arrival date', fieldName: 'canonicalArrivalDate', sortable: true },
   { title: 'Departure date', fieldName: 'canonicalDepartureDate', sortable: true },
 ]
@@ -185,8 +184,8 @@ export const placementTableHeader = (
 ): Array<TableCell> => {
   return columnMap[activeTab].map(({ title, fieldName, sortable }: ColumnDefinition<ColumnField>) => {
     if (!sortable) return textCell(title)
-    const targetField = fieldName === 'tier' && config.flags.useLiveTiers ? 'personTier' : fieldName
-    return sortHeader(title, targetField, sortBy, sortDirection, hrefPrefix)
+    // const targetField = fieldName === 'tier' && config.flags.useLiveTiers ? 'personTier' : fieldName
+    return sortHeader(title, fieldName, sortBy, sortDirection, hrefPrefix)
   })
 }
 
@@ -211,7 +210,7 @@ export const mapPlacementTableRows = (
     const link = getPlacementLink({ request, premisesId, person, placementId: placement.id })
     const fieldValues: Record<ColumnField, TableCell> = {
       personName: htmlCell(`<a href="${link}" data-cy-id="${id}">${displayName(person)}, ${person.crn}</a>`),
-      tier: versionedTierCell(person),
+      personTier: versionedTierCell(person),
       canonicalArrivalDate: dateCell(arrivalDate),
       canonicalDepartureDate: dateCell(departureDate),
       keyWorkerName: textCell(keyWorkerAllocation?.name || 'Not assigned'),

@@ -79,7 +79,7 @@ context('Change Placement', () => {
     const changePlacementPage = Page.verifyOnPage(ChangePlacementPage, placement)
 
     AND('I should see the details of the person')
-    changePlacementPage.shouldShowKeyPersonDetails(placement.person as FullPerson, placement.tier)
+    changePlacementPage.shouldShowKeyPersonDetails(placement.person as FullPerson)
 
     AND('I should see an overview of the placement')
     changePlacementPage.shouldShowPlacementOverview()
@@ -181,7 +181,7 @@ context('Change Placement', () => {
     const changePlacementPage = Page.verifyOnPage(ChangePlacementPage, placement)
 
     AND('I should see the details of the person')
-    changePlacementPage.shouldShowKeyPersonDetails(placement.person as FullPerson, placement.tier)
+    changePlacementPage.shouldShowKeyPersonDetails(placement.person as FullPerson)
 
     AND('I should see an overview of the placement')
     changePlacementPage.shouldShowPlacementOverview()

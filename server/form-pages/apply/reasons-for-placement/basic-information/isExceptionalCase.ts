@@ -18,7 +18,7 @@ export default class IsExceptionalCase implements TasklistPage {
     readonly body: { isExceptionalCase?: YesOrNo },
     readonly application: Application,
   ) {
-    this.tier = getVersionedTierValue(application.person, application.risks?.tier?.value)
+    this.tier = getVersionedTierValue(application.person)
     this.title = `${displayName(application.person)} is not normally eligible for an AP placement`
   }
 

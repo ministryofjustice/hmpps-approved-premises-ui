@@ -332,9 +332,9 @@ describe('utils', () => {
   })
 
   describe('assessmentKeyDetails', () => {
-    const person = personFactory.build({ tier: tierDtoFactory.build({ tierScore: 'D2Live' }) })
+    const person = personFactory.build({ tier: tierDtoFactory.build({ tierScore: 'D' }) })
     const risks = risksFactory.build({
-      tier: tierEnvelopeFactory.build({ value: { level: 'D2' } }),
+      tier: tierEnvelopeFactory.build({ value: { level: 'DApp' } }),
     })
 
     it('should return key details for an assessment when an arrival date is provided', () => {
@@ -359,7 +359,7 @@ describe('utils', () => {
           },
           {
             key: { text: 'Tier' },
-            value: { text: 'D2' },
+            value: { text: 'D' },
           },
           {
             key: { text: 'Arrival Date' },
@@ -400,7 +400,7 @@ describe('utils', () => {
           },
           {
             key: { text: 'Tier' },
-            value: { text: 'D2' },
+            value: { text: 'D' },
           },
           {
             key: { text: 'Arrival Date' },
@@ -418,15 +418,6 @@ describe('utils', () => {
           },
         ],
       })
-    })
-
-    it('should show the tier as not available if it is not defined', () => {
-      const application = applicationFactory.build({ person, risks: undefined })
-      const assessment = assessmentFactory.build({ application })
-
-      const result = assessmentKeyDetails(assessment)
-
-      expect(result.items[1].value).toEqual({ text: 'Not available' })
     })
   })
 
