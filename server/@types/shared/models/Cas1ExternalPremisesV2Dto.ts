@@ -2,12 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Cas1ExternalPremisesDto = {
+export type Cas1ExternalPremisesV2Dto = {
     addressLine1: string;
     addressLine2?: string;
-    endDate?: string;
     postcode: string;
-    startDate?: string;
     town?: string;
 };
 
