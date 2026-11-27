@@ -12,7 +12,10 @@ export const signIn = async (
   }
 
   if (options.redirectToRoot) {
-    await page.goto('/')
+    await page.goto('/sign-in')
+    const signInUrl = new URL(page.url())
+    signInUrl.pathname = signInUrl.pathname.replace(/\/sign-in$/, '/sign-in-other')
+    await page.goto(signInUrl.toString())
   }
 
   await page.getByLabel('Username').fill(user.username)
