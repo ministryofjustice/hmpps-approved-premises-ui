@@ -11,11 +11,6 @@ export type UpdateApprovedPremisesApplication = {
     arrivalDate?: string;
     data: Record<string, any>;
     document?: any;
-    /**
-     * noticeType should be used to indicate if an emergency application
-     * @deprecated
-     */
-    isEmergencyApplication?: boolean;
     isInapplicable?: boolean;
     isWomensApplication?: boolean;
     noticeType?: Cas1ApplicationTimelinessCategory;

@@ -20,17 +20,12 @@ export type SubmitApprovedPremisesApplication = {
     caseManagerIsNotApplicant?: boolean;
     caseManagerUserDetails?: Cas1ApplicationUserDetails;
     /**
-     * noticeType should be used to indicate if this an emergency application
-     * @deprecated
-     */
-    isEmergencyApplication?: boolean;
-    /**
      * If true this is an exceptional application (The case does not meet the CAS1 eligibility criteria, but a senior manager has agreed that the application can proceed)
      */
     isExceptional?: boolean;
     isWomensApplication?: boolean;
     licenseExpiryDate?: string;
-    noticeType?: Cas1ApplicationTimelinessCategory;
+    noticeType: Cas1ApplicationTimelinessCategory;
     reasonForShortNotice?: string;
     reasonForShortNoticeOther?: string;
     releaseType: ReleaseTypeOption;
